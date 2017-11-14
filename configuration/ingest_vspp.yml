@@ -1,0 +1,14 @@
+spark:
+  appName: vspp
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+
+kafka:
+  bootstrap.servers: test1:9094
+  topic.input: at_in_telenet_nl_heapp_airflow_ingest_network_performance_vspp_log_gen_v1
+  startingOffsets: earliest
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
+  topic.output: at_out_telenet_nl_heapp_airflow_ingest_network_performance_vspp_log_gen_v1
+
+

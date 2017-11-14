@@ -1,0 +1,11 @@
+spark:
+  appName: think-analytics-httpaccess-basic-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+ # consoleWriter: true
+
+analytics:
+  componentName: vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess
+  watermark: '1 minutes'
+  window: '10 minutes'

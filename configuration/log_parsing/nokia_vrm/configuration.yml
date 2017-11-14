@@ -1,0 +1,27 @@
+spark:
+  appName: nokia-vrm-log-parsing
+  master: local[*]
+  checkpointLocation: file:///spark/parsing/nokia_vrm/checkpoints
+  shuffle.partitions: 1
+  consoleWriter: true
+
+kafka:
+  maxOffsetsPerTrigger: 100000
+  startingOffsets: earliest
+  bootstrap.servers: test1:9094
+  topics:
+    dlq: vagrant_pro_deadletterqueue
+    inputs:
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_nokiavrm_schedulerbsaudit_log_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_nokiavrm_dvrconsoledev_log_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_nokiavrm_schedulerbsdev_log_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_nokiavrm_cdvrbsdev_log_v1
+    outputs:
+      scheduler_bs_audit: vagrant_pro_eosdtv_lab5aobo_tst_heapp_nokiavrm_schedulerbsaudit_log_v1
+      console_bs_audit: vagrant_pro_eosdtv_lab5aobo_tst_heapp_nokiavrm_dvrconsoledev_log_v1
+      scheduler_bs_dev: vagrant_pro_eosdtv_lab5aobo_tst_heapp_nokiavrm_schedulerbsdev_log_v1
+      cdvr_bs_dev: vagrant_pro_eosdtv_lab5aobo_tst_heapp_nokiavrm_cdvrbsdev_log_v1
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
+
+

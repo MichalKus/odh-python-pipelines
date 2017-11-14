@@ -1,0 +1,2 @@
+{"@timestamp": "2017-10-07T16:30:00.000+03:00", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.undefined_warnings.count", "value": 5}
+{"@timestamp": "2017-10-30T11:33:00.000+03:00", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.undefined_warnings.count", "value": 1}

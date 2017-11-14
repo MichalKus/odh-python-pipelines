@@ -1,0 +1,37 @@
+spark:
+  appName: Spark application name
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+  batchInterval: 10
+
+kafka:
+  options:
+    bootstrap.servers: test1:9093
+    group.id: group0
+    client.id: client0
+    auto.offset.reset: smallest
+  input:
+    topic: vagrant_in_eosdtv_lab5aobo_tst_heapp_offering_generator_log_gen_v1
+  output:
+    topic: vagrant_out_eosdtv_lab5aobo_tst_heapp_offering_generator_log_gen_v1
+
+extractors:
+  # Start event extractor (group 1 - date, group 2 - unique id)
+  - regexp: '(\d{4}-[0-3]\d-[01]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)[+-][0-2]\d:[0-5]\d\s+.+\s+INFO:\s+.*\s+Recursive\s+retrieve\s+(\S*)'
+    date_format: "%Y-%m-%dT%H:%M:%S.%f"
+  # Stop event extractor (group 1 - date, group 2 - unique id)
+  - regexp: '(\d{4}-[0-3]\d-[01]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)[+-][0-2]\d:[0-5]\d\s+.+\s+INFO:\s+.*\s+ftp_poll-vmuk-feed\.sh\s+(\S+)\s+retrieved'
+    date_format: "%Y-%m-%dT%H:%M:%S.%f"
+
+expire:
+  delay: 60
+  event_time: true  # default: 'true'
+  behavior: fail  # values: 'keep', 'drop' or 'fail', default: 'fail'
+
+result:
+  id_field: package  # default: 'id'
+  value_field: value  # default: 'value'
+  value_unit: ms  # default: 's' (seconds)
+  static_fields:
+    system: sample_system
+    type: sample_type

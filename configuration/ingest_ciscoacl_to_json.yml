@@ -1,0 +1,13 @@
+spark:
+  appName: cisco_to_json
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+
+kafka:
+  bootstrap.servers: test1:9094
+  topic.input: vagrant_in_eosdtv_lab5aobo_tst_heapp_cisco_aci_cisco_to_json_log_v1
+  startingOffsets: earliest
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
+  topic.output: vagrant_out_eosdtv_lab5aobo_tst_heapp_cisco_aci_cisco_to_json_log_v1
+

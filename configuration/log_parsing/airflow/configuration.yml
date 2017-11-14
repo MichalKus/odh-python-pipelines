@@ -1,0 +1,21 @@
+spark:
+  appName: airflow-log-parsing
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+  shuffle.partitions: 1
+  consoleWriter: false
+
+kafka:
+  maxOffsetsPerTrigger: 10000
+  bootstrap.servers: test1:9094
+  topics:
+    dlq: vagrant_pro_deadletterqueue
+    inputs:
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_airflow_worker_log_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_airflow_worker_dag_execution_log_v1
+    outputs:
+      worker: vagrant_pro_eosdtv_lab5aobo_tst_heapp_airflow_worker_log_v1
+      worker_dag_execution: vagrant_pro_eosdtv_lab5aobo_tst_heapp_airflow_worker_dag_execution_log_v1
+  startingOffsets: earliest
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN

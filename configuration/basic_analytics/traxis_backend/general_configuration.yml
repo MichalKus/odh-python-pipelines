@@ -1,0 +1,21 @@
+spark:
+  appName: traxis-backend-general-basic-analytics
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+  shuffle.partitions: 1
+  consoleWriter: true
+
+kafka:
+  bootstrap.servers: test1:9094
+  topics:
+    inputs:
+      - vagrant_pro_eosdtv_lab5aobo_tst_heapp_traxis_backend_log_gen_v1
+    output: vagrant_out_eosdtv_lab5aobo_tst_heapp_traxis_backend_log_gen_v1
+  startingOffsets: earliest
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
+
+analytics:
+  componentName: vagrant.eosdtv.lab5aobo.tst.heapp.traxis_backend
+  watermark: 10 seconds
+  window: 1 second
