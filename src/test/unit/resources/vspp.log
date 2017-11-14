@@ -1,0 +1,15 @@
+[2017-06-21 13:47:00,456] {create_obo_assets_transcoding_driven_workflow.py:469} INFO - Submitting asset: ab619992cd790dcc0e2257de677869f8_2204923a2f80eeccb470692c2c48fb34
+[2017-06-21 13:47:00,457] {create_obo_assets_transcoding_driven_workflow.py:471} INFO - Fabrix input: /obo_manage/Countries/E2ESI/FromAirflow/crid~~3A~~2F~~2Fog.libertyglobal.com~~2F1001~~2Fts1111_20170621_132736pt2/ab619992cd790dcc0e2257de677869f8_2204923a2f80eeccb470692c2c48fb34
+[2017-06-21 13:47:00,480] {create_obo_assets_transcoding_driven_workflow.py:489} INFO - Fabrix details: {'code': '0', 'internal_id': '7239'}
+[2017-06-21 13:47:00,486] {fabrix_client.py:262} INFO - Fabrix progress: {'success_full_ingest': '0', 'progress': '0'}
+[2017-06-21 13:47:10,499] {fabrix_client.py:262} INFO - Fabrix progress: {'success_full_ingest': '0', 'progress': '21'}
+[2017-06-21 13:47:20,516] {fabrix_client.py:262} INFO - Fabrix progress: {'success_full_ingest': '0', 'progress': '42'}
+[2017-06-21 13:47:30,526] {fabrix_client.py:262} INFO - Fabrix progress: {'success_full_ingest': '0', 'progress': '64'}
+[2017-06-21 13:47:40,543] {fabrix_client.py:262} INFO - Fabrix progress: {'success_full_ingest': '0', 'progress': '87'}
+[2017-06-21 13:47:50,569] {fabrix_client.py:262} INFO - Fabrix progress: {'success_full_ingest': '1', 'progress': '-1'}
+[2017-06-21 13:47:50,588] {create_obo_assets_transcoding_driven_workflow.py:469} INFO - Submitting asset: 5fc9122105afadbb076ad3657d887d76_ec80816b362f47f54c637f2ad253deb4
+[2017-06-21 13:47:50,588] {create_obo_assets_transcoding_driven_workflow.py:471} INFO - Fabrix input: /obo_manage/Countries/E2ESI/FromAirflow/crid~~3A~~2F~~2Fog.libertyglobal.com~~2F1001~~2Fts1111_20170621_132736pt2/5fc9122105afadbb076ad3657d887d76_ec80816b362f47f54c637f2ad253deb4
+[2017-06-21 13:47:50,606] {create_obo_assets_transcoding_driven_workflow.py:489} INFO - Fabrix details: {'code': '0', 'internal_id': '7240'}
+[2017-06-21 13:47:50,612] {fabrix_client.py:262} INFO - Fabrix progress: {'success_full_ingest': '0', 'progress': '0'}
+[2017-06-21 13:48:00,636] {fabrix_client.py:262} INFO - Fabrix progress: {'success_full_ingest': '1', 'progress': '-1'}
+[2017-06-21 13:48:00,656] {python_operator.py:67} INFO - Done. Returned value was: {'assets': [(<contrib.asset.MultiAsset object at 0x436e0d0>, {'video_frame_rate': '25.00', 'video_vres': '576', 'subtitling_types': [], 'total_size': '190013440', 'video_hres': '720', 'video_bw': '1588297', 'video_type': '', 'audio_languages': [('AAC (ADTS)', 'eng')]}), (<contrib.asset.MultiAsset object at 0x436e150>, {'video_frame_rate': '25.00', 'video_vres': '576', 'subtitling_types': [], 'total_size': '14409728', 'video_hres': '720', 'video_bw': '1545381', 'video_type': '', 'audio_languages': [('AAC (ADTS)', 'eng')]})]}

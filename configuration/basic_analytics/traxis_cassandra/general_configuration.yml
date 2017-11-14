@@ -1,0 +1,21 @@
+spark:
+  appName: traxis-cassandra-general-basic-analytics
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+  shuffle.partitions: 1
+  consoleWriter: true
+
+kafka:
+  bootstrap.servers: test1:9094
+  topics:
+    inputs:
+      - vagrant_pro_eosdtv_lab5aobo_tst_heapp_traxis_cassandra_log_gen_v1
+    output: vagrant_out_eosdtv_lab5aobo_tst_heapp_traxis_cassandra_log_gen_v1
+  startingOffsets: earliest
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
+
+analytics:
+  componentName: vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra
+  watermark: 10 minutes
+  window: 1 minute

@@ -1,0 +1,2 @@
+{"@timestamp": "2017-09-29T13:00:00.000+03:00", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.resystemout.duration.avg", "value": 16.0}
+{"@timestamp": "2017-09-29T09:02:00.000+03:00", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.resystemout.duration.avg", "value": 12.0}

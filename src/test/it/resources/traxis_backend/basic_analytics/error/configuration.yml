@@ -1,0 +1,10 @@
+spark:
+  appName: traxis-backend-error-basic-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+
+analytics:
+  componentName: vagrant.eosdtv.lab5aobo.tst.heapp.traxis_backend.error
+  watermark: 1 minute
+  window: 1 minute

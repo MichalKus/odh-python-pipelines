@@ -1,0 +1,32 @@
+spark:
+  appName: think-analytics-log-parsing
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+  shuffle.partitions: 1
+
+kafka:
+  maxOffsetsPerTrigger: 10
+  startingOffsets: earliest
+  bootstrap.servers: test1:9094
+  topics:
+    dlq: vagrant_pro_deadletterqueue
+    inputs:
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_thinkanalytics_httpaccess_log_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_thinkanalytics_resystemout_log_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_thinkanalytics_remonsystemout_log_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_thinkanalytics_central_log_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_thinkanalytics_thinkenterprise_log_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_thinkanalytics_gcollector_log_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_thinkanalytics_server_log_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_thinkanalytics_reingest_log_v1
+    outputs:
+      httpaccess: vagrant_pro_eosdtv_lab5aobo_tst_heapp_thinkanalytics_httpaccess_log_v1
+      resystemout: vagrant_pro_eosdtv_lab5aobo_tst_heapp_thinkanalytics_resystemout_log_v1
+      remonsystemout: vagrant_pro_eosdtv_lab5aobo_tst_heapp_thinkanalytics_remonsystemout_log_v1
+      central: vagrant_pro_eosdtv_lab5aobo_tst_heapp_thinkanalytics_central_log_v1
+      thinkenterprise: vagrant_pro_eosdtv_lab5aobo_tst_heapp_thinkanalytics_thinkenterprise_log_v1
+      gcollector: vagrant_pro_eosdtv_lab5aobo_tst_heapp_thinkanalytics_gcollector_log_v1
+      server: vagrant_pro_eosdtv_lab5aobo_tst_heapp_thinkanalytics_server_log_v1
+      reingest: vagrant_pro_eosdtv_lab5aobo_tst_heapp_thinkanalytics_reingest_log_v1
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN

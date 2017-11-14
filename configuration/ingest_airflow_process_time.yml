@@ -1,0 +1,30 @@
+spark:
+  appName: airflow_process_time
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+  batchInterval: 10
+
+kafka:
+  options:
+    bootstrap.servers: test1:9093
+    group.id: group0
+    client.id: client0
+    auto.offset.reset: smallest
+    security.protocol: SASL_PLAINTEXT
+    sasl.kerberos.service.name: kafka
+    sasl.mechanism: PLAIN
+  input:
+    topics:
+      - at_in_telenet_nl_heapp_airflow_ingest_network_performance_airflow_log_gen_v1
+      - at_in_telenet_nl_heapp_airflow_ingest_network_performance_airflow_process_time_log_gen_v1
+  output:
+    topic: at_out_telenet_nl_heapp_airflow_ingest_network_performance_airflow_process_time_v1
+
+extractors:
+  - '[\s\S]+?\[(?P<date>[^\]]*)\] \{\S+\} INFO - Deleting directory: [/\S+]+/(?P<packageId>[/^\S]+pt)'
+  - '\[(?P<date>[^\]]*)\] \{\S+\}\s+INFO - Package to process: (?P<packageId>[\S]+pt)'
+
+expired_time: 20
+static_fields:
+  system: process-time
+  type: airflow_ingest_network_performance_airflow

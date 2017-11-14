@@ -1,0 +1,18 @@
+spark:
+  appName: og-basic-analytics
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+  shuffle.partitions: 1
+
+kafka:
+  bootstrap.servers: test1:9094
+  topic:
+    input: vagrant_out_eosdtv_lab5aobo_tst_heapp_offering_generator_log_gen_v1
+    output: vagrant_pro_eosdtv_lab5aobo_tst_heapp_offering_generator_log_gen_v1
+  startingOffsets: earliest
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
+
+analytics:
+  watermark_in_minutes: 10
+  window_in_minutes: 1

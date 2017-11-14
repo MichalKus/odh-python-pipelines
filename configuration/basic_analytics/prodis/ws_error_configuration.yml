@@ -1,0 +1,22 @@
+spark:
+  appName: prodis-basic-analytics
+  master: local[*]
+  checkpointLocation: file:///spark/basic-analytics/prodis/checkpoints
+  shuffle.partitions: 1
+  consoleWriter: true
+
+kafka:
+  maxOffsetsPerTrigger: 100000
+  startingOffsets: earliest
+  bootstrap.servers: test1:9094
+  topics:
+    inputs:
+     - vagrant_pro_eosdtv_lab5aobo_tst_heapp_prodis_ws_log_err_v1
+    output: vagrant_out_eosdtv_lab5aobo_tst_heapp_prodis_log_err_v1
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
+
+analytics:
+  componentName: vagrant.eosdtv.lab5aobo.tst.heapp.prodis.ws
+  watermark: '1 hour'
+  window: '1 minutes'

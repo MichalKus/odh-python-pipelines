@@ -1,0 +1,18 @@
+spark:
+  appName: Spark Streaming Python Test with config
+  checkpointLocation: file:///spark/checkpoints
+  master: local[*]
+  batchInterval: 10
+
+kafka:
+  options:
+    bootstrap.servers: test1:9093
+    auto.offset.reset: smallest
+  input:
+    topics:
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_vspp_recording_manager_log_gen_v1
+  output:
+    topic: vagrant_out_eosdtv_lab5aobo_tst_heapp_vspp_recording_unique_activities_log_gen_v1
+
+pipeline:
+  frequencyMinutes: 1

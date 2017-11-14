@@ -1,0 +1,26 @@
+spark:
+  appName: traxis-frontend-log-parsing
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+  shuffle.partitions: 1
+  consoleWriter: false
+
+kafka:
+#  maxOffsetsPerTrigger: 100
+  startingOffsets: earliest
+  bootstrap.servers: test1:9094
+  topics:
+    dlq: vagrant_pro_deadletterqueue
+    inputs:
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_traxis_frontend_log_gen_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_traxis_frontend_log_err_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_traxis_frontend_scheduler_log_gen_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_traxis_frontend_management_log_gen_v1
+    outputs:
+      general: vagrant_pro_eosdtv_lab5aobo_tst_heapp_traxis_frontend_log_gen_v1
+      error: vagrant_pro_eosdtv_lab5aobo_tst_heapp_traxis_frontend_log_err_v1
+      scheduler: vagrant_pro_eosdtv_lab5aobo_tst_heapp_traxis_frontend_scheduler_log_gen_v1
+      management: vagrant_pro_eosdtv_lab5aobo_tst_heapp_traxis_frontend_management_log_gen_v1
+
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN

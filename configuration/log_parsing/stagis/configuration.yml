@@ -1,0 +1,26 @@
+spark:
+  appName: stagis-log-parsing
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+  shuffle.partitions: 1
+  consoleWriter: true
+
+kafka:
+  bootstrap.servers: test1:9094
+  startingOffsets: earliest
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
+  topics:
+    dlq: vagrant_pro_deadletterqueue
+    inputs:
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_stagis_log_gen_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_stagis_log_err_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_stagis_corecommit_log_err_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_stagis_interface_log_gen_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_stagis_wcf_log_gen_v1
+    outputs:
+      general: vagrant_pro_eosdtv_lab5aobo_tst_heapp_stagis_log_gen_v1
+      error: vagrant_pro_eosdtv_lab5aobo_tst_heapp_stagis_log_err_v1
+      corecommit: vagrant_pro_eosdtv_lab5aobo_tst_heapp_stagis_corecommit_log_err_v1
+      interface: vagrant_pro_eosdtv_lab5aobo_tst_heapp_stagis_interface_log_gen_v1
+      wcf: vagrant_pro_eosdtv_lab5aobo_tst_heapp_stagis_wcf_log_gen_v1

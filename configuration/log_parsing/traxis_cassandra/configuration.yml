@@ -1,0 +1,23 @@
+spark:
+  appName: traxis-cassandra-log-parsing
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+  shuffle.partitions: 1
+  consoleWriter: true
+
+kafka:
+  maxOffsetsPerTrigger: 100
+  startingOffsets: earliest
+  bootstrap.servers: test1:9094
+  topics:
+    dlq: vagrant_pro_deadletterqueue
+    general:
+      input: vagrant_in_eosdtv_lab5aobo_tst_heapp_traxis_cassandra_log_gen_v1
+      output: vagrant_pro_eosdtv_lab5aobo_tst_heapp_traxis_cassandra_log_gen_v1
+    error:
+      input: vagrant_in_eosdtv_lab5aobo_tst_heapp_traxis_cassandra_log_err_v1
+      output: vagrant_pro_eosdtv_lab5aobo_tst_heapp_traxis_cassandra_log_err_v1
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
+
+

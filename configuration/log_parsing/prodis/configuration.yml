@@ -1,0 +1,36 @@
+spark:
+  appName: prodis-log-parsing
+  master: local[*]
+  checkpointLocation: file:///spark/parsing/prodis/checkpoints
+  shuffle.partitions: 1
+  consoleWriter: true
+
+kafka:
+  maxOffsetsPerTrigger: 100000
+  startingOffsets: earliest
+  bootstrap.servers: test1:9094
+  topics:
+    dlq: vagrant_pro_deadletterqueue
+    inputs:
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_prodis_log_gen_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_prodis_log_err_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_prodis_config_log_gen_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_prodis_config_log_err_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_prodis_ws_log_gen_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_prodis_ws_log_err_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_prodis_restclients_log_gen_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_prodis_restservices_log_gen_v1
+    outputs:
+      ws: vagrant_pro_eosdtv_lab5aobo_tst_heapp_prodis_log_gen_v1
+      ws_error: vagrant_pro_eosdtv_lab5aobo_tst_heapp_prodis_ws_log_err_v1
+      prodis: vagrant_pro_eosdtv_lab5aobo_tst_heapp_prodis_log_gen_v1
+      prodis_error: vagrant_pro_eosdtv_lab5aobo_tst_heapp_prodis_log_err_v1
+      config: vagrant_pro_eosdtv_lab5aobo_tst_heapp_prodis_config_log_gen_v1
+      config_error: vagrant_pro_eosdtv_lab5aobo_tst_heapp_prodis_config_log_gen_v1
+      rest_clients: vagrant_pro_eosdtv_lab5aobo_tst_heapp_prodis_restclients_log_gen_v1
+      rest_services: vagrant_pro_eosdtv_lab5aobo_tst_heapp_prodis_restservices_log_gen_v1
+      reporting_rest_services: vagrant_pro_eosdtv_lab5aobo_tst_heapp_prodis_reportiong_restservices_log_gen_v1
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
+
+
