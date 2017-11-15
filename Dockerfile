@@ -1,7 +1,10 @@
 FROM smartislav/spark:2.2.0-12
 
-ADD src /odh/python
-
 RUN pip install nose \
-    && nose-exclude \
-    && coverage
+ && pip install nose-exclude \
+ && pip install coverage
+
+ENV SPARK_HOME=/spark
+ENV PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/build:$PYTHONPATH
+
+ADD src /odh/python
