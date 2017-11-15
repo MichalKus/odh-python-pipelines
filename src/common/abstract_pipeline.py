@@ -70,8 +70,10 @@ class AbstractPipeline:
             stream.start()
         self.spark.streams.awaitAnyTermination(timeout)
 
-    def stop(self):
+    def terminate_active_streams(self):
         """
         Stops pipeline
         """
-        self.spark.stop()
+        for streaming_query in self.spark.streams.active:
+            streaming_query.stop()
+        self.spark.streams.resetTerminated()
