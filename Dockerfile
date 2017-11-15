@@ -2,4 +2,6 @@ FROM smartislav/spark:2.2.0-12
 
 ADD src /odh/python
 
-RUN pip install nose
+RUN pip install nose \
+    && nose-exclude \
+    && coverage
