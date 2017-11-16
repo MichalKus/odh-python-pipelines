@@ -21,7 +21,6 @@ class BaseSparkProcessorTestCase(unittest.TestCase):
         :return:
         """
         table_uuid_postfix = "-" + str(uuid.uuid4())
-        print(table_uuid_postfix)
         configuration = Utils.load_config(configuration_path)
         pipeline = TestPipeline(
             configuration,
@@ -35,7 +34,7 @@ class BaseSparkProcessorTestCase(unittest.TestCase):
                               for query in pipeline.spark.streams.active]
         result = [table for results in result_tables_list for table in results]
         if print_result:
-            print result
+            print(result)
         else:
             expected_result = self.__read_expected_result(expected_result_file)
             self.maxDiff = None
