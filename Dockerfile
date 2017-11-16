@@ -1,8 +1,6 @@
 FROM smartislav/spark:2.2.0-12
 
-RUN pip install nose \
- && pip install nose-exclude \
- && pip install coverage \
+RUN pip install nose nose-exclude coverage \
  && mkdir -p /odh/python/.xunit-reports
 
 ENV SPARK_HOME=/spark

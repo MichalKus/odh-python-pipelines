@@ -33,6 +33,7 @@ class BaseSparkProcessorTestCase(unittest.TestCase):
                                pipeline.spark.sql("select value from " + query.name).collect()]
                               for query in pipeline.spark.streams.active]
         result = [table for results in result_tables_list for table in results]
+        pipeline.terminate_active_streams()
         if print_result:
             print(result)
         else:
