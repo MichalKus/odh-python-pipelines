@@ -20,7 +20,7 @@ class BaseSparkProcessorTestCase(unittest.TestCase):
         :param print_result: flag for only printing results to console for debugging
         :return:
         """
-        table_uuid_postfix = "-" + str(uuid.uuid4())
+        table_uuid_postfix = "_" + str(uuid.uuid1()).replace("-", "_")
         configuration = Utils.load_config(configuration_path)
         pipeline = TestPipeline(
             configuration,
