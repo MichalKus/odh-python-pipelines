@@ -1,5 +1,6 @@
 import unittest
 import json
+import uuid
 
 from common.test_pipeline import TestPipeline
 from util.utils import Utils
@@ -19,19 +20,20 @@ class BaseSparkProcessorTestCase(unittest.TestCase):
         :param print_result: flag for only printing results to console for debugging
         :return:
         """
+        table_uuid_postfix = "-" + str(uuid.uuid4())
+        print(table_uuid_postfix)
         configuration = Utils.load_config(configuration_path)
         pipeline = TestPipeline(
             configuration,
             processor_creator(configuration),
             input_dir,
-            table_name
+            table_name + table_uuid_postfix
         )
         pipeline.start(timeout)
         result_tables_list = [[json.loads(row.value) for row in
                                pipeline.spark.sql("select value from " + query.name).collect()]
                               for query in pipeline.spark.streams.active]
         result = [table for results in result_tables_list for table in results]
-        pipeline.stop()
         if print_result:
             print result
         else:
