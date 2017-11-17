@@ -55,7 +55,7 @@ class ProdisMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
     def test_prodis_general(self):
         self.assert_parsing(
             {
-                "source": "Prodis.log",
+                "source": "PRODIS.log",
                 "message": "2017-10-03 16:26:06,782  INFO [1] - Registered PRODIS client '21' with information: be-w-p-obo00159, 169.254.207.71, 00:50:56:B2:40:6B, a_jlambregts, admin, 8040, 2.3 2017-July-05 #1 Release patch 2"
             },
             {
@@ -69,7 +69,7 @@ class ProdisMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
     def test_prodis_general_error(self):
         self.assert_parsing(
             {
-                "source": "Prodis.log",
+                "source": "PRODIS.log",
                 "message": "2017-09-20 14:35:38,140  WARN [1] - Catalog structure is not in sync with the database, the number of nodes differs between database '1937' and GUI '1936'."
             },
             {
