@@ -21,7 +21,7 @@ pipeline {
 
                 sh 'rm -rf xunit-reports coverage-reports'
 
-                sh "docker build . -t ${imageName}"
+                sh "docker build --network=host --build-arg https_proxy=${env.https_proxy} . -t ${imageName}"
 
                 sh 'mkdir -p xunit-reports coverage-reports'
 
