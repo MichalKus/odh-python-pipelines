@@ -1,0 +1,1 @@
+{"thread_name": "209", "level": "VERBOSE", "@timestamp": "2017-06-29T16:34:10.356000", "hostname": "hostname", "component": "SecurePerimeterAuthenticationManager", "environment": "topic", "source": "TraxisService.log", "message": "Executing method 'Authenticate' took '0' ms"}

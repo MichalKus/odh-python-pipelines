@@ -60,6 +60,10 @@ def create_event_creators(configuration=None):
         "cdvr_bs_dev.log": SourceConfiguration(
             MultipleEventCreator([nokia_vrm_dev_5_columns_csv, nokia_vrm_dev_6_columns_csv]),
             Utils.get_output_topic(configuration, "cdvr_bs_dev")
+        ),
+        "epg_bs_dev.log": SourceConfiguration(
+            MultipleEventCreator([nokia_vrm_dev_5_columns_csv, nokia_vrm_dev_6_columns_csv]),
+            Utils.get_output_topic(configuration, "epg_bs_dev")
         )
     })
 

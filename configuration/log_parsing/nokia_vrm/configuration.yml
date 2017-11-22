@@ -13,14 +13,16 @@ kafka:
     dlq: vagrant_pro_deadletterqueue
     inputs:
       - vagrant_in_eosdtv_lab5aobo_tst_heapp_nokiavrm_schedulerbsaudit_log_v1
-      - vagrant_in_eosdtv_lab5aobo_tst_heapp_nokiavrm_dvrconsoledev_log_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_nokiavrm_consolebsaudit_log_v1
       - vagrant_in_eosdtv_lab5aobo_tst_heapp_nokiavrm_schedulerbsdev_log_v1
       - vagrant_in_eosdtv_lab5aobo_tst_heapp_nokiavrm_cdvrbsdev_log_v1
+      - vagrant_in_eosdtv_lab5aobo_tst_heapp_nokiavrm_epgbsdev_log_v1
     outputs:
       scheduler_bs_audit: vagrant_pro_eosdtv_lab5aobo_tst_heapp_nokiavrm_schedulerbsaudit_log_v1
-      console_bs_audit: vagrant_pro_eosdtv_lab5aobo_tst_heapp_nokiavrm_dvrconsoledev_log_v1
+      console_bs_audit: vagrant_pro_eosdtv_lab5aobo_tst_heapp_nokiavrm_consolebsaudit_log_v1
       scheduler_bs_dev: vagrant_pro_eosdtv_lab5aobo_tst_heapp_nokiavrm_schedulerbsdev_log_v1
       cdvr_bs_dev: vagrant_pro_eosdtv_lab5aobo_tst_heapp_nokiavrm_cdvrbsdev_log_v1
+      epg_bs_dev: vagrant_pro_eosdtv_lab5aobo_tst_heapp_nokiavrm_epgbsdev_log_v1
   security.protocol: SASL_PLAINTEXT
   sasl.mechanism: PLAIN
 

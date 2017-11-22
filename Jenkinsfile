@@ -10,7 +10,7 @@ pipeline {
                     repository_password = 'phaewooH8moob0phuy2E'
                     repository_url = "https://${repository_name}"
 
-                    env.version = new Date().format( 'yyyyMMdd-HHmmss' )
+                    env.version = new Date().format( 'yyyyMMdd-HHmmSS' )
                     dev_prefix = env.BRANCH_NAME == 'master' ? '' : 'dev-'
                     tag = env.BRANCH_NAME == 'master' ? env.version : "${env.BRANCH_NAME}.${env.version}"
 
@@ -25,7 +25,7 @@ pipeline {
 
                 sh 'mkdir -p xunit-reports coverage-reports'
 
-                sh "pwd && docker run --rm -v ${escaped_workspace}/xunit-reports:/odh/python/.xunit-reports -v ${escaped_workspace}/coverage-reports:/odh/python/.coverage-reports ${imageName} bash -c 'cd /odh/python && nosetests --exclude-dir=test/it --with-xunit --xunit-file=.xunit-reports/nosetests-ut.xml --with-coverage --cover-erase --cover-xml --cover-xml-file=.coverage-reports/coverage-ut.xml'"
+                sh "docker run --rm -v ${escaped_workspace}/xunit-reports:/odh/python/.xunit-reports -v ${escaped_workspace}/coverage-reports:/odh/python/.coverage-reports ${imageName} bash -c 'cd /odh/python && nosetests --exclude-dir=test/it --with-xunit --xunit-file=.xunit-reports/nosetests-ut.xml --with-coverage --cover-erase --cover-xml --cover-xml-file=.coverage-reports/coverage-ut.xml'"
 
 //                sh "docker run --rm -v ${escaped_workspace}/xunit-reports:/odh/python/.xunit-reports -v ${escaped_workspace}/coverage-reports:/odh/python/.coverage-reports ${imageName} bash -c 'cd /odh/python && nosetests --nologcapture --exclude-dir=test/unit --with-xunit --xunit-file=.xunit-reports/nosetests-it.xml --with-coverage --cover-erase --cover-xml --cover-xml-file=.coverage-reports/coverage-it.xml'"
 

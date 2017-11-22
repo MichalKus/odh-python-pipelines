@@ -6,7 +6,7 @@ spark:
   consoleWriter: false
 
 kafka:
-#  maxOffsetsPerTrigger: 100
+  maxOffsetsPerTrigger: 100
   startingOffsets: earliest
   bootstrap.servers: test1:9094
   topics:

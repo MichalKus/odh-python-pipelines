@@ -13,7 +13,7 @@ def create_event_creators(configuration=None):
     event_creator = EventCreator(Metadata(
         [TimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f", "@timestamp"), StringField("level"),
          StringField("thread_name"), StringField("component"), StringField("message")]), RegexpParser(
-        "(?s)^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) (?P<level>\w+) (?P<thread_name>\[\w+\]) (?P<component>\w+) - (?P<message>.*)$"))
+        "(?s)^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) (?P<level>\w+) \[(?P<thread_name>.*?)\] (?P<component>\w+) - (?P<message>.*)$"))
 
     return MatchField("source", {
         "TraxisService.log": SourceConfiguration(
@@ -27,6 +27,10 @@ def create_event_creators(configuration=None):
         "TraxisServiceDistributedScheduler.log": SourceConfiguration(
             event_creator,
             Utils.get_output_topic(configuration, "scheduler")
+        ),
+        "TraxisServiceLogManagement.log": SourceConfiguration(
+            event_creator,
+            Utils.get_output_topic(configuration, "management")
         )
     })
 
