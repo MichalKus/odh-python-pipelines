@@ -71,7 +71,7 @@ def createWriteStream(configuration, pipeline):
 
 
 if __name__ == "__main__":
-    configuration = Utils.loadConfig(sys.argv[:])
+    configuration = Utils.load_config(sys.argv[:])
     spark = createSparkSession(configuration)
     readStream = createReadStream(configuration, spark)
     pipeline = createPipeline(readStream)

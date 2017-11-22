@@ -31,6 +31,7 @@ def stagis_ee_event_creator():
         TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f"),
         StringField("level"),
         StringField("instance_name"),
+        StringField("causality_id"),
         StringField("thread_id"),
         StringField("class_name"),
         StringField("message")

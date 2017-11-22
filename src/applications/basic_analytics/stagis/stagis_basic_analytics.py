@@ -46,6 +46,7 @@ class StagisBasicAnalytics(BasicAnalyticsProcessor):
             StructField("@timestamp", TimestampType()),
             StructField("level", StringType()),
             StructField("instance_name", StringType()),
+            StructField("causality_id", StringType()),
             StructField("thread_id", StringType()),
             StructField("class_name", StringType()),
             StructField("message", StringType())
