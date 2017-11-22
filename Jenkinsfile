@@ -10,7 +10,7 @@ pipeline {
                     repository_password = 'phaewooH8moob0phuy2E'
                     repository_url = "https://${repository_name}"
 
-                    env.version = new Date().format( 'yyyyMMdd-HHmmSS' )
+                    env.version = new Date().format( 'yyyyMMdd-HHmmss' )
                     dev_prefix = env.BRANCH_NAME == 'master' ? '' : 'dev-'
                     tag = env.BRANCH_NAME == 'master' ? env.version : "${env.BRANCH_NAME}.${env.version}"
 
