@@ -8,7 +8,7 @@ from util.utils import Utils
 
 class BaseSparkProcessorTestCase(unittest.TestCase):
     def _test_pipeline(self, configuration_path, processor_creator, input_dir, expected_result_file,
-                       table_name="test_result", timeout=10, print_result=False):
+                       timeout=10, print_result=False):
         """
         Method for checking equals between driver result and manually generated result file
         :param configuration_path: path to config file
@@ -26,7 +26,7 @@ class BaseSparkProcessorTestCase(unittest.TestCase):
             configuration,
             processor_creator(configuration),
             input_dir,
-            table_name + table_uuid_postfix
+            "test_result" + table_uuid_postfix
         )
         pipeline.start(timeout)
         result_tables_list = [[json.loads(row.value) for row in

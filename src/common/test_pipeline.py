@@ -12,7 +12,7 @@ class TestPipeline(AbstractPipeline):
         super(TestPipeline, self).__init__(configuration, processor)
 
     def _create_custom_read_stream(self, spark):
-        return spark.readStream.text(self.__input_dir)
+        return spark.readStream.text(self.__input_dir).where("value != ''")
 
     def _create_custom_write_streams(self, pipelines):
         result = []

@@ -1,0 +1,1 @@
+{"source":"TraxisService.log", "topic":"topic", "beat": {"hostname": "hostname"}, "message":"2017-06-29 16:34:10,356 VERBOSE [209] SecurePerimeterAuthenticationManager - Executing method 'Authenticate' took '0' ms"}
