@@ -1,1 +1,1 @@
-{"source":"TraxisService.log", "topic":"topic", "beat": {"hostname": "hostname"}, "message":"2017-06-29 16:34:10,356 VERBOSE [209] SecurePerimeterAuthenticationManager - Executing method 'Authenticate' took '0' ms"}
+{"source":"localhost_access_log", "topic":"topic", "beat": {"hostname": "hostname"}, "message":"[19/Jun/2017:02:06:17 +0200] 172.30.189.59 http-0.0.0.0-8080-64 GET /RE/REController.do?contentSourceId=1&clientType=399&method=lgiAdaptiveSearch&subscriberId=278e3270-4d12-11e7-85f5-e5a72ae6734d_nl HTTP/1.1 200 14"}
