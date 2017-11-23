@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
+from dateutil.tz import tz
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import *
 
@@ -57,6 +58,8 @@ class BasicAnalyticsProcessor:
         return [self.__convert_to_kafka_structure(result) for results in aggregated_results for result in results]
 
     def __convert_to_kafka_structure(self, dataframe):
+        utc = tz.gettz('UTC')
+        func = udf(lambda x: x.astimezone(utc).isoformat())
         return dataframe \
             .withColumn("@timestamp", col("window.start")) \
             .drop("window") \
