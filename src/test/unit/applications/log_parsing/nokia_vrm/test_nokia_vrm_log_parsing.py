@@ -110,3 +110,36 @@ class NokiaVrmMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "description": "Sending request to service: GET http://172.18.253.66:8082/user/data/Configuration?schema=1.0&byParameterName=haActiveInstanceTimeStamp&byServiceName=cdvrBs"
             }
         )
+
+    def test_epg_bs_dev_5_column(self):
+        self.assert_parsing(
+            {
+                "source": "/opt/vrm/jetty-epg-BS/logs/epg_bs_dev.log",
+                "message": "DEBUG | 23-Nov-2017 18:00:11.589 | c5f7c5e3-288a-46f9-84e9-8d1bfd4e2923 | qtp670700378-19 | DispatcherServlet - Last-Modified value for [/epgBs/web/Channel/read] is: -1"
+            },
+            {
+
+                "level": "DEBUG",
+                "@timestamp": datetime(2017, 11, 23, 18, 00, 11, 589000),
+                "event_id": "c5f7c5e3-288a-46f9-84e9-8d1bfd4e2923",
+                "thread_name": "qtp670700378-19",
+                "message": "DispatcherServlet - Last-Modified value for [/epgBs/web/Channel/read] is: -1"
+            }
+        )
+
+    def test_epg_bs_dev_6_column(self):
+        self.assert_parsing(
+            {
+                "source": "/opt/vrm/jetty-epg-BS/logs/epg_bs_dev.log",
+                "message": "DEBUG | 23-Nov-2017 18:00:11.603 | c5f7c5e3-288a-46f9-84e9-8d1bfd4e2923 | qtp670700378-19 | LoggerMDCFilter - Request execution finished | Request finished successfully"
+            },
+            {
+
+                "level": "DEBUG",
+                "@timestamp": datetime(2017, 11, 23, 18, 00, 11, 603000),
+                "event_id": "c5f7c5e3-288a-46f9-84e9-8d1bfd4e2923",
+                "thread_name": "qtp670700378-19",
+                "message": "LoggerMDCFilter - Request execution finished",
+                "description": "Request finished successfully"
+            }
+        )

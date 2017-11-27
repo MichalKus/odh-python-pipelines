@@ -1,4 +1,4 @@
-from applications.log_parsing.traxis_frontend.driver import create_event_creators
+from applications.log_parsing.think_analytics.driver import create_event_creators
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from test.it.core.base_spark_test_case import BaseSparkProcessorTestCase
 
