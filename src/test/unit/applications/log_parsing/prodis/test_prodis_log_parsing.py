@@ -69,7 +69,7 @@ class ProdisMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
     def test_prodis_general_error(self):
         self.assert_parsing(
             {
-                "source": "PRODIS.log",
+                "source": "PRODIS.Error.log",
                 "message": "2017-09-20 14:35:38,140  WARN [1] - Catalog structure is not in sync with the database, the number of nodes differs between database '1937' and GUI '1936'."
             },
             {

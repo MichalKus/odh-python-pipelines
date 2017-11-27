@@ -5,6 +5,7 @@ from pyspark.sql.functions import *
 
 import json
 from datetime import date, datetime
+from dateutil import tz
 
 
 class LogParsingProcessor:
@@ -57,6 +58,20 @@ class LogParsingProcessor:
 
     @staticmethod
     def __json_serial(value):
+        """
+        Set local timezone for all dates without it, then transform date to UTC zone and convert to string in iso format
+        :param value: all fields for filling json
+        :return: string in format YYYY.DD.MMTHH:MM:SS[.SSS]Z
+        """
         if isinstance(value, (datetime, date)):
-            return value.isoformat()
+            utc = tz.gettz('UTC')
+            if value.tzinfo is None or value.tzinfo.utcoffset(value) is None:
+                timestamp_with_timezone = value.replace(tzinfo=tz.tzlocal()).astimezone(utc)
+            else:
+                timestamp_with_timezone = value.astimezone(utc)
+            iso_timestamp = timestamp_with_timezone.strftime("%Y-%m-%dT%H:%M:%S.%f")
+            if len(iso_timestamp) == 26:
+                return iso_timestamp[:23] + "Z"
+            else:
+                return iso_timestamp + ".000Z"
         raise TypeError("Type %s not serializable" % type(value))

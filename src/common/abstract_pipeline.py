@@ -26,7 +26,8 @@ class AbstractPipeline:
         options = self._configuration.property("spark")
         result = SparkSession.builder \
             .appName(self._configuration.property("spark.appName")) \
-            .master(self._configuration.property("spark.master"))
+            .master(self._configuration.property("spark.master")) \
+            .config("spark.sql.session.timeZone", "UTC")
         self.__add_config_if_exists(result, "spark.sql.shuffle.partitions", options, "shuffle.partitions")
         return result.getOrCreate()
 
