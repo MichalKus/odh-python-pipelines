@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 from pyspark.sql.functions import *
-
+from pyspark.sql import DataFrame
 from common.basic_analytics.aggregations import AggregatedDataFrame
 
 
