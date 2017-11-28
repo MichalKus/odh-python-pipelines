@@ -33,7 +33,7 @@ pipeline {
 
                 sh "docker push ${imageName}"
 
-                sh "docker rmi ${imageName}"
+                sh "docker rmi -f ${imageName}"
             }
             post {
                 always {
