@@ -32,6 +32,8 @@ pipeline {
                 sh "docker login -u ${repository_user} -p ${repository_password} ${repository_url}"
 
                 sh "docker push ${imageName}"
+
+                sh "docker rmi ${imageName}"
             }
             post {
                 always {
