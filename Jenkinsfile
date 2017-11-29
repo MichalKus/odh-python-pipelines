@@ -29,6 +29,21 @@ pipeline {
 
                 sh "docker run --rm -v ${escaped_workspace}/xunit-reports:/odh/python/.xunit-reports -v ${escaped_workspace}/coverage-reports:/odh/python/.coverage-reports ${imageName} bash -c 'cd /odh/python && nosetests --nologcapture --exclude-dir=test/unit --with-xunit --xunit-file=.xunit-reports/nosetests-it.xml --with-coverage --cover-erase --cover-xml --cover-xml-file=.coverage-reports/coverage-it.xml'"
 
+                script {
+                    if (env.BRANCH_NAME != 'master') {
+                        sh "/opt/sonar-scanner-3.0.3.778-linux/bin/sonar-scanner -Dsonar.projectKey=lg:odh \
+                            -Dsonar.projectName=Operational Data Hub \
+                            -Dsonar.projectVersion=0.1 \
+                            -Dsonar.projectBaseDir=./misc/spark-processing-python/src \
+                            -Dsonar.sources=. \
+                            -Dsonar.exclusions=**/test/**/* \
+                            -Dsonar.tests=./test \
+                            -Dsonar.python.xunit.reportPath=.xunit-reports/nosetests-*.xml \
+                            -Dsonar.python.coverage.reportPath=.coverage-reports/coverage-ut.xml \
+                            -Dsonar.python.coverage.itReportPath=.coverage-reports/coverage-it.xml"
+                     }
+                }
+
                 sh "docker login -u ${repository_user} -p ${repository_password} ${repository_url}"
 
                 sh "docker push ${imageName}"
