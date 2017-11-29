@@ -30,17 +30,18 @@ pipeline {
                 sh "docker run --rm -v ${escaped_workspace}/xunit-reports:/odh/python/.xunit-reports -v ${escaped_workspace}/coverage-reports:/odh/python/.coverage-reports ${imageName} bash -c 'cd /odh/python && nosetests --nologcapture --exclude-dir=test/unit --with-xunit --xunit-file=.xunit-reports/nosetests-it.xml --with-coverage --cover-erase --cover-xml --cover-xml-file=.coverage-reports/coverage-it.xml'"
 
                 script {
-                    if (env.BRANCH_NAME != 'master') {
+                    if (env.BRANCH_NAME == 'master') {
                         sh "/opt/sonar-scanner-3.0.3.778-linux/bin/sonar-scanner -Dsonar.projectKey=lg:odh \
-                            -Dsonar.projectName=Operational Data Hub \
-                            -Dsonar.projectVersion=0.1 \
-                            -Dsonar.projectBaseDir=./misc/spark-processing-python/src \
+                            -Dsonar.login=a87af9baf633b4de83a46d74b0fc38a54c1518ca \
+                            -Dsonar.projectName='odh-python-pipelines' \
+                            -Dsonar.projectVersion=0.0.1 \
+                            -Dsonar.projectBaseDir=${escaped_workspace}/src \
                             -Dsonar.sources=. \
                             -Dsonar.exclusions=**/test/**/* \
                             -Dsonar.tests=./test \
-                            -Dsonar.python.xunit.reportPath=.xunit-reports/nosetests-*.xml \
-                            -Dsonar.python.coverage.reportPath=.coverage-reports/coverage-ut.xml \
-                            -Dsonar.python.coverage.itReportPath=.coverage-reports/coverage-it.xml"
+                            -Dsonar.python.xunit.reportPath=${escaped_workspace}/xunit-reports/nosetests-*.xml \
+                            -Dsonar.python.coverage.reportPath=${escaped_workspace}/coverage-reports/coverage-ut.xml \
+                            -Dsonar.python.coverage.itReportPath=${escaped_workspace}/coverage-reports/coverage-it.xml"
                      }
                 }
 
@@ -50,6 +51,7 @@ pipeline {
 
                 sh "docker rmi -f ${imageName}"
             }
+
             post {
                 always {
                     junit "xunit-reports/nosetests-*.xml"
