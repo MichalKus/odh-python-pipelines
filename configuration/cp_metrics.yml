@@ -1,0 +1,24 @@
+spark:
+  outputMode: update
+  appName: ida-analytics-cpu
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+  shuffle.partitions: 1
+  consoleWriter: false
+
+kafka:
+  bootstrap.servers: 192.168.100.2:9093
+  topics:
+    inputs:
+      - obo_out_eosdtv_telenet_prod_stb_flat_v1
+    output: test_oboecx_pr_eosdtv_nl_prd_stb 
+      #worker: test_out_eosdtv_telenet_prod_metric_stb_test 
+
+  startingOffsets: latest
+  maxOffsetsPerTrigger: 100
+  #security.protocol: SASL_PLAINTEXT
+  #sasl.mechanism: PLAIN
+
+analytics:
+  watermark_in_minutes: 1
+  window_in_minutes: 5
