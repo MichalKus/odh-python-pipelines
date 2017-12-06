@@ -1,5 +1,5 @@
-{"@timestamp": "2017-09-12T06:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.reingest.ingest.duration.avg", "value": 158.0}
-{"@timestamp": "2017-09-12T08:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.reingest.ingest.duration.avg", "value": 159.0}
-{"@timestamp": "2017-09-12T07:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.reingest.ingest.duration.avg", "value": 156.0}
-{"@timestamp": "2017-09-12T05:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.reingest.ingest.duration.avg", "value": 158.0}
-{"@timestamp": "2017-09-12T09:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.reingest.ingest.duration.avg", "value": 159.0}
+{"hostname":"test1", "@timestamp": "2017-09-12T06:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.reingest.ingest.hostname.test1.duration.avg", "value": 158.0}
+{"hostname":"test1", "@timestamp": "2017-09-12T08:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.reingest.ingest.hostname.test1.duration.avg", "value": 159.0}
+{"hostname":"test1", "@timestamp": "2017-09-12T07:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.reingest.ingest.hostname.test1.duration.avg", "value": 156.0}
+{"hostname":"test1", "@timestamp": "2017-09-12T05:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.reingest.ingest.hostname.test1.duration.avg", "value": 158.0}
+{"hostname":"test1", "@timestamp": "2017-09-12T09:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.reingest.ingest.hostname.test1.duration.avg", "value": 159.0}
