@@ -36,7 +36,9 @@ class TraxisFrontendGeneral(BasicAnalyticsProcessor):
                             ],
                             default_value="unclassified")) \
             .where("counter != 'unclassified'") \
-            .aggregate(Count(group_fields=["counter"], aggregation_name=self._component_name))
+            .aggregate(Count(group_fields=["hostname", "counter"],
+                             aggregation_name=self._component_name))
+
         warn_stream = read_stream.where("level = 'WARN'") \
             .withColumn("counter",
                         custom_translate_like(
@@ -48,7 +50,9 @@ class TraxisFrontendGeneral(BasicAnalyticsProcessor):
                             ],
                             default_value="unclassified")) \
             .where("counter != 'unclassified'") \
-            .aggregate(Count(group_fields=["counter"], aggregation_name=self._component_name))
+            .aggregate(Count(group_fields=["hostname", "counter"],
+                             aggregation_name=self._component_name))
+
         info_stream = read_stream.where("level = 'INFO'") \
             .withColumn("counter",
                         custom_translate_like(
@@ -58,11 +62,15 @@ class TraxisFrontendGeneral(BasicAnalyticsProcessor):
                             ],
                             default_value="unclassified")) \
             .where("counter != 'unclassified'") \
-            .aggregate(Count(group_fields=["counter"], aggregation_name=self._component_name))
+            .aggregate(Count(group_fields=["hostname", "counter"],
+                             aggregation_name=self._component_name))
+
         unclassified_successful_stream = read_stream \
             .where("level in ('INFO', 'DEBUG', 'VERBOSE', 'TRACE') and lower(message) like '%succe%'") \
             .withColumn("counter", lit("unclassified_successful")) \
-            .aggregate(Count(group_fields=["counter"], aggregation_name=self._component_name))
+            .aggregate(Count(group_fields=["hostname", "counter"],
+                             aggregation_name=self._component_name))
+
         return [trace_stream, warn_stream, info_stream, unclassified_successful_stream]
 
     @staticmethod
@@ -72,7 +80,8 @@ class TraxisFrontendGeneral(BasicAnalyticsProcessor):
             StructField("level", StringType()),
             StructField("thread_name", StringType()),
             StructField("component", StringType()),
-            StructField("message", StringType())
+            StructField("message", StringType()),
+            StructField("hostname", StringType())
         ])
 
 

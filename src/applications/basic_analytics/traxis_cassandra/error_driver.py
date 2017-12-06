@@ -20,13 +20,14 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
             .withColumn("host", regexp_extract("message",
                                                ".*Unable\s+to\s+determine\s+external\s+address\s+"
                                                "of\s+node\s+with\s+internal\s+address\s+'(\S+)'.*", 1)) \
-            .aggregate(Count(group_fields="host",
+            .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".ring_status_node_warnings"))
 
         undefined_warnings = warn_events \
             .where("message not like '%Unable to determine external address "
                    "of node with internal address %'") \
-            .aggregate(Count(aggregation_name=self._component_name + ".undefined_warnings"))
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".undefined_warnings"))
 
         ring_status_node_errors = error_events \
             .where("message like '%Eventis.Cassandra.Service."
@@ -34,7 +35,7 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
             .withColumn("host", regexp_extract("message",
                                                ".*Eventis\.Cassandra\.Service\."
                                                "CassandraServiceException\+HostRingException.*'(\S+)'.*", 1)) \
-            .aggregate(Count(group_fields="host",
+            .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".ring_status_node_errors"))
 
         return [ring_status_node_warnings, undefined_warnings, ring_status_node_errors]
@@ -44,7 +45,8 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
         return StructType([
             StructField("@timestamp", TimestampType()),
             StructField("level", StringType()),
-            StructField("message", StringType())
+            StructField("message", StringType()),
+            StructField("hostname", StringType())
         ])
 
 

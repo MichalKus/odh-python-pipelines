@@ -25,7 +25,9 @@ class TraxisFrontendError(BasicAnalyticsProcessor):
             .withColumn("counter", lit("unclassifed_errors"))
 
         result_stream = error_stream.union(warn_and_fatal_stream) \
-            .aggregate(Count(group_fields=["counter"], aggregation_name=self._component_name))
+            .aggregate(Count(group_fields=["hostname", "counter"],
+                             aggregation_name=self._component_name))
+
         return [result_stream]
 
     @staticmethod
@@ -35,7 +37,8 @@ class TraxisFrontendError(BasicAnalyticsProcessor):
             StructField("level", StringType()),
             StructField("thread_name", StringType()),
             StructField("component", StringType()),
-            StructField("message", StringType())
+            StructField("message", StringType()),
+            StructField("hostname", StringType())
         ])
 
 
