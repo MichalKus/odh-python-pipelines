@@ -1,29 +1,31 @@
-class EventCreator:
+from common.log_parsing.metadata import AbstractEventCreator
+
+
+class EventCreator(AbstractEventCreator):
     """
     Creates event for dict parser
     """
 
-    def __init__(self, metadata, parser, field_to_parse="message"):
+    def __init__(self, metadata, parser, field_to_parse="message", timezone_field="tz"):
         """
         Creates instance for dict parser
         :param metadata: metadata
         :param parser: dict parser
         :param field_to_parse: field that uses as source for creating event
         """
-        self.__metadata = metadata
-        self.__parser = parser
+        AbstractEventCreator.__init__(self, metadata, parser, timezone_field)
         self.__field_to_parse = field_to_parse
 
-    def create(self, row):
+    def _create_with_context(self, row, context):
         """
         Creates event for given row
         :param row: input row
         :return: dict with result fields
         """
         return {
-            self.__metadata.get_field_by_name(field).get_output_name():
-                self.__metadata.get_field_by_name(field).get_value(value)
-            for field, value in self.__parser.parse(row[self.__field_to_parse]).items()
+            self._metadata.get_field_by_name(field).get_output_name():
+                self._metadata.get_field_by_name(field).get_value(value, context)
+            for field, value in self._parser.parse(row[self.__field_to_parse]).items()
         }
 
     def get_field_to_parse(self):

@@ -2,6 +2,8 @@ from abc import ABCMeta, abstractmethod
 from datetime import datetime
 from dateutil.parser import parse
 
+CONTEXT_TIMEZONE = "timezone"
+
 
 class Metadata:
     """
@@ -79,15 +81,17 @@ class AbstractField:
         return self.__output_name if self.__output_name is not None else self.__name
 
     @abstractmethod
-    def get_value(self, value):
+    def get_value(self, value, context):
         """
-        Converts value for field's type
+        Converts value of string into value of field's type
+        :param value value of string type to be converted
+        :param context dictionary provided by EvenCreator which can contain useful values related to event being parsed.
         :return: converted value
         """
 
 
 class StringField(AbstractField):
-    def get_value(self, value):
+    def get_value(self, value, context=None):
         """
         Converts value for field's type
         :return: string value
@@ -100,7 +104,7 @@ class TimestampField(AbstractField):
         AbstractField.__init__(self, name, output_name)
         self.__datetime_format = datetime_format
 
-    def get_value(self, value):
+    def get_value(self, value, context=None):
         """
         Converts value for field's type
         :return: datetime value
@@ -116,7 +120,7 @@ class TimestampFieldWithTimeZone(AbstractField):
     def __init__(self, name, output_name=None):
         AbstractField.__init__(self, name, output_name)
 
-    def get_value(self, value):
+    def get_value(self, value, context=None):
         """
         Converts value for field's type
         :return: datetime value
@@ -127,8 +131,9 @@ class TimestampFieldWithTimeZone(AbstractField):
         except ValueError:
             raise ParsingException("wrong datetime format")
 
+
 class IntField(AbstractField):
-    def get_value(self, value):
+    def get_value(self, value, context=None):
         """
         Converts value for field's type
         :return: int value
@@ -141,7 +146,7 @@ class IntField(AbstractField):
 
 
 class FloatField(AbstractField):
-    def get_value(self, value):
+    def get_value(self, value, context=None):
         """
         Converts value for field's type
         :return: float value
@@ -151,3 +156,49 @@ class FloatField(AbstractField):
             return float(value)
         except ValueError:
             raise ParsingException("float parsing error")
+
+
+class AbstractEventCreator:
+    __metaclass__ = ABCMeta
+
+    def __init__(self, metadata, parser, timezone_field="tz"):
+        """
+        Creates event creator for list parser
+        :param metadata: metadata
+        :param parser: list parser
+        """
+        self._metadata = metadata
+        self._parser = parser
+        self._timezone_field = timezone_field
+
+    def _create_context(self, row):
+        """
+        Creates dictionary with timezone. That dictionary is referred as a parsing context and can be extended
+        if other data is needed in field values.
+        :param row: incoming row.
+        :return: dictionary with context data for parsing event. Currently it contains
+            - 'timezone' value taken from input json.
+        """
+        context = {}
+        if self._timezone_field in row:
+            context[CONTEXT_TIMEZONE] = row[self._timezone_field]
+        return context
+
+    def create(self, row):
+        """
+        Creates event for given row
+        :param row: input row
+        :return: dict with result fields
+        :raises: ParsingException when values amount isn't equal metadata fields amount
+        """
+        context = self._create_context(row)
+        return self._create_with_context(row, context)
+
+    @abstractmethod
+    def _create_with_context(self, row, context):
+        """
+
+        :param row:
+        :param context:
+        :return:
+        """
