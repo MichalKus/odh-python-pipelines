@@ -13,6 +13,7 @@ class KafkaPipeline(AbstractPipeline):
             .option("subscribe", ",".join(self._configuration.property("kafka.topics.inputs")))
         self.__add_option_if_exists(result, options, "maxOffsetsPerTrigger")
         self.__add_option_if_exists(result, options, "startingOffsets")
+        self.__add_option_if_exists(result, options, "failOnDataLoss")
         return result.load()
 
     @staticmethod
