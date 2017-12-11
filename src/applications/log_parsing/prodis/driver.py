@@ -9,18 +9,23 @@ from common.log_parsing.list_event_creator.event_creator import EventCreator
 from common.log_parsing.list_event_creator.multiple_event_creator import MultipleEventCreator
 from common.log_parsing.list_event_creator.splitter_parser import SplitterParser
 from common.log_parsing.metadata import *
+from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
 
 
-def create_event_creators(configuration=None):
+def create_event_creators(configuration):
     """
     Tree of different parsers for all types of logs for PRODIS
     :param configuration: YML config
     :return: Tree of event_creators
     """
+
+    timezone_name = configuration.property("timezone.name")
+    timezones_property = configuration.property("timezone.priority", "dic")
+
     general_regexp_event_creator = DictEventCreator(
         Metadata([
-            TimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f", "@timestamp"),
+            ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
             StringField("level"),
             StringField("thread"),
             StringField("message")
@@ -32,7 +37,7 @@ def create_event_creators(configuration=None):
 
     additional_services_event_event_creator = DictEventCreator(
         Metadata([
-            TimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f", "@timestamp"),
+            ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
             StringField("level"),
             StringField("thread"),
             StringField("message")
@@ -43,7 +48,7 @@ def create_event_creators(configuration=None):
 
     prodis_ws_event_creator_5_columns = EventCreator(
         Metadata([
-            TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f"),
+            ConfigurableTimestampField("@timestamp", timezone_name, timezones_property),
             StringField("level"),
             StringField("thread_name"),
             StringField("instance_name"),
@@ -56,7 +61,7 @@ def create_event_creators(configuration=None):
                 prodis_ws_event_creator_5_columns,
                 EventCreator(
                     Metadata([
-                        TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f"),
+                        ConfigurableTimestampField("@timestamp", timezone_name, timezones_property),
                         StringField("level"),
                         StringField("thread_name"),
                         StringField("instance_name"),
