@@ -69,6 +69,12 @@ class ConfigurableTimestampTestCase(unittest.TestCase):
 
         self.assertEquals(self._winter_date_utc1, parsed_date)
 
+    def test_configurable_timestamp_field_bad_timezone(self):
+        field = ConfigurableTimestampField("datetime", "Europe/Amsterdam1", "dic")
+        parsed_date = field.get_value(self._winter_date_string_tz)
+
+        self.assertEquals(self._winter_date_utc2, parsed_date)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -33,7 +33,7 @@ class ConfigurableTimestampField(AbstractField):
     Priorities of mentioned sources are specified as a constructor parameter.
     """
 
-    def __init__(self, name, timezone_name, priorities="dic", output_name=None, dayfirst=True, yearfirst=False):
+    def __init__(self, name, timezone_name, priorities="dic", output_name=None, dayfirst=False, yearfirst=False):
         """
 
         :param name:
@@ -87,7 +87,7 @@ class ConfigurableTimestampField(AbstractField):
             date_with_timezone = timezone_function(date, context)
             if date_with_timezone is not None:
                 return date_with_timezone
-        return date
+        raise ParsingException("Time zone is missing in input data, default configuration and timezone field.")
 
     def get_value(self, value, context=None):
         """

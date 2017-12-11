@@ -3,12 +3,15 @@ import yaml
 
 class Configuration(object):
 
-    def __init__(self, filename):
-        with open(filename, 'r') as stream:
-            try:
-                self.__config_data = yaml.load(stream)
-            except yaml.YAMLError:
-                self.__config_data = None
+    def __init__(self, filename=None, dict={}):
+        if (filename is not None):
+            with open(filename, 'r') as stream:
+                try:
+                    self.__config_data = yaml.load(stream)
+                except yaml.YAMLError:
+                    self.__config_data = None
+        else:
+            self.__config_data = dict
 
     def property(self, name, default=None):
         if not self.__config_data:

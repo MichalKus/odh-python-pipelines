@@ -8,13 +8,17 @@ from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration, MatchField
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.metadata import Metadata, StringField, TimestampField
+from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
 
 
-def create_event_creators(configuration=None):
+def create_event_creators(configuration):
+    timezone_name = configuration.property("timezone.name")
+    timezones_property = configuration.property("timezone.priority", "dic")
+
     general_creator = EventCreator(
         Metadata([
-            TimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f", "@timestamp"),
+            ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
             StringField("script"),
             StringField("level"),
             StringField("message")
@@ -34,7 +38,7 @@ def create_event_creators(configuration=None):
 
     subtask_creator = EventCreator(
         Metadata(
-            [TimestampField("subtask_timestamp", "%Y-%m-%d %H:%M:%S,%f"),
+            [ConfigurableTimestampField("subtask_timestamp", timezone_name, timezones_property),
              StringField("subtask_script"),
              StringField("subtask_level"),
              StringField("subtask_message")]),
@@ -58,7 +62,6 @@ def create_event_creators(configuration=None):
         RegexpParser("Submitting asset:\s+(?P<airflow_id>[\d|\w]{32}_[\d|\w]{32})",
                      return_empty_dict=True),
         field_to_parse="subtask_message")
-
 
     return MatchField("source", {
         "airflow.log": SourceConfiguration(
