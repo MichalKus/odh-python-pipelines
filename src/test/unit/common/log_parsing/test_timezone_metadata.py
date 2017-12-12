@@ -3,6 +3,7 @@ import unittest
 from datetime import datetime
 
 from common.log_parsing.timezone_metadata import *
+from common.log_parsing.timezone_metadata import _get_available_timezones
 
 
 class ConfigurableTimestampTestCase(unittest.TestCase):
@@ -21,7 +22,7 @@ class ConfigurableTimestampTestCase(unittest.TestCase):
 
     def test_get_available_timezones(self):
         zonemap = {}
-        for zone in get_available_timezones("test/unit/resources/timezones"):
+        for zone in _get_available_timezones("test/unit/resources/timezones"):
             zonemap[zone[0]] = zone[1].replace("\\", "/")
 
         self.assertEquals(4, len(zonemap))

@@ -14,6 +14,13 @@ class EventCreator(AbstractEventCreator):
         AbstractEventCreator.__init__(self, metadata, parser, timezone_field)
 
     def _create_with_context(self, row, context):
+        """
+        Converts row to typed values according metadata.
+        :param row: input row
+        :param context: dictionary with additional data.
+        :return: map representing event where key is event field name and value is field value.
+        :exception ParsingException if converting goes wrong.
+        """
         values = self._convert_row_to_event_values(row)
         if self._metadata.get_fields_amount() == len(values):
             return {
@@ -27,7 +34,7 @@ class EventCreator(AbstractEventCreator):
 
     def _convert_row_to_event_values(self, row):
         """
-        Converts given row to event values
+        Converts given row to a number of string values
         :param row: input row
         :return: list of values
         """

@@ -100,6 +100,10 @@ class StringField(AbstractField):
 
 
 class TimestampField(AbstractField):
+    """
+    This class doesn't take into account timezone of a field. Consider using of ConfigurableTimestampField.
+    """
+
     def __init__(self, name, datetime_format, output_name=None):
         AbstractField.__init__(self, name, output_name)
         self.__datetime_format = datetime_format

@@ -18,9 +18,11 @@ class EventCreator(AbstractEventCreator):
 
     def _create_with_context(self, row, context):
         """
-        Creates event for given row
+        Converts row to typed values according metadata.
         :param row: input row
-        :return: dict with result fields
+        :param context: dictionary with additional data.
+        :return: map representing event where key is event field name and value is field value.
+        :exception ParsingException if converting goes wrong.
         """
         return {
             self._metadata.get_field_by_name(field).get_output_name():
