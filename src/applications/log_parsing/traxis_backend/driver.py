@@ -6,16 +6,20 @@ from common.log_parsing.event_creator_tree.multisource_configuration import *
 from common.log_parsing.list_event_creator.event_creator import EventCreator
 from common.log_parsing.list_event_creator.regexp_parser import RegexpParser
 from common.log_parsing.metadata import *
+from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
 
 
-def create_event_creators(configuration=None):
+def create_event_creators(configuration):
+    timezone_name = configuration.property("timezone.name")
+    timezones_priority = configuration.property("timezone.priority", "dic")
+
     return MatchField("topic", {
         "traxis_backend_log_gen": MatchField("source", {
             "TraxisService.log": SourceConfiguration(
                 EventCreator(
                     Metadata([
-                        TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f"),
+                        ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
                         StringField("level"),
                         StringField("message")
                     ]),
@@ -27,7 +31,7 @@ def create_event_creators(configuration=None):
             "TraxisServiceDistributedScheduler.log": SourceConfiguration(
                 EventCreator(
                     Metadata([
-                        TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f"),
+                        ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
                         StringField("level"),
                         StringField("message")
                     ]),
@@ -39,7 +43,7 @@ def create_event_creators(configuration=None):
             "TraxisServiceLogManagement.log": SourceConfiguration(
                 EventCreator(
                     Metadata([
-                        TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f"),
+                        ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
                         StringField("level"),
                         StringField("message")
                     ]),
@@ -52,7 +56,7 @@ def create_event_creators(configuration=None):
         "traxis_backend_log_err": SourceConfiguration(
             EventCreator(
                 Metadata([
-                    TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f"),
+                    ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
                     StringField("level"),
                     StringField("message")
                 ]),

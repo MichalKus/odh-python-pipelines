@@ -15,7 +15,7 @@ from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
 
 
-def create_event_creators(configuration=None):
+def create_event_creators(configuration):
     """
     Tree of different parsers for all types of logs for THINK ANALYTICS
     :param configuration: YML config

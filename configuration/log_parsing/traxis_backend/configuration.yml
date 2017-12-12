@@ -21,3 +21,7 @@ kafka:
       error: vagrant_proc_eosdtv_lab5aobo_tst_heapp_traxis_backend_log_err_v1
   security.protocol: SASL_PLAINTEXT
   sasl.mechanism: PLAIN
+
+timezone:
+  name: Europe/Amsterdam
+  priority: dic
