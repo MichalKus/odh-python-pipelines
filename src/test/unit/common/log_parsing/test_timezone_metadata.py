@@ -16,6 +16,9 @@ class ConfigurableTimestampTestCase(unittest.TestCase):
     _summer_date = datetime(2017, 7, 28, 13, 39, 11, 238000).replace(tzinfo=tzoffset(None, 7200))
     _summer_date_string_tz = "2017-07-28 13:39:11.238000 +0200"
 
+    _ambiguous_date = datetime(2016, 10, 30, 2, 0, 0, 0).replace(tzinfo=timezones["Europe/Amsterdam"])
+    _ambiguous_date_string = "2016-10-30 2:00:00"
+
     def test_get_available_timezones(self):
         zonemap = {}
         for zone in get_available_timezones("test/unit/resources/timezones"):
@@ -74,6 +77,13 @@ class ConfigurableTimestampTestCase(unittest.TestCase):
         parsed_date = field.get_value(self._winter_date_string_tz)
 
         self.assertEquals(self._winter_date_utc2, parsed_date)
+
+    def test_ambiguous_date_covertion(self):
+        field = ConfigurableTimestampField("datetime", "Europe/Amsterdam", "idc")
+        parsed_date = field.get_value(self._ambiguous_date_string)
+        ambiguous = timezones["Europe/Amsterdam"].is_ambiguous(parsed_date)
+
+        self.assertEquals(self._ambiguous_date, parsed_date)
 
 
 if __name__ == '__main__':

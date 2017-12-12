@@ -2,12 +2,12 @@ from common.log_parsing.list_event_creator.event_creator import EventCreator
 import urlparse
 
 
-class EventWithUrlCreator(object, EventCreator):
+class EventWithUrlCreator(EventCreator):
     """
     Extended EventCreator with parsing URL inside message
     """
-    def __init__(self, metadata, parser):
-        super(EventWithUrlCreator, self).__init__()
+    def __init__(self, metadata, parser, timezone_field="tz"):
+        EventCreator.__init__(self, metadata, parser, timezone_field="tz")
         self._metadata = metadata
         self._parser = parser
 
