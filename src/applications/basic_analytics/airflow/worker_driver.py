@@ -25,7 +25,7 @@ class AirflowWorker(BasicAnalyticsProcessor):
                                 ".*managed folder doesn't exist.*": "folder_does_not_exist"
                             },
                             default_value="unclassified")) \
-            .aggregate(Count(group_fields=["exception_type"], aggregation_name=self._component_name))
+            .aggregate(Count(group_fields=["hostname", "exception_type"], aggregation_name=self._component_name))
         return [exception_types_stream]
 
     @staticmethod
@@ -34,7 +34,8 @@ class AirflowWorker(BasicAnalyticsProcessor):
             StructField("@timestamp", TimestampType()),
             StructField("script", StringType()),
             StructField("level", StringType()),
-            StructField("message", StringType())
+            StructField("message", StringType()),
+            StructField("hostname", StringType())
         ])
 
 

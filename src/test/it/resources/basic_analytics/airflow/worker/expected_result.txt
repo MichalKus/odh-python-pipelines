@@ -1,5 +1,5 @@
-{"exception_type":"bad_checksum","value":1,"metric_name":"vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker.exception_type.bad_checksum.count","@timestamp":"2017-06-09T06:06:00.000Z"}
-{"exception_type":"folder_does_not_exist","value":1,"metric_name":"vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker.exception_type.folder_does_not_exist.count","@timestamp":"2017-06-09T12:06:00.000Z"}
-{"exception_type":"folder_does_not_exist","value":1,"metric_name":"vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker.exception_type.folder_does_not_exist.count","@timestamp":"2017-06-09T12:09:00.000Z"}
-{"exception_type":"folder_does_not_exist","value":1,"metric_name":"vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker.exception_type.folder_does_not_exist.count","@timestamp":"2017-06-09T12:21:00.000Z"}
-{"exception_type":"connection_failed","value":1,"metric_name":"vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker.exception_type.connection_failed.count","@timestamp":"2017-06-09T21:32:00.000Z"}
+{"hostname": "test1","exception_type":"bad_checksum","value":1,"metric_name":"vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker.hostname.test1.exception_type.bad_checksum.count","@timestamp":"2017-06-09T06:06:00.000Z"}
+{"hostname": "test1","exception_type":"folder_does_not_exist","value":1,"metric_name":"vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker.hostname.test1.exception_type.folder_does_not_exist.count","@timestamp":"2017-06-09T12:06:00.000Z"}
+{"hostname": "test1","exception_type":"folder_does_not_exist","value":1,"metric_name":"vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker.hostname.test1.exception_type.folder_does_not_exist.count","@timestamp":"2017-06-09T12:09:00.000Z"}
+{"hostname": "test1","exception_type":"folder_does_not_exist","value":1,"metric_name":"vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker.hostname.test1.exception_type.folder_does_not_exist.count","@timestamp":"2017-06-09T12:21:00.000Z"}
+{"hostname": "test1","exception_type":"connection_failed","value":1,"metric_name":"vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker.hostname.test1.exception_type.connection_failed.count","@timestamp":"2017-06-09T21:32:00.000Z"}

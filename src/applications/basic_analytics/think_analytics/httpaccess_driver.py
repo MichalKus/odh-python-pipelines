@@ -14,24 +14,25 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
         avg_response_time_by_method_stream = read_stream \
             .where("method is not null") \
             .withColumn("response_time", read_stream["response_time"].cast("Int")) \
-            .aggregate(Avg(group_fields=["method"], aggregation_field="response_time",
+            .aggregate(Avg(group_fields=["hostname", "method"], aggregation_field="response_time",
                            aggregation_name=self._component_name))
 
         count_by_method_stream = read_stream \
             .where("method is not null") \
             .withColumn("response_time", read_stream["response_time"].cast("Int")) \
-            .aggregate(Count(group_fields=["method"], aggregation_name=self._component_name))
+            .aggregate(Count(group_fields=["hostname", "method"], aggregation_name=self._component_name))
 
         avg_response_time_stream = read_stream \
             .withColumn("response_time", read_stream["response_time"].cast("Int")) \
-            .aggregate(Avg(aggregation_field="response_time", aggregation_name=self._component_name))
+            .aggregate(
+            Avg(group_fields=["hostname"], aggregation_field="response_time", aggregation_name=self._component_name))
 
         count_responses_stream = read_stream \
-            .aggregate(Count(aggregation_name=self._component_name + ".responses"))
+            .aggregate(Count(group_fields=["hostname"], aggregation_name=self._component_name + ".responses"))
 
         count_by_code_stream = read_stream \
             .where("response_code is not null") \
-            .aggregate(Count(group_fields=["response_code"], aggregation_name=self._component_name))
+            .aggregate(Count(group_fields=["hostname", "response_code"], aggregation_name=self._component_name))
 
         return [avg_response_time_by_method_stream, count_by_method_stream, avg_response_time_stream,
                 count_responses_stream, count_by_code_stream]
@@ -49,7 +50,8 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
             StructField("contentSourceId", StringType()),
             StructField("clientType", StringType()),
             StructField("method", StringType()),
-            StructField("subscriberId", StringType())
+            StructField("subscriberId", StringType()),
+            StructField("hostname", StringType())
         ])
 
 
