@@ -43,7 +43,7 @@ class EventCreatorTestCase(unittest.TestCase):
         self.assertRaises(ParsingException, self.metadata.get_field_by_name("float").get_value, "abc")
 
     def test_ConfigurableTimestampField(self):
-        self.assertEquals(datetime(2017, 9, 28, 13, 39, 11).replace(tzinfo=tzoffset(None, 7200)),
+        self.assertEquals(datetime(2017, 9, 28, 13, 39, 11).replace(tzinfo=tzoffset(None, 0)),
                           self.metadata.get_field_by_name("configurable_time").get_value("2017-09-28 13:39:11 +0200"))
 
 
