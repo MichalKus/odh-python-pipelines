@@ -120,22 +120,6 @@ class TimestampField(AbstractField):
             raise ParsingException("date parsing error")
 
 
-class TimestampFieldWithTimeZone(AbstractField):
-    def __init__(self, name, output_name=None):
-        AbstractField.__init__(self, name, output_name)
-
-    def get_value(self, value, context=None):
-        """
-        Converts value for field's type
-        :return: datetime value
-        :raises: ParsingException for wrong date format
-        """
-        try:
-            return parse(value, fuzzy=True)
-        except ValueError:
-            raise ParsingException("wrong datetime format")
-
-
 class IntField(AbstractField):
     def get_value(self, value, context=None):
         """
