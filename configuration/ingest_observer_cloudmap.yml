@@ -1,0 +1,37 @@
+spark:
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+  appName: ObserverIngestionProcessing
+  batchInterval: 1
+
+kafka:
+  bootstrapServers: 192.168.100.1:9093,192.168.100.2:9093,192.168.100.3:9093,192.168.100.4:9093,192.168.100.5:9093,192.168.100.6:9093,192.168.100.7:9093,192.168.100.8:9093,192.168.100.9:9093,192.168.100.10:9093,192.168.100.11:9093,192.168.100.12:9093,192.168.100.13:9093,192.168.100.14:9093,192.168.100.15:9093,192.168.100.16:9093,192.168.100.17:9093,192.168.100.18:9093
+  topicInput: odhecx_in_eosdtv_all_prd_cloudmap_top_v1
+  zookeeperHosts: 192.168.100.1:2181/kafka,192.168.100.3:2181/kafka,192.168.100.5:2181/kafka,192.168.100.7:2181/kafka,192.168.100.9:2181/kafka
+  groupId: ObserverIngestCloudmap
+  autoOffsetReset: smallest
+  securityProtocol: SASL_PLAINTEXT
+  saslMechanism: PLAIN
+
+es:
+  index: all_prd_cloudmap_topology
+  host: 192.168.100.1:9200
+
+#spark:
+#  appName: CloudmapIngestionProcessing
+#  master: mesos://zk://192.168.100.1:2181,192.168.100.3:2181,192.168.100.5:2181,192.168.100.7:2181,192.168.100.9:2181/mesos
+#  checkpointLocation: hdfs://192.168.100.1:9820/spark-checkpoints/observer-cloudmap-top-all
+#  batchInterval: 1
+#
+#kafka:
+#  bootstrapServers: 192.168.100.1:9093,192.168.100.2:9093,192.168.100.3:9093,192.168.100.4:9093,192.168.100.5:9093,192.168.100.6:9093,192.168.100.7:9093,192.168.100.8:9093,192.168.100.9:9093,192.168.100.10:9093,192.168.100.11:9093,192.168.100.12:9093,192.168.100.13:9093,192.168.100.14:9093,192.168.100.15:9093,192.168.100.16:9093,192.168.100.17:9093,192.168.100.18:9093
+#  topicInput: odhecx_in_eosdtv_all_prd_cloudmap_top_v1
+#  zookeeperHosts: "192.168.100.1:2181/kafka,192.168.100.3:2181/kafka,192.168.100.5:2181/kafka,192.168.100.7:2181/kafka,192.168.100.9:2181/kafka"
+#  groupId: ObserverIngestCloudmap
+#  autoOffsetReset: smallest
+#  securityProtocol: SASL_PLAINTEXT
+#  saslMechanism: PLAIN
+#
+#es:
+#  index: all_prd_cloudmap_topology
+#  host: 192.168.100.1:9200
