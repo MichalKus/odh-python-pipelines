@@ -4,7 +4,7 @@ import sys
 from pyspark import SparkContext
 from pyspark.streaming import StreamingContext
 from util.utils import Utils
-from common.kafkaUtils import KafkaConnector
+from common.adv_analytics.kafkaUtils import KafkaConnector
 import json
 import requests
 import datetime
