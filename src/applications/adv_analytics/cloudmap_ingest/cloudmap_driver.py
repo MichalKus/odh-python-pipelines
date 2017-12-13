@@ -9,19 +9,6 @@ import json
 import requests
 import datetime
 
-def create_spark_context():
-    """
-    Create the spark context using the correct configurations
-    :param config: configurations from .yml file
-    :return: spark context
-    """
-    sc = SparkContext(appName=config.property('spark.appName'), master=config.property('spark.master'))
-    sc.setLogLevel("WARN")
-    ssc = StreamingContext(sc, config.property('spark.batchInterval'))
-    ssc.checkpoint(config.property('spark.checkpointLocation'))
-
-    return ssc
-
 def json_check(msg):
     try:
         json.loads(msg[1])
@@ -83,6 +70,7 @@ if __name__ == "__main__":
     ssc = KafkaConnector.create_spark_context(config, sc)
     input_stream = KafkaConnector(config).create_kafka_stream(ssc)
     output_stream = read_data(input_stream)
-    sink = output_stream.foreachRDD(lambda rdd: rdd.foreachPartition(send_partition))
+    output_stream.pprint()
+    # sink = output_stream.foreachRDD(lambda rdd: rdd.foreachPartition(send_partition))
     ssc.start()
     ssc.awaitTermination()
