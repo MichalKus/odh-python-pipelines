@@ -18,7 +18,7 @@ class KafkaConnector(object):
         self.auto_offset_reset = conf.property('kafka.autoOffsetReset')
         self.group_id = conf.property('kafka.groupId')
         self.partitions = self._get_partition_ids(self.topic, self.bootstrap_server)
-        self.checkpoint = config.property('spark.checkpointLocation')
+        self.checkpoint = conf.property('spark.checkpointLocation')
 
     @staticmethod
     def create_spark_context(config, sc):

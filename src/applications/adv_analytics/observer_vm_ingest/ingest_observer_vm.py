@@ -96,7 +96,7 @@ if __name__ == "__main__":
     component_type = 'virtual_machine'
     input_stream = KafkaConnector(config).create_kafka_stream(ssc)
     output_stream = process_data(input_stream)
-    sink = output_stream.foreachRDD(lambda rdd: rdd.foreachPartition(send_partition))
-    # output_stream.pprint()
+    # sink = output_stream.foreachRDD(lambda rdd: rdd.foreachPartition(send_partition))
+    output_stream.pprint()
     ssc.start()
     ssc.awaitTermination()
