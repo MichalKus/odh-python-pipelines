@@ -22,18 +22,26 @@ def create_event_creators(configuration):
     timezones_priority = configuration.property("timezone.priority", "dic")
 
     return MatchField("topic", {
-        "stagis_log_gen": SourceConfiguration(stagis_ee_event_creator(timezone_name, timezones_priority),
-                                              Utils.get_output_topic(configuration, "general")),
-        "stagis_log_err": SourceConfiguration(stagis_ee_event_creator(timezone_name, timezones_priority),
-                                              Utils.get_output_topic(configuration, "error")),
+        "stagis_log_gen": SourceConfiguration(
+            stagis_ee_event_creator(timezone_name, timezones_priority),
+            Utils.get_output_topic(configuration, "general")
+        ),
+        "stagis_log_err": SourceConfiguration(
+            stagis_ee_event_creator(timezone_name, timezones_priority),
+            Utils.get_output_topic(configuration, "error")
+        ),
         "stagis_corecommit_log": SourceConfiguration(
             stagis_ee_corecommit_event_creator(timezone_name, timezones_priority),
-            Utils.get_output_topic(configuration, "corecommit")),
+            Utils.get_output_topic(configuration, "corecommit")
+        ),
         "stagis_interface_log": SourceConfiguration(
             stagis_ee_interface_event_creator(timezone_name, timezones_priority),
-            Utils.get_output_topic(configuration, "interface")),
-        "stagis_wcf_log": SourceConfiguration(stagis_ee_wcf_event_creator(timezone_name, timezones_priority),
-                                              Utils.get_output_topic(configuration, "wcf"))
+            Utils.get_output_topic(configuration, "interface")
+        ),
+        "stagis_wcf_log": SourceConfiguration(
+            stagis_ee_wcf_event_creator(timezone_name, timezones_priority),
+            Utils.get_output_topic(configuration, "wcf")
+        )
     })
 
 

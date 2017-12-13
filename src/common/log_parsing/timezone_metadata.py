@@ -1,7 +1,7 @@
 from os import listdir
 from os.path import isfile, join
 from dateutil.parser import parse
-from dateutil.tz import tzoffset, tzfile
+from dateutil.tz import tzfile
 from metadata import AbstractField, ParsingException
 from metadata import CONTEXT_TIMEZONE
 
@@ -44,7 +44,8 @@ class ConfigurableTimestampField(AbstractField):
     Priorities of mentioned sources are specified as a constructor parameter.
     """
 
-    def __init__(self, name, default_timezone_name, priorities="dic", output_name=None, dayfirst=False, yearfirst=False):
+    def __init__(self, name, default_timezone_name, priorities="dic", output_name=None, dayfirst=False,
+                 yearfirst=False):
         """
         Constructor.
         :param name: field name
@@ -56,9 +57,9 @@ class ConfigurableTimestampField(AbstractField):
         self._default_timezone_name = default_timezone_name
         self.dayfirst = dayfirst
         self.yearfirst = yearfirst
-        self._timezone_functions = self._get_prioritized_timezone_function(priorities)
+        self._timezone_functions = self.__get_prioritized_timezone_function(priorities)
 
-    def _set_default_timezone_date(self, date, context):
+    def __set_default_timezone_date(self, date, context):
         """
         Sets default timezone in datetime object.
         :param date: datetime object to set timezone
@@ -71,19 +72,16 @@ class ConfigurableTimestampField(AbstractField):
         except:
             return None
 
-    def _set_inherent_timezone_date(self, date, context):
+    def __set_inherent_timezone_date(self, date, context):
         """
         Leaves timezone of a datetime object unchanged if it is defined withing the datetime object.
         :param date: datetime object to set timezone
         :param context: dictionary with additional data. It's not used in the method.
         :return: datetime object if it has timezone defined or None
         """
-        if date.tzinfo is None:
-            return None
-        else:
-            return date
+        return None if (date.tzinfo is None) else date
 
-    def _set_context_timezone_date(self, date, context):
+    def __set_context_timezone_date(self, date, context):
         """
         Sets timezone from context.
         :param date: datetime object to set timezone
@@ -96,18 +94,18 @@ class ConfigurableTimestampField(AbstractField):
         except:
             return None
 
-    def _get_prioritized_timezone_function(self, priorities):
+    def __get_prioritized_timezone_function(self, priorities):
         """
         Constract an array of "set timezone" function in priority order
         :param priorities: possible values are "dic", "dci", "cdi", "cid", "idc", "icd"
         :return: array of functions applying timezones to datetime object.
         """
-        priority_map = {"d": self._set_default_timezone_date,
-                        "i":  self._set_inherent_timezone_date,
-                        "c": self._set_context_timezone_date}
+        priority_map = {"d": self.__set_default_timezone_date,
+                        "i":  self.__set_inherent_timezone_date,
+                        "c": self.__set_context_timezone_date}
         return [priority_map[item] for item in priorities]
 
-    def _apply_timezone(self, date, context):
+    def __apply_timezone(self, date, context):
         """
         Updating time zone according to specified priorities.
         :param date: datetime object for timezone to be applied.
@@ -128,7 +126,8 @@ class ConfigurableTimestampField(AbstractField):
         :raises: ParsingException if date format is wrong or no timezone is found
         """
         try:
-            return self._apply_timezone(parse(value, fuzzy=True, dayfirst=self.dayfirst, yearfirst=self.yearfirst), context)
+            return self.__apply_timezone(
+                parse(value, fuzzy=True, dayfirst=self.dayfirst, yearfirst=self.yearfirst), context)
         except ValueError:
             raise ParsingException("wrong datetime format")
 

@@ -2,6 +2,8 @@ import unittest
 
 from datetime import datetime
 
+from dateutil.tz import tzoffset
+
 from common.log_parsing.timezone_metadata import *
 from common.log_parsing.timezone_metadata import _get_available_timezones
 
