@@ -2,15 +2,15 @@ from common.log_parsing.dict_event_creator.event_creator import EventCreator
 from common.log_parsing.metadata import ParsingException
 
 
-class EventIngestCreator(object, EventCreator):
+class EventIngestCreator(EventCreator):
     """
     Extended EventCreator with checking for equals of started and finished scripts
     """
 
-    def __init__(self, metadata, parser):
+    def __init__(self, metadata, parser, field_to_parse="message", timezone_field="tz"):
         self._metadata = metadata
         self._parser = parser
-        EventCreator.__init__(self, metadata, parser)
+        EventCreator.__init__(self, metadata, parser, field_to_parse, timezone_field)
 
     def create(self, row):
         """

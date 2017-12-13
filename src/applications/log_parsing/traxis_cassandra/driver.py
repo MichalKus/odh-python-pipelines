@@ -7,17 +7,21 @@ from common.log_parsing.list_event_creator.event_creator import EventCreator
 from common.log_parsing.list_event_creator.multiple_event_creator import MultipleEventCreator
 from common.log_parsing.list_event_creator.regexp_parser import RegexpParser
 from common.log_parsing.metadata import *
+from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
 
 
-def create_event_creators(configuration=None):
+def create_event_creators(configuration):
+    timezone_name = configuration.property("timezone.name")
+    timezones_priority = configuration.property("timezone.priority", "dic")
+
     return MatchField("topic", {
         "traxis_cassandra_log_gen": SourceConfiguration(
             MultipleEventCreator([
                 EventCreator(
                     Metadata([
                         StringField("level"),
-                        TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f"),
+                        ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
                         StringField("message")
                     ]),
                     RegexpParser(
@@ -25,7 +29,7 @@ def create_event_creators(configuration=None):
                 ),
                 EventCreator(
                     Metadata([
-                        TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f"),
+                        ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
                         StringField("level"),
                         StringField("message")
                     ]),
@@ -40,7 +44,7 @@ def create_event_creators(configuration=None):
                 EventCreator(
                     Metadata([
                         StringField("level"),
-                        TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f"),
+                        ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
                         StringField("message")
                     ]),
                     RegexpParser(
@@ -49,7 +53,7 @@ def create_event_creators(configuration=None):
                 EventCreator(
                     Metadata([
                         StringField("level"),
-                        TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f"),
+                        ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
                         StringField("message")
                     ]),
                     RegexpParser(
@@ -57,7 +61,7 @@ def create_event_creators(configuration=None):
                 ),
                 EventCreator(
                     Metadata([
-                        TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f"),
+                        ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
                         StringField("level"),
                         StringField("message")
                     ]),

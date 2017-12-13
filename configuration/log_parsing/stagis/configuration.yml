@@ -24,3 +24,7 @@ kafka:
       corecommit: vagrant_pro_eosdtv_lab5aobo_tst_heapp_stagis_corecommit_log_err_v1
       interface: vagrant_pro_eosdtv_lab5aobo_tst_heapp_stagis_interface_log_gen_v1
       wcf: vagrant_pro_eosdtv_lab5aobo_tst_heapp_stagis_wcf_log_gen_v1
+
+timezone:
+  name: Europe/Amsterdam
+  priority: dic

@@ -10,21 +10,25 @@ from common.log_parsing.event_creator_tree.multisource_configuration import Sour
 from common.log_parsing.list_event_creator.event_creator import EventCreator
 from common.log_parsing.list_event_creator.regexp_parser import RegexpParser
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
-from common.log_parsing.metadata import Metadata, StringField, TimestampFieldWithTimeZone, TimestampField
+from common.log_parsing.metadata import Metadata, StringField
+from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
 
 
-def create_event_creators(configuration=None):
+def create_event_creators(configuration):
     """
     Tree of different parsers for all types of logs for THINK ANALYTICS
     :param configuration: YML config
     :return: Tree of event_creators
     """
+    timezone_name = configuration.property("timezone.name")
+    timezones_priority = configuration.property("timezone.priority", "dic")
+
     return MatchField("source", {
         "localhost_access_log": SourceConfiguration(
             EventWithUrlCreator(
                 Metadata([
-                    TimestampFieldWithTimeZone("@timestamp"),
+                    ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
                     StringField("ip"),
                     StringField("thread"),
                     StringField("http_method"),
@@ -40,7 +44,7 @@ def create_event_creators(configuration=None):
         "RE_SystemOut.log": SourceConfiguration(
             EventCreator(
                 Metadata([
-                    TimestampFieldWithTimeZone("@timestamp"),
+                    ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
                     StringField("level"),
                     StringField("script"),
                     StringField("message")
@@ -53,7 +57,7 @@ def create_event_creators(configuration=None):
         "REMON_SystemOut.log": SourceConfiguration(
             EventCreator(
                 Metadata([
-                    TimestampFieldWithTimeZone("@timestamp"),
+                    ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
                     StringField("level"),
                     StringField("script"),
                     StringField("type"),
@@ -67,7 +71,7 @@ def create_event_creators(configuration=None):
         "Central.log": SourceConfiguration(
             EventCreator(
                 Metadata([
-                    TimestampField("@timestamp", "%a %d/%m/%y %H:%M:%S"),
+                    ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority, dayfirst=True),
                     StringField("level"),
                     StringField("message"),
                     StringField("thread"),
@@ -83,7 +87,7 @@ def create_event_creators(configuration=None):
         "thinkenterprise.log": SourceConfiguration(
             EventCreator(
                 Metadata([
-                    TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f"),
+                    ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
                     StringField("level"),
                     StringField("message")
                 ]),
@@ -95,7 +99,7 @@ def create_event_creators(configuration=None):
         "gcollector.log": SourceConfiguration(
             EventCreator(
                 Metadata([
-                    TimestampFieldWithTimeZone("@timestamp"),
+                    ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
                     StringField("process_uptime"),
                     StringField("message")
                 ]),
@@ -107,7 +111,7 @@ def create_event_creators(configuration=None):
         "server.log": SourceConfiguration(
             EventCreator(
                 Metadata([
-                    TimestampFieldWithTimeZone("@timestamp"),
+                    ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
                     StringField("level"),
                     StringField("class_name"),
                     StringField("thread"),
@@ -122,10 +126,10 @@ def create_event_creators(configuration=None):
             EventIngestCreator(
                 Metadata([
                     StringField("started_script"),
-                    TimestampFieldWithTimeZone("timestamp", "@timestamp"),
+                    ConfigurableTimestampField("timestamp", timezone_name, timezones_priority, "@timestamp"),
                     StringField("message"),
                     StringField("finished_script"),
-                    TimestampFieldWithTimeZone("finished_time")
+                    ConfigurableTimestampField("finished_time", timezone_name, timezones_priority)
                 ]),
                 RegexpMatchesParser(
                     "Started\s+?(?P<started_script>.*?\.sh)\s+?(?P<timestamp>\w+?\s+?\w+?\s+?\d{1,2}\s+?\d{2}:\d{2}:\d{2}\s+?\w+?\s+?\d{4})(?P<message>(?:.|\s)*)Finished\s+?(?P<finished_script>.*?\.sh)\s+?(?P<finished_time>\w+?\s+?\w+?\s+?\d{1,2}\s+?\d{2}:\d{2}:\d{2}\s+?\w+?\s+?\d{4}).*"
