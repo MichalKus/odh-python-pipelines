@@ -18,6 +18,7 @@ class KafkaConnector(object):
         self.auto_offset_reset = conf.property('kafka.autoOffsetReset')
         self.group_id = conf.property('kafka.groupId')
         self.partitions = self._get_partition_ids(self.topic, self.bootstrap_server)
+        self.checkpoint = config.property('spark.checkpointLocation')
 
     @staticmethod
     def create_spark_context(config, sc):
@@ -27,7 +28,6 @@ class KafkaConnector(object):
         :return: spark context
         """
         ssc = StreamingContext(sc, config.property('spark.batchInterval'))
-        ssc.checkpoint(config.property('spark.checkpointLocation'))
 
         return ssc
 
@@ -53,4 +53,5 @@ class KafkaConnector(object):
         kafkaParams = {}
         kafkaParams["auto.offset.reset"] = self.auto_offset_reset
         input_stream = KafkaUtils.createStream(ssc, self.zookeeper_host, self.group_id, topic, kafkaParams)
+        ssc.checkpoint(self.checkpoint)
         return input_stream
