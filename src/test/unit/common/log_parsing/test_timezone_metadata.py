@@ -88,6 +88,9 @@ class ConfigurableTimestampTestCase(unittest.TestCase):
 
         self.assertEquals(self._ambiguous_date, parsed_date)
 
+    def test_load_timezones_from_main_resources(self):
+        loaded_timezones = load_timezones("resources/timezones")
+        self.assertTrue(len(loaded_timezones) > 0)
 
 if __name__ == '__main__':
     unittest.main()
