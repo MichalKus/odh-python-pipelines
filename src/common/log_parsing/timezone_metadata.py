@@ -1,4 +1,4 @@
-from os import listdir
+from os import listdir, environ
 from os.path import isfile, join
 from dateutil.parser import parse
 from dateutil.tz import tzfile
@@ -136,4 +136,4 @@ class ConfigurableTimestampField(AbstractField):
 Load timezones once
 """
 if "timezones" not in globals():
-    timezones = load_timezones("resources/timezones")
+    timezones = load_timezones(environ.get("TIMEZONES_ROOT_DIR", "resources/timezones"))
