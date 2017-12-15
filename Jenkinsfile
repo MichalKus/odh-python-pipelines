@@ -31,10 +31,18 @@ pipeline {
 
                 script {
                     if (env.BRANCH_NAME == 'master') {
+                        def projectProps = readProperties file: 'project.properties'
+                        def sonarProjectVersion = projectProps['sonar.projectVersion']
+                        echo "project version ${sonarProjectVersion}"
+
+                        if (sonarProjectVersion == null) {
+                            error("Build failed because property 'project.version.sonar' is not defined.")
+                        }
+
                         sh "/opt/sonar-scanner-3.0.3.778-linux/bin/sonar-scanner -Dsonar.projectKey=lg:odh \
                             -Dsonar.login=a87af9baf633b4de83a46d74b0fc38a54c1518ca \
                             -Dsonar.projectName='odh-python-pipelines' \
-                            -Dsonar.projectVersion=0.0.1 \
+                            -Dsonar.projectVersion=${sonarProjectVersion} \
                             -Dsonar.projectBaseDir=${escaped_workspace}/src \
                             -Dsonar.sources=. \
                             -Dsonar.exclusions=**/test/**/* \
