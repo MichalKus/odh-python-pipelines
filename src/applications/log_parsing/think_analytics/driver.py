@@ -50,7 +50,7 @@ def create_event_creators(configuration):
                     StringField("message")
                 ]),
                 RegexpParser(
-                    "^\[(?P<timestamp>\d{2}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\s\D+?)\] (?P<level>\w+?)\s+?-\s+?(?P<script>\S+?)\s+?:\s+?(?P<message>.*)")
+                    r"^\[(?P<timestamp>\d{2}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\s\D+?)\] (?P<level>\w+?)\s+?-\s+?(?P<script>\S+?)\s+?:\s+?(?P<message>.*)")
             ),
             Utils.get_output_topic(configuration, "resystemout")
         ),
@@ -64,7 +64,7 @@ def create_event_creators(configuration):
                     StringField("message")
                 ]),
                 RegexpParser(
-                    "^\[(?P<timestamp>\d{2}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}.\d{3}\s\D+?)\] (?P<level>\w+?)\s+?-\s+?(?P<script>\S+?)\s+?:\s+?\[(?P<type>\S+?)\]\s+?-\s+?(?P<message>.*)")
+                    r"^\[(?P<timestamp>\d{2}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}.\d{3}\s\D+?)\] (?P<level>\w+?)\s+?-\s+?(?P<script>\S+?)\s+?:\s+?\[(?P<type>\S+?)\]\s+?-\s+?(?P<message>.*)")
             ),
             Utils.get_output_topic(configuration, "remonsystemout")
         ),
@@ -92,7 +92,7 @@ def create_event_creators(configuration):
                     StringField("message")
                 ]),
                 RegexpParser(
-                    "^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}):\s+?(?P<level>\w+?)\s+?-\s+?(?P<message>.*)")
+                    r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}):\s+?(?P<level>\w+?)\s+?-\s+?(?P<message>.*)")
             ),
             Utils.get_output_topic(configuration, "thinkenterprise")
         ),
@@ -104,7 +104,7 @@ def create_event_creators(configuration):
                     StringField("message")
                 ]),
                 RegexpParser(
-                    "^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}.\d{4}):\s+?(?P<process_uptime>\d+?\.\d{3}):\s+?(?P<message>.*)")
+                    r"^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}.\d{4}):\s+?(?P<process_uptime>\d+?\.\d{3}):\s+?(?P<message>.*)")
             ),
             Utils.get_output_topic(configuration, "gcollector")
         ),
@@ -118,7 +118,7 @@ def create_event_creators(configuration):
                     StringField("message")
                 ]),
                 RegexpParser(
-                    "^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\s+?(?P<level>\w+?)\s+?\[(?P<class_name>.+?)\]\s+?\((?P<thread>.+?)\)\s+?(?P<message>.*)")
+                    r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\s+?(?P<level>\w+?)\s+?\[(?P<class_name>.+?)\]\s+?\((?P<thread>.+?)\)\s+?(?P<message>.*)")
             ),
             Utils.get_output_topic(configuration, "server")
         ),
@@ -132,7 +132,7 @@ def create_event_creators(configuration):
                     ConfigurableTimestampField("finished_time", timezone_name, timezones_priority)
                 ]),
                 RegexpMatchesParser(
-                    "Started\s+?(?P<started_script>.*?\.sh)\s+?(?P<timestamp>\w+?\s+?\w+?\s+?\d{1,2}\s+?\d{2}:\d{2}:\d{2}\s+?\w+?\s+?\d{4})(?P<message>(?:.|\s)*)Finished\s+?(?P<finished_script>.*?\.sh)\s+?(?P<finished_time>\w+?\s+?\w+?\s+?\d{1,2}\s+?\d{2}:\d{2}:\d{2}\s+?\w+?\s+?\d{4}).*"
+                    r"Started\s+?(?P<started_script>.*?\.sh)\s+?(?P<timestamp>\w+?\s+?\w+?\s+?\d{1,2}\s+?\d{2}:\d{2}:\d{2}\s+?\w+?\s+?\d{4})(?P<message>(?:.|\s)*)Finished\s+?(?P<finished_script>.*?\.sh)\s+?(?P<finished_time>\w+?\s+?\w+?\s+?\d{1,2}\s+?\d{2}:\d{2}:\d{2}\s+?\w+?\s+?\d{4}).*"
                 )
             ),
             Utils.get_output_topic(configuration, "reingest")

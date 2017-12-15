@@ -25,7 +25,7 @@ def create_event_creators(configuration):
                         StringField("message")
                     ]),
                     RegexpParser(
-                        "^.*?\:\s+(\S+)\s\[[^\]]*\]\s+(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S[\s\S]+)")
+                        r"^.*?\:\s+(\S+)\s\[[^\]]*\]\s+(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S[\s\S]+)")
                 ),
                 EventCreator(
                     Metadata([
@@ -34,7 +34,7 @@ def create_event_creators(configuration):
                         StringField("message")
                     ]),
                     RegexpParser(
-                        "^.*?\:\s(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s(\S+)\s+\[[^\]]*\]\s+(\S[\s\S]+)")
+                        r"^.*?\:\s(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s(\S+)\s+\[[^\]]*\]\s+(\S[\s\S]+)")
                 )
             ]),
             Utils.get_output_topic(configuration, "general")
@@ -48,7 +48,7 @@ def create_event_creators(configuration):
                         StringField("message")
                     ]),
                     RegexpParser(
-                        "^.*\:\s.*\:\s(\S+)\s\[[^\]]*\]\s+(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S[\s\S]+)")
+                        r"^.*\:\s.*\:\s(\S+)\s\[[^\]]*\]\s+(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S[\s\S]+)")
                 ),
                 EventCreator(
                     Metadata([
@@ -57,7 +57,7 @@ def create_event_creators(configuration):
                         StringField("message")
                     ]),
                     RegexpParser(
-                        "^.*\:\s(\S+)\s\[[^\]]*\]\s+(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S[\s\S]+)")
+                        r"^.*\:\s(\S+)\s\[[^\]]*\]\s+(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S[\s\S]+)")
                 ),
                 EventCreator(
                     Metadata([
@@ -66,7 +66,7 @@ def create_event_creators(configuration):
                         StringField("message")
                     ]),
                     RegexpParser(
-                        "^.*\:\s(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s(\S+)\s\[[^\]]*\]\s+(\S[\s\S]+)")
+                        r"^.*\:\s(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s(\S+)\s\[[^\]]*\]\s+(\S[\s\S]+)")
                 )
             ]),
             Utils.get_output_topic(configuration, "error")

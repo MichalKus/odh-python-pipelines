@@ -13,7 +13,7 @@ from util.utils import Utils
 class AirflowWorker(BasicAnalyticsProcessor):
     def _process_pipeline(self, read_stream):
         exception_types_stream = read_stream \
-            .withColumn("exception_text", regexp_extract("message", "\nException\:(.+?)\n", 1)) \
+            .withColumn("exception_text", regexp_extract("message", r"\nException\:(.+?)\n", 1)) \
             .where("exception_text != ''") \
             .withColumn("exception_type",
                         custom_translate_regex(

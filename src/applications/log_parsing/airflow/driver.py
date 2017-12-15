@@ -24,7 +24,7 @@ def create_event_creators(configuration):
             StringField("message")
         ]),
         RegexpParser(
-            "^\[(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\] \{(?P<script>[^\}]+)\} (?P<level>\w+?) - (?P<message>(.|\s)*)"
+            r"^\[(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\] \{(?P<script>[^\}]+)\} (?P<level>\w+?) - (?P<message>(.|\s)*)"
         )
     )
 
@@ -33,7 +33,7 @@ def create_event_creators(configuration):
             StringField("dag"),
             StringField("task")
         ]),
-        RegexpParser(".*/usr/local/airflow/logs/(?P<dag>\S+)/(?P<task>[\S|^/]+)/.*",
+        RegexpParser(r".*/usr/local/airflow/logs/(?P<dag>\S+)/(?P<task>[\S|^/]+)/.*",
                      return_empty_dict=True), field_to_parse="source")
 
     subtask_creator = EventCreator(
@@ -43,7 +43,7 @@ def create_event_creators(configuration):
              StringField("subtask_level"),
              StringField("subtask_message")]),
         RegexpParser(
-            "^Subtask: \[(?P<subtask_timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\] \{(?P<subtask_script>[^\}]+):\d+\} (?P<subtask_level>\w+?) - (?P<subtask_message>(?:.|\s)*)",
+            r"^Subtask: \[(?P<subtask_timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\] \{(?P<subtask_script>[^\}]+):\d+\} (?P<subtask_level>\w+?) - (?P<subtask_message>(?:.|\s)*)",
             return_empty_dict=True),
         field_to_parse="message")
 
@@ -51,7 +51,7 @@ def create_event_creators(configuration):
         Metadata([
             StringField("crid")
         ]),
-        RegexpParser("Fabrix input:.*\/(?P<crid>crid[^\/]+)",
+        RegexpParser(r"Fabrix input:.*\/(?P<crid>crid[^\/]+)",
                      return_empty_dict=True),
         field_to_parse="subtask_message")
 
@@ -59,7 +59,7 @@ def create_event_creators(configuration):
         Metadata([
             StringField("airflow_id")
         ]),
-        RegexpParser("Submitting asset:\s+(?P<airflow_id>[\d|\w]{32}_[\d|\w]{32})",
+        RegexpParser(r"Submitting asset:\s+(?P<airflow_id>[\d|\w]{32}_[\d|\w]{32})",
                      return_empty_dict=True),
         field_to_parse="subtask_message")
 

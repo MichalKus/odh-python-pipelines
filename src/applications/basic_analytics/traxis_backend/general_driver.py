@@ -58,9 +58,9 @@ class TraxisBackendGeneral(BasicAnalyticsProcessor):
 
         uris = trace_events \
             .where("message like '%HTTP request received from%'") \
-            .withColumn("message", regexp_replace("message", "(>\n\s<)", "><")) \
-            .withColumn("message", regexp_replace("message", "(\n\t)", "\t")) \
-            .withColumn("message", regexp_replace("message", "(\n\s)", " ")) \
+            .withColumn("message", regexp_replace("message", r"(>\n\s<)", "><")) \
+            .withColumn("message", regexp_replace("message", r"(\n\t)", "\t")) \
+            .withColumn("message", regexp_replace("message", r"(\n\s)", " ")) \
             .withColumn("header", explode(split(lower(col("message")), "\n"))) \
             .where("header like 'uri%'") \
             .select(col("hostname"), col("@timestamp"), col("level"), col("message"),

@@ -38,7 +38,7 @@ def createReadStream(configuration, spark):
 
 
 def createPipeline(readStream):
-    split_col = split(readStream['value'], ' \[')
+    split_col = split(readStream['value'], r" \[")
     message = split_col.getItem(1)
     systemDetails = split(split_col.getItem(0), ' ')
     
