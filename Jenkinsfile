@@ -45,7 +45,7 @@ pipeline {
                             -Dsonar.projectVersion=${sonarProjectVersion} \
                             -Dsonar.projectBaseDir=${escaped_workspace}/src \
                             -Dsonar.sources=. \
-                            -Dsonar.exclusions=**/test/**/* \
+                            -Dsonar.exclusions=**/test/**/*,**/__init__.py \
                             -Dsonar.tests=./test \
                             -Dsonar.python.xunit.reportPath=${escaped_workspace}/xunit-reports/nosetests-*.xml \
                             -Dsonar.python.coverage.reportPath=${escaped_workspace}/coverage-reports/coverage-ut.xml \
