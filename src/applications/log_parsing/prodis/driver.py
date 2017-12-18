@@ -31,7 +31,7 @@ def create_event_creators(configuration):
             StringField("message")
         ]),
         RegexpParser(
-            "^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})(?:\s+)(?P<level>\w+?) \[(?P<thread>\d+)\] - (?P<message>(?:.|\s)*)"
+            r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})(?:\s+)(?P<level>\w+?) \[(?P<thread>\d+)\] - (?P<message>(?:.|\s)*)"
         )
     )
 
@@ -43,7 +43,7 @@ def create_event_creators(configuration):
             StringField("message")
         ]),
         RegexpParser(
-            "^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})(?:\s+)(?P<level>\w+?) \[(?P<thread>.*)\] \(:0\) - (?P<message>(?:.|\s)*)"
+            r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})(?:\s+)(?P<level>\w+?) \[(?P<thread>.*)\] \(:0\) - (?P<message>(?:.|\s)*)"
         ))
 
     prodis_ws_event_creator_5_columns = EventCreator(

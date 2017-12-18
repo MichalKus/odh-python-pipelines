@@ -33,7 +33,7 @@ class TraxisBackendError(BasicAnalyticsProcessor):
         cassandra_errors = error_events \
             .where("message like '%Exception with cassandra node%'") \
             .withColumn("host", regexp_extract("message",
-                                               ".*Exception\s+with\s+cassandra\s+node\s+\'([\d\.]+).*", 1)
+                                               r".*Exception\s+with\s+cassandra\s+node\s+\'([\d\.]+).*", 1)
                         ) \
             .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".cassandra_errors"))

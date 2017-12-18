@@ -24,7 +24,7 @@ def create_event_creators(configuration):
                         StringField("message")
                     ]),
                     RegexpParser(
-                        "^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S+)\s+\[[^\]]+\]\s+([\s\S]*)")
+                        r"^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S+)\s+\[[^\]]+\]\s+([\s\S]*)")
                 ),
                 Utils.get_output_topic(configuration, "general")
             ),
@@ -36,7 +36,7 @@ def create_event_creators(configuration):
                         StringField("message")
                     ]),
                     RegexpParser(
-                        "^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S+)\s+\[[^\]]+\]\s+([\s\S]*)")
+                        r"^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S+)\s+\[[^\]]+\]\s+([\s\S]*)")
                 ),
                 Utils.get_output_topic(configuration, "scheduler")
             ),
@@ -48,7 +48,7 @@ def create_event_creators(configuration):
                         StringField("message")
                     ]),
                     RegexpParser(
-                        "^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S+)\s+\[[^\]]+\]\s+([\s\S]*)")
+                        r"^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S+)\s+\[[^\]]+\]\s+([\s\S]*)")
                 ),
                 Utils.get_output_topic(configuration, "management")
             )
@@ -61,7 +61,7 @@ def create_event_creators(configuration):
                     StringField("message")
                 ]),
                 RegexpParser(
-                    "^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S+)\s+\[[^\]]+\]\s+([\s\S]*)")
+                    r"^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S+)\s+\[[^\]]+\]\s+([\s\S]*)")
             ),
             Utils.get_output_topic(configuration, "error")
         )

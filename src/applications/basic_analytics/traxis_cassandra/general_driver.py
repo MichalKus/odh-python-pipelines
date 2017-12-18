@@ -46,13 +46,13 @@ class TraxisCassandraGeneral(BasicAnalyticsProcessor):
 
         node_ups = info_events \
             .where("message like '%InetAddress /% is now UP%'") \
-            .withColumn("host", regexp_extract("message", ".*InetAddress\s+/(\S+)\s+is\s+now\s+UP.*", 1)) \
+            .withColumn("host", regexp_extract("message", r".*InetAddress\s+/(\S+)\s+is\s+now\s+UP.*", 1)) \
             .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".node_ups"))
 
         node_downs = info_events \
             .where("message like '%InetAddress /% is now DOWN%'") \
-            .withColumn("host", regexp_extract("message", ".*InetAddress\s+/(\S+)\s+is\s+now\s+DOWN.*", 1)) \
+            .withColumn("host", regexp_extract("message", r".*InetAddress\s+/(\S+)\s+is\s+now\s+DOWN.*", 1)) \
             .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".node_downs"))
 
@@ -60,8 +60,7 @@ class TraxisCassandraGeneral(BasicAnalyticsProcessor):
             .where("message like '%Unable to determine external address "
                    "of node with internal address %'") \
             .withColumn("host", regexp_extract("message",
-                                               ".*Unable\s+to\s+determine\s+external\s+address\s+"
-                                               "of\s+node\s+with\s+internal\s+address\s+'(\S+)'.*", 1)) \
+                                               r".*Unable\s+to\s+determine\s+external\s+address\s+of\s+node\s+with\s+internal\s+address\s+'(\S+)'.*", 1)) \
             .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".ring_status_node_warnings"))
 

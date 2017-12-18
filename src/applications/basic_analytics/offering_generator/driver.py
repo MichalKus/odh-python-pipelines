@@ -36,7 +36,7 @@ def count_provider_metric(metric, script, message):
             .where("json.script == '" + script + "' and json.message_end like '" + message + "'") \
             .select(json_stream["json.@timestamp"],
                     concat(lit("heapp.oferring_generator.lab5aobo." + metric + ".provider."),
-                           regexp_replace(json_stream["json.provider"], "\s", "_"),
+                           regexp_replace(json_stream["json.provider"], r"\s", "_"),
                            lit(".count")).alias("metric")
                     ) \
             .withColumn("value", lit("1"))

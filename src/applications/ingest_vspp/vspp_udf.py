@@ -4,9 +4,9 @@ from util.utils import Utils
 
 class VsppUDF(object):
     megabyte = float(1024 * 1024)
-    __startRegex = re.compile("\[([^\]]*)\].*?INFO - Fabrix details")
-    __endRegex = re.compile("\[([^\]]*)\].*?INFO - Fabrix progress.*?'success_full_ingest'\s*:\s*'1'")
-    __sizeRegex = re.compile("'total_size'\s*:\s*'(\d*)'")
+    __startRegex = re.compile(r"\[([^\]]*)\].*?INFO - Fabrix details")
+    __endRegex = re.compile(r"\[([^\]]*)\].*?INFO - Fabrix progress.*?'success_full_ingest'\s*:\s*'1'")
+    __sizeRegex = re.compile(r"'total_size'\s*:\s*'(\d*)'")
 
     @staticmethod
     def process(text):

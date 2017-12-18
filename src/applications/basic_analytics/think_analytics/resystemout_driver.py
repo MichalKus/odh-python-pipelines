@@ -13,7 +13,7 @@ class ThinkAnalyticsReSystemOut(BasicAnalyticsProcessor):
     def _process_pipeline(self, read_stream):
         duration_stream = read_stream \
             .where("level == 'INFO'") \
-            .withColumn("duration", regexp_extract("message", '^.*?(\d+)ms.$', 1).cast("Int").alias("duration")) \
+            .withColumn("duration", regexp_extract("message", r"^.*?(\d+)ms.$", 1).cast("Int").alias("duration")) \
             .aggregate(
             Avg(group_fields=["hostname"], aggregation_field="duration", aggregation_name=self._component_name))
 

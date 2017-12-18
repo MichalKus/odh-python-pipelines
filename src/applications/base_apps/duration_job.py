@@ -5,7 +5,7 @@ from applications.base_apps.base_spark_job import BaseSparkJob
 from common.extractor import Extractor
 from util import Utils
 
-"""
+r"""
 Common configurable job to calculate duration between any events.
 A configuration for the job must be like that:
     
