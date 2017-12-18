@@ -47,3 +47,10 @@ class IngestVMData(object):
             msg["vm_metrics"] = metrics
             res.append((vm, msg))
         return res
+
+    @staticmethod
+    def filter_correlated(msg):
+        if msg["vm_metrics"] == {}:
+            return False
+        else:
+            return True
