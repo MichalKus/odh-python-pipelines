@@ -13,10 +13,9 @@ class ThinkAnalyticsReSystemOut(BasicAnalyticsProcessor):
     def _process_pipeline(self, read_stream):
         duration_stream = read_stream \
             .where("level == 'INFO'") \
-            .select(
-            read_stream["@timestamp"],
-            regexp_extract(read_stream["message"], '^.*?(\d+)ms.$', 1).cast("Int").alias("duration")) \
-            .aggregate(Avg(aggregation_field="duration", aggregation_name=self._component_name))
+            .withColumn("duration", regexp_extract("message", r"^.*?(\d+)ms.$", 1).cast("Int").alias("duration")) \
+            .aggregate(
+            Avg(group_fields=["hostname"], aggregation_field="duration", aggregation_name=self._component_name))
 
         return [duration_stream]
 
@@ -26,7 +25,8 @@ class ThinkAnalyticsReSystemOut(BasicAnalyticsProcessor):
             StructField("@timestamp", TimestampType()),
             StructField("level", StringType()),
             StructField("script", StringType()),
-            StructField("message", StringType())
+            StructField("message", StringType()),
+            StructField("hostname", StringType())
         ])
 
 

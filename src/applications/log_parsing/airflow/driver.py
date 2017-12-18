@@ -1,5 +1,6 @@
 import sys
 
+from applications.log_parsing.airflow.crid_event_creator import CridEventCreator
 from common.kafka_pipeline import KafkaPipeline
 from common.log_parsing.dict_event_creator.event_creator import CompositeEventCreator
 from common.log_parsing.dict_event_creator.event_creator import EventCreator
@@ -7,39 +8,77 @@ from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration, MatchField
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.metadata import Metadata, StringField, TimestampField
+from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
 
 
-def create_event_creators(configuration=None):
-    general_regexp_event_creator = EventCreator(
+def create_event_creators(configuration):
+    timezone_name = configuration.property("timezone.name")
+    timezones_property = configuration.property("timezone.priority", "dic")
+
+    general_creator = EventCreator(
         Metadata([
-            TimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f", "@timestamp"),
+            ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
             StringField("script"),
             StringField("level"),
             StringField("message")
         ]),
         RegexpParser(
-            "^\[(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\] \{(?P<script>[^\}]+)\} (?P<level>\w+?) - (?P<message>(.|\s)*)"
+            r"^\[(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\] \{(?P<script>[^\}]+)\} (?P<level>\w+?) - (?P<message>(.|\s)*)"
         )
     )
 
+    dag_creator = EventCreator(
+        Metadata([
+            StringField("dag"),
+            StringField("task")
+        ]),
+        RegexpParser(r".*/usr/local/airflow/logs/(?P<dag>\S+)/(?P<task>[\S|^/]+)/.*",
+                     return_empty_dict=True), field_to_parse="source")
+
+    subtask_creator = EventCreator(
+        Metadata(
+            [ConfigurableTimestampField("subtask_timestamp", timezone_name, timezones_property),
+             StringField("subtask_script"),
+             StringField("subtask_level"),
+             StringField("subtask_message")]),
+        RegexpParser(
+            r"^Subtask: \[(?P<subtask_timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\] \{(?P<subtask_script>[^\}]+):\d+\} (?P<subtask_level>\w+?) - (?P<subtask_message>(?:.|\s)*)",
+            return_empty_dict=True),
+        field_to_parse="message")
+
+    crid_creator = CridEventCreator(
+        Metadata([
+            StringField("crid")
+        ]),
+        RegexpParser(r"Fabrix input:.*\/(?P<crid>crid[^\/]+)",
+                     return_empty_dict=True),
+        field_to_parse="subtask_message")
+
+    airflow_id_creator = EventCreator(
+        Metadata([
+            StringField("airflow_id")
+        ]),
+        RegexpParser(r"Submitting asset:\s+(?P<airflow_id>[\d|\w]{32}_[\d|\w]{32})",
+                     return_empty_dict=True),
+        field_to_parse="subtask_message")
+
     return MatchField("source", {
         "airflow.log": SourceConfiguration(
-            general_regexp_event_creator,
+            CompositeEventCreator()
+                .add_source_parser(general_creator)
+                .add_intermediate_result_parser(subtask_creator)
+                .add_intermediate_result_parser(crid_creator)
+                .add_intermediate_result_parser(airflow_id_creator),
             Utils.get_output_topic(configuration, 'worker')
         ),
         "/usr/local/airflow/logs": SourceConfiguration(
             CompositeEventCreator()
-                .add(general_regexp_event_creator)
-                .add(
-                EventCreator(Metadata([
-                    StringField("dag"),
-                    StringField("task")
-                ]),
-                    RegexpParser(".*/usr/local/airflow/logs/(?P<dag>\S+)/(?P<task>[\S|^/]+)/.*",
-                                 return_empty_dict=True),
-                    field_to_parse="source"
-                )),
+                .add_source_parser(general_creator)
+                .add_source_parser(dag_creator)
+                .add_intermediate_result_parser(subtask_creator)
+                .add_intermediate_result_parser(crid_creator)
+                .add_intermediate_result_parser(airflow_id_creator),
             Utils.get_output_topic(configuration, 'worker_dag_execution')
         )
     })

@@ -13,7 +13,7 @@ from util.utils import Utils
 class AirflowWorker(BasicAnalyticsProcessor):
     def _process_pipeline(self, read_stream):
         exception_types_stream = read_stream \
-            .withColumn("exception_text", regexp_extract("message", "\nException\:(.+?)\n", 1)) \
+            .withColumn("exception_text", regexp_extract("message", r"\nException\:(.+?)\n", 1)) \
             .where("exception_text != ''") \
             .withColumn("exception_type",
                         custom_translate_regex(
@@ -25,7 +25,7 @@ class AirflowWorker(BasicAnalyticsProcessor):
                                 ".*managed folder doesn't exist.*": "folder_does_not_exist"
                             },
                             default_value="unclassified")) \
-            .aggregate(Count(group_fields=["exception_type"], aggregation_name=self._component_name))
+            .aggregate(Count(group_fields=["hostname", "exception_type"], aggregation_name=self._component_name))
         return [exception_types_stream]
 
     @staticmethod
@@ -34,7 +34,8 @@ class AirflowWorker(BasicAnalyticsProcessor):
             StructField("@timestamp", TimestampType()),
             StructField("script", StringType()),
             StructField("level", StringType()),
-            StructField("message", StringType())
+            StructField("message", StringType()),
+            StructField("hostname", StringType())
         ])
 
 

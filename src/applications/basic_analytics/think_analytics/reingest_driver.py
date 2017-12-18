@@ -13,7 +13,7 @@ class ThinkAnalyticsReIngest(BasicAnalyticsProcessor):
     def _process_pipeline(self, read_stream):
         duration_stream = read_stream \
             .where("started_script == '/apps/ThinkAnalytics/ContentIngest/bin/ingest.sh'") \
-            .aggregate(Avg(aggregation_field="duration", aggregation_name=self._component_name + ".ingest"))
+            .aggregate(Avg(group_fields=["hostname"], aggregation_field="duration", aggregation_name=self._component_name + ".ingest"))
 
         return [duration_stream]
 
@@ -25,7 +25,8 @@ class ThinkAnalyticsReIngest(BasicAnalyticsProcessor):
             StructField("message", StringType()),
             StructField("finished_script", StringType()),
             StructField("finished_time", TimestampType()),
-            StructField("duration", StringType())
+            StructField("duration", StringType()),
+            StructField("hostname", StringType()),
         ])
 
 

@@ -19,3 +19,7 @@ kafka:
   startingOffsets: earliest
   security.protocol: SASL_PLAINTEXT
   sasl.mechanism: PLAIN
+
+timezone:
+  name: Europe/Amsterdam
+  priority: dic

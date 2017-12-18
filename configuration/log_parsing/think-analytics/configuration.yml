@@ -30,3 +30,7 @@ kafka:
       reingest: vagrant_pro_eosdtv_lab5aobo_tst_heapp_thinkanalytics_reingest_log_v1
   security.protocol: SASL_PLAINTEXT
   sasl.mechanism: PLAIN
+
+timezone:
+  name: Europe/Amsterdam
+  priority: dic

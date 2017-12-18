@@ -16,28 +16,32 @@ class TraxisBackendError(BasicAnalyticsProcessor):
 
         tva_ingest_error = warn_events \
             .where("message like '%One or more validation errors detected during tva ingest%'") \
-            .aggregate(Count(aggregation_name=self._component_name + ".tva_ingest_error"))
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".tva_ingest_error"))
 
         customer_provisioning_error = warn_events \
             .where("message like '%Unable to use alias%because alias is already used by%'") \
-            .aggregate(Count(aggregation_name=self._component_name + ".customer_provisioning_error"))
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".customer_provisioning_error"))
 
         undefined_warnings = warn_events.where(
             "message not like '%Unable to use alias%because alias is already used by%' and "
             "message not like '%One or more validation errors detected during tva ingest%'"
-        ).aggregate(Count(aggregation_name=self._component_name + ".undefined_warnings"))
+        ).aggregate(Count(group_fields=["hostname"],
+                          aggregation_name=self._component_name + ".undefined_warnings"))
 
         cassandra_errors = error_events \
             .where("message like '%Exception with cassandra node%'") \
             .withColumn("host", regexp_extract("message",
-                                               ".*Exception\s+with\s+cassandra\s+node\s+\'([\d\.]+).*", 1)
+                                               r".*Exception\s+with\s+cassandra\s+node\s+\'([\d\.]+).*", 1)
                         ) \
-            .aggregate(Count(group_fields="host",
+            .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".cassandra_errors"))
 
         undefined_errors = error_events \
             .where("message not like '%Exception with cassandra node%'") \
-            .aggregate(Count(aggregation_name=self._component_name + ".undefined_errors"))
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".undefined_errors"))
 
         return [tva_ingest_error, customer_provisioning_error, undefined_warnings,
                 cassandra_errors, undefined_errors]
@@ -47,7 +51,8 @@ class TraxisBackendError(BasicAnalyticsProcessor):
         return StructType([
             StructField("@timestamp", TimestampType()),
             StructField("level", StringType()),
-            StructField("message", StringType())
+            StructField("message", StringType()),
+            StructField("hostname", StringType())
         ])
 
 

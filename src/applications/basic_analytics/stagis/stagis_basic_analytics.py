@@ -37,7 +37,7 @@ class StagisBasicAnalytics(BasicAnalyticsProcessor):
 
         return [read_stream
                 .where(where_column)
-                .aggregate(Count(group_fields=["instance_name", "level"], aggregation_name=self._component_name))
+                .aggregate(Count(group_fields=["hostname", "instance_name", "level"], aggregation_name=self._component_name))
                 ]
 
     @staticmethod
@@ -49,7 +49,8 @@ class StagisBasicAnalytics(BasicAnalyticsProcessor):
             StructField("causality_id", StringType()),
             StructField("thread_id", StringType()),
             StructField("class_name", StringType()),
-            StructField("message", StringType())
+            StructField("message", StringType()),
+            StructField("hostname", StringType())
         ])
 
 
