@@ -144,6 +144,6 @@ if __name__ == "__main__":
     output_stream = stream_build.build_output_stream(agg_stream, config)
     joined = agg_stream.join(output_stream).flatMap(lambda x: IngestVMData.flatten(x)).filter(IngestVMData.filter_correlated)
     joined.pprint()
-    # sink = joined.filter(IngestVMData.filter_correlated).foreachRDD(lambda rdd: rdd.foreachPartition(KafkaOutput(config).send_partition))
+    # sink = joined.foreachRDD(lambda rdd: rdd.foreachPartition(KafkaOutput(config).send_partition))
     ssc.start()
     ssc.awaitTermination()

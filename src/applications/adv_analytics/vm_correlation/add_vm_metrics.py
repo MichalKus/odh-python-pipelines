@@ -50,7 +50,7 @@ class IngestVMData(object):
 
     @staticmethod
     def filter_correlated(msg):
-        if msg["vm_metrics"] == {}:
+        if msg[1]["vm_metrics"] == {}:
             return False
         else:
             return True
