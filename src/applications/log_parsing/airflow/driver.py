@@ -7,12 +7,21 @@ from common.log_parsing.dict_event_creator.event_creator import EventCreator
 from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration, MatchField
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
-from common.log_parsing.metadata import Metadata, StringField, TimestampField
+from common.log_parsing.metadata import Metadata, StringField
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
 
 
 def create_event_creators(configuration):
+    """
+    Method creates configuration for Airflow Component:
+    - worker
+    - worker_dag_execution
+
+    :param configuration
+    :return: MatchField configuration for Airflow
+    """
+
     timezone_name = configuration.property("timezone.name")
     timezones_property = configuration.property("timezone.priority", "dic")
 
