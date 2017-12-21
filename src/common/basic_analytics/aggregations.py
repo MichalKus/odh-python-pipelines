@@ -97,3 +97,16 @@ class Count(Aggregation):
     """
 
     def aggregate(self, grouped_dataframe): return grouped_dataframe.agg(count("*").alias("value"))
+
+
+class DistinctCount(Aggregation):
+    """
+    Returns an approximate distinct count of ``_aggregation_field``
+    """
+
+    def aggregate(self, grouped_dataframe):
+        if self._aggregation_field is None:
+            raise SyntaxError("An aggregation field must be defined "
+                              "for ApproximateCountDistinct aggregation.")
+
+        return grouped_dataframe.agg(approx_count_distinct(self._aggregation_field).alias("value"))
