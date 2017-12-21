@@ -4,7 +4,7 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import DecimalType, DoubleType
 
 
-class Aggregation:
+class Aggregation(object):
     """
     Abstract class to define any aggregation for an input dataframe
     using specified fields to group and window if it's needed.
@@ -45,7 +45,7 @@ class Aggregation:
         """
 
 
-class AggregatedDataFrame:
+class AggregatedDataFrame(object):
     """
     Class for aggregated dataframe by specified functions.
     """
@@ -63,8 +63,9 @@ class Avg(Aggregation):
     Computes average values for each numeric columns for each group.
     """
 
-    def aggregate(self, grouped_dataframe): return grouped_dataframe.agg(
-        avg(self._aggregation_field).cast(DecimalType(scale=2)).alias("value"))
+    def aggregate(self, grouped_dataframe):
+        return grouped_dataframe.agg(avg(
+            self._aggregation_field).cast(DecimalType(scale=2)).alias("value"))
 
 
 class Min(Aggregation):
@@ -72,7 +73,8 @@ class Min(Aggregation):
     Computes the min value for each numeric column for each group.
     """
 
-    def aggregate(self, grouped_dataframe): return grouped_dataframe.agg(min(self._aggregation_field).alias("value"))
+    def aggregate(self, grouped_dataframe):
+        return grouped_dataframe.agg(min(self._aggregation_field).alias("value"))
 
 
 class Max(Aggregation):
@@ -80,7 +82,8 @@ class Max(Aggregation):
     Computes the max value for each numeric column for each group.
     """
 
-    def aggregate(self, grouped_dataframe): return grouped_dataframe.agg(max(self._aggregation_field).alias("value"))
+    def aggregate(self, grouped_dataframe):
+        return grouped_dataframe.agg(max(self._aggregation_field).alias("value"))
 
 
 class Sum(Aggregation):
@@ -88,7 +91,8 @@ class Sum(Aggregation):
     Compute the sum for each numeric columns for each group.
     """
 
-    def aggregate(self, grouped_dataframe): return grouped_dataframe.agg(sum(self._aggregation_field).alias("value"))
+    def aggregate(self, grouped_dataframe):
+        return grouped_dataframe.agg(sum(self._aggregation_field).alias("value"))
 
 
 class Count(Aggregation):
@@ -96,7 +100,8 @@ class Count(Aggregation):
     Counts the number of records for each group.
     """
 
-    def aggregate(self, grouped_dataframe): return grouped_dataframe.agg(count("*").alias("value"))
+    def aggregate(self, grouped_dataframe):
+        return grouped_dataframe.agg(count("*").alias("value"))
 
 
 class DistinctCount(Aggregation):
