@@ -7,12 +7,13 @@ See:
 
 import sys
 
-from pyspark.sql.functions import col
+from pyspark.sql.functions import col, lit
+from pyspark.sql.functions import when
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
 from common.kafka_pipeline import KafkaPipeline
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.basic_analytics.aggregations import *
+from common.basic_analytics.aggregations import Count, DistinctCount
 from util.utils import Utils
 
 
@@ -27,14 +28,24 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
             .aggregate(DistinctCount(group_fields=["hostname"], aggregation_field="dag",
                                      aggregation_name=self._component_name))
 
-        return [dag_count]
+        success_and_failures_counts = read_stream \
+            .select(col("@timestamp"), col("task"), col("dag"), col("message")) \
+            .where(col("message").like("Task exited with return code%")) \
+            .withColumn("status",
+                        when(col("message").like("Task exited with return code 0%"), lit("success"))
+                        .otherwise(lit("failure"))) \
+            .aggregate(Count(group_fields=["task", "dag", "status"], aggregation_name=self._component_name))
+
+        return [dag_count, success_and_failures_counts]
 
     @staticmethod
     def create_schema():
         return StructType([
             StructField("@timestamp", TimestampType()),
-            StructField("dag", StringType()),
-            StructField("hostname", StringType())
+            StructField("message", StringType()),
+            StructField("hostname", StringType()),
+            StructField("task", StringType()),
+            StructField("dag", StringType())
         ])
 
 
