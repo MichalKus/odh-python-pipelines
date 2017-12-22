@@ -1,3 +1,10 @@
+"""
+The module for the driver to calculate metrics related to DAGs in the Airflow Worker component.
+See:
+  ODH-1439: Success/failure extension of Airflow-Worker basics analytics job
+  ODH-1442: Airflow. Running DAGs per hosts
+"""
+
 import sys
 
 from pyspark.sql.functions import *
@@ -10,8 +17,11 @@ from util.utils import Utils
 
 
 class AirflowWorkerDag(BasicAnalyticsProcessor):
-    def _process_pipeline(self, read_stream):
+    """
+    The processor implementation to calculate metrics related to DAGs in the Airflow Worker component.
+    """
 
+    def _process_pipeline(self, read_stream):
         dag_count = read_stream \
             .select(col("hostname"), col("@timestamp"), col("dag")) \
             .aggregate(DistinctCount(group_fields=["hostname"], aggregation_field="dag",
@@ -29,6 +39,8 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
 
 
 def create_processor(configuration):
+    """Method to create the instance of the processor"""
+
     return AirflowWorkerDag(configuration, AirflowWorkerDag.create_schema())
 
 

@@ -1,8 +1,13 @@
+"""
+The module to define aggregations for an input dataframes.
+Aggregation class defines common methods for all aggregations.
+"""
+
 from abc import ABCMeta, abstractmethod
 
 import re
 from pyspark.sql.functions import *
-from pyspark.sql.types import DecimalType, DoubleType
+from pyspark.sql.types import DecimalType
 
 
 class Aggregation(object):
