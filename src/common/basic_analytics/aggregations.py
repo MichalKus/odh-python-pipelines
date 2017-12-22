@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
+import re
 from pyspark.sql.functions import *
 from pyspark.sql.types import DecimalType, DoubleType
 
@@ -34,7 +35,12 @@ class Aggregation(object):
                [concat(lit(group_field), lit("."), regexp_replace(input_dataframe[group_field], "\\s+", "_"))
                 for group_field in self.__group_fields] + \
                [lit(self._aggregation_field)] + \
-               [lit(self.__class__.__name__.lower())]
+               [lit(self.__convert_to_underlined(self.__class__.__name__))]
+
+    @staticmethod
+    def __convert_to_underlined(name):
+        s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+        return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
     @abstractmethod
     def aggregate(self, grouped_dataframe):

@@ -1,6 +1,6 @@
-{"@timestamp": "2017-12-20T09:13:00.000Z", "hostname": "be-l-p-obo00156", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.hostname.be-l-p-obo00156.dag.distinctcount", "value": 1}
-{"@timestamp": "2017-12-20T09:13:00.000Z", "hostname": "zg-l-p-obo00117", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.hostname.zg-l-p-obo00117.dag.distinctcount", "value": 1}
-{"@timestamp": "2017-12-20T09:13:00.000Z", "hostname": "zg-l-p-obo00116", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.hostname.zg-l-p-obo00116.dag.distinctcount", "value": 2}
-{"@timestamp": "2017-12-20T09:12:00.000Z", "hostname": "zg-l-p-obo00116", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.hostname.zg-l-p-obo00116.dag.distinctcount", "value": 1}
-{"@timestamp": "2017-12-20T09:12:00.000Z", "hostname": "be-l-p-obo00156", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.hostname.be-l-p-obo00156.dag.distinctcount", "value": 1}
-{"@timestamp": "2017-12-20T09:12:00.000Z", "hostname": "zg-l-p-obo00117", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.hostname.zg-l-p-obo00117.dag.distinctcount", "value": 1}
+{"@timestamp": "2017-12-20T09:13:00.000Z", "hostname": "be-l-p-obo00156", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.hostname.be-l-p-obo00156.dag.distinct_count", "value": 1}
+{"@timestamp": "2017-12-20T09:13:00.000Z", "hostname": "zg-l-p-obo00117", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.hostname.zg-l-p-obo00117.dag.distinct_count", "value": 1}
+{"@timestamp": "2017-12-20T09:13:00.000Z", "hostname": "zg-l-p-obo00116", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.hostname.zg-l-p-obo00116.dag.distinct_count", "value": 2}
+{"@timestamp": "2017-12-20T09:12:00.000Z", "hostname": "zg-l-p-obo00116", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.hostname.zg-l-p-obo00116.dag.distinct_count", "value": 1}
+{"@timestamp": "2017-12-20T09:12:00.000Z", "hostname": "be-l-p-obo00156", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.hostname.be-l-p-obo00156.dag.distinct_count", "value": 1}
+{"@timestamp": "2017-12-20T09:12:00.000Z", "hostname": "zg-l-p-obo00117", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.hostname.zg-l-p-obo00117.dag.distinct_count", "value": 1}
