@@ -8,11 +8,13 @@ See:
 import sys
 
 from pyspark.sql.functions import col
+from pyspark.sql.functions import lit
+from pyspark.sql.functions import when
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
 from common.kafka_pipeline import KafkaPipeline
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.basic_analytics.aggregations import *
+from common.basic_analytics.aggregations import Count, DistinctCount
 from util.utils import Utils
 
 
