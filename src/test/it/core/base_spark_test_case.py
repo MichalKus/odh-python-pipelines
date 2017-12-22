@@ -7,6 +7,7 @@ from util.utils import Utils
 
 
 class BaseSparkProcessorTestCase(unittest.TestCase):
+    """ Class allows to proceed integration test for Spark Pipeline"""
     def _test_pipeline(self, configuration_path, processor_creator, input_dir, expected_result_file,
                        timeout=10, print_result=False):
         """
@@ -35,7 +36,8 @@ class BaseSparkProcessorTestCase(unittest.TestCase):
         result = [table for results in result_tables_list for table in results]
         pipeline.terminate_active_streams()
         if print_result:
-            print(result)
+            for row in result:
+                print(row)
         else:
             expected_result = self.__read_expected_result(expected_result_file)
             self.maxDiff = None

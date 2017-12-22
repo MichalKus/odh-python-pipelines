@@ -25,13 +25,13 @@ class Aggregation(object):
         self.__aggregation_window = aggregation_window
         self.__aggregation_name = aggregation_name
 
-    def apply(self, input_dataframe, aggregation_window=None):
+    def apply(self, input_dataframe, aggregation_window=None, time_column=None):
         actual_window = self.__aggregation_window \
             if self.__aggregation_window is not None else aggregation_window
         metric_name_list = self.__construct_metric_name(input_dataframe)
 
         return self.aggregate(
-            input_dataframe.groupBy(window("@timestamp", actual_window), *self.__group_fields)
+            input_dataframe.groupBy(window(time_column, actual_window), *self.__group_fields)
             if actual_window is not None else input_dataframe.groupBy(*self.__group_fields)
         ).withColumn("metric_name", concat_ws(".", *metric_name_list))
 
@@ -65,8 +65,8 @@ class AggregatedDataFrame(object):
         self.__dataframe = dataframe
         self.__aggregations = aggregations if isinstance(aggregations, list) else [aggregations]
 
-    def results(self, window=None):
-        return [aggregation.apply(self.__dataframe, window) for aggregation in self.__aggregations]
+    def results(self, window=None, time_column=None):
+        return [aggregation.apply(self.__dataframe, window, time_column) for aggregation in self.__aggregations]
 
 
 class Avg(Aggregation):
