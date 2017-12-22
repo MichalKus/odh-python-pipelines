@@ -110,8 +110,4 @@ class DistinctCount(Aggregation):
     """
 
     def aggregate(self, grouped_dataframe):
-        if self._aggregation_field is None:
-            raise SyntaxError("An aggregation field must be defined "
-                              "for ApproximateCountDistinct aggregation.")
-
         return grouped_dataframe.agg(approx_count_distinct(self._aggregation_field).alias("value"))
