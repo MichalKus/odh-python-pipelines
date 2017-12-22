@@ -1,10 +1,16 @@
+"""
+The module to define aggregations for an input dataframes.
+Aggregation class defines common methods for all aggregations.
+"""
+
 from abc import ABCMeta, abstractmethod
 
+import re
 from pyspark.sql.functions import *
-from pyspark.sql.types import DecimalType, DoubleType
+from pyspark.sql.types import DecimalType
 
 
-class Aggregation:
+class Aggregation(object):
     """
     Abstract class to define any aggregation for an input dataframe
     using specified fields to group and window if it's needed.
@@ -34,7 +40,12 @@ class Aggregation:
                [concat(lit(group_field), lit("."), regexp_replace(input_dataframe[group_field], "\\s+", "_"))
                 for group_field in self.__group_fields] + \
                [lit(self._aggregation_field)] + \
-               [lit(self.__class__.__name__.lower())]
+               [lit(self.__convert_to_underlined(self.__class__.__name__))]
+
+    @staticmethod
+    def __convert_to_underlined(name):
+        s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+        return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
     @abstractmethod
     def aggregate(self, grouped_dataframe):
@@ -45,7 +56,7 @@ class Aggregation:
         """
 
 
-class AggregatedDataFrame:
+class AggregatedDataFrame(object):
     """
     Class for aggregated dataframe by specified functions.
     """
@@ -63,8 +74,9 @@ class Avg(Aggregation):
     Computes average values for each numeric columns for each group.
     """
 
-    def aggregate(self, grouped_dataframe): return grouped_dataframe.agg(
-        avg(self._aggregation_field).cast(DecimalType(scale=2)).alias("value"))
+    def aggregate(self, grouped_dataframe):
+        return grouped_dataframe.agg(avg(
+            self._aggregation_field).cast(DecimalType(scale=2)).alias("value"))
 
 
 class Min(Aggregation):
@@ -72,7 +84,8 @@ class Min(Aggregation):
     Computes the min value for each numeric column for each group.
     """
 
-    def aggregate(self, grouped_dataframe): return grouped_dataframe.agg(min(self._aggregation_field).alias("value"))
+    def aggregate(self, grouped_dataframe):
+        return grouped_dataframe.agg(min(self._aggregation_field).alias("value"))
 
 
 class Max(Aggregation):
@@ -80,7 +93,8 @@ class Max(Aggregation):
     Computes the max value for each numeric column for each group.
     """
 
-    def aggregate(self, grouped_dataframe): return grouped_dataframe.agg(max(self._aggregation_field).alias("value"))
+    def aggregate(self, grouped_dataframe):
+        return grouped_dataframe.agg(max(self._aggregation_field).alias("value"))
 
 
 class Sum(Aggregation):
@@ -88,7 +102,8 @@ class Sum(Aggregation):
     Compute the sum for each numeric columns for each group.
     """
 
-    def aggregate(self, grouped_dataframe): return grouped_dataframe.agg(sum(self._aggregation_field).alias("value"))
+    def aggregate(self, grouped_dataframe):
+        return grouped_dataframe.agg(sum(self._aggregation_field).alias("value"))
 
 
 class Count(Aggregation):
@@ -96,4 +111,14 @@ class Count(Aggregation):
     Counts the number of records for each group.
     """
 
-    def aggregate(self, grouped_dataframe): return grouped_dataframe.agg(count("*").alias("value"))
+    def aggregate(self, grouped_dataframe):
+        return grouped_dataframe.agg(count("*").alias("value"))
+
+
+class DistinctCount(Aggregation):
+    """
+    Returns an approximate distinct count of ``_aggregation_field``
+    """
+
+    def aggregate(self, grouped_dataframe):
+        return grouped_dataframe.agg(approx_count_distinct(self._aggregation_field).alias("value"))
