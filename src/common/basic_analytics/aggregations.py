@@ -3,10 +3,11 @@ The module to define aggregations for an input dataframes.
 Aggregation class defines common methods for all aggregations.
 """
 
+import re
 from abc import ABCMeta, abstractmethod
 
-import re
-from pyspark.sql.functions import *
+from pyspark.sql.functions import lit, avg, count
+from pyspark.sql.functions import window, concat, concat_ws, regexp_replace, approx_count_distinct
 from pyspark.sql.types import DecimalType
 
 
@@ -25,15 +26,13 @@ class Aggregation(object):
         self.__aggregation_window = aggregation_window
         self.__aggregation_name = aggregation_name
 
-    def apply(self, input_dataframe, aggregation_window=None, time_column=None):
+    def apply(self, input_dataframe, aggregation_window, time_column):
         actual_window = self.__aggregation_window \
             if self.__aggregation_window is not None else aggregation_window
         metric_name_list = self.__construct_metric_name(input_dataframe)
 
-        return self.aggregate(
-            input_dataframe.groupBy(window(time_column, actual_window), *self.__group_fields)
-            if actual_window is not None else input_dataframe.groupBy(*self.__group_fields)
-        ).withColumn("metric_name", concat_ws(".", *metric_name_list))
+        window_aggreagated_df = input_dataframe.groupBy(window(time_column, actual_window), *self.__group_fields)
+        return self.aggregate(window_aggreagated_df).withColumn("metric_name", concat_ws(".", *metric_name_list))
 
     def __construct_metric_name(self, input_dataframe):
         return [lit(self.__aggregation_name)] + \
@@ -65,7 +64,7 @@ class AggregatedDataFrame(object):
         self.__dataframe = dataframe
         self.__aggregations = aggregations if isinstance(aggregations, list) else [aggregations]
 
-    def results(self, window=None, time_column=None):
+    def results(self, window, time_column):
         return [aggregation.apply(self.__dataframe, window, time_column) for aggregation in self.__aggregations]
 
 

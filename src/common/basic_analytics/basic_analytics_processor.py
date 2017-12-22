@@ -16,7 +16,7 @@ class BasicAnalyticsProcessor:
 
     def __init__(self, configuration, schema):
         self.__configuration = configuration
-        self.__schema = schema
+        self._schema = schema
         self._component_name = configuration.property("analytics.componentName")
         DataFrame.aggregate = BasicAnalyticsProcessor.__aggregate_dataframe
 
@@ -24,9 +24,11 @@ class BasicAnalyticsProcessor:
     def __aggregate_dataframe(dataframe, aggregations):
         return AggregatedDataFrame(dataframe, aggregations)
 
+
+
     def _prepare_stream(self, read_stream):
         return read_stream \
-            .select(from_json(read_stream["value"].cast("string"), self.__schema).alias("json")) \
+            .select(from_json(read_stream["value"].cast("string"), self._schema).alias("json")) \
             .select("json.*") \
             .withWatermark(self._get_watermark_field(), self._get_interval_duration("watermark"))
 
