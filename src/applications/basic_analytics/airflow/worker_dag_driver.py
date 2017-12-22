@@ -7,8 +7,8 @@ See:
 
 import sys
 
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
+from pyspark.sql.functions import col
+from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
 from common.kafka_pipeline import KafkaPipeline
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
