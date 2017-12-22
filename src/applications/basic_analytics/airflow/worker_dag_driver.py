@@ -7,8 +7,7 @@ See:
 
 import sys
 
-from pyspark.sql.functions import col
-from pyspark.sql.functions import lit
+from pyspark.sql.functions import col, lit
 from pyspark.sql.functions import when
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
@@ -32,10 +31,10 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
         success_and_failures_counts = read_stream \
             .select(col("@timestamp"), col("task"), col("dag"), col("message")) \
             .where(col("message").like("Task exited with return code%")) \
-            .withColumn("success",
-                        when(col("message").like("Task exited with return code 0%"), lit("true"))
-                        .when(col("message").like("Task exited with return code 1%"), lit("false"))) \
-            .aggregate(Count(group_fields=["task", "dag", "success"], aggregation_name=self._component_name))
+            .withColumn("status",
+                        when(col("message").like("Task exited with return code 0%"), lit("success"))
+                        .otherwise(lit("failure"))) \
+            .aggregate(Count(group_fields=["task", "dag", "status"], aggregation_name=self._component_name))
 
         return [dag_count, success_and_failures_counts]
 
