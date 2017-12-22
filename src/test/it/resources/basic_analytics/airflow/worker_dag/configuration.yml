@@ -1,0 +1,10 @@
+spark:
+  appName: airflow-worker-dag-basic-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+
+analytics:
+  componentName: vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag
+  watermark: '1 minutes'
+  window: '1 minutes'
