@@ -7,8 +7,7 @@ See:
 
 import sys
 
-from pyspark.sql.functions import col, lit
-from pyspark.sql.functions import when
+from pyspark.sql.functions import col, lit, when
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
 from common.kafka_pipeline import KafkaPipeline
@@ -49,10 +48,10 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
         ])
 
 
-def create_processor(configuration):
+def create_processor(config):
     """Method to create the instance of the processor"""
 
-    return AirflowWorkerDag(configuration, AirflowWorkerDag.create_schema())
+    return AirflowWorkerDag(config, AirflowWorkerDag.create_schema())
 
 
 if __name__ == "__main__":
