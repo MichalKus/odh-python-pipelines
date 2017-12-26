@@ -1,17 +1,26 @@
+"""
+This module contains a general code for basic analytics processing pipeline.
+"""
 from abc import ABCMeta, abstractmethod
 
-from pyspark.sql.functions import *
+from pyspark.sql.functions import col, lit, from_json
 from pyspark.sql import DataFrame
 from common.basic_analytics.aggregations import AggregatedDataFrame
 
 
-class BasicAnalyticsProcessor:
+class BasicAnalyticsProcessor(object):
     """
-    Pipeline for basic analytics
+    Super class for basic analytics processing. It implements general pipeline. That is reading data, processing,
+    and writing to kafka sink.
     """
     __metaclass__ = ABCMeta
 
     def __init__(self, configuration, schema):
+        """
+        Constructor
+        :param configuration: configuration object of  Configuration type.
+        :param schema: schema of an input json message.
+        """
         self.__configuration = configuration
         self.__schema = schema
         self._component_name = configuration.property("analytics.componentName")
