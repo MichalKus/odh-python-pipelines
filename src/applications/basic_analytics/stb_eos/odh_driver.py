@@ -19,13 +19,16 @@ class StbEosOdhProcessor(BasicAnalyticsProcessor):
     - unique_count
     """
 
+    def __init__(self, configuration, schema):
+        super(StbEosOdhProcessor, self).__init__(configuration, schema, "ts")
+
     def _prepare_stream(self, read_stream):
         return read_stream \
             .select(from_json(read_stream["value"].cast("string"), self._schema).alias("json")) \
             .select("json.header.*") \
             .select(col("viewerId").alias("stb_id"),
                     from_unixtime(col("ts") / 1000).cast(TimestampType()).alias("ts")) \
-            .withWatermark(self._get_watermark_field(), self._get_interval_duration("watermark"))
+            .withWatermark(self._timefield_name, self._get_interval_duration("watermark"))
 
     def _process_pipeline(self, read_stream):
         stb_ids_count = read_stream.aggregate(
