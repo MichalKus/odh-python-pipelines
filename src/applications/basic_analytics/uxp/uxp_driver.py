@@ -3,8 +3,7 @@ This module contains code of basic UXP basic analytic spark job driver.
 """
 
 import sys
-from pyspark.sql.functions import current_timestamp
-from pyspark.sql.types import StructType, StructField, StringType
+from pyspark.sql.types import StructType, StructField, StringType, LongType
 
 from common.basic_analytics.aggregations import Count, Avg
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
@@ -30,7 +29,8 @@ class UxpBAProcessor(BasicAnalyticsProcessor):
         return StructType([
             StructField("url", StringType()),
             StructField("status code", StringType()),
-            StructField("responseTime", StringType())
+            StructField("responseTime", StringType()),
+            StructField("time", LongType())
         ])
 
     def _process_pipeline(self, uxp_stream):
@@ -40,9 +40,7 @@ class UxpBAProcessor(BasicAnalyticsProcessor):
         :return: list of processed streams
         """
 
-        filtered_exp_stream = uxp_stream \
-            .where(uxp_stream.url.isin(self.__processing_urls)) \
-            .withColumn("@timestamp", current_timestamp())
+        filtered_exp_stream = uxp_stream.where(uxp_stream.url.isin(self.__processing_urls))
 
         uxp_count_stream = filtered_exp_stream \
             .aggregate(Count(group_fields=["status code"], aggregation_name=self._component_name))
