@@ -1,0 +1,11 @@
+spark:
+  appName: stb-eos-basic-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+
+analytics:
+  componentName: vagrant.eosdtv.lab5aobo.tst.heapp.stb.eos.acs
+  watermarkField: 'time'
+  watermark: '1 minutes'
+  window: '1 minutes'
