@@ -3,7 +3,9 @@ This module contains code of basic UXP basic analytic spark job driver.
 """
 
 import sys
-from pyspark.sql.types import StructType, StructField, StringType, LongType
+
+from pyspark.sql.functions import from_unixtime, col
+from pyspark.sql.types import StructType, StructField, StringType, LongType, TimestampType
 
 from common.basic_analytics.aggregations import Count, Avg
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
@@ -33,6 +35,9 @@ class UxpBAProcessor(BasicAnalyticsProcessor):
             StructField("time", LongType())
         ])
 
+    def _prepare_timefield(self, data_stream):
+        return data_stream.withColumn("@timestamp", from_unixtime(col("time") / 1000).cast(TimestampType()))
+
     def _process_pipeline(self, uxp_stream):
         """
         Returns list with streams for aggragated fields.
@@ -43,10 +48,10 @@ class UxpBAProcessor(BasicAnalyticsProcessor):
         filtered_exp_stream = uxp_stream.where(uxp_stream.url.isin(self.__processing_urls))
 
         uxp_count_stream = filtered_exp_stream \
-            .aggregate(Count(group_fields=["status code"], aggregation_name=self._component_name))
+            .aggregate(Count(group_fields=["status code"], aggregation_name=self._component_name + ".count"))
 
         uxp_avg_response_time_stream = filtered_exp_stream \
-            .aggregate(Avg(group_fields=["responseTime"], aggregation_name=self._component_name))
+            .aggregate(Avg(aggregation_field="responseTime", aggregation_name=self._component_name + ".average"))
 
         return [uxp_count_stream, uxp_avg_response_time_stream]
 

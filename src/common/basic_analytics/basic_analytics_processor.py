@@ -27,10 +27,14 @@ class BasicAnalyticsProcessor(object):
         return AggregatedDataFrame(dataframe, aggregations)
 
     def _prepare_stream(self, read_stream):
-        return read_stream \
+        data_stream = read_stream \
             .select(from_json(read_stream["value"].cast("string"), self._schema).alias("json")) \
-            .select("json.*") \
-            .withWatermark(self._timefield_name, self._get_interval_duration("watermark"))
+            .select("json.*")
+        return self._prepare_timefield(data_stream).withWatermark(self._timefield_name,
+                                                                  self._get_interval_duration("watermark"))
+
+    def _prepare_timefield(self, data_stream):
+        return data_stream
 
     @abstractmethod
     def _process_pipeline(self, json_stream):
