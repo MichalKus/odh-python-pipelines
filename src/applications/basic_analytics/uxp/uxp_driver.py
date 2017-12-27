@@ -2,15 +2,12 @@
 This module contains code of basic UXP basic analytic spark job driver.
 """
 
-import sys
-
 from pyspark.sql.functions import from_unixtime, col
 from pyspark.sql.types import StructType, StructField, StringType, LongType, TimestampType
 
 from common.basic_analytics.aggregations import Count, Avg
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.kafka_pipeline import KafkaPipeline
-from util import Utils
+from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
 class UxpBAProcessor(BasicAnalyticsProcessor):
@@ -67,8 +64,4 @@ def create_processor(config):
 
 
 if __name__ == "__main__":
-    configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
-        configuration,
-        create_processor(configuration)
-    ).start()
+    start_basic_analytics_pipeline(create_processor)
