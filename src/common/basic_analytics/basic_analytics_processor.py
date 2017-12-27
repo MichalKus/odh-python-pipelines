@@ -1,5 +1,6 @@
 """"
-Modules contains processor for basic analytics (count, avg, min, max and etc)
+Modules contains superclass for basic analytics processors.
+It implements processing pipeline.
 """
 from abc import ABCMeta, abstractmethod
 
@@ -8,29 +9,28 @@ from pyspark.sql import DataFrame
 from common.basic_analytics.aggregations import AggregatedDataFrame
 
 
-class BasicAnalyticsProcessor:
+class BasicAnalyticsProcessor(object):
     """
-    Pipeline for basic analytics
+    Pipeline for basic analytics.
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self, configuration, schema):
+    def __init__(self, configuration, schema, timefield_name="@timestamp"):
         self.__configuration = configuration
         self._schema = schema
         self._component_name = configuration.property("analytics.componentName")
+        self._timefield_name = timefield_name
         DataFrame.aggregate = BasicAnalyticsProcessor.__aggregate_dataframe
 
     @staticmethod
     def __aggregate_dataframe(dataframe, aggregations):
         return AggregatedDataFrame(dataframe, aggregations)
 
-
-
     def _prepare_stream(self, read_stream):
         return read_stream \
             .select(from_json(read_stream["value"].cast("string"), self._schema).alias("json")) \
             .select("json.*") \
-            .withWatermark(self._get_watermark_field(), self._get_interval_duration("watermark"))
+            .withWatermark(self._timefield_name, self._get_interval_duration("watermark"))
 
     @abstractmethod
     def _process_pipeline(self, json_stream):
@@ -58,8 +58,8 @@ class BasicAnalyticsProcessor:
                               "with type AggregatedDataFrame or array of such objects.")
 
         # Get aggregations results
-        actual_window = self._get_interval_duration("window")
-        aggregated_results = [df.results(actual_window, self._get_watermark_field()) for df in aggregated_dataframes]
+        aggregation_window = self._get_interval_duration("window")
+        aggregated_results = [df.results(aggregation_window, self._timefield_name) for df in aggregated_dataframes]
         return [self._convert_to_kafka_structure(result) for results in aggregated_results for result in results]
 
     def _convert_to_kafka_structure(self, dataframe):
@@ -71,6 +71,3 @@ class BasicAnalyticsProcessor:
 
     def _get_interval_duration(self, name):
         return self.__configuration.property("analytics." + name)
-
-    def _get_watermark_field(self):
-        return self.__configuration.property("analytics.watermarkField", "@timestamp")
