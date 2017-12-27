@@ -1,5 +1,5 @@
-import unittest
 import json
+import unittest
 import uuid
 
 from common.test_pipeline import TestPipeline
@@ -7,6 +7,8 @@ from util.utils import Utils
 
 
 class BaseSparkProcessorTestCase(unittest.TestCase):
+    """ Class allows to proceed integration test for Spark Pipeline"""
+
     def _test_pipeline(self, configuration_path, processor_creator, input_dir, expected_result_file,
                        timeout=10, print_result=False):
         """
@@ -15,7 +17,6 @@ class BaseSparkProcessorTestCase(unittest.TestCase):
         :param processor_creator: processor for event_creator
         :param input_dir: path to input messages
         :param expected_result_file: path to expected result
-        :param table_name: name for table with result in memory
         :param timeout: timout for waiting driver end its work before matching result
         :param print_result: flag for only printing results to console for debugging
         :return:
@@ -35,7 +36,8 @@ class BaseSparkProcessorTestCase(unittest.TestCase):
         result = [table for results in result_tables_list for table in results]
         pipeline.terminate_active_streams()
         if print_result:
-            print(result)
+            for row in result:
+                print(row)
         else:
             expected_result = self.__read_expected_result(expected_result_file)
             self.maxDiff = None
