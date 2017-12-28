@@ -51,10 +51,10 @@ class UxpBasicAnalyticsProcessor(BasicAnalyticsProcessor):
         filtered_exp_stream = uxp_stream \
             .where(uxp_stream.url.isin(self.__processing_urls)) \
             .select(custom_translate_like(col("url"), self.__url_mapping, lit("undefined")).alias("action"),
-                    col("status code"), col("responseTime"), col("@timestamp"))
+                    col("status code").alias("statusCode"), col("responseTime"), col("@timestamp"))
 
         uxp_count_stream = filtered_exp_stream \
-            .aggregate(Count(group_fields=["action", "status code"], aggregation_name=self._component_name))
+            .aggregate(Count(group_fields=["action", "statusCode"], aggregation_name=self._component_name))
 
         uxp_avg_response_time_stream = filtered_exp_stream \
             .aggregate(Avg(aggregation_field="responseTime", group_fields=["action"],
