@@ -1,5 +1,5 @@
 from applications.basic_analytics.uxp.uxp_driver import create_processor
-from it.core.base_spark_test_case import BaseSparkProcessorTestCase
+from test.it.core.base_spark_test_case import BaseSparkProcessorTestCase
 
 
 class UxpBAProcessorTestCase(BaseSparkProcessorTestCase):
