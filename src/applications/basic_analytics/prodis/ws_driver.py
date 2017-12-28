@@ -1,10 +1,11 @@
 import sys
-from pyspark.sql.types import *
+from pyspark.sql.types import TimestampType, StructType, StructField, StringType
+from pyspark.sql.functions import col, regexp_replace, lower, when
 
 from common.basic_analytics.aggregations import Count
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.kafka_pipeline import KafkaPipeline
-from common.spark_utils.custom_functions import *
+from common.spark_utils.custom_functions import custom_translate_regex
 from util.utils import Utils
 
 

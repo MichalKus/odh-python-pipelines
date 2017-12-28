@@ -1,5 +1,4 @@
-from pyspark.sql.functions import lower, when
-from pyspark.sql.functions import Column
+from pyspark.sql.functions import lower, when, Column
 
 
 def custom_translate_regex(source_field, mapping, default_value, exact_match=False):
