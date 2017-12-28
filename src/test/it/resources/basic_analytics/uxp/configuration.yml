@@ -1,0 +1,10 @@
+spark:
+  appName: uxp-basic-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+
+analytics:
+  componentName: uxp
+  watermark: '1 minutes'
+  window: '1 minutes'
