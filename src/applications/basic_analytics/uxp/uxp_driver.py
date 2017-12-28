@@ -2,21 +2,27 @@
 This module contains code of basic UXP basic analytic spark job driver.
 """
 
-from pyspark.sql.functions import from_unixtime, col
+from pyspark.sql.functions import from_unixtime, col, lit
 from pyspark.sql.types import StructType, StructField, StringType, LongType, TimestampType
 
 from common.basic_analytics.aggregations import Count, Avg
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
+from common.spark_utils.custom_functions import custom_translate_like
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
-class UxpBAProcessor(BasicAnalyticsProcessor):
+class UxpBasicAnalyticsProcessor(BasicAnalyticsProcessor):
     """
     This is a driver class for UXP basic analytics spark job.
     """
 
     __processing_urls = ["id.virginmedia.com/oidc/authorize", "id.virginmedia.com/oidc/token",
                          "id.virginmedia.com/rest/v40/session/start", "id.virginmedia.com/oidc/token/revokeToken"]
+
+    __url_mapping = [(["id.virginmedia.com/oidc/authorize"], "authorize"),
+                     (["id.virginmedia.com/oidc/token"], "token"),
+                     (["id.virginmedia.com/rest/v40/session/start"], "session_start"),
+                     (["id.virginmedia.com/oidc/token/revokeToken"], "revokeToken")]
 
     @staticmethod
     def create_schema():
@@ -42,13 +48,17 @@ class UxpBAProcessor(BasicAnalyticsProcessor):
         :return: list of processed streams
         """
 
-        filtered_exp_stream = uxp_stream.where(uxp_stream.url.isin(self.__processing_urls))
+        filtered_exp_stream = uxp_stream \
+            .where(uxp_stream.url.isin(self.__processing_urls)) \
+            .select(custom_translate_like(col("url"), self.__url_mapping, lit("undefined")).alias("action"),
+                    col("status code"), col("responseTime"), col("@timestamp"))
 
         uxp_count_stream = filtered_exp_stream \
-            .aggregate(Count(group_fields=["status code"], aggregation_name=self._component_name + ".count"))
+            .aggregate(Count(group_fields=["action", "status code"], aggregation_name=self._component_name))
 
         uxp_avg_response_time_stream = filtered_exp_stream \
-            .aggregate(Avg(aggregation_field="responseTime", aggregation_name=self._component_name + ".average"))
+            .aggregate(Avg(aggregation_field="responseTime", group_fields=["action"],
+                           aggregation_name=self._component_name))
 
         return [uxp_count_stream, uxp_avg_response_time_stream]
 
@@ -60,7 +70,7 @@ def create_processor(config):
     :return: configured Uxp object.
     """
 
-    return UxpBAProcessor(config, UxpBAProcessor.create_schema())
+    return UxpBasicAnalyticsProcessor(config, UxpBasicAnalyticsProcessor.create_schema())
 
 
 if __name__ == "__main__":

@@ -1,21 +1,44 @@
-{"@timestamp": "2017-12-27T10:42:00.000Z", "metric_name": "uxp.basic-analytics.average.responseTime.avg", "value": 9.39}
-{"@timestamp": "2017-12-27T10:43:00.000Z", "metric_name": "uxp.basic-analytics.average.responseTime.avg", "value": 2.4}
-{"@timestamp": "2017-12-27T10:44:00.000Z", "metric_name": "uxp.basic-analytics.average.responseTime.avg", "value": 3.07}
-{"@timestamp": "2017-12-27T10:45:00.000Z", "metric_name": "uxp.basic-analytics.average.responseTime.avg", "value": 3.57}
-{"@timestamp": "2017-12-27T10:46:00.000Z", "metric_name": "uxp.basic-analytics.average.responseTime.avg", "value": 5.5}
-{"@timestamp": "2017-12-27T10:47:00.000Z", "metric_name": "uxp.basic-analytics.average.responseTime.avg", "value": 6.72}
-{"@timestamp": "2017-12-27T10:48:00.000Z", "metric_name": "uxp.basic-analytics.average.responseTime.avg", "value": 6.1}
-{"@timestamp": "2017-12-27T10:42:00.000Z", "status code": "401", "metric_name": "uxp.basic-analytics.count.status code.401.count", "value": 4}
-{"@timestamp": "2017-12-27T10:42:00.000Z", "status code": "200", "metric_name": "uxp.basic-analytics.count.status code.200.count", "value": 11}
-{"@timestamp": "2017-12-27T10:43:00.000Z", "status code": "200", "metric_name": "uxp.basic-analytics.count.status code.200.count", "value": 8}
-{"@timestamp": "2017-12-27T10:43:00.000Z", "status code": "401", "metric_name": "uxp.basic-analytics.count.status code.401.count", "value": 4}
-{"@timestamp": "2017-12-27T10:44:00.000Z", "status code": "200", "metric_name": "uxp.basic-analytics.count.status code.200.count", "value": 14}
-{"@timestamp": "2017-12-27T10:44:00.000Z", "status code": "401", "metric_name": "uxp.basic-analytics.count.status code.401.count", "value": 3}
-{"@timestamp": "2017-12-27T10:45:00.000Z", "status code": "200", "metric_name": "uxp.basic-analytics.count.status code.200.count", "value": 9}
-{"@timestamp": "2017-12-27T10:45:00.000Z", "status code": "401", "metric_name": "uxp.basic-analytics.count.status code.401.count", "value": 6}
-{"@timestamp": "2017-12-27T10:46:00.000Z", "status code": "200", "metric_name": "uxp.basic-analytics.count.status code.200.count", "value": 9}
-{"@timestamp": "2017-12-27T10:46:00.000Z", "status code": "401", "metric_name": "uxp.basic-analytics.count.status code.401.count", "value": 8}
-{"@timestamp": "2017-12-27T10:47:00.000Z", "status code": "200", "metric_name": "uxp.basic-analytics.count.status code.200.count", "value": 15}
-{"@timestamp": "2017-12-27T10:47:00.000Z", "status code": "401", "metric_name": "uxp.basic-analytics.count.status code.401.count", "value": 4}
-{"@timestamp": "2017-12-27T10:48:00.000Z", "status code": "200", "metric_name": "uxp.basic-analytics.count.status code.200.count", "value": 4}
-{"@timestamp": "2017-12-27T10:48:00.000Z", "status code": "401", "metric_name": "uxp.basic-analytics.count.status code.401.count", "value": 1}
+{"action": "session_start", "status code": "401", "metric_name": "uxp.action.session_start.status code.401.count", "value": 3, "@timestamp": "2017-12-27T10:42:00.000Z"}
+{"action": "session_start", "status code": "200", "metric_name": "uxp.action.session_start.status code.200.count", "value": 8, "@timestamp": "2017-12-27T10:42:00.000Z"}
+{"action": "token", "status code": "200", "metric_name": "uxp.action.token.status code.200.count", "value": 2, "@timestamp": "2017-12-27T10:42:00.000Z"}
+{"action": "authorize", "status code": "200", "metric_name": "uxp.action.authorize.status code.200.count", "value": 1, "@timestamp": "2017-12-27T10:42:00.000Z"}
+{"action": "token", "status code": "401", "metric_name": "uxp.action.token.status code.401.count", "value": 1, "@timestamp": "2017-12-27T10:42:00.000Z"}
+{"action": "session_start", "status code": "200", "metric_name": "uxp.action.session_start.status code.200.count", "value": 7, "@timestamp": "2017-12-27T10:43:00.000Z"}
+{"action": "authorize", "status code": "200", "metric_name": "uxp.action.authorize.status code.200.count", "value": 1, "@timestamp": "2017-12-27T10:43:00.000Z"}
+{"action": "session_start", "status code": "401", "metric_name": "uxp.action.session_start.status code.401.count", "value": 2, "@timestamp": "2017-12-27T10:43:00.000Z"}
+{"action": "token", "status code": "401", "metric_name": "uxp.action.token.status code.401.count", "value": 2, "@timestamp": "2017-12-27T10:43:00.000Z"}
+{"action": "session_start", "status code": "200", "metric_name": "uxp.action.session_start.status code.200.count", "value": 10, "@timestamp": "2017-12-27T10:44:00.000Z"}
+{"action": "authorize", "status code": "200", "metric_name": "uxp.action.authorize.status code.200.count", "value": 2, "@timestamp": "2017-12-27T10:44:00.000Z"}
+{"action": "session_start", "status code": "401", "metric_name": "uxp.action.session_start.status code.401.count", "value": 2, "@timestamp": "2017-12-27T10:44:00.000Z"}
+{"action": "token", "status code": "401", "metric_name": "uxp.action.token.status code.401.count", "value": 1, "@timestamp": "2017-12-27T10:44:00.000Z"}
+{"action": "token", "status code": "200", "metric_name": "uxp.action.token.status code.200.count", "value": 2, "@timestamp": "2017-12-27T10:44:00.000Z"}
+{"action": "session_start", "status code": "200", "metric_name": "uxp.action.session_start.status code.200.count", "value": 8, "@timestamp": "2017-12-27T10:45:00.000Z"}
+{"action": "session_start", "status code": "401", "metric_name": "uxp.action.session_start.status code.401.count", "value": 5, "@timestamp": "2017-12-27T10:45:00.000Z"}
+{"action": "authorize", "status code": "401", "metric_name": "uxp.action.authorize.status code.401.count", "value": 1, "@timestamp": "2017-12-27T10:45:00.000Z"}
+{"action": "session_start", "status code": "200", "metric_name": "uxp.action.session_start.status code.200.count", "value": 7, "@timestamp": "2017-12-27T10:46:00.000Z"}
+{"action": "token", "status code": "200", "metric_name": "uxp.action.token.status code.200.count", "value": 1, "@timestamp": "2017-12-27T10:46:00.000Z"}
+{"action": "token", "status code": "401", "metric_name": "uxp.action.token.status code.401.count", "value": 2, "@timestamp": "2017-12-27T10:46:00.000Z"}
+{"action": "session_start", "status code": "401", "metric_name": "uxp.action.session_start.status code.401.count", "value": 6, "@timestamp": "2017-12-27T10:46:00.000Z"}
+{"action": "authorize", "status code": "200", "metric_name": "uxp.action.authorize.status code.200.count", "value": 1, "@timestamp": "2017-12-27T10:46:00.000Z"}
+{"action": "session_start", "status code": "200", "metric_name": "uxp.action.session_start.status code.200.count", "value": 11, "@timestamp": "2017-12-27T10:47:00.000Z"}
+{"action": "token", "status code": "200", "metric_name": "uxp.action.token.status code.200.count", "value": 4, "@timestamp": "2017-12-27T10:47:00.000Z"}
+{"action": "session_start", "status code": "401", "metric_name": "uxp.action.session_start.status code.401.count", "value": 4, "@timestamp": "2017-12-27T10:47:00.000Z"}
+{"action": "session_start", "status code": "200", "metric_name": "uxp.action.session_start.status code.200.count", "value": 4, "@timestamp": "2017-12-27T10:48:00.000Z"}
+{"action": "session_start", "status code": "401", "metric_name": "uxp.action.session_start.status code.401.count", "value": 1, "@timestamp": "2017-12-27T10:48:00.000Z"}
+{"action": "session_start", "@timestamp": "2017-12-27T10:42:00.000Z", "metric_name": "uxp.action.session_start.responseTime.avg", "value": 0.34}
+{"action": "token", "@timestamp": "2017-12-27T10:42:00.000Z", "metric_name": "uxp.action.token.responseTime.avg", "value": 0.0}
+{"action": "authorize", "@timestamp": "2017-12-27T10:42:00.000Z", "metric_name": "uxp.action.authorize.responseTime.avg", "value": 137.02}
+{"action": "session_start", "@timestamp": "2017-12-27T10:43:00.000Z", "metric_name": "uxp.action.session_start.responseTime.avg", "value": 2.18}
+{"action": "authorize", "@timestamp": "2017-12-27T10:43:00.000Z", "metric_name": "uxp.action.authorize.responseTime.avg", "value": 0.0}
+{"action": "token", "@timestamp": "2017-12-27T10:43:00.000Z", "metric_name": "uxp.action.token.responseTime.avg", "value": 4.56}
+{"action": "session_start", "@timestamp": "2017-12-27T10:44:00.000Z", "metric_name": "uxp.action.session_start.responseTime.avg", "value": 4.34}
+{"action": "authorize", "@timestamp": "2017-12-27T10:44:00.000Z", "metric_name": "uxp.action.authorize.responseTime.avg", "value": 0.0}
+{"action": "token", "@timestamp": "2017-12-27T10:44:00.000Z", "metric_name": "uxp.action.token.responseTime.avg", "value": 0.0}
+{"action": "session_start", "@timestamp": "2017-12-27T10:45:00.000Z", "metric_name": "uxp.action.session_start.responseTime.avg", "value": 0.71}
+{"action": "authorize", "@timestamp": "2017-12-27T10:45:00.000Z", "metric_name": "uxp.action.authorize.responseTime.avg", "value": 0.0}
+{"action": "session_start", "@timestamp": "2017-12-27T10:46:00.000Z", "metric_name": "uxp.action.session_start.responseTime.avg", "value": 1.1}
+{"action": "token", "@timestamp": "2017-12-27T10:46:00.000Z", "metric_name": "uxp.action.token.responseTime.avg", "value": 26.42}
+{"action": "authorize", "@timestamp": "2017-12-27T10:46:00.000Z", "metric_name": "uxp.action.authorize.responseTime.avg", "value": 0.0}
+{"action": "session_start", "@timestamp": "2017-12-27T10:47:00.000Z", "metric_name": "uxp.action.session_start.responseTime.avg", "value": 1.26}
+{"action": "token", "@timestamp": "2017-12-27T10:47:00.000Z", "metric_name": "uxp.action.token.responseTime.avg", "value": 27.2}
+{"action": "session_start", "@timestamp": "2017-12-27T10:48:00.000Z", "metric_name": "uxp.action.session_start.responseTime.avg", "value": 6.1}

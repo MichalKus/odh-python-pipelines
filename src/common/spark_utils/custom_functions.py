@@ -1,4 +1,4 @@
-from pyspark.sql.functions import *
+from pyspark.sql.functions import lower, when
 from pyspark.sql.functions import Column
 
 
@@ -33,7 +33,23 @@ def custom_translate_regex(source_field, mapping, default_value, exact_match=Fal
 
 
 def custom_translate_like(source_field, mappings_pair, default_value):
+    """
+    This function returns function which can translate column values to values specified by mapping.
+    Mapping is spacified as list of tuples. Each tuple contains list of match strings and value to return if
+    match strings are found in column values.
+    :param source_field: field to analyze
+    :param mappings_pair: list of matching tuples.
+    :param default_value: spark sql value for column if mapping is not found.
+    :return: complex spark sql function which can be used in select or withColumns.
+    """
+
     def get_like_condition(source_filed, mappings):
+        """
+        This function returns a part of matching expression.
+        :param source_filed: source column
+        :param mappings: array of string values to be looked for in source column.
+        :return: matching expression
+        """
         return  reduce(
             lambda c1, c2: c1.__and__(c2),
             [lower(source_filed).like("%" + mapping.lower() + "%") for mapping in mappings]

@@ -34,6 +34,13 @@ class BasicAnalyticsProcessor(object):
                                                                   self._get_interval_duration("watermark"))
 
     def _prepare_timefield(self, data_stream):
+        """
+        This method should be used to create proper time field in data_stream. This may need if time field name
+        is not @timestamp.
+        Default implementation does nothing and it's consistemt with default name of time field '@timestamp'.
+        :param data_stream: spark stream
+        :return: spark stream
+        """
         return data_stream
 
     @abstractmethod

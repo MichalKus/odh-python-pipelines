@@ -5,6 +5,6 @@ spark:
   outputMode: update
 
 analytics:
-  componentName: uxp.basic-analytics
+  componentName: uxp
   watermark: '1 minutes'
   window: '1 minutes'

@@ -8,5 +8,6 @@ class UxpBAProcessorTestCase(BaseSparkProcessorTestCase):
             configuration_path="test/it/resources/basic_analytics/uxp/configuration.yml",
             processor_creator=create_processor,
             input_dir="test/it/resources/basic_analytics/uxp/input",
-            expected_result_file="test/it/resources/basic_analytics/uxp/expected_result.txt"
+            expected_result_file="test/it/resources/basic_analytics/uxp/expected_result.txt",
+            print_result=False
         )
