@@ -35,9 +35,9 @@ class BasicAnalyticsProcessor(object):
 
     def _prepare_timefield(self, data_stream):
         """
-        This method should be used to create proper time field in data_stream. This may need if time field name
+        This method can be overridden to create proper time field in data_stream. This may need if time field name
         is not @timestamp.
-        Default implementation does nothing and it's consistemt with default name of time field '@timestamp'.
+        Default implementation does nothing and it's consistent with default name of time field '@timestamp'.
         :param data_stream: spark stream
         :return: spark stream
         """
