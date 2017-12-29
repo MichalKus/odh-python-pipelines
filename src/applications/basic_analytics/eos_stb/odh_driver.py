@@ -1,18 +1,16 @@
 """
 Modules contains general logic for HE components like ODH
 """
-import sys
 
 from pyspark.sql.functions import col, from_json, from_unixtime
 from pyspark.sql.types import StructType, StructField, TimestampType, StringType, LongType
 
 from common.basic_analytics.aggregations import Count, DistinctCount
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.kafka_pipeline import KafkaPipeline
-from util.utils import Utils
+from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
-class StbEosOdhProcessor(BasicAnalyticsProcessor):
+class EosStbOdhProcessor(BasicAnalyticsProcessor):
     """
     STB EOS ODH driver contains logic for calculation several metrics:
     - count
@@ -20,7 +18,7 @@ class StbEosOdhProcessor(BasicAnalyticsProcessor):
     """
 
     def __init__(self, configuration, schema):
-        super(StbEosOdhProcessor, self).__init__(configuration, schema, "ts")
+        super(EosStbOdhProcessor, self).__init__(configuration, schema, "ts")
 
     def _prepare_stream(self, read_stream):
         return read_stream \
@@ -51,12 +49,8 @@ class StbEosOdhProcessor(BasicAnalyticsProcessor):
 
     @staticmethod
     def create_processor(configuration):
-        return StbEosOdhProcessor(configuration, StbEosOdhProcessor.create_schema())
+        return EosStbOdhProcessor(configuration, EosStbOdhProcessor.create_schema())
 
 
 if __name__ == "__main__":
-    configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
-        configuration,
-        StbEosOdhProcessor.create_processor(configuration)
-    ).start()
+    start_basic_analytics_pipeline(EosStbOdhProcessor.create_processor)
