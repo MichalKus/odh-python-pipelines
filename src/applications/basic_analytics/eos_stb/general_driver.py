@@ -1,18 +1,16 @@
 """
 Modules contains general logic for HE components like ACS, uService and etc (exclude ODH)
 """
-import sys
 
 from pyspark.sql.functions import col, from_unixtime, from_json
 from pyspark.sql.types import StructType, StructField, TimestampType, StringType, LongType
 
 from common.basic_analytics.aggregations import Count, DistinctCount
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.kafka_pipeline import KafkaPipeline
-from util.utils import Utils
+from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
-class GeneralStbEosProcessor(BasicAnalyticsProcessor):
+class GeneralEosStbProcessor(BasicAnalyticsProcessor):
     """
     STB EOS General driver contains logic for calculation several metrics:
     - count
@@ -20,7 +18,7 @@ class GeneralStbEosProcessor(BasicAnalyticsProcessor):
     """
 
     def __init__(self, configuration, schema):
-        super(GeneralStbEosProcessor, self).__init__(configuration, schema, "time")
+        super(GeneralEosStbProcessor, self).__init__(configuration, schema, "time")
 
     def _prepare_stream(self, read_stream):
         return read_stream \
@@ -49,12 +47,8 @@ class GeneralStbEosProcessor(BasicAnalyticsProcessor):
 
     @staticmethod
     def create_processor(configuration):
-        return GeneralStbEosProcessor(configuration, GeneralStbEosProcessor.create_schema())
+        return GeneralEosStbProcessor(configuration, GeneralEosStbProcessor.create_schema())
 
 
 if __name__ == "__main__":
-    configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
-        configuration,
-        GeneralStbEosProcessor.create_processor(configuration)
-    ).start()
+    start_basic_analytics_pipeline(GeneralEosStbProcessor.create_processor)
