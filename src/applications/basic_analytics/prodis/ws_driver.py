@@ -1,15 +1,21 @@
-import sys
+"""
+The module for the driver to calculate metrics related to Prodis WS component.
+"""
+
 from pyspark.sql.types import TimestampType, StructType, StructField, StringType
 from pyspark.sql.functions import col, regexp_replace, lower, when
 
 from common.basic_analytics.aggregations import Count
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.kafka_pipeline import KafkaPipeline
 from common.spark_utils.custom_functions import custom_translate_regex
-from util.utils import Utils
+from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
 class ProdisWS(BasicAnalyticsProcessor):
+    """
+    The processor implementation to calculate metrics related to Prodis WS component.
+    """
+
     def __init__(self, configuration, schema):
         self.__component_name = configuration.property("analytics.componentName")
         super(ProdisWS, self).__init__(configuration, schema)
@@ -34,9 +40,9 @@ class ProdisWS(BasicAnalyticsProcessor):
                         when(
                             (col("level") == "INFO") &
                             (
-                                (col("message").contains("successfully initialized port"))
-                                |
-                                ~(col("message").rlike("^[^']*(['][^']*?['])*[^']*succe.*"))
+                                    (col("message").contains("successfully initialized port"))
+                                    |
+                                    ~(col("message").rlike("^[^']*(['][^']*?['])*[^']*succe.*"))
                             ),
                             "SUCCESS")
                         .otherwise(col("level"))) \
@@ -69,12 +75,9 @@ class ProdisWS(BasicAnalyticsProcessor):
 
 
 def create_processor(configuration):
+    """Method to create the instance of the processor"""
     return ProdisWS(configuration, ProdisWS.create_schema())
 
 
 if __name__ == "__main__":
-    configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
-        configuration,
-        create_processor(configuration)
-    ).start()
+    start_basic_analytics_pipeline(create_processor)

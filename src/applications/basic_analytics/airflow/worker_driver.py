@@ -1,16 +1,20 @@
-import sys
+"""
+The module for the driver to calculate metrics related to Airflow Worker component.
+"""
+from pyspark.sql.functions import col, regexp_extract
+from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
-
-from common.kafka_pipeline import KafkaPipeline
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.spark_utils.custom_functions import *
+from common.spark_utils.custom_functions import custom_translate_regex
 from common.basic_analytics.aggregations import Count
-from util.utils import Utils
+from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
 class AirflowWorker(BasicAnalyticsProcessor):
+    """
+    The processor implementation to calculate metrics related to Airflow Worker component.
+    """
+
     def _process_pipeline(self, read_stream):
         exception_types_stream = read_stream \
             .withColumn("exception_text", regexp_extract("message", r"\nException\:(.+?)\n", 1)) \
@@ -40,12 +44,10 @@ class AirflowWorker(BasicAnalyticsProcessor):
 
 
 def create_processor(configuration):
+    """Method to create the instance of the processor"""
+
     return AirflowWorker(configuration, AirflowWorker.create_schema())
 
 
 if __name__ == "__main__":
-    configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
-        configuration,
-        create_processor(configuration)
-    ).start()
+    start_basic_analytics_pipeline(create_processor)

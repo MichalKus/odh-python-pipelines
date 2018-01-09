@@ -5,15 +5,12 @@ See:
   ODH-1442: Airflow. Running DAGs per hosts
 """
 
-import sys
-
 from pyspark.sql.functions import col, lit, when
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
-from common.kafka_pipeline import KafkaPipeline
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.basic_analytics.aggregations import Count, DistinctCount
-from util.utils import Utils
+from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
 class AirflowWorkerDag(BasicAnalyticsProcessor):
@@ -48,15 +45,11 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
         ])
 
 
-def create_processor(config):
+def create_processor(configuration):
     """Method to create the instance of the processor"""
 
-    return AirflowWorkerDag(config, AirflowWorkerDag.create_schema())
+    return AirflowWorkerDag(configuration, AirflowWorkerDag.create_schema())
 
 
 if __name__ == "__main__":
-    configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
-        configuration,
-        create_processor(configuration)
-    ).start()
+    start_basic_analytics_pipeline(create_processor)
