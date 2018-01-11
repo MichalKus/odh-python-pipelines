@@ -6,8 +6,8 @@ Aggregation class defines common methods for all aggregations.
 import re
 from abc import ABCMeta, abstractmethod
 
-from pyspark.sql.functions import lit, avg, count
-from pyspark.sql.functions import window, concat, concat_ws, regexp_replace, approx_count_distinct
+from pyspark.sql.functions import lit, avg, count, col, regexp_replace, concat
+from pyspark.sql.functions import window, concat_ws, approx_count_distinct
 from pyspark.sql.types import DecimalType
 
 
@@ -29,17 +29,20 @@ class Aggregation(object):
     def apply(self, input_dataframe, aggregation_window, time_column):
         actual_window = self.__aggregation_window \
             if self.__aggregation_window is not None else aggregation_window
-        metric_name_list = self.__construct_metric_name(input_dataframe)
-
+        metric_name = self.__construct_metric_name()
         window_aggreagated_df = input_dataframe.groupBy(window(time_column, actual_window), *self.__group_fields)
-        return self.aggregate(window_aggreagated_df).withColumn("metric_name", concat_ws(".", *metric_name_list))
+        return self.aggregate(window_aggreagated_df) \
+            .withColumn("metric_name", metric_name) \
+            .withColumn("metric_name", regexp_replace(col("metric_name"), "\\s+", "_"))
 
-    def __construct_metric_name(self, input_dataframe):
-        return [lit(self.__aggregation_name)] + \
-               [concat(lit(group_field), lit("."), regexp_replace(input_dataframe[group_field], "\\s+", "_"))
-                for group_field in self.__group_fields] + \
-               [lit(self._aggregation_field)] + \
-               [lit(self.__convert_to_underlined(self.__class__.__name__))]
+    def __construct_metric_name(self):
+        metric_name_parts = \
+            [lit(self.__aggregation_name)] + \
+            [concat(lit(group_field + "."), col(group_field))
+             for group_field in self.__group_fields] + \
+            [lit(self._aggregation_field), lit(self.__convert_to_underlined(self.__class__.__name__))]
+
+        return concat_ws(".", *metric_name_parts)
 
     @staticmethod
     def __convert_to_underlined(name):
