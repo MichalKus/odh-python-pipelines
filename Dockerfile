@@ -1,4 +1,4 @@
-FROM smartislav/spark:2.2.0-12
+FROM smartislav/spark:2.2.1-1
 
 RUN pip install nose nose-exclude coverage \
  && mkdir -p /odh/python/.xunit-reports /odh/python/.coverage-reports

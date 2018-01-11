@@ -2,7 +2,7 @@
 Modules contains general logic for HE components like ACS, uService and etc (exclude ODH)
 """
 
-from pyspark.sql.functions import col, from_unixtime, from_json
+from pyspark.sql.functions import col, from_unixtime
 from pyspark.sql.types import StructType, StructField, TimestampType, StringType, LongType
 
 from common.basic_analytics.aggregations import Count, DistinctCount
@@ -17,26 +17,20 @@ class GeneralEosStbProcessor(BasicAnalyticsProcessor):
     - unique_count
     """
 
-    def __init__(self, configuration, schema):
-        super(GeneralEosStbProcessor, self).__init__(configuration, schema, "time")
+    def __init__(self, configuration):
+        BasicAnalyticsProcessor.__init__(self, configuration, GeneralEosStbProcessor.create_schema())
 
-    def _prepare_stream(self, read_stream):
-        return read_stream \
-            .select(from_json(read_stream["value"].cast("string"), self._schema).alias("json")) \
-            .select("json.*") \
-            .select(col("xdev").alias("stb_id"),
-                    from_unixtime(col("time") / 1000).cast(TimestampType()).alias("time")) \
-            .withWatermark(self._timefield_name, self._get_interval_duration("watermark"))
+    def _prepare_timefield(self, data_stream):
+        return data_stream.withColumn("@timestamp", from_unixtime(col("time") / 1000).cast(TimestampType()))
 
     def _process_pipeline(self, read_stream):
-        stb_ids_count = read_stream.aggregate(
-            Count(aggregation_field="stb_id",
-                  aggregation_name=self._component_name))
+        requests_count = read_stream.aggregate(Count(aggregation_name=self._component_name + ".request"))
 
-        stb_ids_distinct_count = read_stream.aggregate(
-            DistinctCount(aggregation_field="stb_id",
-                          aggregation_name=self._component_name))
-        return [stb_ids_count, stb_ids_distinct_count]
+        stb_ids_distinct_count = read_stream \
+            .withColumn("stb_id", col("xdev")) \
+            .aggregate(DistinctCount(aggregation_field="stb_id",
+                                     aggregation_name=self._component_name))
+        return [requests_count, stb_ids_distinct_count]
 
     @staticmethod
     def create_schema():
@@ -47,7 +41,7 @@ class GeneralEosStbProcessor(BasicAnalyticsProcessor):
 
     @staticmethod
     def create_processor(configuration):
-        return GeneralEosStbProcessor(configuration, GeneralEosStbProcessor.create_schema())
+        return GeneralEosStbProcessor(configuration)
 
 
 if __name__ == "__main__":

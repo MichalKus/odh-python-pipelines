@@ -1,15 +1,20 @@
-import sys
+"""
+The module for the driver to calculate metrics related to Think Analytics resystemout component.
+"""
 
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
+from pyspark.sql.functions import regexp_extract
+from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
-from common.kafka_pipeline import KafkaPipeline
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.basic_analytics.aggregations import Count, Avg
-from util.utils import Utils
+from common.basic_analytics.aggregations import Avg
+from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
 class ThinkAnalyticsReSystemOut(BasicAnalyticsProcessor):
+    """
+    The processor implementation to calculate metrics related to Think Analytics resystemout component.
+    """
+
     def _process_pipeline(self, read_stream):
         duration_stream = read_stream \
             .where("level == 'INFO'") \
@@ -31,12 +36,9 @@ class ThinkAnalyticsReSystemOut(BasicAnalyticsProcessor):
 
 
 def create_processor(configuration):
+    """Method to create the instance of the processor"""
     return ThinkAnalyticsReSystemOut(configuration, ThinkAnalyticsReSystemOut.create_schema())
 
 
 if __name__ == "__main__":
-    configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
-        configuration,
-        create_processor(configuration)
-    ).start()
+    start_basic_analytics_pipeline(create_processor)
