@@ -40,9 +40,9 @@ class ProdisWS(BasicAnalyticsProcessor):
                         when(
                             (col("level") == "INFO") &
                             (
-                                    (col("message").contains("successfully initialized port"))
-                                    |
-                                    ~(col("message").rlike("^[^']*(['][^']*?['])*[^']*succe.*"))
+                                (col("message").contains("successfully initialized port"))
+                                |
+                                ~(col("message").rlike("^[^']*(['][^']*?['])*[^']*succe.*"))
                             ),
                             "SUCCESS")
                         .otherwise(col("level"))) \
