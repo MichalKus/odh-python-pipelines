@@ -30,7 +30,7 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
             .withColumn("status",
                         when(col("message").like("Task exited with return code 0%"), lit("success"))
                         .otherwise(lit("failure"))) \
-            .aggregate(Count(group_fields=["task", "dag", "status"], aggregation_name=self._component_name))
+            .aggregate(Count(group_fields=["dag", "task", "status"], aggregation_name=self._component_name))
 
         return [dag_count, success_and_failures_counts]
 
