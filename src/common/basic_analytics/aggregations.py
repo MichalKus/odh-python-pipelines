@@ -32,15 +32,16 @@ class Aggregation(object):
         metric_name = self.__construct_metric_name()
         window_aggreagated_df = input_dataframe.groupBy(window(time_column, actual_window), *self.__group_fields)
         return self.aggregate(window_aggreagated_df) \
-            .withColumn("metric_name", metric_name) \
-            .withColumn("metric_name", regexp_replace(col("metric_name"), "\\s+", "_"))
+            .withColumn("metric_name", regexp_replace(metric_name, "\\s+", "_"))
 
     def __construct_metric_name(self):
-        metric_name_parts = \
-            [lit(self.__aggregation_name)] + \
-            [concat(lit(group_field + "."), col(group_field))
-             for group_field in self.__group_fields] + \
-            [lit(self._aggregation_field), lit(self.__convert_to_underlined(self.__class__.__name__))]
+        metric_name_parts = [lit(self.__aggregation_name)]
+
+        for group_field in self.__group_fields:
+            metric_name_parts += [lit(group_field), col(group_field)]
+
+        metric_name_parts += [lit(self._aggregation_field),
+                              lit(self.__convert_to_underlined(self.__class__.__name__))]
 
         return concat_ws(".", *metric_name_parts)
 
