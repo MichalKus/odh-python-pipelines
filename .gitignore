@@ -7,3 +7,5 @@
 
 # spark stuff
 **/spark-warehouse
+
+venv*

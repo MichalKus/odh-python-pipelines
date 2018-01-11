@@ -1,15 +1,18 @@
-import sys
+"""
+The module for the driver to calculate metrics related to Think Analytics HTTP access component.
+"""
+from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
-
-from common.kafka_pipeline import KafkaPipeline
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.basic_analytics.aggregations import Count, Avg
-from util.utils import Utils
+from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
 class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
+    """
+    The processor implementation to calculate metrics related to Think Analytics HTTP access component.
+    """
+
     def _process_pipeline(self, read_stream):
         avg_response_time_by_method_stream = read_stream \
             .where("method is not null") \
@@ -56,12 +59,9 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
 
 
 def create_processor(configuration):
+    """Method to create the instance of the processor"""
     return ThinkAnalyticsHttpAccess(configuration, ThinkAnalyticsHttpAccess.create_schema())
 
 
 if __name__ == "__main__":
-    configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
-        configuration,
-        create_processor(configuration)
-    ).start()
+    start_basic_analytics_pipeline(create_processor)

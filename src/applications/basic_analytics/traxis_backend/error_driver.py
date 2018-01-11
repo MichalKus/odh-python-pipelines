@@ -1,15 +1,20 @@
-import sys
+"""
+The module for the driver to calculate metrics related to Traxis Backend error component.
+"""
 
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
+from pyspark.sql.functions import regexp_extract
+from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
 from common.basic_analytics.aggregations import Count
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.kafka_pipeline import KafkaPipeline
-from util.utils import Utils
+from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
 class TraxisBackendError(BasicAnalyticsProcessor):
+    """
+    The processor implementation to calculate metrics related to Traxis Backend error component.
+    """
+
     def _process_pipeline(self, read_stream):
         warn_events = read_stream.where("level == 'WARN'")
         error_events = read_stream.where("level == 'ERROR'")
@@ -57,12 +62,9 @@ class TraxisBackendError(BasicAnalyticsProcessor):
 
 
 def create_processor(configuration):
+    """Method to create the instance of the processor"""
     return TraxisBackendError(configuration, TraxisBackendError.create_schema())
 
 
 if __name__ == "__main__":
-    configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
-        configuration,
-        create_processor(configuration)
-    ).start()
+    start_basic_analytics_pipeline(create_processor)

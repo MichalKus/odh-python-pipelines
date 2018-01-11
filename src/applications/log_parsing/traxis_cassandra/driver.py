@@ -6,7 +6,7 @@ from common.log_parsing.event_creator_tree.multisource_configuration import *
 from common.log_parsing.list_event_creator.event_creator import EventCreator
 from common.log_parsing.list_event_creator.multiple_event_creator import MultipleEventCreator
 from common.log_parsing.list_event_creator.regexp_parser import RegexpParser
-from common.log_parsing.metadata import *
+from common.log_parsing.metadata import Metadata, StringField
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
 
