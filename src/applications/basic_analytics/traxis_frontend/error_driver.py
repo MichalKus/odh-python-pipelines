@@ -6,7 +6,7 @@ from pyspark.sql.functions import col, lit
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.spark_utils.custom_functions import *
+from common.spark_utils.custom_functions import custom_translate_like
 from common.basic_analytics.aggregations import Count
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
