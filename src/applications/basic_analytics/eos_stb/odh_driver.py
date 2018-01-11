@@ -29,7 +29,7 @@ class EosStbOdhProcessor(BasicAnalyticsProcessor):
         requests_count = stb_ids.aggregate(Count(aggregation_name=self._component_name + ".request"))
         stb_ids_distinct_count = stb_ids.aggregate(DistinctCount(aggregation_field="stb_id",
                                                                  aggregation_name=self._component_name))
-        return [requests_count , stb_ids_distinct_count]
+        return [requests_count, stb_ids_distinct_count]
 
     @staticmethod
     def create_schema():
