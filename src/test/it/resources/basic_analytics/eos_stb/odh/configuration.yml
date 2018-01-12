@@ -6,6 +6,5 @@ spark:
 
 analytics:
   componentName: vagrant.eosdtv.lab5aobo.tst.heapp.stb.eos.odh
-  watermarkField: 'ts'
   watermark: '1 minutes'
   window: '1 minutes'
