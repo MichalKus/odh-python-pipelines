@@ -130,11 +130,26 @@ def calc_cpu_kpi(msg):
     json_msg['proc_utime_rate'] = proc_utime_rate
     return json_msg
 
+def es_structure(msg):
+    doc = {
+        'timestamp': msg['proc_ts'],
+        'originId': msg['originId'],
+        'proc_name': msg['proc_name'],
+        'proc_rss': msg['proc_rss'],
+        'MemoryUsage_totalKb': msg['MemoryUsage_totalKb'],
+        'proc_mem_usage': msg['proc_mem_usage'],
+        'proc_stime': msg['proc_stime'],
+        'proc_stime_rate': msg['proc_stime_rate'],
+        'proc_utime': msg['proc_utime'],
+        'proc_utime_rate': msg['proc_utime_rate']
+    }
+    return doc
+
 def carbon_structure(msg):
     carbon_path = config.property('analytics.componentName')
     mem = {
         'proc_name': msg['proc_name'],
-        'timestamp': msg['proc_ts'],
+        '@timestamp': msg['proc_ts'],
         'originId': msg['originId'],
         'proc_rss': msg['proc_rss'],
         'MemoryUsage_totalKb': msg['MemoryUsage_totalKb'],
@@ -144,7 +159,7 @@ def carbon_structure(msg):
     }
     cpu_stime = {
         'proc_name': msg['proc_name'],
-        'timestamp': msg['proc_ts'],
+        '@timestamp': msg['proc_ts'],
         'originId': msg['originId'],
         'proc_stime': msg['proc_stime'],
         'proc_stime_rate': msg['proc_stime_rate'],
@@ -165,10 +180,12 @@ def carbon_structure(msg):
 def join_streams(stream_1, stream_2):
     joined = stream_1 \
         .leftOuterJoin(stream_2) \
-        .map(lambda x: calc_cpu_kpi(x)) \
-        .flatMap(lambda x: carbon_structure(x))
+        .map(lambda x: calc_cpu_kpi(x))
 
-    return joined
+    # sink = joined.flatMap(lambda x: carbon_structure(x))
+    sink = joined.map(lambda x: es_structure(x))
+
+    return sink
 
 def send_partition(iter):
     topic = config.property('kafka.topicOutput')
