@@ -192,7 +192,7 @@ def send_partition(iter):
     producer = KafkaProducer(bootstrap_servers = config.property('kafka.bootstrapServers').split(','))
     for record in iter:
         try:
-            record_metadata = producer.send(topic, json.dumps(record[1]).encode('utf-8')).get(timeout=30)
+            record_metadata = producer.send(topic, json.dumps(record).encode('utf-8')).get(timeout=30)
         except errors.KafkaTimeoutError:
             print("Topic: {}, Failed to deliver message".format(topic))
     producer.flush()
@@ -205,7 +205,7 @@ if __name__ == "__main__":
     output_stream = process_data(input_stream)
     state = state_manipulate(output_stream)
     joined = join_streams(output_stream, state)
-    joined.pprint()
-    # sink = output_stream.foreachRDD(lambda rdd: rdd.foreachPartition(send_partition))
+    # joined.pprint()
+    sink = joined.foreachRDD(lambda rdd: rdd.foreachPartition(send_partition))
     ssc.start()
     ssc.awaitTermination()

@@ -14,7 +14,7 @@ kafka:
     dlq: odhecx_pro_deadletterqueue
     inputs:
       - odhecx_pr_eosdtv_be_prd_stb_statelog_v1
-    output: observer-test
+    output: test
   security.protocol: SASL_PLAINTEXT
   sasl.mechanism: PLAIN
   failOnDataLoss: false
