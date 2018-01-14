@@ -15,4 +15,4 @@ kafka:
   saslMechanism: PLAIN
 
 analytics:
-  componentName: odhecx.eosdtv.be.prd.stb.top-processes
+  componentName: odhecx.eosdtv.be.prd.stb #.hw_version.model_name.fw_version.app_version.metric_group.metric_name

@@ -61,12 +61,20 @@ class StbProcessor(object):
             MemoryUsage_freeKb = row[2]
             MemoryUsage_totalKb = row[3]
             TopProcesses_processes = row[4]
+            hardwareVersion = row[5]
+            modelDescription = row[6]
+            firmwareVersion = row[7]
+            appVersion = row[8]
             res = []
             for proc in TopProcesses_processes:
                 if proc != "":
                     proc_row = []
                     ix = TopProcesses_processes.index(proc)
                     proc_row.append(timestamp[ix])
+                    proc_row.append(hardwareVersion[ix])
+                    proc_row.append(modelDescription[ix])
+                    proc_row.append(firmwareVersion[ix])
+                    proc_row.append(appVersion[ix])
                     if MemoryUsage_totalKb[ix] == '0':
                         mem_ix = ''
                         for i in list(reversed(range(ix))):
@@ -91,12 +99,18 @@ class StbProcessor(object):
         filled_df = agg_stream \
             .withColumn("res", fill_mem_field(struct([agg_stream[x] for x in agg_stream.columns]))) \
             .drop('collect_list(timestamp)', 'collect_list(MemoryUsage_freeKb)',
-                  'collect_list(MemoryUsage_totalKb)', 'collect_list(TopProcesses_processes)') \
+                  'collect_list(MemoryUsage_totalKb)', 'collect_list(TopProcesses_processes)',
+                  'collect_list(hardwareVersion)', 'collect_list(modelDescription)', 'collect_list(firmwareVersion)',
+                  'collect_list(appVersion)') \
             .withColumn('res', explode('res')) \
             .withColumn('timestamp', col('res').getItem(0)) \
-            .withColumn('MemoryUsage_freeKb', col('res').getItem(1)) \
-            .withColumn('MemoryUsage_totalKb', col('res').getItem(2)) \
-            .withColumn('TopProcesses_processes', col('res').getItem(3)) \
+            .withColumn('hardwareVersion', col('res').getItem(1)) \
+            .withColumn('modelDescription', col('res').getItem(2)) \
+            .withColumn('firmwareVersion', col('res').getItem(3)) \
+            .withColumn('appVersion', col('res').getItem(4)) \
+            .withColumn('MemoryUsage_freeKb', col('res').getItem(5)) \
+            .withColumn('MemoryUsage_totalKb', col('res').getItem(6)) \
+            .withColumn('TopProcesses_processes', col('res').getItem(7)) \
             .drop('res')
 
         return filled_df

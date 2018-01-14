@@ -134,6 +134,10 @@ def es_structure(msg):
     doc = {
         'timestamp': msg['proc_ts'],
         'originId': msg['originId'],
+        'hardwareVersion': msg['hardwareVersion'],
+        'appVersion': msg['appVersion'],
+        'modelDescription': msg['modelDescription'],
+        'firmwareVersion': msg['firmwareVersion'],
         'proc_name': msg['proc_name'],
         'proc_rss': msg['proc_rss'],
         'MemoryUsage_totalKb': msg['MemoryUsage_totalKb'],
@@ -146,7 +150,13 @@ def es_structure(msg):
     return doc
 
 def carbon_structure(msg):
-    carbon_path = config.property('analytics.componentName')
+    carbon_path = '{}.{}.{}.{}.{}.top-processes'.format(
+        config.property('analytics.componentName'),
+        msg['hardwareVersion'],
+        msg['modelDescription'],
+        msg['firmwareVersion'],
+        msg['appVersion'])
+
     mem = {
         'proc_name': msg['proc_name'],
         '@timestamp': msg['proc_ts'],
@@ -154,7 +164,7 @@ def carbon_structure(msg):
         'proc_rss': msg['proc_rss'],
         'MemoryUsage_totalKb': msg['MemoryUsage_totalKb'],
         'proc_mem_usage': msg['proc_mem_usage'],
-        'metric_name': '{}.mem.MemoryUsage_percentage'.format(carbon_path),
+        'metric_name': carbon_path + '.mem.MemoryUsage_percentage',
         'value': msg['proc_mem_usage']
     }
     cpu_stime = {
@@ -163,16 +173,16 @@ def carbon_structure(msg):
         'originId': msg['originId'],
         'proc_stime': msg['proc_stime'],
         'proc_stime_rate': msg['proc_stime_rate'],
-        'metric_name': '{}.cpu.stime_rate_jiffiespersec'.format(carbon_path),
+        'metric_name': carbon_path + '.cpu.stime_rate_jiffiespersec',
         'value': msg['proc_stime_rate']
     }
     cpu_utime = {
         'proc_name': msg['proc_name'],
-        'timestamp': msg['proc_ts'],
+        '@timestamp': msg['proc_ts'],
         'originId': msg['originId'],
         'proc_utime': msg['proc_utime'],
         'proc_utime_rate': msg['proc_utime_rate'],
-        'metric_name': '{}.cpu.utime_rate_jiffiespersec'.format(carbon_path),
+        'metric_name': carbon_path + '.cpu.utime_rate_jiffiespersec',
         'value': msg['proc_utime_rate']
     }
     return [mem, cpu_stime, cpu_utime]
@@ -182,8 +192,8 @@ def join_streams(stream_1, stream_2):
         .leftOuterJoin(stream_2) \
         .map(lambda x: calc_cpu_kpi(x))
 
-    # sink = joined.flatMap(lambda x: carbon_structure(x))
-    sink = joined.map(lambda x: es_structure(x))
+    sink = joined.flatMap(lambda x: carbon_structure(x))
+    # sink = joined.map(lambda x: es_structure(x))
 
     return sink
 

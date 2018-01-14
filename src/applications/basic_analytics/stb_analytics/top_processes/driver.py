@@ -10,9 +10,9 @@ class TopProcesses(StbProcessor):
     """
     https://www.wikitechy.com/tutorials/linux/how-to-calculate-the-cpu-usage-of-a-process-by-pid-in-Linux-from-c
     """
-    
+
     def __init__(self, configuration, schema):
-        
+
         self.__configuration = configuration
         self._schema = schema
         self._component_name = configuration.property("analytics.componentName")
@@ -25,8 +25,8 @@ class TopProcesses(StbProcessor):
         :return:
         """
         def udf_mem_usage(row):
-            MemoryUsage_totalKb = row[3]
-            proc_rss = row[6]
+            MemoryUsage_totalKb = row[7]
+            proc_rss = row[10]
 
             proc_mem_usage = round((float(proc_rss) / float(MemoryUsage_totalKb)) * 1000000) / 10000.0
 
@@ -83,7 +83,9 @@ class TopProcesses(StbProcessor):
         filter_udf = udf(TopProcesses.udf_filter, BooleanType())
         processed = stream \
             .groupBy('originId') \
-            .agg(collect_list('timestamp'), collect_list('MemoryUsage_freeKb'), collect_list('MemoryUsage_totalKb'), collect_list('TopProcesses_processes')) \
+            .agg(collect_list('timestamp'), collect_list('MemoryUsage_freeKb'), collect_list('MemoryUsage_totalKb'),
+                 collect_list('TopProcesses_processes'), collect_list('hardwareVersion'), collect_list('modelDescription'),
+                 collect_list('firmwareVersion'), collect_list('appVersion')) \
             .filter(filter_udf(col('collect_list(TopProcesses_processes)')))
 
         filled = self._fill_df(processed)
@@ -98,11 +100,15 @@ class TopProcesses(StbProcessor):
             StructField("MemoryUsage_freeKb", StringType()),
             StructField("MemoryUsage_totalKb", StringType()),
             StructField("TopProcesses_processes", StringType()),
+            StructField("hardwareVersion", StringType()),
+            StructField("modelDescription", StringType()),
+            StructField("firmwareVersion", StringType()),
+            StructField("appVersion", StringType())
         ])
 
 def create_processor(configuration):
     return TopProcesses(configuration, TopProcesses.get_message_schema())
-    
+
 
 if __name__ == "__main__":
     configuration = Utils.load_config(sys.argv[:])
