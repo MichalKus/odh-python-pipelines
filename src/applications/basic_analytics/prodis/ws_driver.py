@@ -16,10 +16,6 @@ class ProdisWS(BasicAnalyticsProcessor):
     The processor implementation to calculate metrics related to Prodis WS component.
     """
 
-    def __init__(self, configuration, schema):
-        self.__component_name = configuration.property("analytics.componentName")
-        super(ProdisWS, self).__init__(configuration, schema)
-
     def _process_pipeline(self, source_stream):
         mapping_thread_name_to_group = \
             {
@@ -49,7 +45,7 @@ class ProdisWS(BasicAnalyticsProcessor):
             .withColumn("level", col("level_updated")) \
             .drop("level_updated") \
             .withColumn("instance_name_updated",
-                        when(col("instance_name") == "", "undefined") \
+                        when(col("instance_name") == "", "undefined")
                         .otherwise(regexp_replace("instance_name", "Cleanpu", "Cleanup"))
                         ) \
             .withColumn("instance_name", col("instance_name_updated")) \
@@ -58,7 +54,7 @@ class ProdisWS(BasicAnalyticsProcessor):
             .where(col("level").isin("SUCCESS", "ERROR", "WARN", "FATAL"))
 
         counts = prepared_stream.aggregate(
-            Count(group_fields=["hostname", "group", "instance_name", "level"], aggregation_name=self.__component_name))
+            Count(group_fields=["hostname", "group", "instance_name", "level"], aggregation_name=self._component_name))
         return [counts]
 
     @staticmethod
