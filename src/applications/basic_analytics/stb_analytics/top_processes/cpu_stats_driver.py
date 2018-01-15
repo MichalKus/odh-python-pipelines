@@ -150,12 +150,13 @@ def es_structure(msg):
     return doc
 
 def carbon_structure(msg):
-    carbon_path = '{}.{}.{}.{}.{}.top-processes'.format(
+    carbon_path = '{}.{}.{}.{}.{}.{}.top-processes'.format(
         config.property('analytics.componentName'),
         msg['hardwareVersion'],
         msg['modelDescription'],
         msg['firmwareVersion'],
-        msg['appVersion'])
+        msg['appVersion'],
+        msg['originId'])
 
     mem = {
         'proc_name': msg['proc_name'],
