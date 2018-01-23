@@ -32,7 +32,7 @@ class MicroServices(object):
             .selectExpr("to_json(struct(*)) AS value") \
             .withColumn("topic", lit(self.kafka_output))
 
-    def _http_stats(self, stream):
+    def _http_jvm_stats(self, stream):
         """
 
         :param stream:
@@ -41,9 +41,13 @@ class MicroServices(object):
         inbound = ['jetty_requests', 'jetty_requests_count', 'jetty_responses_total']
         outbound = ['org_apache_http_client_HttpClient_requests_count',
                    'org_apache_http_client_HttpClient_responses_total']
+        jvm = ['jvm_memory_heap_used', 'jvm_memory_non_heap_used', 'jvm_gc_PS_MarkSweep_time',
+               'jvm_gc_PS_Scavenge_time', 'jvm_gc_PS_Scavenge_count', 'jvm_gc_PS_MarkSweep_count']
+        jvm_w = ['%jvm_threads_%', '%jvm_memory_pools_%']
 
-        http_stream = stream \
-            .where(col('metric_name').isin(inbound + outbound)) \
+        http_jvm_stream = stream \
+            .where(col('metric_name').isin(inbound + outbound + jvm) | (col('metric_name').like(jvm_w[0])) | (
+                    col('metric_name').like(jvm_w[1]))) \
             .fillna({'target': 'na', 'code': 'na', 'quantile': 'na'}) \
             .withColumn("carbon_metric",
                         concat(lit(self._component_name[0]), col("country"), lit(self._component_name[1]),
@@ -53,9 +57,7 @@ class MicroServices(object):
             .withColumn('carbon_metric', regexp_replace('carbon_metric', '.na', '')) \
             .select(col('timestamp'), col('carbon_metric').alias("metric_name"), col('value'))
 
-        return http_stream
-
-
+        return http_jvm_stream
 
     def _process_pipeline(self, stream):
         """
@@ -75,7 +77,7 @@ class MicroServices(object):
             .drop("labels") \
             .where((col("country") != "kube-system") | (col("country") != None))
 
-        http_stream = self._http_stats(formatted)
+        http_stream = self._http_jvm_stats(formatted)
 
         return [http_stream]
 
