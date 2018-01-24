@@ -46,16 +46,15 @@ class MicroServices(object):
         jvm_w = ['%jvm_threads_%', '%jvm_memory_pools_%']
 
         http_jvm_stream = stream \
-            .where(col('metric_name').isin(inbound + outbound + jvm) | (col('metric_name').like(jvm_w[0])) | (
-                    col('metric_name').like(jvm_w[1]))) \
+            .where(col('metric').isin(inbound + outbound + jvm) | (col('metric').like(jvm_w[0])) | (
+                    col('metric').like(jvm_w[1]))) \
             .fillna({'target': 'na', 'code': 'na', 'quantile': 'na'}) \
-            .withColumn("carbon_metric",
+            .withColumn("metric_name",
                         concat(lit(self._component_name[0]), col("country"), lit(self._component_name[1]),
                                col("service"), lit(".pod."), col("pod_name"), lit("."),
-                               col("instance"), lit("."), col("metric_name"), lit("."), col("target"), lit("."),
-                               col("code"), lit("."), col("quantile"), lit("."), col("metric_name"))) \
-            .withColumn('carbon_metric', regexp_replace('carbon_metric', '.na', '')) \
-            .select(col('timestamp'), col('carbon_metric').alias("metric_name"), col('value'))
+                               col("instance"), lit("."), col("metric"), lit("."), col("target"), lit("."),
+                               col("code"), lit("."), col("quantile"), lit("."), col("metric"))) \
+            .withColumn('metric_name', regexp_replace('metric_name', '.na', ''))
 
         return http_jvm_stream
 
@@ -69,7 +68,7 @@ class MicroServices(object):
             .withColumn("country", col("labels").getItem('kubernetes_namespace')) \
             .withColumn("service", col("labels").getItem('app')) \
             .withColumn("pod_name", col('labels').getItem('kubernetes_pod_name')) \
-            .withColumn("metric_name", col("labels").getItem('__name__')) \
+            .withColumn("metric", col("labels").getItem('__name__')) \
             .withColumn("instance", col('labels').getItem('instance')) \
             .withColumn("code", col('labels').getItem('code')) \
             .withColumn("target", col('labels').getItem('target')) \
@@ -77,9 +76,9 @@ class MicroServices(object):
             .drop("labels") \
             .where((col("country") != "kube-system") | (col("country") != None))
 
-        http_stream = self._http_jvm_stats(formatted)
+        stream = self._http_jvm_stats(formatted)
 
-        return [http_stream]
+        return [stream]
 
     @staticmethod
     def get_message_schema():
