@@ -13,6 +13,7 @@ class StbProcessor(object):
         self.__configuration = configuration
         self._schema = schema
         self._component_name = configuration.property("analytics.componentName")
+        self.kafka_output = configuration.property("kafka.topics.output")
 
     @abstractmethod
     def _process_pipeline(self, streams):

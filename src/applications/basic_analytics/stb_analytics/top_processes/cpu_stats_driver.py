@@ -4,7 +4,6 @@ import sys
 from pyspark import SparkContext
 from kafka import KafkaProducer, errors
 import json
-import time
 
 from util.utils import Utils
 from common.adv_analytics.kafkaUtils import KafkaConnector
@@ -14,9 +13,14 @@ sc = SparkContext(appName=config.property('spark.appName'), master=config.proper
 sc.setLogLevel("WARN")
 
 def json_check(msg):
+    """
+    Check if message in json format
+    :param msg: topic msg str
+    :return: Boolean
+    """
     try:
         json.loads(msg[1])
-    except (ValueError, TypeError) as e:
+    except (ValueError, TypeError):
         return False
     return True
 
@@ -31,12 +35,22 @@ def filter_check(msg):
     return check
 
 def format_to_pair(json_msg):
-    originId = json_msg['originId']
+    """
+    Create Pair RDD stream so data can be grouped
+    :param json_msg: signle message
+    :return: tuple containing key & value
+    """
+    origin_id = json_msg['originId']
     proc_name = json_msg['proc_name']
-    key = originId+'-'+proc_name
-    return (key, json_msg)
+    key = origin_id+'-'+proc_name
+    return key, json_msg
 
 def split_grouping(x):
+    """
+    Split each group back to single messages
+    :param x: grouped message
+    :return: single message
+    """
     key = x[0]
     val = x[1]
     if len(val) > 1:
@@ -61,7 +75,7 @@ def prepare_for_state(x):
 
     return (key, (proc_ts, val['proc_stime'], val['proc_utime']))
 
-def process_data(kafkaStream):
+def process_data(kafka_stream):
     """
     Take input stream and encode all topic messages into json format.
     Ignore messages that do not contained the required fields.
@@ -69,7 +83,7 @@ def process_data(kafkaStream):
     :param kafkaStream: Input stream
     :return: filtered input stream
     """
-    output = kafkaStream \
+    output = kafka_stream \
         .filter(json_check) \
         .map(lambda x: json.loads(x[1])) \
         .filter(filter_check) \
@@ -84,9 +98,8 @@ def update_state(new_state, previous_state):
         return new_state[-1:]
     else:
         state = previous_state[-1:]
-        if new_state != []:
-            if int(new_state[-1][0]) > int(state[0][0]):
-                return state + new_state[-1:]
+        if (new_state != []) and (int(new_state[-1][0]) > int(state[0][0])):
+            return state + new_state[-1:]
 
         return previous_state
 
@@ -107,7 +120,6 @@ def calc_cpu_kpi(msg):
     :param msg: rdd pair element (key, (json, state))
     :return: (key, new_json)
     """
-    key = msg[0]
     json_msg = msg[1][0]
     state = msg[1][1]
     match = False
@@ -195,13 +207,13 @@ def join_streams(stream_1, stream_2):
         .map(lambda x: calc_cpu_kpi(x))
 
     sink = joined.flatMap(lambda x: carbon_structure(x))
-    # sink = joined.map(lambda x: es_structure(x))
 
     return sink
 
 def send_partition(iter):
     topic = config.property('kafka.topicOutput')
-    producer = KafkaProducer(bootstrap_servers = config.property('kafka.bootstrapServers').split(','))
+    bootstrap_servers = config.property('kafka.bootstrapServers')
+    producer = KafkaProducer(bootstrap_servers = bootstrap_servers.split(','))
     for record in iter:
         try:
             record_metadata = producer.send(topic, json.dumps(record).encode('utf-8')).get(timeout=30)

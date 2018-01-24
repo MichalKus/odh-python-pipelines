@@ -1,8 +1,8 @@
 import sys
 from common.kafka_pipeline import KafkaPipeline
 from util.utils import Utils
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
+from pyspark.sql.functions import from_json, lit, col, concat, regexp_replace
+from pyspark.sql.types import ArrayType, StringType, DoubleType, BooleanType, StructType, StructField
 
 class MicroServices(object):
     """

@@ -4,7 +4,7 @@ from common.kafka_pipeline import KafkaPipeline
 from applications.basic_analytics.stb_analytics.top_processes.stb_processor import StbProcessor
 from util.utils import Utils
 from pyspark.sql.functions import col, collect_list, udf, split, explode, struct
-from pyspark.sql.types import *
+from pyspark.sql.types import ArrayType, StringType, DoubleType, BooleanType, StructField, StructType
 
 class TopProcesses(StbProcessor):
     """
