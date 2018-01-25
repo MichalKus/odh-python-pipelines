@@ -6,7 +6,7 @@ from pyspark.sql.types import ArrayType, StringType, DoubleType, BooleanType, St
 
 class MicroServices(object):
     """
-    https://www.wikitechy.com/tutorials/linux/how-to-calculate-the-cpu-usage-of-a-process-by-pid-in-Linux-from-c
+    Process uservices http and jvm stats from prometheus decoded topic and export to graphite.
     """
 
     def __init__(self, configuration, schema):
@@ -20,7 +20,11 @@ class MicroServices(object):
         self.kafka_output = configuration.property("kafka.topics.output")
 
     def create(self, read_stream):
-
+        """
+        Create final stream to output to kafka
+        :param read_stream:
+        :return: Kafka stream
+        """
         json_stream = read_stream \
             .select(from_json(read_stream["value"].cast("string"), self._schema).alias("json")) \
             .select("json.*")
@@ -28,6 +32,11 @@ class MicroServices(object):
         return [self._convert_to_kafka_structure(dataframe) for dataframe in self._process_pipeline(json_stream)]
 
     def _convert_to_kafka_structure(self, dataframe):
+        """
+        Convert to json schema and add topic name as output
+        :param dataframe:
+        :return: output stream
+        """
         return dataframe \
             .selectExpr("to_json(struct(*)) AS value") \
             .withColumn("topic", lit(self.kafka_output))
@@ -70,8 +79,10 @@ class MicroServices(object):
             .withColumn("pod_name", col('labels').getItem('kubernetes_pod_name')) \
             .withColumn("metric", col("labels").getItem('__name__')) \
             .withColumn("instance", col('labels').getItem('instance')) \
+            .withColumn('instance', regexp_replace('instance', '[\.]', '-')) \
             .withColumn("code", col('labels').getItem('code')) \
             .withColumn("target", col('labels').getItem('target')) \
+            .withColumn('target', regexp_replace('target', '[\.]', '-')) \
             .withColumn("quantile", col('labels').getItem('quantile')) \
             .drop("labels") \
             .where((col("country") != "kube-system") | (col("country") != None))
