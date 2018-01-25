@@ -34,9 +34,9 @@ class MicroServices(object):
 
     def _http_jvm_stats(self, stream):
         """
-
+        Filter and process only http and jvm stats for every service.
         :param stream:
-        :return:
+        :return: carbon output stream
         """
         inbound = ['jetty_requests', 'jetty_requests_count', 'jetty_responses_total']
         outbound = ['org_apache_http_client_HttpClient_requests_count',

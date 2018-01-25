@@ -1,7 +1,7 @@
 spark:
-  appName: prometheus-uservices-export
+  appName: prometheus-uservices-nodes
   master: local[*]
-  checkpointLocation: file:///spark/checkpoints/uservices/
+  checkpointLocation: file:///spark/checkpoints/uservices/nodes/
   shuffle.partitions: 1
   consoleWriter: true
   outputMode: update
@@ -20,4 +20,4 @@ kafka:
   failOnDataLoss: false
 
 analytics:
-  componentName: odhecx.eosdtv.<country>.prd.uservices.<service>.pod.<pod_name>.<instance>.<metric_name>.<target>.<code>.<quantile>.<metric>
+  componentName: odhecx.eosdtv.pan.prd.uservices.nodes.<instance>.device.<device>.fstype.<fstype>.<metric_group>.<metric_type>
