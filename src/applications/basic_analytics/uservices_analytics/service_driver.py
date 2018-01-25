@@ -79,10 +79,10 @@ class MicroServices(object):
             .withColumn("pod_name", col('labels').getItem('kubernetes_pod_name')) \
             .withColumn("metric", col("labels").getItem('__name__')) \
             .withColumn("instance", col('labels').getItem('instance')) \
-            .withColumn('instance', regexp_replace('instance', '[\.]', '-')) \
+            .withColumn('instance', regexp_replace('instance', r'\.', '-')) \
             .withColumn("code", col('labels').getItem('code')) \
             .withColumn("target", col('labels').getItem('target')) \
-            .withColumn('target', regexp_replace('target', '[\.]', '-')) \
+            .withColumn('target', regexp_replace('target', r'\.', '-')) \
             .withColumn("quantile", col('labels').getItem('quantile')) \
             .drop("labels") \
             .where((col("country") != "kube-system") | (col("country") != None))

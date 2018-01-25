@@ -70,12 +70,12 @@ class MicroServicesNodes(object):
         formatted = stream \
             .withColumn("metric", col("labels").getItem('__name__')) \
             .withColumn("instance", col('labels').getItem('instance')) \
-            .withColumn('instance', regexp_replace('instance', '[\.]', '-')) \
+            .withColumn('instance', regexp_replace('instance', r'\.', '-')) \
             .withColumn("device", col('labels').getItem('device')) \
-            .withColumn('device', regexp_replace('device', '[\.]', '-')) \
+            .withColumn('device', regexp_replace('device', r'\.', '-')) \
             .withColumn("fstype", col('labels').getItem('fstype')) \
             .withColumn("mountpoint", col('labels').getItem('mountpoint')) \
-            .withColumn('mountpoint', regexp_replace('mountpoint', '[\.]', '-')) \
+            .withColumn('mountpoint', regexp_replace('mountpoint', r'\.', '-')) \
             .drop("labels") \
             .withColumn('metric_group', split(col('metric'), '_').getItem(0)) \
             .withColumn('metric_type', split(col('metric'), '_').getItem(1)) \
