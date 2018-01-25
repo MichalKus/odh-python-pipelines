@@ -87,6 +87,10 @@ class MicroServicesNodes(object):
 
     @staticmethod
     def get_message_schema():
+        """
+        Provide schema for reading input messages.
+        :return: schema
+        """
         return StructType([
             StructField("timestamp", StringType()),
             StructField("value", DoubleType()),
@@ -100,6 +104,11 @@ class MicroServicesNodes(object):
         ])
 
 def create_processor(configuration):
+    """
+    Build processor using configurations and schema.
+    :param configuration:
+    :return:
+    """
     return MicroServicesNodes(configuration, MicroServicesNodes.get_message_schema())
 
 
