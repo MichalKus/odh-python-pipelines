@@ -14,7 +14,7 @@ kafka:
       - odhecx_pr_eosdtv_be_prd_stb_statelog_v1
     output: test_oboecx_pr_eosdtv_nl_prd_stb
       #worker: test_out_eosdtv_telenet_prod_metric_stb_test
-    #dlq: odhecx_pro_deadletterqueue
+    #"dlq: odhecx_pro_deadletterqueue
   startingOffsets: earliest
   maxOffsetsPerTrigger: 100
   security.protocol: SASL_PLAINTEXT
