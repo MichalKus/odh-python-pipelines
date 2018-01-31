@@ -3,8 +3,6 @@ import logging
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from common.kafka_pipeline import KafkaPipeline
-import statistics
-from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.utils import Utils
 
 
@@ -17,37 +15,37 @@ __status__ = "Pre-Prod"
 logging.basicConfig(level=logging.WARN)
 
 
-class BasicAnalyticsCPU(BasicAnalyticsProcessor):
+class StbAnalyticsCPU(object):
     """This class expose method useful for cpu metrics"""
-    """def __init__(self, configuration, schema):
+    def __init__(self, configuration, schema):
 
         self.__configuration = configuration
         self._schema = schema
         self._component_name = configuration.property("analytics.componentName")
-        self.kafka_output = configuration.property("kafka.topics.output")"""
+        self.kafka_output = configuration.property("kafka.topics.output")
 
 
     def _process_pipeline(self, read_stream):
 
         idle_pct_avg = read_stream.withWatermark("timestamp", "5 minutes") \
-            .groupBy(window("timestamp", "5 minutes"), "json.firmwareVersion", "json.appVersion", "json.modelDescription") \
-            .agg(((avg("json.VMStat_idlePct")).alias("VMStat_idlePct")))
+            .groupBy(window("timestamp", "5 minutes"), "json.hardwareVersion", "json.firmwareVersion", "json.appVersion", "json.modelDescription") \
+            .agg(((avg("json.VMStat_idlePct")).alias("value")))
 
         system_pct =  read_stream.withWatermark("timestamp", "5 minutes") \
-            .groupBy(window("timestamp", "5 minutes"), "json.firmwareVersion", "json.appVersion", "json.modelDescription") \
-            .agg(((avg("json.VMStat_systemPct"))))
+            .groupBy(window("timestamp", "5 minutes"), "json.hardwareVersion", "json.firmwareVersion", "json.appVersion", "json.modelDescription") \
+            .agg(((avg("json.VMStat_systemPct")).alias("value")))
 
         iowait_pct = read_stream.withWatermark("timestamp", "5 minutes") \
-            .groupBy(window("timestamp", "5 minutes"), "json.firmwareVersion", "json.appVersion", "json.modelDescription") \
-            .agg(((avg("json.VMStat_iowaitPct"))))
+            .groupBy(window("timestamp", "5 minutes"), "json.hardwareVersion", "json.firmwareVersion", "json.appVersion", "json.modelDescription") \
+            .agg(((avg("json.VMStat_iowaitPct")).alias("value")))
 
         hwIrqPct = read_stream.withWatermark("timestamp", "5 minutes") \
-            .groupBy(window("timestamp", "5 minutes"), "json.firmwareVersion", "json.appVersion", "json.modelDescription") \
-            .agg(((avg("json.VMStat_hwIrqPct"))))
+            .groupBy(window("timestamp", "5 minutes"), "json.hardwareVersion", "json.firmwareVersion", "json.appVersion", "json.modelDescription") \
+            .agg(((avg("json.VMStat_hwIrqPct")).alias("value")))
 
         mem_usage = read_stream.withWatermark("timestamp", "5 minutes") \
-            .groupBy(window("timestamp", "5 minutes"), "json.firmwareVersion", "json.appVersion", "json.modelDescription") \
-            .agg(((avg("json.MemoryUsage_totalKb"))))
+            .groupBy(window("timestamp", "5 minutes"), "json.hardwareVersion", "json.firmwareVersion", "json.appVersion", "json.modelDescription") \
+            .agg(((avg("json.MemoryUsage_totalKb"))).alias("value"))
 
         return [system_pct, idle_pct_avg, iowait_pct, hwIrqPct, mem_usage]
 
@@ -80,6 +78,8 @@ class BasicAnalyticsCPU(BasicAnalyticsProcessor):
 
         dataframes = self._process_pipeline(json_stream)
 
+        return dataframes
+
         dataframes_output = []
 
         dataframes_output.append(self.construct_metric_system_pct((dataframes[0])))
@@ -94,7 +94,6 @@ class BasicAnalyticsCPU(BasicAnalyticsProcessor):
 
         return [self.convert_to_kafka_structure(dataframe) for dataframe in dataframes_output]
 
-
     def convert_to_kafka_structure(self, dataframe):
 
         return dataframe \
@@ -102,7 +101,6 @@ class BasicAnalyticsCPU(BasicAnalyticsProcessor):
             .drop("window") \
             .selectExpr("metric_name","to_json(struct(*)) AS value")\
             .withColumn("topic", lit((self.__configuration.property("kafka.topics.output"))))
-
 
     @staticmethod
     def get_message_schema():
@@ -124,8 +122,8 @@ class BasicAnalyticsCPU(BasicAnalyticsProcessor):
 
 
 def create_processor(configuration):
-    """return basicAnalytics cpu istance"""
-    return BasicAnalyticsCPU(configuration, BasicAnalyticsCPU.get_message_schema())
+    """return StbAnalytics cpu istance"""
+    return StbAnalyticsCPU(configuration, StbAnalyticsCPU.get_message_schema())
 
 
 if __name__ == "__main__":
