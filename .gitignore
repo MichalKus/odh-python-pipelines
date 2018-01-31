@@ -9,3 +9,5 @@
 **/spark-warehouse
 
 venv*
+
+\.vscode/
