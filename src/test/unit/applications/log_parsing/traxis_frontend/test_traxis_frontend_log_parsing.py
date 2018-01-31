@@ -71,3 +71,19 @@ class TraxisFrontEndParsingTestCase(BaseMultipleMessageParsingTestCase):
 
             }
         )
+
+    def test_traxis_for_extra_spaces(self):
+        self.assert_parsing(
+            {
+                "source": "TraxisServiceLogManagement.log",
+                "message": "2018-01-31 09:20:41,979 INFO  [ResponseCache.Refresh] ResponseCache - [Task = ResponseCache.Refresh] Refreshing '482' queries took '55224' ms"
+            },
+            {
+                "@timestamp": datetime(2018, 1, 31, 9, 20, 41, 979000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "level": "INFO",
+                "thread_name": "ResponseCache.Refresh",
+                "component": "ResponseCache",
+                "message": "[Task = ResponseCache.Refresh] Refreshing '482' queries took '55224' ms"
+
+            }
+        )

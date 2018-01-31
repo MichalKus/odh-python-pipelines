@@ -20,7 +20,15 @@ def create_event_creators(configuration):
         StringField("thread_name"),
         StringField("component"),
         StringField("message")]),
-        RegexpParser(r"(?s)^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) (?P<level>\w+) \[(?P<thread_name>.*?)\] (?P<component>\w+) - (?P<message>.*)$"))
+        RegexpParser(r"(?s)^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})"
+                     r"\s*"
+                     r"(?P<level>\w+)"
+                     r"\s*"
+                     r"\[(?P<thread_name>.*?)\]"
+                     r"\s*"
+                     r"(?P<component>\w+)"
+                     r"\s*-\s*"
+                     r"(?P<message>.*)$"))
 
     return MatchField("source", {
         "TraxisService.log": SourceConfiguration(
