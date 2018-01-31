@@ -80,19 +80,19 @@ class BasicAnalyticsCPU(BasicAnalyticsProcessor):
 
         dataframes = self._process_pipeline(json_stream)
 
-        dataframesOutput = []
+        dataframes_output = []
 
-        dataframesOutput.append(self.construct_metric_system_pct((dataframes[0])))
+        dataframes_output.append(self.construct_metric_system_pct((dataframes[0])))
 
-        dataframesOutput.append((self.construct_metric_idle_pct((dataframes[1]))))
+        dataframes_output.append((self.construct_metric_idle_pct((dataframes[1]))))
 
-        dataframesOutput.append((self.construct_metric_iowait_pct((dataframes[2]))))
+        dataframes_output.append((self.construct_metric_iowait_pct((dataframes[2]))))
 
-        dataframesOutput.append((self.construct_metric_hwIrqPct((dataframes[3]))))
+        dataframes_output.append((self.construct_metric_hwIrqPct((dataframes[3]))))
 
-        dataframesOutput.append((self.construct_metric_mem_usage(dataframes[4])))
+        dataframes_output.append((self.construct_metric_mem_usage(dataframes[4])))
 
-        return [self.convert_to_kafka_structure(dataframe) for dataframe in dataframesOutput]
+        return [self.convert_to_kafka_structure(dataframe) for dataframe in dataframes_output]
 
 
     def convert_to_kafka_structure(self, dataframe):
