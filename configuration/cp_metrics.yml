@@ -8,7 +8,7 @@ spark:
 
 kafka:
   bootstrap.servers: 192.168.100.1:9093
-  startingOffsets: latest
+  startingOffsets: earliest
   topics:
     inputs:
       - odhecx_pr_eosdtv_be_prd_stb_statelog_v1
@@ -21,5 +21,5 @@ kafka:
 
 analytics:
   componentName: stb_cpu_usage
-  watermark: '5 minutes'
-  window: '5 minutes'
+  watermark: '1 minutes'
+  window: '1 minutes'

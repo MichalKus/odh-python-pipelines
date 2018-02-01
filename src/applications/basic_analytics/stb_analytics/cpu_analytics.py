@@ -10,45 +10,27 @@ __copyright__ = "Liberty Global"
 __email__ = "jstockton@libertyglobal.com"
 __status__ = "Pre-Prod"
 
-logging.basicConfig(level=logging.WARN)
+#logging.basicConfig(level=logging.WARN)
 
 
 class StbAnalyticsCPU(BasicAnalyticsProcessor):
     """This class expose method useful for cpu metrics"""
 
-    __dimensions = ["hardwareVersion", "firmwareVersion", "appVersion", "asVersion"]
+    __dimensions = ["hardwareVersion", "firmwareVersion", "appVersion", "modelDescription"]
 
-    def _process_pipeline(self, json_stream):
-        stream = json_stream \
-            .withColumn("VMStat_idlePct", col("VMStat_idlePct").cast(IntegerType())) \
-            .withColumn("VMStat_iowaitPct", col("VMStat_iowaitPct").cast(IntegerType())) \
-            .withColumn("VMStat_systemPct", col("VMStat_systemPct").cast(IntegerType())) \
-            .withColumn("VMStat_swIrqPct", col("VMStat_swIrqPct").cast(IntegerType())) \
-            .withColumn("VMStat_hwIrqPct", col("VMStat_hwIrqPct").cast(IntegerType())) \
-            .withColumn("MemoryUsage_totalKb", col("MemoryUsage_totalKb").cast(IntegerType())) \
-            .withColumn("MemoryUsage_totalKb", col("MemoryUsage_totalKb").cast(IntegerType()))
+    def _process_pipeline(self, read_stream):
 
-        aggregation_fields = ["VMStat_idlePct", "VMStat_iowaitPct", "VMStat_systemPct", "VMStat_swIrqPct",
-                              "VMStat_hwIrqPct", "MemoryUsage_totalKb", "MemoryUsage_totalKb"]
+        idle_pct = read_stream \
+            .withColumn("VMStat_idlePct", read_stream["VMStat_idlePct"].cast("Int")) \
+            .aggregate(Avg(group_fields=["hardwareVersion", "firmwareVersion",  "appVersion" , "modelDescription"], aggregation_field="VMStat_idlePct", aggregation_name=self._component_name))
 
-        for field in aggregation_fields:
-            kwargs = {'group_fields': self.__dimensions,
-                      'aggregation_name': self._component_name,
-                      'aggregation_field': field}
-            aggregations += [
-                # stream.aggregate(Sum(**kwargs)),
-                # stream.aggregate(Count(**kwargs)),
-                # stream.aggregate(Max(**kwargs)),
-                # stream.aggregate(Min(**kwargs)),
-                stream.aggregate(Avg(**kwargs))
-            ]
+        return [idle_pct]
 
-        return aggregations
 
     @staticmethod
-    def get_message_schema():
+    def create_schema():
         return StructType([
-            StructField("timestamp", StringType()),
+            StructField("@timestamp", TimestampType()),
             StructField("originId", StringType()),
             StructField("MemoryUsage_freeKb", StringType()),
             StructField("MemoryUsage_totalKb", StringType()),
