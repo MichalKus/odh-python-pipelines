@@ -1,10 +1,8 @@
-import sys
-import logging
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
-from common.kafka_pipeline import KafkaPipeline
-from util.utils import Utils
-
+from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
+from util.kafka_pipeline_helper import start_basic_analytics_pipeline
+from pyspark.sql.types import StructField, StructType, TimestampType, StringType, IntegerType
+from common.basic_analytics.aggregations import Count, Sum, Max, Min, Avg
+from pyspark.sql.functions import col
 
 __author__ = "John Gregory Stockton"
 __maintainer__ = "John Gregory Stockton"
@@ -15,92 +13,37 @@ __status__ = "Pre-Prod"
 logging.basicConfig(level=logging.WARN)
 
 
-class StbAnalyticsCPU(object):
+class StbAnalyticsCPU(BasicAnalyticsProcessor):
     """This class expose method useful for cpu metrics"""
-    def __init__(self, configuration, schema):
 
-        self.__configuration = configuration
-        self._schema = schema
-        self._component_name = configuration.property("analytics.componentName")
-        self.kafka_output = configuration.property("kafka.topics.output")
+    __dimensions = ["hardwareVersion", "firmwareVersion", "appVersion", "asVersion"]
 
+    def _process_pipeline(self, json_stream):
+        stream = json_stream \
+            .withColumn("VMStat_idlePct", col("VMStat_idlePct").cast(IntegerType())) \
+            .withColumn("VMStat_iowaitPct", col("VMStat_iowaitPct").cast(IntegerType())) \
+            .withColumn("VMStat_systemPct", col("VMStat_systemPct").cast(IntegerType())) \
+            .withColumn("VMStat_swIrqPct", col("VMStat_swIrqPct").cast(IntegerType())) \
+            .withColumn("VMStat_hwIrqPct", col("VMStat_hwIrqPct").cast(IntegerType())) \
+            .withColumn("MemoryUsage_totalKb", col("MemoryUsage_totalKb").cast(IntegerType())) \
+            .withColumn("MemoryUsage_totalKb", col("MemoryUsage_totalKb").cast(IntegerType()))
 
-    def _process_pipeline(self, read_stream):
+        aggregation_fields = ["VMStat_idlePct", "VMStat_iowaitPct", "VMStat_systemPct", "VMStat_swIrqPct",
+                              "VMStat_hwIrqPct", "MemoryUsage_totalKb", "MemoryUsage_totalKb"]
 
-        idle_pct_avg = read_stream.withWatermark("timestamp", "5 minutes") \
-            .groupBy(window("timestamp", "5 minutes"), "json.hardwareVersion", "json.firmwareVersion", "json.appVersion", "json.modelDescription") \
-            .agg(((avg("json.VMStat_idlePct")).alias("value")))
+        for field in aggregation_fields:
+            kwargs = {'group_fields': self.__dimensions,
+                      'aggregation_name': self._component_name,
+                      'aggregation_field': field}
+            aggregations += [
+                # stream.aggregate(Sum(**kwargs)),
+                # stream.aggregate(Count(**kwargs)),
+                # stream.aggregate(Max(**kwargs)),
+                # stream.aggregate(Min(**kwargs)),
+                stream.aggregate(Avg(**kwargs))
+            ]
 
-        system_pct =  read_stream.withWatermark("timestamp", "5 minutes") \
-            .groupBy(window("timestamp", "5 minutes"), "json.hardwareVersion", "json.firmwareVersion", "json.appVersion", "json.modelDescription") \
-            .agg(((avg("json.VMStat_systemPct")).alias("value")))
-
-        iowait_pct = read_stream.withWatermark("timestamp", "5 minutes") \
-            .groupBy(window("timestamp", "5 minutes"), "json.hardwareVersion", "json.firmwareVersion", "json.appVersion", "json.modelDescription") \
-            .agg(((avg("json.VMStat_iowaitPct")).alias("value")))
-
-        hwIrqPct = read_stream.withWatermark("timestamp", "5 minutes") \
-            .groupBy(window("timestamp", "5 minutes"), "json.hardwareVersion", "json.firmwareVersion", "json.appVersion", "json.modelDescription") \
-            .agg(((avg("json.VMStat_hwIrqPct")).alias("value")))
-
-        mem_usage = read_stream.withWatermark("timestamp", "5 minutes") \
-            .groupBy(window("timestamp", "5 minutes"), "json.hardwareVersion", "json.firmwareVersion", "json.appVersion", "json.modelDescription") \
-            .agg(((avg("json.MemoryUsage_totalKb"))).alias("value"))
-
-        return [system_pct, idle_pct_avg, iowait_pct, hwIrqPct, mem_usage]
-
-
-    def construct_metric_system_pct(self, dataframe):
-
-        return dataframe.withColumn("metric_name", lit("systemPct_avg"))
-
-    def construct_metric_idle_pct(self, dataframe):
-
-        return dataframe.withColumn("metric_name", lit("idlePct_avg"))
-
-    def construct_metric_iowait_pct(self, dataframe):
-
-        return dataframe.withColumn("metric_name", lit("iowaitPct"))
-
-    def construct_metric_hwIrqPct(self, dataframe):
-
-        return dataframe.withColumn("metric_name", lit("hwIrqPct"))
-
-    def construct_metric_mem_usage (self, dataframe):
-
-        return dataframe.withColumn("metric_name", lit("mem_usage"))
-
-    def create(self, read_stream):
-
-        json_stream = read_stream.select(read_stream["timestamp"].cast("timestamp").alias("timestamp"),
-                        from_json(read_stream["value"].cast("string"),
-                        self.get_message_schema()).alias("json"))
-
-        dataframes = self._process_pipeline(json_stream)
-
-        return dataframes
-
-        dataframes_output = []
-
-        dataframes_output.append(self.construct_metric_system_pct((dataframes[0])))
-
-        dataframes_output.append((self.construct_metric_idle_pct((dataframes[1]))))
-
-        dataframes_output.append((self.construct_metric_iowait_pct((dataframes[2]))))
-
-        dataframes_output.append((self.construct_metric_hwIrqPct((dataframes[3]))))
-
-        dataframes_output.append((self.construct_metric_mem_usage(dataframes[4])))
-
-        return [self.convert_to_kafka_structure(dataframe) for dataframe in dataframes_output]
-
-    def convert_to_kafka_structure(self, dataframe):
-
-        return dataframe \
-            .withColumn("@timestamp", col("window.start")) \
-            .drop("window") \
-            .selectExpr("metric_name","to_json(struct(*)) AS value")\
-            .withColumn("topic", lit((self.__configuration.property("kafka.topics.output"))))
+        return aggregations
 
     @staticmethod
     def get_message_schema():
@@ -122,13 +65,8 @@ class StbAnalyticsCPU(object):
 
 
 def create_processor(configuration):
-    """return StbAnalytics cpu istance"""
-    return StbAnalyticsCPU(configuration, StbAnalyticsCPU.get_message_schema())
+    return StbAnalyticsCPU(configuration, StbAnalyticsCPU.create_schema())
 
 
 if __name__ == "__main__":
-    configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
-        configuration,
-        create_processor(configuration)
-    ).start()
+    start_basic_analytics_pipeline(create_processor)

@@ -19,4 +19,7 @@ kafka:
   security.protocol: SASL_PLAINTEXT
   sasl.mechanism: PLAIN
 
-
+analytics:
+  componentName: stb_cpu_usage
+  watermark: '5 minutes'
+  window: '5 minutes'
