@@ -22,9 +22,38 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
 
         idle_pct = read_stream \
             .withColumn("VMStat_idlePct", read_stream["VMStat_idlePct"].cast("Int")) \
-            .aggregate(Avg(group_fields=["hardwareVersion", "firmwareVersion",  "appVersion" , "modelDescription"], aggregation_field="VMStat_idlePct", aggregation_name=self._component_name))
+            .aggregate(Avg(group_fields=["hardwareVersion", "firmwareVersion",  "appVersion", "modelDescription"],
+                           aggregation_field="VMStat_idlePct",
+                           aggregation_name=self._component_name))
 
-        return [idle_pct]
+        system_pct = read_stream \
+            .withColumn("VMStat_systemPct", read_stream["VMStat_systemPct"].cast("Int")) \
+            .aggregate(Avg(group_fields=["hardwareVersion", "firmwareVersion",  "appVersion", "modelDescription"],
+                           aggregation_field="VMStat_systemPct",
+                           aggregation_name=self._component_name))
+
+        iowait_pct = read_stream \
+            .withColumn("VMStat_iowaitPct", read_stream["VMStat_iowaitPct"].cast("Int")) \
+            .aggregate(Avg(group_fields=["hardwareVersion", "firmwareVersion", "appVersion", "modelDescription"],
+                             aggregation_field="VMStat_iowaitPct",
+                             aggregation_name=self._component_name))
+
+        hwIrq_pct = read_stream \
+            .withColumn("VMStat_hwIrqPct", read_stream["VMStat_hwIrqPct"].cast("Int")) \
+            .aggregate(Avg(group_fields=["hardwareVersion", "firmwareVersion", "appVersion", "modelDescription"],
+                           aggregation_field="VMStat_hwIrqPct",
+                           aggregation_name=self._component_name))
+
+        mem_usage = read_stream \
+            .withColumn("MemoryUsage_totalKb", read_stream["MemoryUsage_totalKb"].cast("Int")) \
+            .aggregate(Avg(group_fields=["hardwareVersion", "firmwareVersion", "appVersion", "modelDescription"],
+                           aggregation_field="MemoryUsage_totalKb",
+                           aggregation_name=self._component_name))
+
+        read_stream.writeStream.format("console").outputMode("update").start()
+        #read_stram.writeStream()
+
+        return [idle_pct, system_pct, iowait_pct, hwIrq_pct, mem_usage]
 
 
     @staticmethod
