@@ -4,7 +4,8 @@ Basic analytics driver for STB Network and Connectivity errors.
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType, IntegerType
-from common.basic_analytics.aggregations import Count, Sum, Max, Min
+from common.basic_analytics.aggregations import Count, Sum, Max, Min, Stddev
+from common.basic_analytics.aggregations import P01, P05, P10, P25, P50, P75, P90, P95, P99
 from pyspark.sql.functions import col
 
 
@@ -22,27 +23,22 @@ class NetworkErrorsStbBasicAnalytics(BasicAnalyticsProcessor):
             .withColumn("Wifi_TxErrors", col("WiFiStats_txErrors").cast(IntegerType()))\
             .withColumn("Wifi_RxErrors", col("WiFiStats_rxErrors").cast(IntegerType()))
 
-        error_report_dimensions = self.__dimensions[:].append("ErrorReport_level")
-        aggregations = [stream.aggregate(Count(
-            group_fields=error_report_dimensions,
-            aggregation_name=self._component_name,
-            aggregation_field="ErrorReport_level"))
-            ]
-
         aggregation_fields = ["Ethernet_TxErrors", "Ethernet_RxErrors", "Wifi_TxErrors", "Wifi_RxErrors"]
+        result = []
 
         for field in aggregation_fields:
             kwargs = {'group_fields': self.__dimensions,
                       'aggregation_name': self._component_name,
                       'aggregation_field': field}
-            aggregations += [
-                stream.aggregate(Sum(**kwargs)),
-                stream.aggregate(Count(**kwargs)),
-                stream.aggregate(Max(**kwargs)),
-                stream.aggregate(Min(**kwargs))
-            ]
 
-        return aggregations
+            aggregations = [Sum(**kwargs), Count(**kwargs), Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
+                            P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
+                            P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)]
+
+            for aggregation in aggregations:
+                result.append(stream.aggregate(aggregation))
+
+        return result
 
     @staticmethod
     def create_schema():
@@ -56,7 +52,6 @@ class NetworkErrorsStbBasicAnalytics(BasicAnalyticsProcessor):
             StructField("EthernetStats_rxErrors", StringType()),
             StructField("WiFiStats_txErrors", StringType()),
             StructField("WiFiStats_rxErrors", StringType()),
-            StructField("ErrorReport_level", StringType()),
         ])
 
 

@@ -6,7 +6,7 @@ Aggregation class defines common methods for all aggregations.
 import re
 from abc import ABCMeta, abstractmethod
 
-from pyspark.sql.functions import lit, avg, count, sum, max, min, col, regexp_replace
+from pyspark.sql.functions import lit, avg, count, sum, max, min, col, stddev, expr, regexp_replace
 from pyspark.sql.functions import window, concat_ws, approx_count_distinct
 from pyspark.sql.types import DecimalType
 
@@ -125,3 +125,79 @@ class DistinctCount(Aggregation):
 
     def aggregate(self, grouped_dataframe):
         return grouped_dataframe.agg(approx_count_distinct(self._aggregation_field).alias("value"))
+
+
+class Stddev(Aggregation):
+    """
+    Computes standard deviation
+    """
+
+    def aggregate(self, grouped_dataframe):
+        return grouped_dataframe.agg(stddev(self._aggregation_field).alias("value"))
+
+
+class Percentile(Aggregation):
+    """
+    Computes n-th percentile
+    """
+
+    @abstractmethod
+    def percentile(self):
+        """
+        Abstract property which defines n of percentile
+        """
+
+    def aggregate(self, grouped_dataframe):
+        return grouped_dataframe.agg(expr
+                                     ("percentile(" + self._aggregation_field + "," + str(self.percentile()) + ")")
+                                     .alias("value"))
+
+
+class P01(Percentile):
+    def percentile(self):
+        return 0.01
+
+
+class P05(Percentile):
+    def percentile(self):
+        return 0.05
+
+
+class P10(Percentile):
+    def percentile(self):
+        return 0.1
+
+
+class P25(Percentile):
+    def percentile(self):
+        return 0.25
+
+
+class P50(Percentile):
+    def percentile(self):
+        return 0.5
+
+
+class Median(Percentile):
+    def percentile(self):
+        return 0.5
+
+
+class P75(Percentile):
+    def percentile(self):
+        return 0.75
+
+
+class P90(Percentile):
+    def percentile(self):
+        return 0.9
+
+
+class P95(Percentile):
+    def percentile(self):
+        return 0.95
+
+
+class P99(Percentile):
+    def percentile(self):
+        return 0.99
