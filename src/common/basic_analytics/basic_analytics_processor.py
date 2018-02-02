@@ -15,12 +15,11 @@ class BasicAnalyticsProcessor(object):
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self, configuration, schema, timefield_name="@timestamp", drop_columns=[]):
+    def __init__(self, configuration, schema, timefield_name="@timestamp"):
         self.__configuration = configuration
         self._schema = schema
         self._component_name = configuration.property("analytics.componentName")
         self._timefield_name = timefield_name
-        self._drop_columns = drop_columns
         DataFrame.aggregate = BasicAnalyticsProcessor.__aggregate_dataframe
 
     @staticmethod
@@ -75,11 +74,9 @@ class BasicAnalyticsProcessor(object):
         return [self._convert_to_kafka_structure(result) for results in aggregated_results for result in results]
 
     def _convert_to_kafka_structure(self, dataframe):
-        drop_list = ["window"]
-        drop_list.extend(self._drop_columns)
         return dataframe \
             .withColumn("@timestamp", col("window.start")) \
-            .drop(*drop_list) \
+            .drop("window") \
             .selectExpr("metric_name AS key", "to_json(struct(*)) AS value") \
             .withColumn("topic", lit(self.__configuration.property("kafka.topics.output")))
 

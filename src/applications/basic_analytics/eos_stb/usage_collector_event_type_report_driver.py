@@ -1,5 +1,5 @@
-from pyspark.sql.types import StructType, StructField, TimestampType, StringType
 from pyspark.sql.functions import *
+from pyspark.sql.types import StructType, StructField, TimestampType, StringType
 from common.basic_analytics.aggregations import Count
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
@@ -11,40 +11,31 @@ class UsageCollectorEventTypeReportProcessor(BasicAnalyticsProcessor):
     - count
     """
 
+    def _prepare_timefield(self, data_stream):
+        return data_stream.withColumn("@timestamp", from_unixtime(col("timestamp") / 1000).cast(TimestampType()))
+
     def _process_pipeline(self, read_stream):
         group_by_list = ["hardwareVersion", "firmwareVersion", "asVersion", "appVersion",
                          "UsageCollectorReport_event_Type"]
 
         aggregation = Count(group_fields=group_by_list, aggregation_name=self._component_name)
 
-        start_count = read_stream \
-            .filter(col("UsageCollectorReport_event_Type") == "start") \
-            .aggregate(aggregation)
+        def get_agg_df(current_value):
+            return read_stream \
+                .filter(col("UsageCollectorReport_event_Type") == current_value) \
+                .aggregate(aggregation)
 
-        callback_failed_count = read_stream \
-            .filter(col("UsageCollectorReport_event_Type") == "callback_failed") \
-            .aggregate(aggregation)
-
-        memory_full_count = read_stream \
-            .filter(col("UsageCollectorReport_event_Type") == "memory_full") \
-            .aggregate(aggregation)
-
-        degraded_mode_count = read_stream \
-            .filter(col("UsageCollectorReport_event_Type") == "degraded_mode") \
-            .aggregate(aggregation)
-
-
-        return [start_count, callback_failed_count, memory_full_count, degraded_mode_count]
+        return map(get_agg_df, ["start", "callback_failed", "memory_full", "degraded_mode"])
 
     @staticmethod
     def create_schema():
         return StructType([
-            StructField("@timestamp", TimestampType()),
-            StructField("UsageCollectorReport_event_type", StringType()),
+            StructField("timestamp", StringType()),
             StructField("firmwareVersion", StringType()),
             StructField("hardwareVersion", StringType()),
             StructField("asVersion", StringType()),
-            StructField("appVersion", StringType())
+            StructField("appVersion", StringType()),
+            StructField("UsageCollectorReport_event_type", StringType())
         ])
 
 
