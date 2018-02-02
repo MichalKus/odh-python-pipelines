@@ -63,7 +63,8 @@ class MicroServices(object):
                                col("service"), lit(".pod."), col("pod_name"), lit("."),
                                col("instance"), lit("."), col("metric"), lit("."), col("target"), lit("."),
                                col("code"), lit("."), col("quantile"), lit("."), col("metric"))) \
-            .withColumn('metric_name', regexp_replace('metric_name', '.na', ''))
+            .withColumn('metric_name', regexp_replace('metric_name', '.na', '')) \
+            .withColumnRenamed('timestamp', '@timestamp')
 
         return http_jvm_stream
 
