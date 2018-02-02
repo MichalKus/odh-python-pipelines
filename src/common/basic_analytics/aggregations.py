@@ -7,7 +7,7 @@ import re
 from abc import ABCMeta, abstractmethod
 
 from pyspark.sql.functions import lit, avg, count, sum, max, min, col, stddev, expr, regexp_replace
-from pyspark.sql.functions import window, concat_ws, approx_count_distinct
+from pyspark.sql.functions import window, concat_ws, approx_count_distinct, posexplode, explode, create_map
 from pyspark.sql.types import DecimalType
 
 
@@ -29,24 +29,28 @@ class Aggregation(object):
     def apply(self, input_dataframe, aggregation_window, time_column):
         actual_window = self.__aggregation_window \
             if self.__aggregation_window is not None else aggregation_window
-        metric_name = self.__construct_metric_name()
         window_aggreagated_df = input_dataframe.groupBy(window(time_column, actual_window), *self.__group_fields)
-        return self.aggregate(window_aggreagated_df) \
-            .withColumn("metric_name", regexp_replace(metric_name, "\\s+", "_"))
+        aggregated_dataframe = self.aggregate(window_aggreagated_df)
+        if "metric_name" not in aggregated_dataframe.columns:
+            aggregated_dataframe = aggregated_dataframe.withColumn("metric_name", self._construct_metric_name())
+        return aggregated_dataframe
 
-    def __construct_metric_name(self):
+    def _construct_metric_name(self, suffix=None):
         metric_name_parts = [lit(self.__aggregation_name)]
 
         for group_field in self.__group_fields:
             metric_name_parts += [lit(group_field), col(group_field)]
 
-        metric_name_parts += [lit(self._aggregation_field),
-                              lit(self.__convert_to_underlined(self.__class__.__name__))]
+        metric_name_parts += [lit(self._aggregation_field)]
+        if suffix is None:
+            metric_name_parts += [lit(self._convert_to_underlined(self.__class__.__name__))]
+        else:
+            metric_name_parts += [suffix]
 
-        return concat_ws(".", *metric_name_parts)
+        return regexp_replace(concat_ws(".", *metric_name_parts), "\\s+", "_")
 
     @staticmethod
-    def __convert_to_underlined(name):
+    def _convert_to_underlined(name):
         s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
         return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
@@ -136,6 +140,30 @@ class Stddev(Aggregation):
         return grouped_dataframe.agg(stddev(self._aggregation_field).alias("value"))
 
 
+class CompoundAggregation(Aggregation):
+    def aggregate(self, grouped_dataframe):
+        return grouped_dataframe.agg(
+            expr("percentile(" + self._aggregation_field + ", array(0.01,0.05,0.1,0.25,0.5,0.75,0.9,0.95,0.99))").alias("percentile"),
+            count("*").alias("count"),
+            sum(self._aggregation_field).alias("sum"),
+            max(self._aggregation_field).alias("max"),
+            min(self._aggregation_field).alias("min"),
+            stddev(self._aggregation_field).alias("stddev")
+        )\
+            .withColumn("map", create_map(
+                [lit("sum"), col("sum"), lit("max"), col("max"), lit("min"), col("min"),
+                    lit("count"), col("count"), lit("stddev"), col("stddev"),
+                    lit("p01"), col("percentile").getItem(0), lit("p05"), col("percentile").getItem(1),
+                    lit("p10"), col("percentile").getItem(2), lit("p25"), col("percentile").getItem(3),
+                    lit("p50"), col("percentile").getItem(4), lit("p75"), col("percentile").getItem(5),
+                    lit("p90"), col("percentile").getItem(6), lit("p95"), col("percentile").getItem(7),
+                    lit("p99"), col("percentile").getItem(8)
+                 ]))\
+            .select("*", explode(col("map")).alias("metric_name", "value")) \
+            .withColumn("metric_name", self._construct_metric_name(col("metric_name"))) \
+            .drop("map", "sum", "max", "min", "stddev", "percentile", "count", "stddev")
+
+
 class Percentile(Aggregation):
     """
     Computes n-th percentile
@@ -148,9 +176,10 @@ class Percentile(Aggregation):
         """
 
     def aggregate(self, grouped_dataframe):
-        return grouped_dataframe.agg(expr
-                                     ("percentile(" + self._aggregation_field + "," + str(self.percentile()) + ")")
-                                     .alias("value"))
+        return grouped_dataframe.agg(
+            expr("percentile(" + self._aggregation_field + ", array(0.01,0.05,0.1,0.25,0.5,0.75,0.9,0.95,0.99)")
+            .alias("value"),
+        )
 
 
 class P01(Percentile):

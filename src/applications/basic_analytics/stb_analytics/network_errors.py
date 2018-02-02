@@ -4,7 +4,7 @@ Basic analytics driver for STB Network and Connectivity errors.
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType, IntegerType
-from common.basic_analytics.aggregations import Count, Sum, Max, Min, Stddev
+from common.basic_analytics.aggregations import Count, Sum, Max, Min, Stddev, CompoundAggregation
 from common.basic_analytics.aggregations import P01, P05, P10, P25, P50, P75, P90, P95, P99
 from pyspark.sql.functions import col
 
@@ -35,8 +35,7 @@ class NetworkErrorsStbBasicAnalytics(BasicAnalyticsProcessor):
                             P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
                             P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)]
 
-            for aggregation in aggregations:
-                result.append(stream.aggregate(aggregation))
+            result.append(stream.aggregate(CompoundAggregation(**kwargs)))
 
         return result
 
