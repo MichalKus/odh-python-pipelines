@@ -1,0 +1,4 @@
+{"@timestamp": "2017-07-26T15:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb.eos.acs.request.count", "value": 3}
+{"@timestamp": "2017-07-26T15:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb.eos.acs.stb_id.distinct_count", "value": 2}
+{"@timestamp": "2017-07-26T15:01:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb.eos.acs.request.count", "value": 3}
+{"@timestamp": "2017-07-26T15:01:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb.eos.acs.stb_id.distinct_count", "value": 2}
