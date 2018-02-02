@@ -38,7 +38,7 @@ fi
 DOCKER_IMAGE="lgi/odh-python-pipelines:${DOCKER_TAG}"
 docker build . -t ${DOCKER_IMAGE}
 
-docker run -it --net=host --rm --privileged=true --env SPARK_LOCAL_IP=127.0.0.1 \
+docker run --rm -it --net=host --rm --privileged=true --env SPARK_LOCAL_IP=127.0.0.1 \
         -v `pwd`/configuration:/spark/processing-conf:ro \
         -v `pwd`/tools/spark_jaas.conf:/spark/conf/spark_jaas.conf \
         -v `pwd`/tools/log4j.properties:/spark/conf/log4j.properties \

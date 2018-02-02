@@ -16,31 +16,23 @@ class UsageCollectorDroppedEvents(BasicAnalyticsProcessor):
 
     def _process_pipeline(self, read_stream):
 
-        count_missed_events = read_stream   \
-            .withColumn("UsageCollectorReport_missed_events", col("UsageCollectorReport_missed_events").cast(LongType())) \
-            .where("UsageCollectorReport_missed_events is not null") \
-            .aggregate(Count(   aggregation_field="UsageCollectorReport_missed_events",
+        stream = read_stream \
+                .withColumn("UsageCollectorReport_missed_events", col("UsageCollectorReport_missed_events").cast(LongType())) \
+                .where("UsageCollectorReport_missed_events is not null")
+
+        count_missed_events = stream.aggregate(Count(   aggregation_field="UsageCollectorReport_missed_events",
                                 group_fields=["hardwareVersion","firmwareVersion","asVersion","appVersion"],
                                 aggregation_name=self._component_name))
 
-        sum_missed_events = read_stream \
-            .withColumn("UsageCollectorReport_missed_events", col("UsageCollectorReport_missed_events").cast(LongType())) \
-            .where("UsageCollectorReport_missed_events is not null") \
-            .aggregate(Sum( aggregation_field="UsageCollectorReport_missed_events",
+        sum_missed_events = stream.aggregate(Sum( aggregation_field="UsageCollectorReport_missed_events",
                             group_fields=["hardwareVersion","firmwareVersion","asVersion","appVersion"],
                             aggregation_name=self._component_name))
 
-        min_missed_events = read_stream \
-            .withColumn("UsageCollectorReport_missed_events", col("UsageCollectorReport_missed_events").cast(LongType())) \
-            .where("UsageCollectorReport_missed_events is not null") \
-            .aggregate(Min( aggregation_field="UsageCollectorReport_missed_events",
+        min_missed_events = stream.aggregate(Min( aggregation_field="UsageCollectorReport_missed_events",
                             group_fields=["hardwareVersion","firmwareVersion","asVersion","appVersion"],
                             aggregation_name=self._component_name))
 
-        max_missed_events = read_stream \
-            .withColumn("UsageCollectorReport_missed_events", col("UsageCollectorReport_missed_events").cast(LongType())) \
-            .where("UsageCollectorReport_missed_events is not null") \
-            .aggregate(Max( aggregation_field="UsageCollectorReport_missed_events",
+        max_missed_events = stream.aggregate(Max( aggregation_field="UsageCollectorReport_missed_events",
                             group_fields=["hardwareVersion","firmwareVersion","asVersion","appVersion"],
                             aggregation_name=self._component_name))
 
