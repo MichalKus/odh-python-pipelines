@@ -19,6 +19,6 @@ kafka:
   sasl.mechanism: PLAIN
 
 analytics:
-  componentName: test.bdebotte.usagecollector.missed_events
+  componentName: vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.reingest
   watermark: '1 minutes'
   window: '1 minutes'
