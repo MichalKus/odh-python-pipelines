@@ -1,6 +1,7 @@
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType, IntegerType
+from pyspark.sql.functions import from_unixtime
 from common.basic_analytics.aggregations import Count, Sum, Max, Min, Avg
 from pyspark.sql.functions import col
 
@@ -18,7 +19,12 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
 
     __dimensions = ["hardwareVersion", "firmwareVersion", "appVersion", "modelDescription"]
 
+    def _prepare_timefield(self, data_stream):
+        return data_stream.withColumn("@timestamp", from_unixtime(col("timestamp") / 1000).cast(TimestampType()))
+
     def _process_pipeline(self, read_stream):
+
+        read_stream = self._prepare_timefield(read_stream)
 
         idle_pct = read_stream \
             .withColumn("VMStat_idlePct", read_stream["VMStat_idlePct"].cast("Int")) \
@@ -60,6 +66,7 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
     def create_schema():
         return StructType([
             StructField("@timestamp", TimestampType()),
+            StructField("timestamp", StringType()),
             StructField("originId", StringType()),
             StructField("MemoryUsage_freeKb", StringType()),
             StructField("MemoryUsage_totalKb", StringType()),

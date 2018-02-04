@@ -20,6 +20,6 @@ kafka:
   sasl.mechanism: PLAIN
 
 analytics:
-  componentName: stb_cpu_usage
+  componentName: odhecx.eosstb.be.prd.stb
   watermark: '1 minutes'
   window: '1 minutes'
