@@ -44,7 +44,7 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
                              aggregation_field="VMStat_iowaitPct",
                              aggregation_name=self._component_name))
 
-        hwIrq_pct = read_stream \
+        hwirq_pct = read_stream \
             .withColumn("VMStat_hwIrqPct", read_stream["VMStat_hwIrqPct"].cast("Int")) \
             .aggregate(Avg(group_fields=["hardwareVersion", "firmwareVersion", "appVersion", "modelDescription"],
                            aggregation_field="VMStat_hwIrqPct",
@@ -59,7 +59,7 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
         read_stream.writeStream.format("console").outputMode("update").start()
         #read_stram.writeStream()
 
-        return [idle_pct, system_pct, iowait_pct, hwIrq_pct, mem_usage]
+        return [idle_pct, system_pct, iowait_pct, hwirq_pct, mem_usage]
 
 
     @staticmethod
@@ -83,6 +83,7 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
 
 
 def create_processor(configuration):
+    """Create Processor"""
     return StbAnalyticsCPU(configuration, StbAnalyticsCPU.create_schema())
 
 
