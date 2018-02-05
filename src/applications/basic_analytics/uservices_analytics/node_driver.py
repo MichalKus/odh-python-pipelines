@@ -57,7 +57,8 @@ class MicroServicesNodes(object):
             .drop("metric_type") \
             .withColumn('metric_name', regexp_replace('metric_name', '.device.na', '')) \
             .withColumn('metric_name', regexp_replace('metric_name', '.fstype.na', '')) \
-            .withColumn('metric_name', regexp_replace('metric_name', '.mountpoint.na', ''))
+            .withColumn('metric_name', regexp_replace('metric_name', '.mountpoint.na', '')) \
+            .withColumnRenamed('timestamp', '@timestamp')
 
         return node_proc_stream
 
