@@ -43,15 +43,12 @@ class Aggregation(object):
             metric_name_parts += [lit(group_field), col(group_field)]
 
         metric_name_parts += [lit(self._aggregation_field)]
-        if suffix is None:
-            metric_name_parts += [lit(self.get_name())]
-        else:
-            metric_name_parts += [suffix]
+        metric_name_parts += [lit(self.get_name())] if suffix is None else [suffix]
 
         return regexp_replace(concat_ws(".", *metric_name_parts), "\\s+", "_")
 
     @staticmethod
-    def _convert_to_underlined(name):
+    def __convert_to_underlined(name):
         s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
         return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
@@ -85,7 +82,7 @@ class Aggregation(object):
         return df
 
     def get_name(self):
-        return self._convert_to_underlined(self.__class__.__name__)
+        return self.__convert_to_underlined(self.__class__.__name__)
 
 
 class AggregatedDataFrame(object):
