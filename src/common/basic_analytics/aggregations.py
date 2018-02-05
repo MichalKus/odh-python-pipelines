@@ -7,8 +7,9 @@ import re
 from abc import ABCMeta, abstractmethod
 
 from pyspark.sql.functions import lit, avg, count, sum, max, min, col, stddev, expr, regexp_replace
-from pyspark.sql.functions import window, concat_ws, approx_count_distinct, posexplode, explode, create_map
+from pyspark.sql.functions import window, concat_ws, approx_count_distinct, explode, create_map
 from pyspark.sql.types import DecimalType
+from itertools import chain
 
 
 class Aggregation(object):
@@ -43,7 +44,7 @@ class Aggregation(object):
 
         metric_name_parts += [lit(self._aggregation_field)]
         if suffix is None:
-            metric_name_parts += [lit(self._convert_to_underlined(self.__class__.__name__))]
+            metric_name_parts += [lit(self.get_name())]
         else:
             metric_name_parts += [suffix]
 
@@ -54,13 +55,37 @@ class Aggregation(object):
         s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
         return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
-    @abstractmethod
     def aggregate(self, grouped_dataframe):
         """
         Abstract aggregation
         :param grouped_dataframe: input dataframe grouped by specified fields
         :return: Aggregated dataframe
         """
+        result = grouped_dataframe.agg(self.get_aggregation().alias("value"))
+        return self.post_process(result)
+
+    @abstractmethod
+    def get_aggregation(self):
+        """
+        Abstract aggregation
+        :param grouped_dataframe: input dataframe grouped by specified fields
+        :return: Aggregated dataframe
+        """
+
+    def post_process(self, df):
+        """
+        Callback method to apply any needed transformations to
+        dataframe after aggregation column(s) are already included in it.
+        Typically should be called from aggregate method.
+        Default implementation does nothing.
+        The method is not made abstract intentionally to avoid forcing developers to provide no-op implementations.
+        :param df: dataframe to perform any needed transformations
+        :return: Transformed dataframe
+        """
+        return df
+
+    def get_name(self):
+        return self._convert_to_underlined(self.__class__.__name__)
 
 
 class AggregatedDataFrame(object):
@@ -80,153 +105,179 @@ class Avg(Aggregation):
     """
     Computes average values for each numeric columns for each group.
     """
-
-    def aggregate(self, grouped_dataframe):
-        return grouped_dataframe.agg(avg(
-            self._aggregation_field).cast(DecimalType(scale=2)).alias("value"))
+    def get_aggregation(self):
+        return avg(self._aggregation_field).cast(DecimalType(scale=2))
 
 
 class Min(Aggregation):
     """
     Computes the min value for each numeric column for each group.
     """
-
-    def aggregate(self, grouped_dataframe):
-        return grouped_dataframe.agg(min(self._aggregation_field).alias("value"))
+    def get_aggregation(self):
+        return min(self._aggregation_field)
 
 
 class Max(Aggregation):
     """
     Computes the max value for each numeric column for each group.
     """
-
-    def aggregate(self, grouped_dataframe):
-        return grouped_dataframe.agg(max(self._aggregation_field).alias("value"))
+    def get_aggregation(self):
+        return max(self._aggregation_field)
 
 
 class Sum(Aggregation):
     """
     Compute the sum for each numeric columns for each group.
     """
-
-    def aggregate(self, grouped_dataframe):
-        return grouped_dataframe.agg(sum(self._aggregation_field).alias("value"))
+    def get_aggregation(self):
+        return sum(self._aggregation_field)
 
 
 class Count(Aggregation):
     """
     Counts the number of records for each group.
     """
-
-    def aggregate(self, grouped_dataframe):
-        return grouped_dataframe.agg(count("*").alias("value"))
+    def get_aggregation(self):
+        return count("*")
 
 
 class DistinctCount(Aggregation):
     """
     Returns an approximate distinct count of ``_aggregation_field``
     """
-
-    def aggregate(self, grouped_dataframe):
-        return grouped_dataframe.agg(approx_count_distinct(self._aggregation_field).alias("value"))
+    def get_aggregation(self):
+        return approx_count_distinct(self._aggregation_field)
 
 
 class Stddev(Aggregation):
     """
     Computes standard deviation
     """
-
-    def aggregate(self, grouped_dataframe):
-        return grouped_dataframe.agg(stddev(self._aggregation_field).alias("value"))
-
-
-class CompoundAggregation(Aggregation):
-    def aggregate(self, grouped_dataframe):
-        return grouped_dataframe.agg(
-            expr("percentile(" + self._aggregation_field + ", array(0.01,0.05,0.1,0.25,0.5,0.75,0.9,0.95,0.99))").alias("percentile"),
-            count("*").alias("count"),
-            sum(self._aggregation_field).alias("sum"),
-            max(self._aggregation_field).alias("max"),
-            min(self._aggregation_field).alias("min"),
-            stddev(self._aggregation_field).alias("stddev")
-        )\
-            .withColumn("map", create_map(
-                [lit("sum"), col("sum"), lit("max"), col("max"), lit("min"), col("min"),
-                    lit("count"), col("count"), lit("stddev"), col("stddev"),
-                    lit("p01"), col("percentile").getItem(0), lit("p05"), col("percentile").getItem(1),
-                    lit("p10"), col("percentile").getItem(2), lit("p25"), col("percentile").getItem(3),
-                    lit("p50"), col("percentile").getItem(4), lit("p75"), col("percentile").getItem(5),
-                    lit("p90"), col("percentile").getItem(6), lit("p95"), col("percentile").getItem(7),
-                    lit("p99"), col("percentile").getItem(8)
-                 ]))\
-            .select("*", explode(col("map")).alias("metric_name", "value")) \
-            .withColumn("metric_name", self._construct_metric_name(col("metric_name"))) \
-            .drop("map", "sum", "max", "min", "stddev", "percentile", "count", "stddev")
+    def get_aggregation(self):
+        return stddev(self._aggregation_field)
 
 
 class Percentile(Aggregation):
     """
-    Computes n-th percentile
+    Computes percentiles
     """
+    def get_aggregation(self):
+        return expr("percentile(" + self._aggregation_field + ", array(" + str(self.percentile()) + "))")
 
     @abstractmethod
     def percentile(self):
         """
-        Abstract property which defines n of percentile
+        Computes percentiles
         """
 
-    def aggregate(self, grouped_dataframe):
-        return grouped_dataframe.agg(
-            expr("percentile(" + self._aggregation_field + ", array(0.01,0.05,0.1,0.25,0.5,0.75,0.9,0.95,0.99)")
-            .alias("value"),
-        )
+    def post_process(self, df):
+        column_name = self.get_name()
+        return df.withColumn(column_name, col(column_name).getItem(0))
 
 
 class P01(Percentile):
+    """
+    Computes 0.01 percentile
+    """
     def percentile(self):
         return 0.01
 
 
 class P05(Percentile):
+    """
+    Computes 0.05 percentile
+    """
     def percentile(self):
         return 0.05
 
 
 class P10(Percentile):
+    """
+    Computes 0.1 percentile
+    """
     def percentile(self):
         return 0.1
 
 
 class P25(Percentile):
+    """
+    Computes 0.25 percentile
+    """
     def percentile(self):
         return 0.25
 
 
 class P50(Percentile):
+    """
+    Computes 0.5 percentile
+    """
     def percentile(self):
         return 0.5
 
 
 class Median(Percentile):
+    """
+    Computes median
+    """
     def percentile(self):
         return 0.5
 
 
 class P75(Percentile):
+    """
+    Computes 0.75 percentile
+    """
     def percentile(self):
         return 0.75
 
 
 class P90(Percentile):
+    """
+    Computes 0.9 percentile
+    """
     def percentile(self):
         return 0.9
 
 
 class P95(Percentile):
+    """
+    Computes 0.95 percentile
+    """
     def percentile(self):
         return 0.95
 
 
 class P99(Percentile):
+    """
+    Computes 0.99 percentile
+    """
     def percentile(self):
         return 0.99
+
+
+class CompoundAggregation(Aggregation):
+    """
+    Computes collection of aggregations in "one go"
+    """
+    def __init__(self, aggregations, group_fields=None, aggregation_field=None,
+                 aggregation_window=None, aggregation_name=None):
+        self.__aggregations = aggregations
+        super(CompoundAggregation, self).__init__(group_fields, aggregation_field, aggregation_window, aggregation_name)
+
+    def get_aggregation(self):
+        return None
+
+    def aggregate(self, grouped_dataframe):
+        aggregation_names = [aggregation.get_name() for aggregation in self.__aggregations]
+        aggregations = [aggregation.get_aggregation().alias(aggregation.get_name())
+                        for aggregation in self.__aggregations]
+        map_column = create_map(list(chain(*((lit(agg), col(agg)) for agg in aggregation_names)))).alias("map")
+        result = grouped_dataframe.agg(*aggregations)
+        for aggregation in self.__aggregations:
+            result = aggregation.post_process(result)
+        return result\
+            .withColumn("map", map_column)\
+            .select("*", explode(col("map")).alias("metric_name", "value"))\
+            .withColumn("metric_name", self._construct_metric_name(col("metric_name")))\
+            .drop("map")\
+            .drop(*aggregation_names)

@@ -35,7 +35,7 @@ class NetworkErrorsStbBasicAnalytics(BasicAnalyticsProcessor):
                             P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
                             P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)]
 
-            result.append(stream.aggregate(CompoundAggregation(**kwargs)))
+            result.append(stream.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs)))
 
         return result
 
