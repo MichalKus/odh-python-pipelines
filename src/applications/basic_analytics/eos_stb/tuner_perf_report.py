@@ -120,6 +120,10 @@ class TunerPerfReport(BasicAnalyticsProcessor):
 
     @staticmethod
     def create_schema():
+        """
+        Create the input schema according to current processor requirements
+        :return: Returns the schema
+        """
         return StructType([
             StructField("timestamp", StringType()),
             StructField("hardwareVersion", StringType()),
