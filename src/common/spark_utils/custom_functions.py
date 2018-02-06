@@ -1,4 +1,5 @@
-from pyspark.sql.functions import lower, when, Column
+from pyspark.sql.functions import col, lower, when, Column, from_unixtime
+from pyspark.sql.types import TimestampType
 
 
 def custom_translate_regex(source_field, mapping, default_value, exact_match=False):
@@ -49,7 +50,7 @@ def custom_translate_like(source_field, mappings_pair, default_value):
         :param mappings: array of string values to be looked for in source column.
         :return: matching expression
         """
-        return  reduce(
+        return reduce(
             lambda c1, c2: c1.__and__(c2),
             [lower(source_filed).like("%" + mapping.lower() + "%") for mapping in mappings]
         )
@@ -62,3 +63,14 @@ def custom_translate_like(source_field, mappings_pair, default_value):
             result = result.when(get_like_condition(source_field, mappings), value)
 
     return result.otherwise(default_value)
+
+
+def convert_epoch_to_iso(data_stream, input_field_name, result_field_name):
+    """
+    This function converts the epoch input timestamp to spark TimestampType
+    :param data_stream: input spark dataframe
+    :param input_field_name: input column name
+    :param result_field_name: result column name
+    :return: dataframe with added TimesatmpType column
+    """
+    return data_stream.withColumn(result_field_name, from_unixtime(col(input_field_name) / 1000).cast(TimestampType()))
