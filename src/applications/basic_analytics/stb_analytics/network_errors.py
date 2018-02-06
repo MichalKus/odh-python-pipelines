@@ -3,10 +3,11 @@ Basic analytics driver for STB Network and Connectivity errors.
 """
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
-from pyspark.sql.types import StructField, StructType, TimestampType, StringType, IntegerType
+from pyspark.sql.types import StructField, StructType, StringType, IntegerType
 from common.basic_analytics.aggregations import Count, Sum, Max, Min, Stddev, CompoundAggregation
 from common.basic_analytics.aggregations import P01, P05, P10, P25, P50, P75, P90, P95, P99
 from pyspark.sql.functions import col
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 
 
 class NetworkErrorsStbBasicAnalytics(BasicAnalyticsProcessor):
@@ -39,10 +40,13 @@ class NetworkErrorsStbBasicAnalytics(BasicAnalyticsProcessor):
 
         return result
 
+    def _prepare_timefield(self, data_stream):
+        return convert_epoch_to_iso(data_stream, "timestamp", "@timestamp")
+
     @staticmethod
     def create_schema():
         return StructType([
-            StructField("@timestamp", TimestampType()),
+            StructField("timestamp", StringType()),
             StructField("hardwareVersion", StringType()),
             StructField("firmwareVersion", StringType()),
             StructField("appVersion", StringType()),
