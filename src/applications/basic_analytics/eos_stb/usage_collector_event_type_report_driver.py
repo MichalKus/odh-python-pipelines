@@ -1,7 +1,8 @@
-from pyspark.sql.functions import *
-from pyspark.sql.types import StructType, StructField, TimestampType, StringType
+from pyspark.sql.types import StructType, StructField, StringType
+
 from common.basic_analytics.aggregations import Count
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
@@ -12,23 +13,22 @@ class UsageCollectorEventTypeReportProcessor(BasicAnalyticsProcessor):
     """
 
     def _prepare_timefield(self, data_stream):
-        return data_stream.withColumn("@timestamp", from_unixtime(col("timestamp") / 1000).cast(TimestampType()))
+        return convert_epoch_to_iso(data_stream, "timestamp", "@timestamp")
 
     def _process_pipeline(self, read_stream):
-        group_by_list = ["hardwareVersion", "firmwareVersion", "asVersion", "appVersion",
-                         "UsageCollectorReport_event_Type"]
 
-        aggregation = Count(group_fields=group_by_list, aggregation_name=self._component_name)
-
-        def get_agg_df(current_value):
-            return read_stream \
-                .filter(col("UsageCollectorReport_event_Type") == current_value) \
-                .aggregate(aggregation)
-
-        return map(get_agg_df, ["start", "callback_failed", "memory_full", "degraded_mode"])
+        return read_stream.aggregate(Count(
+            group_fields=["hardwareVersion", "firmwareVersion", "asVersion", "appVersion",
+                         "UsageCollectorReport_event_Type"],
+            aggregation_name=self._component_name)
+        )
 
     @staticmethod
     def create_schema():
+        """
+        Create the input schema according to current processor requirements
+        :return: Returns the schema
+        """
         return StructType([
             StructField("timestamp", StringType()),
             StructField("firmwareVersion", StringType()),
@@ -40,7 +40,11 @@ class UsageCollectorEventTypeReportProcessor(BasicAnalyticsProcessor):
 
 
 def create_processor(configuration):
-    """Method to create the instance of the processor"""
+    """
+    Creates stream processor object.
+    :param config: Configuration object of type Configuration.
+    :return: configured UsageCollectorEventTypeReportProcessor object.
+    """
     return UsageCollectorEventTypeReportProcessor(configuration,
                                                   UsageCollectorEventTypeReportProcessor.create_schema(),
                                                   )
