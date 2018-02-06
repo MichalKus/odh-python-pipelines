@@ -3,8 +3,8 @@ import re
 import json
 from common.kafka_pipeline import KafkaPipeline
 from util.utils import Utils
-from pyspark.sql.functions import from_json, lit, col, concat, regexp_replace, split, udf
-from pyspark.sql.types import ArrayType, StringType, DoubleType, BooleanType, StructType, StructField
+from pyspark.sql.functions import lit, col, udf
+from pyspark.sql.types import StringType
 
 class VropsParser(object):
     """

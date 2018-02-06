@@ -29,10 +29,10 @@ class VMCpuProcessor(BasicAnalyticsProcessor):
             :param metric_name: name of cpu metric which needs to be averaged.
             :return: list of streams
             """
-            aggregation = Avg(group_fields=["res_kind", "group"], aggregation_field=metric_name,
+            aggregation = Avg(group_fields=["res_kind", "group", "name"], aggregation_field=metric_name,
                               aggregation_name=self._component_name)
             agg_stream = read_stream \
-                .select("@timestamp", "group", "res_kind", metric_name) \
+                .select("@timestamp", "group", "res_kind", "name", metric_name) \
                 .filter(
                 (col("group") == "cpu") & (col("res_kind") == "VirtualMachine") & (col(metric_name).isNotNull())) \
                 .aggregate(aggregation)
