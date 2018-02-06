@@ -1,10 +1,10 @@
 import json
 
-from pyspark.sql.functions import *
+from pyspark.sql.functions import col, udf, from_unixtime
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType, ArrayType, FloatType, DoubleType, \
     IntegerType
 
-from common.basic_analytics.aggregations import *
+from common.basic_analytics.aggregations import CompoundAggregation, Sum, Count, Max, Min, Stddev, P01, P05, P10, P25, P50, P75, P90, P95, P99
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
@@ -26,6 +26,13 @@ class TunerPerfReport(BasicAnalyticsProcessor):
         for i in range(0, num):
             res = TunerPerfReport.get_column(column, column + "_" + str(i), i)
             ls.extend(res)
+        return ls
+
+    @staticmethod
+    def get_column_names(column_prefix, num = 8):
+        ls = []
+        for i in range(0, num):
+            ls.append(column_prefix + "_" + str(i))
         return ls
 
     @staticmethod
@@ -79,7 +86,7 @@ class TunerPerfReport(BasicAnalyticsProcessor):
         #         ), get_columns("TunerReport_correcteds", 8)
         #     ).drop(*column_list)
         json_to_array_udf = udf(TunerPerfReport.json_to_array, ArrayType(FloatType()))
-        read_stream.printSchema()
+        # read_stream.printSchema()
 
         # read_stream \
         #     .writeStream \
@@ -100,7 +107,7 @@ class TunerPerfReport(BasicAnalyticsProcessor):
         expanded_dataframe = expand_df(input_df, column_list)
 
         pre_result_df = expanded_dataframe.drop(*column_list)
-        pre_result_df.printSchema()
+        # pre_result_df.printSchema()
 
 
         # results_df = pre_result_df \
@@ -110,21 +117,48 @@ class TunerPerfReport(BasicAnalyticsProcessor):
 
 
         # results_df.results("2 seconds", "@timestamp")[0] \
-        pre_result_df \
-            .writeStream\
-            .format("console") \
-            .trigger(processingTime='2 seconds') \
-            .outputMode("update") \
-            .start()
+        # pre_result_df \
+        #     .writeStream\
+        #     .format("console") \
+        #     .trigger(processingTime='2 seconds') \
+        #     .outputMode("update") \
+        #     .start()
 
 
 
         # return [results_df]
 
-        aggregation_fields = ["TunerReport_SNR_0", "TunerReport_SNR_1"]
+        aggregation_fields_without_sum = TunerPerfReport.get_column_names("TunerReport_SNR")
+        aggregation_fields_without_sum.extend(TunerPerfReport.get_column_names("TunerReport_signalLevel"))
+
+        aggregation_fields_with_sum = TunerPerfReport.get_column_names("TunerReport_erroreds")
+        aggregation_fields_with_sum.extend(TunerPerfReport.get_column_names("TunerReport_unerroreds"))
+        aggregation_fields_with_sum.extend(TunerPerfReport.get_column_names("TunerReport_correcteds"))
+
         result = []
 
-        for field in aggregation_fields:
+        for field in aggregation_fields_without_sum:
+            kwargs = {'group_fields': self.__dimensions,
+                      'aggregation_name': self._component_name,
+                      'aggregation_field': field
+                      }
+
+            aggregations = [Count(**kwargs), Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
+                            P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
+                            P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)]
+
+            column_stream = pre_result_df.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs))
+
+            # column_stream \
+            # .results("10 seconds", "@timestamp")[0] \
+            # .writeStream\
+            #     .format("console").outputMode("update") \
+            #         .option("truncate", False).option("numRows", 100) \
+            #         .start()
+
+            result.append(column_stream)
+
+        for field in aggregation_fields_with_sum:
             kwargs = {'group_fields': self.__dimensions,
                       'aggregation_name': self._component_name,
                       'aggregation_field': field}
@@ -134,13 +168,6 @@ class TunerPerfReport(BasicAnalyticsProcessor):
                             P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)]
 
             column_stream = pre_result_df.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs))
-
-            column_stream \
-            .results("10 seconds", "@timestamp")[0] \
-            .writeStream\
-                .format("console").outputMode("update") \
-                    .option("truncate", False).option("numRows", 100) \
-                    .start()
 
             result.append(column_stream)
 
@@ -169,4 +196,4 @@ def create_processor(configuration):
 
 
 if __name__ == "__main__":
-    start_basic_analytics_pipeline(TunerPerfReport.create_processor)
+    start_basic_analytics_pipeline(create_processor)

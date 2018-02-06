@@ -3,7 +3,7 @@ spark:
   master: local[*]
   shuffle.partitions: 1
   outputMode: update
-  consoleWriter: true
+#  consoleWriter: true
 
 kafka:
   maxOffsetsPerTrigger: 100000

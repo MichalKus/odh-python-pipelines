@@ -2,7 +2,7 @@ from applications.basic_analytics.eos_stb.tuner_perf_report import create_proces
 from test.it.core.base_spark_test_case import BaseSparkProcessorTestCase
 
 
-class EosStbAnalyticsTestCase(BaseSparkProcessorTestCase):
+class TunerPerfReportBasicAnalyticsTestCase(BaseSparkProcessorTestCase):
     def test_events(self):
         self._test_pipeline(
             configuration_path="test/it/resources/basic_analytics/eos_stb/tuner_perf_report/configuration.yml",
