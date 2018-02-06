@@ -1,11 +1,11 @@
 """
 Basic analytics driver for STB Display Report.
 """
-from pyspark.sql.functions import from_unixtime, col
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
-from pyspark.sql.types import StructField, StructType, TimestampType, StringType
+from pyspark.sql.types import StructField, StructType, StringType
 from common.basic_analytics.aggregations import Count
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 
 
 class DisplayStbBasicAnalytics(BasicAnalyticsProcessor):
@@ -23,7 +23,7 @@ class DisplayStbBasicAnalytics(BasicAnalyticsProcessor):
         return stream.aggregate(aggregations)
 
     def _prepare_timefield(self, data_stream):
-        return data_stream.withColumn("@timestamp", from_unixtime(col("timestamp") / 1000).cast(TimestampType()))
+        return convert_epoch_to_iso(data_stream, "timestamp", "@timestamp")
 
     @staticmethod
     def immutable_append_and_return(lst, item):
