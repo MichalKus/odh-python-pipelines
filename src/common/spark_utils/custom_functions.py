@@ -65,7 +65,7 @@ def custom_translate_like(source_field, mappings_pair, default_value):
     return result.otherwise(default_value)
 
 
-def prepare_timestamp_field(data_stream, input_field_name, result_field_name):
+def convert_epoch_to_iso(data_stream, input_field_name, result_field_name):
     """
     This function converts the epoch input timestamp to spark TimestampType
     :param data_stream: input spark dataframe

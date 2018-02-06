@@ -5,7 +5,7 @@ from pyspark.sql.types import StructField, StructType, StringType, LongType
 
 from common.basic_analytics.aggregations import Count
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.spark_utils.custom_functions import prepare_timestamp_field
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
@@ -31,7 +31,7 @@ class UpgradeStatusViaSettingsReportStbBasicAnalytics(BasicAnalyticsProcessor):
         return result
 
     def _prepare_timefield(self, data_stream):
-        return prepare_timestamp_field(data_stream, "timestamp", "@timestamp")
+        return convert_epoch_to_iso(data_stream, "timestamp", "@timestamp")
 
     @staticmethod
     def create_schema():
