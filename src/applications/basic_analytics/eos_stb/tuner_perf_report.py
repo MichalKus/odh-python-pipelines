@@ -58,8 +58,7 @@ class TunerPerfReport(BasicAnalyticsProcessor):
     def _prepare_timefield(self, data_stream):
         return convert_epoch_to_iso(data_stream, "timestamp", "@timestamp")
 
-    def _process_pipeline(self, read_stream):
-
+    def _prepare_input_data_frame(self, read_stream):
         def explode_in_columns(df, columns_with_name):
             return (reduce(lambda memo_df, col_name: memo_df.withColumn(col_name[0], col_name[1].cast(DoubleType())),
                 columns_with_name, df))
@@ -81,18 +80,24 @@ class TunerPerfReport(BasicAnalyticsProcessor):
             .withColumn("TunerReport_correcteds", json_to_array_udf(col("TunerReport_correcteds")))
 
 
-        pre_result_df = expand_df(input_df, column_list).drop(*column_list)
+        return expand_df(input_df, column_list).drop(*column_list)
 
+    def _process_pipeline(self, read_stream):
+
+        pre_result_df = self._prepare_input_data_frame(read_stream)
+
+        aggregations_ls = []
         aggregation_fields_without_sum = TunerPerfReport.get_column_names("TunerReport_SNR")
         aggregation_fields_without_sum.extend(TunerPerfReport.get_column_names("TunerReport_signalLevel"))
-
         aggregation_fields_with_sum = TunerPerfReport.get_column_names("TunerReport_erroreds")
         aggregation_fields_with_sum.extend(TunerPerfReport.get_column_names("TunerReport_unerroreds"))
         aggregation_fields_with_sum.extend(TunerPerfReport.get_column_names("TunerReport_correcteds"))
+        aggregations_ls.extend(aggregation_fields_without_sum)
+        aggregations_ls.extend(aggregation_fields_with_sum)
 
         result = []
 
-        for field in aggregation_fields_without_sum:
+        for field in aggregations_ls:
             kwargs = {'group_fields': self.__dimensions,
                       'aggregation_name': self._component_name,
                       'aggregation_field': field
@@ -102,16 +107,8 @@ class TunerPerfReport(BasicAnalyticsProcessor):
                             P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
                             P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)]
 
-            result.append(pre_result_df.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs)))
-
-        for field in aggregation_fields_with_sum:
-            kwargs = {'group_fields': self.__dimensions,
-                      'aggregation_name': self._component_name,
-                      'aggregation_field': field}
-
-            aggregations = [Sum(**kwargs), Count(**kwargs), Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
-                            P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
-                            P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)]
+            if kwargs["aggregation_field"] in aggregation_fields_with_sum:
+                aggregations.append(Sum(**kwargs))
 
             result.append(pre_result_df.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs)))
 
