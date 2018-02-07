@@ -1,5 +1,5 @@
 from pyspark.sql.functions import col
-from pyspark.sql.types import StructType, StructField, TimestampType, StringType, DoubleType
+from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
