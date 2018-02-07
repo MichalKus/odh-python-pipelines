@@ -1,0 +1,23 @@
+spark:
+  appName: upgrade-status-via-settings-report
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+  shuffle.partitions: 1
+  consoleWriter: true
+  outputMode: update
+
+kafka:
+  maxOffsetsPerTrigger: 1000
+  bootstrap.servers: 192.168.100.1:9094
+  topics:
+    inputs:
+      - odhecx_pr_eosdtv_be_prd_stb_statelog_v1
+    output: vagrant_out_eosdtv_lab5aobo_tst_heapp_stagis_log_err_v1
+  startingOffsets: earliest
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
+
+analytics:
+  componentName: odhecx.eosdtv.be.prd.eos_stb.upgrade_status_via_settings_report
+  watermark: 10 minutes
+  window: 1 minute
