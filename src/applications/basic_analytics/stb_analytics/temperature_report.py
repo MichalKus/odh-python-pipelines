@@ -2,11 +2,12 @@
 Basic analytics driver for STB Tempetarure values for all hardware components.
 """
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
-from pyspark.sql.types import StructField, StructType, TimestampType, StringType, IntegerType
+from pyspark.sql.types import StructField, StructType, StringType
 from common.basic_analytics.aggregations import Count, Max, Min, Stddev, CompoundAggregation
 from common.basic_analytics.aggregations import P01, P05, P10, P25, P50, P75, P90, P95, P99
-from pyspark.sql.functions import col, explode, from_unixtime
+from pyspark.sql.functions import lit, col, from_json, when
 
 
 class TemperatureStbBasicAnalytics(BasicAnalyticsProcessor):
@@ -14,15 +15,28 @@ class TemperatureStbBasicAnalytics(BasicAnalyticsProcessor):
     Basic analytics driver for STB Tempetarure values for all hardware components.
     """
 
-    __dimensions = ["hardwareVersion", "firmwareVersion", "appVersion", "asVersion", "hardwareComponent"]
+    __dimensions = ["hardwareVersion", "firmwareVersion", "appVersion", "asVersion"]
 
     def _process_pipeline(self, json_stream):
+        schema = StructType([
+            StructField("TUNER", StringType()),
+            StructField("BOARD", StringType()),
+            StructField("WIFI", StringType()),
+            StructField("CPU", StringType()),
+            StructField("HDD", StringType())
+        ])
+
         stream = json_stream \
-            .select("*", explode("TemperatureReport_value").alias("hardwareComponent", "temperatureValue")) \
-            .withColumn("temperatureValue", col("temperatureValue").cast(IntegerType())) \
+            .withColumn("jsonHW", from_json(col("TemperatureReport_value"), schema).alias("jsonHW")) \
+            .withColumn("TUNER", when(col("jsonHW.TUNER") == "-274", None).otherwise(col("jsonHW.TUNER"))) \
+            .withColumn("BOARD", when(col("jsonHW.BOARD") == "-274", None).otherwise(col("jsonHW.BOARD"))) \
+            .withColumn("WIFI", when(col("jsonHW.WIFI") == "-274", None).otherwise(col("jsonHW.WIFI"))) \
+            .withColumn("CPU", when(col("jsonHW.CPU") == "-274", None).otherwise(col("jsonHW.CPU"))) \
+            .withColumn("HDD", when(col("jsonHW.HDD") == "-274", None).otherwise(col("jsonHW.HDD"))) \
+            .drop("jsonHW") \
             .drop("TemperatureReport_value")
 
-        aggregation_fields = ["temperatureValue"]
+        aggregation_fields = ["TUNER", "BOARD", "WIFI", "CPU", "HDD"]
         result = []
 
         for field in aggregation_fields:
@@ -50,7 +64,12 @@ class TemperatureStbBasicAnalytics(BasicAnalyticsProcessor):
         ])
 
     def _prepare_timefield(self, data_stream):
-        return data_stream.withColumn("@timestamp", from_unixtime(col("timestamp") / 1000).cast(TimestampType()))
+        return convert_epoch_to_iso(data_stream, "timestamp", "@timestamp")
+
+    def _post_processing_pipeline(self, dataframe):
+        return dataframe \
+            .filter(col("value").isNotNull()) \
+            .filter(col("value") != "NaN")
 
 
 def create_processor(configuration):

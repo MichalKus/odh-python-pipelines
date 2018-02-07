@@ -8,6 +8,5 @@ class TemperatureStbBasicAnalyticsTestCase(BaseSparkProcessorTestCase):
             configuration_path="test/it/resources/basic_analytics/stb_analytics/temperature_report/configuration.yml",
             processor_creator=create_processor,
             input_dir="test/it/resources/basic_analytics/stb_analytics/temperature_report/input",
-            expected_result_file="test/it/resources/basic_analytics/stb_analytics/temperature_report/expected_result.txt",
-            print_result=True
+            expected_result_file="test/it/resources/basic_analytics/stb_analytics/temperature_report/expected_result.txt"
         )
