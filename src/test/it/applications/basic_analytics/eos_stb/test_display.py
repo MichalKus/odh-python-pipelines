@@ -1,4 +1,4 @@
-from applications.basic_analytics.stb_analytics.display import create_processor
+from applications.basic_analytics.stb_analytics.display_report_driver import create_processor
 from test.it.core.base_spark_test_case import BaseSparkProcessorTestCase
 
 
