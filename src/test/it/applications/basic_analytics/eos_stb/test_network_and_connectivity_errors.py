@@ -1,4 +1,4 @@
-from applications.basic_analytics.stb_analytics.network_errors import create_processor
+from applications.basic_analytics.stb_analytics.network_errors_report_driver import create_processor
 from test.it.core.base_spark_test_case import BaseSparkProcessorTestCase
 
 
