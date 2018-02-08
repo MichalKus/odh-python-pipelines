@@ -74,8 +74,11 @@ class BasicAnalyticsProcessor(object):
         aggregated_results = [df.results(aggregation_window, self._timefield_name) for df in aggregated_dataframes]
         return [self._convert_to_kafka_structure(result) for results in aggregated_results for result in results]
 
+    def _post_processing_pipeline(self, dataframe):
+        return dataframe
+
     def _convert_to_kafka_structure(self, dataframe):
-        return dataframe \
+        return self._post_processing_pipeline(dataframe) \
             .withColumn("@timestamp", col("window.start")) \
             .drop("window") \
             .selectExpr("metric_name AS key", "to_json(struct(*)) AS value") \

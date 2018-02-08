@@ -1,0 +1,14 @@
+spark:
+  appName: eos-stb-basic-analytics-test-tuner-perf-report
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+#  consoleWriter: true
+
+kafka:
+  maxOffsetsPerTrigger: 100000
+
+analytics:
+  componentName: vagrant.eosdtv.lab5aobo.tst.heapp.stb.eos.acs
+  watermark: '1 second'
+  window: '10 seconds'
