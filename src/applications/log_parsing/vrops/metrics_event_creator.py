@@ -1,3 +1,4 @@
+import re
 from common.log_parsing.dict_event_creator.event_creator import EventCreator
 
 
@@ -25,7 +26,17 @@ class MetricsEventCreator(EventCreator):
         """
         metrics = values["metrics"]
         pairs = []
-        for x in metrics.split(','):
+        split = re.split(r'[, ]', metrics)
+        res =[]
+        for x in split:
+            if '=' in x:
+                res.append(x)
+            else:
+                try:
+                    res[-1] = res[-1] + x
+                except IndexError:
+                    pass
+        for x in res:
             [key, metric_value] = x.split('=')
             try:
                 value = float(metric_value)

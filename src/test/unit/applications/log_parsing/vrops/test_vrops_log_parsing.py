@@ -53,3 +53,49 @@ class VROPSParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "timestamp": "1517835610321"
             }
         )
+
+    def test_vrops_random(self):
+        self.assert_parsing(
+            {
+                "source": "VROPS.log",
+                "message": "cpu,name=nlcsapesxp010.csa.internal,res_kind=HostSystem,cpu_id=31 idle_summation=9855.2001953125,used_summation=117.13333129882812,usage_average=0.5806666612625122 1518112552376"
+            },
+            {
+                "group": "cpu",
+                "name": "nlcsapesxp010.csa.internal",
+                "res_kind": "HostSystem",
+                "metrics": {"cpu_id": 31.0, "idle_summation": 9855.2001953125, "used_summation": 117.13333129882812, "usage_average": 0.5806666612625122},
+                "timestamp": "1518112552376"
+            }
+        )
+
+    def test_rare_case(self):
+        self.assert_parsing(
+            {
+                "source": "VROPS.log",
+                "message": "net,name=LG-W-P-VDI10028,res_kind=VirtualMachine,interface_id=aggregate\ of\ all\ instances droppedpct=40.50104522705078,packetstxpersec=0.3333333432674408,packetsrxpersec=1.5666667222976685 1518115192381"
+            },
+            {
+                "group": "net",
+                "name": "LG-W-P-VDI10028",
+                "res_kind": "VirtualMachine",
+                "metrics": {"interface_id": "aggregate\\of\\all\\instances", "droppedpct": 40.50104522705078, "packetstxpersec": 0.3333333432674408,
+                            "packetsrxpersec": 1.5666667222976685},
+                "timestamp": "1518115192381"
+            }
+        )
+
+    def test_rare_case2(self):
+        self.assert_parsing(
+            {
+                "source": "VROPS.log",
+                "message": "availability,name=Likewise\ Service\ Manager,res_kind=vSphere\ SSO\ Likewise\ Service\ Manager resourceavailability=100.0 1518118140000"
+            },
+            {
+                "group": "availability",
+                "name": "Likewise\ Service\ Manager",
+                "res_kind": "vSphere\\",
+                "metrics": {"resourceavailability": 100.0},
+                "timestamp": "1518118140000"
+            }
+        )
