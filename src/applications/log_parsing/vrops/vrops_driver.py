@@ -92,6 +92,7 @@ from common.log_parsing.dict_event_creator.event_creator import EventCreator
 from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
 from common.log_parsing.event_creator_tree.multisource_configuration import MatchField, SourceConfiguration
 from common.log_parsing.metadata import Metadata, StringField
+from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from applications.log_parsing.vrops.dictionary_field import CustomDictField
 from util.utils import Utils
 
@@ -111,6 +112,7 @@ def create_event_creators(configuration):
         StringField("res_kind"),
         CustomDictField("metrics"),
         StringField("timestamp")]),
+        # ConfigurableTimestampField("timestamp", timezone_name, timezones_priority, "timestamp")]),
         RegexpParser(r"(?s)^(?P<group>.*),name=(?P<name>.*),res_kind=(?P<res_kind>[^\,]*)\s(?P<metrics>.*)\s(?P<timestamp>.*)"))
 
     return MatchField("source", {

@@ -3,7 +3,7 @@ spark:
   master: local[*]
   shuffle.partitions: 1
   outputMode: update
-  consoleWriter: false
+  consoleWriter: true
 
 analytics:
   componentName: odhecx.eosdtv.pan.prd.vrops

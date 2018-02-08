@@ -1,4 +1,5 @@
-from pyspark.sql.functions import col
+import json
+from pyspark.sql.functions import col, udf, lit
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.spark_utils.custom_functions import convert_epoch_to_iso
@@ -23,6 +24,7 @@ class VMCpuProcessor(BasicAnalyticsProcessor):
         Process stream via filtering and aggregating
         :param read_stream: input stream
         """
+
         def for_each_metric(metric_name):
             """
             Build aggregated stream for each metric
@@ -32,9 +34,10 @@ class VMCpuProcessor(BasicAnalyticsProcessor):
             aggregation = Avg(group_fields=["res_kind", "group", "name"], aggregation_field=metric_name,
                               aggregation_name=self._component_name)
             agg_stream = read_stream \
+                .select("@timestamp", "group", "res_kind", "name", "metrics.*") \
                 .select("@timestamp", "group", "res_kind", "name", metric_name) \
                 .filter(
-                (col("group") == "cpu") & (col("res_kind") == "VirtualMachine") & (col(metric_name).isNotNull())) \
+                (col("group") == "cpu") & (col("res_kind") == "VirtualMachine")  & (col(metric_name).isNotNull())) \
                 .aggregate(aggregation)
 
             return agg_stream
@@ -51,11 +54,14 @@ class VMCpuProcessor(BasicAnalyticsProcessor):
             StructField("group", StringType()),
             StructField("res_kind", StringType()),
             StructField("name", StringType()),
-            StructField("demandpct", DoubleType()),
-            StructField("idlepct", DoubleType()),
-            StructField("readypct", DoubleType()),
-            StructField("swapwaitpct", DoubleType()),
-            StructField("usage_average", DoubleType())
+            StructField("metrics", StructType([
+                StructField("demandpct", DoubleType()),
+                StructField("idlepct", DoubleType()),
+                StructField("readypct", DoubleType()),
+                StructField("swapwaitpct", DoubleType()),
+                StructField("usage_average", DoubleType())
+            ]))
+            # StructField("metrics", StringType())
         ])
 
 
