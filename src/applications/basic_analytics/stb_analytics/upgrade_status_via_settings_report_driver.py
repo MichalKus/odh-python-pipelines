@@ -1,7 +1,7 @@
 """
 Basic analytics driver for STB Upgrade Status via Settings report.
 """
-from pyspark.sql.types import StructField, StructType, StringType, LongType
+from pyspark.sql.types import StructField, StructType, StringType
 
 from common.basic_analytics.aggregations import Count
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
