@@ -6,8 +6,8 @@ Aggregation class defines common methods for all aggregations.
 import re
 from abc import ABCMeta, abstractmethod
 
-from pyspark.sql.functions import lit, avg, count, sum, max, min, col, stddev, expr, regexp_replace
 from pyspark.sql.functions import window, concat_ws, approx_count_distinct, explode, create_map
+from pyspark.sql.functions import lit, avg, count, sum, max, min, col, stddev, expr, regexp_replace
 from pyspark.sql.types import DecimalType
 from itertools import chain
 
