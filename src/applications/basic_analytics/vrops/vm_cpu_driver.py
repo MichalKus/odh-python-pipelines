@@ -61,7 +61,6 @@ class VMCpuProcessor(BasicAnalyticsProcessor):
                 StructField("swapwaitpct", DoubleType()),
                 StructField("usage_average", DoubleType())
             ]))
-            # StructField("metrics", StringType())
         ])
 
 
