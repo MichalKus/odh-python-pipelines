@@ -1,4 +1,4 @@
-from applications.basic_analytics.stb_analytics.upgrade_status_via_settings_report import create_processor
+from applications.basic_analytics.stb_analytics.upgrade_status_via_settings_report_driver import create_processor
 from test.it.core.base_spark_test_case import BaseSparkProcessorTestCase
 
 
