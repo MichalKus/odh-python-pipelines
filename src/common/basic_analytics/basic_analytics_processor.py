@@ -30,7 +30,6 @@ class BasicAnalyticsProcessor(object):
         data_stream = read_stream \
             .select(from_json(read_stream["value"].cast("string"), self._schema).alias("json")) \
             .select("json.*")
-
         return self._prepare_timefield(data_stream).withWatermark(self._timefield_name,
                                                                   self._get_interval_duration("watermark"))
 
