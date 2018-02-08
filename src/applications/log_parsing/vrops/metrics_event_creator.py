@@ -26,11 +26,11 @@ class MetricsEventCreator(EventCreator):
         metrics = values["metrics"]
         pairs = []
         for x in metrics.split(','):
-            key = x.split('=')[0]
+            [key, metric_value] = x.split('=')
             try:
-                value = float(x.split('=')[1])
+                value = float(metric_value)
             except ValueError:
-                value = x.split('=')[1]
+                value = metric_value
             pairs.append((key,value))
         res = dict(pairs)
         values.update({"metrics": res})

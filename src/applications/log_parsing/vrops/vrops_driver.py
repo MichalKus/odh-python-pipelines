@@ -1,6 +1,6 @@
 import sys
 
-from common.kafka_pipeline import KafkaPipeline
+from util.kafka_pipeline_helper import start_log_parsing_pipeline
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.dict_event_creator.event_creator import EventCreator, CompositeEventCreator
 from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
@@ -8,6 +8,7 @@ from common.log_parsing.event_creator_tree.multisource_configuration import Matc
 from common.log_parsing.metadata import Metadata, StringField
 from applications.log_parsing.vrops.metrics_event_creator import MetricsEventCreator
 from util.utils import Utils
+
 
 def create_event_creators(configuration):
     """
@@ -22,7 +23,8 @@ def create_event_creators(configuration):
         StringField("res_kind"),
         StringField("metrics"),
         StringField("timestamp")]),
-        RegexpParser(r"(?s)^(?P<group>.*),name=(?P<name>.*),res_kind=(?P<res_kind>[^\,]*)\s(?P<metrics>.*)\s(?P<timestamp>.*)"))
+        RegexpParser(
+            r"(?s)^(?P<group>.*),name=(?P<name>.*),res_kind=(?P<res_kind>[^\,]*)\s(?P<metrics>.*)\s(?P<timestamp>.*)"))
 
     metrics_creator = MetricsEventCreator(Metadata([
         StringField("metrics")]),
@@ -40,8 +42,6 @@ def create_event_creators(configuration):
     })
 
 if __name__ == "__main__":
-    configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
-        configuration,
-        LogParsingProcessor(configuration, create_event_creators(configuration))
-    ).start()
+
+    
+    start_log_parsing_pipeline(create_event_creators)

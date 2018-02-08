@@ -1,5 +1,4 @@
-import json
-from pyspark.sql.functions import col, udf, lit
+from pyspark.sql.functions import col, lit
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.spark_utils.custom_functions import convert_epoch_to_iso
@@ -15,7 +14,7 @@ class VMCpuProcessor(BasicAnalyticsProcessor):
     def _prepare_timefield(self, data_stream):
         """
         Convert to appropriate timestamp type
-        :param data_stream:
+        :param data_stream: input stream
         """
         return convert_epoch_to_iso(data_stream, "timestamp", "@timestamp")
 
