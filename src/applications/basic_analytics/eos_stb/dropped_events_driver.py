@@ -5,7 +5,7 @@ from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 from pyspark.sql.functions import *
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.basic_analytics.aggregations import Count, Avg, Sum, Min, Max
+from common.basic_analytics.aggregations import *
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
@@ -13,31 +13,30 @@ class UsageCollectorDroppedEvents(BasicAnalyticsProcessor):
     """
     The processor implementation to calculate metrics related to UsageCollector DroppedEvents component.
     """
+    __dimensions = ["hardwareVersion", "firmwareVersion", "appVersion", "asVersion"]
 
-    def _process_pipeline(self, read_stream):
+    def _process_pipeline(self, json_stream):
 
-        stream = read_stream \
-                .withColumn("UsageCollectorReport_missed_events", col("UsageCollectorReport_missed_events").cast(LongType())) \
-                .where("UsageCollectorReport_missed_events is not null")
-
-        count_missed_events = stream.aggregate(Count(   aggregation_field="UsageCollectorReport_missed_events",
-                                group_fields=["hardwareVersion","firmwareVersion","asVersion","appVersion"],
-                                aggregation_name=self._component_name))
-
-        sum_missed_events = stream.aggregate(Sum( aggregation_field="UsageCollectorReport_missed_events",
-                            group_fields=["hardwareVersion","firmwareVersion","asVersion","appVersion"],
-                            aggregation_name=self._component_name))
-
-        min_missed_events = stream.aggregate(Min( aggregation_field="UsageCollectorReport_missed_events",
-                            group_fields=["hardwareVersion","firmwareVersion","asVersion","appVersion"],
-                            aggregation_name=self._component_name))
-
-        max_missed_events = stream.aggregate(Max( aggregation_field="UsageCollectorReport_missed_events",
-                            group_fields=["hardwareVersion","firmwareVersion","asVersion","appVersion"],
-                            aggregation_name=self._component_name))
+        stream = json_stream\
+            .withColumn("UsageCollectorReport_missed_events", col("UsageCollectorReport_missed_events").cast(LongType()))\
+            .where("UsageCollectorReport_missed_events is not null")
 
 
-        return [count_missed_events, sum_missed_events, min_missed_events, max_missed_events]
+        aggregation_field = "UsageCollectorReport_missed_events"
+        result = []
+
+        for field in aggregation_fields:
+            kwargs = {'group_fields': self.__dimensions,
+                      'aggregation_name': self._component_name,
+                      'aggregation_field': aggregation_field}
+
+            aggregations = [Sum(**kwargs), Count(**kwargs), Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
+                            P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
+                            P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)]
+
+            result.append(stream.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs)))
+
+        return result
 
     @staticmethod
     def create_schema():
