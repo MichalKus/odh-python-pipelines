@@ -36,7 +36,7 @@ class UpgradeStatusViaSettingsReportStbBasicAnalytics(BasicAnalyticsProcessor):
     @staticmethod
     def create_schema():
         return StructType([
-            StructField("timestamp", LongType()),
+            StructField("timestamp", StringType()),
             StructField("hardwareVersion", StringType()),
             StructField("firmwareVersion", StringType()),
             StructField("appVersion", StringType()),
