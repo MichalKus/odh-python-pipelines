@@ -1,11 +1,11 @@
 """
-The module for the driver to calculate metrics related to Think Analytics HTTP access component.
+The module for the driver to calculate metrics related to UsageCollector for dropped events.
 """
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType, LongType
 from pyspark.sql.functions import *
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.basic_analytics.aggregations import *
+from common.basic_analytics.aggregations import Sum, Count, Max, Min, Stddev, P01, P05, P10, P25, P50, P75, P90, P95, P99
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
@@ -16,7 +16,6 @@ class UsageCollectorDroppedEvents(BasicAnalyticsProcessor):
     __dimensions = ["hardwareVersion", "firmwareVersion", "appVersion", "asVersion"]
 
     def _process_pipeline(self, json_stream):
-
         stream = json_stream\
             .withColumn("UsageCollectorReport_missed_events", col("UsageCollectorReport_missed_events").cast(LongType()))\
             .where("UsageCollectorReport_missed_events is not null")
@@ -25,21 +24,25 @@ class UsageCollectorDroppedEvents(BasicAnalyticsProcessor):
         aggregation_field = "UsageCollectorReport_missed_events"
         result = []
 
-        for field in aggregation_fields:
-            kwargs = {'group_fields': self.__dimensions,
-                      'aggregation_name': self._component_name,
-                      'aggregation_field': aggregation_field}
+        kwargs = {'group_fields': self.__dimensions,
+                    'aggregation_name': self._component_name,
+                    'aggregation_field': aggregation_field}
 
-            aggregations = [Sum(**kwargs), Count(**kwargs), Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
-                            P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
-                            P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)]
+        aggregations = [Sum(**kwargs), Count(**kwargs), Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
+                        P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
+                        P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)]
 
-            result.append(stream.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs)))
+        result.append(stream.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs)))
 
         return result
 
     @staticmethod
     def create_schema():
+        """
+            Returns fields needed for processing.
+            UsageCollectorReport_missed_events contains the number of missed events
+            Other fields describes the origin of the metrics.
+        """
         return StructType([
             StructField("@timestamp", TimestampType()),
             StructField("UsageCollectorReport_missed_events", StringType()),
