@@ -48,7 +48,7 @@ class UsageCollectorDroppedEvents(BasicAnalyticsProcessor):
             Other fields describes the origin of the metrics.
         """
         return StructType([
-            StructField("@timestamp", TimestampType()),
+            StructField("timestamp", StringType()),
             StructField("UsageCollectorReport_missed_events", StringType()),
             StructField("firmwareVersion", StringType()),
             StructField("hardwareVersion", StringType()),

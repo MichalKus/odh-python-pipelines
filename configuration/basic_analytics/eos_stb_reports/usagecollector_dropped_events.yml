@@ -9,7 +9,7 @@ spark:
 kafka:
   maxOffsetsPerTrigger: 100000
   bootstrap.servers: 172.31.101.138:9094,172.31.101.139:9094,172.31.101.140:9094
-  startingOffsets: latest
+  startingOffsets: earliest
   topics:
     dlq: odhdev_pro_deadletterqueue
     inputs:
