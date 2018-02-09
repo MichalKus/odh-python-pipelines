@@ -1,6 +1,10 @@
 import sys
+import json
+from pyspark.sql.functions import from_json, udf, col
+from pyspark.sql.types import StringType, StructField, StructType
 
-from util.kafka_pipeline_helper import start_log_parsing_pipeline
+from common.log_parsing.metadata import ParsingException
+from common.kafka_pipeline import KafkaPipeline
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.dict_event_creator.event_creator import EventCreator, CompositeEventCreator
 from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
@@ -9,6 +13,37 @@ from common.log_parsing.metadata import Metadata, StringField
 from applications.log_parsing.vrops.metrics_event_creator import MetricsEventCreator
 from util.utils import Utils
 
+class CustomLogParsingProcessor(LogParsingProcessor):
+    """
+    Pipeline for custom log parsing for input messages not file from filebeat
+    """
+
+    def __init__(self, configuration, event_creators_tree):
+        self._LogParsingProcessor__event_creators_tree = event_creators_tree
+        self.__input_topic = configuration.property("kafka.topics.inputs")[0]
+
+    def udf_format_influx(self, message):
+        """
+        User defined function for formatting influx line strings to json
+        :param message:
+        :return: string
+        """
+        res = {}
+        res["message"] = message
+        res["topic"] = self.__input_topic
+        res["source"] = "VROPS.log"
+        res["beat"] = {"hostname": "non-filebeat-msg"}
+        return json.dumps(res)
+
+    def create(self, read_stream):
+        pre_format_udf = udf(lambda row: self.udf_format_influx(row), StringType())
+        create_full_event_udf = udf(lambda row: self._LogParsingProcessor__create_full_event(row),
+                                    self._LogParsingProcessor__get_udf_result_schema())
+        return [read_stream
+                    .withColumn("new_value", pre_format_udf(col('value').cast("string"))) \
+                    .select(from_json(col("new_value"), self._LogParsingProcessor__get_message_schema()).alias("json")) \
+                    .select(create_full_event_udf("json").alias("result")) \
+                    .selectExpr("result.topic AS topic", "result.json AS value")]
 
 def create_event_creators(configuration):
     """
@@ -44,4 +79,8 @@ def create_event_creators(configuration):
 if __name__ == "__main__":
 
 
-    start_log_parsing_pipeline(create_event_creators)
+    configuration = Utils.load_config(sys.argv[:])
+    KafkaPipeline(
+        configuration,
+        CustomLogParsingProcessor(configuration, create_event_creators(configuration))
+    ).start()
