@@ -7,6 +7,7 @@ from pyspark.sql.functions import *
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.basic_analytics.aggregations import Sum, Count, Max, Min, Stddev, P01, P05, P10, P25, P50, P75, P90, P95, P99, CompoundAggregation
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 
 
 class UsageCollectorDroppedEvents(BasicAnalyticsProcessor):
@@ -14,6 +15,9 @@ class UsageCollectorDroppedEvents(BasicAnalyticsProcessor):
     The processor implementation to calculate metrics related to UsageCollector DroppedEvents component.
     """
     __dimensions = ["hardwareVersion", "firmwareVersion", "appVersion", "asVersion"]
+
+    def _prepare_timefield(self, data_stream):
+        return convert_epoch_to_iso(data_stream, "timestamp", "@timestamp")
 
     def _process_pipeline(self, json_stream):
         stream = json_stream\
