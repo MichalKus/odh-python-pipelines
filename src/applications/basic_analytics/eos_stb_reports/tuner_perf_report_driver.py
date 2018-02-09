@@ -62,6 +62,14 @@ class TunerPerfReport(BasicAnalyticsProcessor):
     def _prepare_timefield(self, data_stream):
         return convert_epoch_to_iso(data_stream, "timestamp", "@timestamp")
 
+    def _filter_stream(self, read_stream):
+        return read_stream \
+            .where("TunerReport_SNR != \"\" AND TunerReport_SNR != \"{}\"") \
+            .where("TunerReport_signalLevel != \"\" AND TunerReport_signalLevel != \"{}\"") \
+            .where("TunerReport_erroreds != \"\" AND TunerReport_erroreds != \"{}\"") \
+            .where("TunerReport_unerroreds != \"\" AND TunerReport_unerroreds != \"{}\"") \
+            .where("TunerReport_correcteds != \"\" AND TunerReport_correcteds != \"{}\"")
+
     def _prepare_input_data_frame(self, read_stream):
         def explode_in_columns(df, columns_with_name):
             """
@@ -102,7 +110,7 @@ class TunerPerfReport(BasicAnalyticsProcessor):
 
     def _process_pipeline(self, read_stream):
 
-        pre_result_df = self._prepare_input_data_frame(read_stream)
+        pre_result_df = self._prepare_input_data_frame(self._filter_stream(read_stream))
 
         aggregations_ls = []
         aggregation_fields_without_sum = TunerPerfReport.get_column_names("TunerReport_SNR")
