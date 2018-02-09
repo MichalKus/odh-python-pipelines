@@ -1,4 +1,6 @@
-from pyspark.sql.functions import col
+"""
+Aggregate incoming stream of ErrorReport.level messages from a Kafka topic and write to a new Kafka topic
+"""
 from pyspark.sql.types import StructType, StructField, StringType
 
 from common.basic_analytics.aggregations import Count
@@ -19,8 +21,9 @@ class ErrorLevelReportProcessor(BasicAnalyticsProcessor):
     def _process_pipeline(self, read_stream):
 
         return read_stream\
+            .where("ErrorReport_level IS NOT NULL AND ErrorReport_level != \"\"") \
             .aggregate(Count(
-                group_fields=["hardwareVersion", "firmwareVersion", "asVersion", "appVersion", "ErrorReport_level"],
+                group_fields=["hardwareVersion", "firmwareVersion", "appVersion", "asVersion", "ErrorReport_level"],
                 aggregation_name=self._component_name)
             )
 

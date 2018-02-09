@@ -20,8 +20,12 @@ class UpgradeStatusViaSettingsReportStbBasicAnalytics(BasicAnalyticsProcessor):
         result = []
         for field in aggregation_fields:
             result.append(
-                json_stream.aggregate(
-                    Count(
+                json_stream
+                    .where("SettingsReport_cpe_standByMode IS NOT NULL AND "
+                           "SettingsReport_cpe_standByMode != \"\"") \
+                    .where("SettingsReport_cpe_anonymizedData IS NOT NULL AND "
+                           "SettingsReport_cpe_anonymizedData != \"\"") \
+                    .aggregate(Count(
                         group_fields=["hardwareVersion", "firmwareVersion", "appVersion", "asVersion", field],
                         aggregation_name=self._component_name,
                     )

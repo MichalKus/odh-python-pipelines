@@ -1,3 +1,6 @@
+"""
+Aggregate incoming stream of UsageCollectorReport.event_type messages from a Kafka topic and write to a new Kafka topic
+"""
 from pyspark.sql.types import StructType, StructField, StringType
 
 from common.basic_analytics.aggregations import Count
@@ -17,8 +20,10 @@ class UsageCollectorEventTypeReportProcessor(BasicAnalyticsProcessor):
 
     def _process_pipeline(self, read_stream):
 
-        return read_stream.aggregate(Count(
-            group_fields=["hardwareVersion", "firmwareVersion", "asVersion", "appVersion",
+        return read_stream \
+            .where("UsageCollectorReport_event_Type IS NOT NULL AND UsageCollectorReport_event_Type != \"\"") \
+            .aggregate(Count(
+            group_fields=["hardwareVersion", "firmwareVersion", "appVersion", "asVersion",
                          "UsageCollectorReport_event_Type"],
             aggregation_name=self._component_name)
         )

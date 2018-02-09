@@ -1,10 +1,14 @@
+"""
+Aggregate incoming stream of TunerReport messages from a Kafka topic and write to a new Kafka topic
+"""
+
 import json
 
 from pyspark.sql.functions import col, udf
 from pyspark.sql.types import StructField, StructType, StringType, ArrayType, FloatType, DoubleType
 
-from common.basic_analytics.aggregations import CompoundAggregation, Sum, Count, Max, Min, Stddev, P01, P05, P10, P25, \
-    P50, P75, P90, P95, P99
+from common.basic_analytics.aggregations import CompoundAggregation, Sum, Count, Max, Min, Stddev
+from common.basic_analytics.aggregations import P01, P05, P10, P25, P50, P75, P90, P95, P99
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
@@ -32,7 +36,7 @@ class TunerPerfReport(BasicAnalyticsProcessor):
         return ls
 
     @staticmethod
-    def get_column_names(column_prefix, num = 8):
+    def get_column_names(column_prefix, num=8):
         """
         Get multiple column names with provided prefix and an index until provided num
         :param column_prefix: Prefix for each name
@@ -60,11 +64,26 @@ class TunerPerfReport(BasicAnalyticsProcessor):
 
     def _prepare_input_data_frame(self, read_stream):
         def explode_in_columns(df, columns_with_name):
-            return (reduce(lambda memo_df, col_name: memo_df.withColumn(col_name[0], col_name[1].cast(DoubleType())),
-                columns_with_name, df))
+            """
+            Explode a single array column in to multiple columns
+            :param df: Input datafram with array column
+            :param columns_with_name: List of tupples with column and its name
+            :return: Transformed dataframe
+            """
+            return (reduce(lambda memo_df, col_name:
+                           memo_df.withColumn(col_name[0], col_name[1].cast(DoubleType())),
+                           columns_with_name, df))
 
         def expand_df(df, columns):
-            return (reduce(lambda memo_df, col_name: explode_in_columns(memo_df, TunerPerfReport.get_columns(col_name, 8)),
+            """
+            Expand a single array column in to multiple columns
+            :param df: Input dataframe with array column
+            :param columns: list of column names to process
+            :return: Dataframe with expanded columns
+            """
+            return (reduce(
+                lambda memo_df, col_name: explode_in_columns(
+                    memo_df, TunerPerfReport.get_columns(col_name, 8)),
                 columns, df))
 
         column_list = ["TunerReport_SNR", "TunerReport_signalLevel", "TunerReport_erroreds",
@@ -78,7 +97,6 @@ class TunerPerfReport(BasicAnalyticsProcessor):
             .withColumn("TunerReport_erroreds", json_to_array_udf(col("TunerReport_erroreds"))) \
             .withColumn("TunerReport_unerroreds", json_to_array_udf(col("TunerReport_unerroreds"))) \
             .withColumn("TunerReport_correcteds", json_to_array_udf(col("TunerReport_correcteds")))
-
 
         return expand_df(input_df, column_list).drop(*column_list)
 
@@ -113,7 +131,6 @@ class TunerPerfReport(BasicAnalyticsProcessor):
             result.append(pre_result_df.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs)))
 
         return result
-
 
     @staticmethod
     def create_schema():

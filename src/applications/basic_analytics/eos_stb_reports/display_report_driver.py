@@ -20,7 +20,10 @@ class DisplayStbBasicAnalytics(BasicAnalyticsProcessor):
         aggregations = [Count(group_fields=self.immutable_append_and_return(dimensions, field),
                               aggregation_name=self._component_name) for field in aggregation_fields]
 
-        return stream.aggregate(aggregations)
+        return stream \
+            .where("SettingsReport_cpe_aspectRatio IS NOT NULL AND SettingsReport_cpe_aspectRatio != \"\"") \
+            .where("SettingsReport_cpe_hdmiResolution IS NOT NULL AND SettingsReport_cpe_hdmiResolution != \"\"") \
+            .aggregate(aggregations)
 
     def _prepare_timefield(self, data_stream):
         return convert_epoch_to_iso(data_stream, "timestamp", "@timestamp")
