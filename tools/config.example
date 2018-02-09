@@ -1,8 +1,0 @@
-## TODO: Rename this file to `config`
-
-# Tag associated with your docker image
-DOCKER_TAG="usagecollector_dropped_events"
-# Path to configuration without configuration/
-CONFIG_PATH="basic_analytics/eos_stb/usagecollector_dropped_events.yml"
-# Path to your driver file, without src/
-APP_DRIVER_PATH="applications/basic_analytics/eos_stb/dropped_events_driver.py"

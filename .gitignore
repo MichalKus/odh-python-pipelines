@@ -9,7 +9,3 @@
 **/spark-warehouse
 
 venv*
-
-\.vscode/
-tools/config
-checkpoints
