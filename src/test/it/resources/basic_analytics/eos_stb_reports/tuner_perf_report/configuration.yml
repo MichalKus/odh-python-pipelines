@@ -4,9 +4,6 @@ spark:
   shuffle.partitions: 1
   outputMode: update
 
-kafka:
-  maxOffsetsPerTrigger: 100000
-
 analytics:
   componentName: vagrant.eosdtv.lab5aobo.tst.heapp.stb.eos.acs
   watermark: '10 seconds'
