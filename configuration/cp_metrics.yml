@@ -1,24 +1,25 @@
 spark:
-  outputMode: update
   appName: ida-analytics-cpu
   master: local[*]
   checkpointLocation: file:///spark/checkpoints
   shuffle.partitions: 1
-  consoleWriter: false
+  consoleWriter: true
+  outputMode: update
 
 kafka:
-  bootstrap.servers: 192.168.100.2:9093
+  bootstrap.servers: 192.168.100.1:9093
+  startingOffsets: latest
   topics:
     inputs:
-      - obo_out_eosdtv_telenet_prod_stb_flat_v1
-    output: test_oboecx_pr_eosdtv_nl_prd_stb 
-      #worker: test_out_eosdtv_telenet_prod_metric_stb_test 
-
-  startingOffsets: latest
+      - odhecx_pr_eosdtv_be_prd_stb_statelog_v1
+    output: test_oboecx_stb_vmstat_v1
+      #worker: test_out_eosdtv_telenet_prod_metric_stb_test
+    #"dlq: odhecx_pro_deadletterqueue
   maxOffsetsPerTrigger: 100
-  #security.protocol: SASL_PLAINTEXT
-  #sasl.mechanism: PLAIN
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
 
 analytics:
-  watermark_in_minutes: 1
-  window_in_minutes: 5
+  componentName: odhecx.eosstb.be.prd.stb
+  watermark: '1 minutes'
+  window: '1 minutes'

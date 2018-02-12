@@ -1,144 +1,75 @@
-import sys
-import datetime
-import logging
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
-from common.kafka_pipeline import KafkaPipeline
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.basic_analytics.aggregations import Count, Avg
-from util.utils import Utils
-import pyspark.sql.functions as func
+from util.kafka_pipeline_helper import start_basic_analytics_pipeline
+from pyspark.sql.types import StructField, StructType, StringType, IntegerType
+from common.basic_analytics.aggregations import Count, Sum, Max, Min, Stddev, CompoundAggregation
+from common.basic_analytics.aggregations import P01, P05, P10, P25, P50, P75, P90, P95, P99
+from pyspark.sql.functions import col
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 
-__author__  = "John Gregory Stockton"
+__author__ = "John Gregory Stockton"
 __maintainer__ = "John Gregory Stockton"
-__copyright__   = "Liberty Global"
+__copyright__ = "Liberty Global"
 __email__ = "jstockton@libertyglobal.com"
 __status__ = "Pre-Prod"
 
 
-logging.basicConfig(level=logging.WARN)
+class StbAnalyticsCPU(BasicAnalyticsProcessor):
+    """This class expose method useful for cpu metrics and memory"""
 
-class ThinkAnalyticsCPU(BasicAnalyticsProcessor):
-    
-    def __init__(self, configuration, schema):
-        
-        self.__configuration = configuration
-        self.__schema = schema
-        self._component_name = configuration.property("analytics.componentName")
-       
-    
+    __dimensions = ["hardwareVersion", "firmwareVersion", "appVersion", "modelDescription"]
 
-    
     def _process_pipeline(self, read_stream):
 
-    
+        stream = read_stream \
+            .withColumn("VMStat_idlePct", col("VMStat_idlePct").cast(IntegerType())) \
+            .withColumn("VMStat_systemPct", col("VMStat_systemPct").cast(IntegerType())) \
+            .withColumn("VMStat_iowaitPct", col("VMStat_iowaitPct").cast(IntegerType())) \
+            .withColumn("VMStat_hwIrqPct", col("VMStat_hwIrqPct").cast(IntegerType())) \
+            .withColumn("VMStat_hwIrqPct", col("MemoryUsage_totalKb").cast(IntegerType())) \
+            .withColumn("MemoryUsage_totalKb", col("MemoryUsage_totalKb").cast(IntegerType()))
 
-        uptimeAvg = read_stream.withWatermark("timestamp", "0 minutes") \
-                .groupBy(window("timestamp", "15 minutes") , "json.header.hardwareVersion", ) \
-                .agg(avg("json.VMStat.uptime").cast('string').alias("value"))
-              
-       
-        idlePctAvg = read_stream.withWatermark("timestamp", "0 minutes") \
-                .groupBy(window("timestamp", "15 minutes") , "json.header.hardwareVersion", ) \
-                .agg(avg("json.VMStat.iowaitPct").cast('string').alias("value"))
+        aggregation_fields = ["VMStat_idlePct", "VMStat_systemPct", "VMStat_iowaitPct", "VMStat_hwIrqPct",
+                              "MemoryUsage_totalKb", "MemoryUsage_totalKb"]
+        result = []
 
-               
+        for field in aggregation_fields:
+            kwargs = {'group_fields': self.__dimensions,
+                      'aggregation_name': self._component_name,
+                      'aggregation_field': field}
 
-        systemPct = read_stream.withWatermark("timestamp", "0 minutes") \
-                .groupBy(window("timestamp", "15 minutes") , "json.header.hardwareVersion", ) \
-                .agg(avg("json.VMStat.systemPct").cast('string').alias("value"))
-                
-        iowaitPct = read_stream.withWatermark("timestamp", "0 minutes") \
-                .groupBy(window("timestamp", "15 minutes") , "json.header.hardwareVersion", ) \
-                .agg(avg("json.VMStat.iowaitPct").cast('string').alias("value"))
+            aggregations = [ Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
+                            P01(**kwargs), P50(**kwargs),P99(**kwargs) ]
 
-        
-        return [systemPct , idlePctAvg ,uptimeAvg, iowaitPct]
+            result.append(stream.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs)))
 
+        return result
 
+    def _prepare_timefield(self, data_stream):
+        return convert_epoch_to_iso(data_stream, "timestamp", "@timestamp")
 
-
-
-    def construct_metric_systemPct(self, dataframe):
-        
-        return dataframe.withColumn("metric_name", lit(("test_oboecx_pr_eosdtv_nl_prd_stb_systemPct_avg"))) 
-
-    def construct_metric_idlePct(self, dataframe):
-
-        return dataframe.withColumn("metric_name", lit(("test_oboecx_pr_eosdtv_nl_prd_stb_idlePct_avg"))) 
-
-    def construct_metric_uptime(self, dataframe):
-
-        return dataframe.withColumn("metric_name", lit(("test_oboecx_pr_eosdtv_nl_prd_stb_uptime_avg"))) 
-    
-    def construct_metric_iowaitPct(self, dataframe):
-
-        return dataframe.withColumn("metric_name", lit(("test_oboecx_pr_eosdtv_nl_prd_stb_iowaitPct"))) 
-
-    
-    #Overriding
-    def create(self, read_stream):
-     
-  
-        json_stream = read_stream.select(read_stream["timestamp"].cast("timestamp").alias("timestamp"), 
-                from_json(read_stream["value"].cast("string"), self.get_message_schema()).alias("json")) 
-                
-        dataframes = self._process_pipeline(json_stream)       
-
-       
-        
-        dataframesOutput = []
-
-        dataframesOutput.append(self.construct_metric_systemPct((dataframes[0])))
-       
-        dataframesOutput.append((self.construct_metric_idlePct((dataframes[1]))))
-        
-        dataframesOutput.append((self.construct_metric_uptime((dataframes[2]))))
-
-        dataframesOutput.append((self.construct_metric_iowaitPct((dataframes[3]))))
-
-        
-        
-        return [self.convert_to_kafka_structure(dataframe) for dataframe in dataframesOutput]
-   
-       
-
-    #Overriding
-    def convert_to_kafka_structure(self, dataframe):
-        
-        return dataframe \
-            .withColumn("@timestamp", col("window.start")) \
-            .drop("window") \
-            .selectExpr("metric_name","to_json(struct(*)) AS value")\
-            .withColumn("topic", lit(((self.__configuration.property("kafka.topics.output")))))
-
-
-   
     @staticmethod
-    def get_message_schema():
+    def create_schema():
         return StructType([
-                StructField("header", StructType([
-                StructField("ts",  TimestampType()),
-                StructField("hardwareVersion", StringType()),
-                StructField("modelName", StringType()),
-            ])),
-                StructField("VMStat", StructType([ 
-                StructField("uptime", FloatType()),
-                StructField("idlePct", FloatType()),
-                StructField("iowaitPct", FloatType()),
-                StructField("systemPct", FloatType())
-                
-            ])
-                )])
+            StructField("timestamp", StringType()),
+            StructField("originId", StringType()),
+            StructField("MemoryUsage_freeKb", StringType()),
+            StructField("MemoryUsage_totalKb", StringType()),
+            StructField("hardwareVersion", StringType()),
+            StructField("modelDescription", StringType()),
+            StructField("firmwareVersion", StringType()),
+            StructField("appVersion", StringType()),
+            StructField("VMStat_idlePct", StringType()),
+            StructField("VMStat_iowaitPct", StringType()),
+            StructField("VMStat_systemPct", StringType()),
+            StructField("VMStat_swIrqPct", StringType()),
+            StructField("VMStat_hwIrqPct", StringType())
+        ])
 
 
 def create_processor(configuration):
-    return ThinkAnalyticsCPU(configuration, ThinkAnalyticsCPU.get_message_schema())
-    
+    """Create Processor"""
+    return StbAnalyticsCPU(configuration, StbAnalyticsCPU.create_schema())
+
 
 if __name__ == "__main__":
-    configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
-        configuration,
-        create_processor(configuration)
-    ).start()
+    start_basic_analytics_pipeline(create_processor)
