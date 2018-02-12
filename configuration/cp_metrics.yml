@@ -1,9 +1,9 @@
 spark:
-  appName: ida-analytics-cpu
+  appName: analytics-cpu-mem
   master: local[*]
   checkpointLocation: file:///spark/checkpoints
   shuffle.partitions: 1
-  consoleWriter: true
+  consoleWriter: false
   outputMode: update
 
 kafka:
@@ -21,5 +21,5 @@ kafka:
 
 analytics:
   componentName: odhecx.eosstb.be.prd.stb
-  watermark: '1 minutes'
-  window: '1 minutes'
+  watermark: '30 seconds'
+  window: '5 minutes'

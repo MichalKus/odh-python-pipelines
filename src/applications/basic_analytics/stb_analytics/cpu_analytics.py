@@ -16,7 +16,7 @@ __status__ = "Pre-Prod"
 class StbAnalyticsCPU(BasicAnalyticsProcessor):
     """This class expose method useful for cpu metrics and memory"""
 
-    __dimensions = ["hardwareVersion", "firmwareVersion", "appVersion", "modelDescription"]
+    __dimensions = ["hardwareVersion", "firmwareVersion", "appVersion", "asVersion"]
 
     def _process_pipeline(self, read_stream):
 
@@ -55,6 +55,7 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
             StructField("MemoryUsage_freeKb", StringType()),
             StructField("MemoryUsage_totalKb", StringType()),
             StructField("hardwareVersion", StringType()),
+            StructField("asVersion", StringType()),
             StructField("modelDescription", StringType()),
             StructField("firmwareVersion", StringType()),
             StructField("appVersion", StringType()),

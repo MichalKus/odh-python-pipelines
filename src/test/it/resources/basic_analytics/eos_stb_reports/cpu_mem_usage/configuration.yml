@@ -1,0 +1,11 @@
+spark:
+  appName: analytics-cpu-mem
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+  #consoleWriter: true
+
+analytics:
+  componentName: odhecx.eosstb.be.prd.stb
+  watermark: '10 minutes'
+  window: '1 minutes'
