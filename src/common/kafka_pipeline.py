@@ -18,9 +18,9 @@ class KafkaPipeline(AbstractPipeline):
 
     @staticmethod
     def __set_kafka_securing_settings(stream, options):
-        return stream.option("kafka.bootstrap.servers", options["bootstrap.servers"]) #\
-            #.option("kafka.security.protocol", options["security.protocol"]) \
-            #.option("kafka.sasl.mechanism", options["sasl.mechanism"])
+        return stream.option("kafka.bootstrap.servers", options["bootstrap.servers"]) \
+            .option("kafka.security.protocol", options["security.protocol"]) \
+            .option("kafka.sasl.mechanism", options["sasl.mechanism"])
 
     @staticmethod
     def __add_option_if_exists(reader, options, option):
