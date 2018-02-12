@@ -1,4 +1,4 @@
-from pyspark.sql.functions import col, lit
+from pyspark.sql.functions import col, regexp_replace
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.spark_utils.custom_functions import convert_epoch_to_iso
@@ -37,11 +37,18 @@ class VMCpuProcessor(BasicAnalyticsProcessor):
                 .select("@timestamp", "group", "res_kind", "name", metric_name) \
                 .filter(
                 (col("group") == "cpu") & (col("res_kind") == "VirtualMachine")  & (col(metric_name).isNotNull())) \
+                .withColumn("name", regexp_replace("name", "\.", "-")) \
                 .aggregate(aggregation)
 
             return agg_stream
 
-        return map(for_each_metric, ["demandpct", "idlepct", "readypct", "swapwaitpct", "usage_average"])
+        demandpct = for_each_metric("demandpct")
+        idlepct = for_each_metric("idlepct")
+        readypct = for_each_metric("readypct")
+        swapwaitpct = for_each_metric("swapwaitpct")
+        usage_average = for_each_metric("usage_average")
+
+        return [demandpct, idlepct, readypct, swapwaitpct, usage_average]
 
     @staticmethod
     def create_schema():
@@ -49,17 +56,17 @@ class VMCpuProcessor(BasicAnalyticsProcessor):
         Schema for input stream.
         """
         return StructType([
-            StructField("timestamp", StringType()),
-            StructField("group", StringType()),
-            StructField("res_kind", StringType()),
-            StructField("name", StringType()),
             StructField("metrics", StructType([
                 StructField("demandpct", DoubleType()),
                 StructField("idlepct", DoubleType()),
                 StructField("readypct", DoubleType()),
                 StructField("swapwaitpct", DoubleType()),
                 StructField("usage_average", DoubleType())
-            ]))
+            ])),
+            StructField("group", StringType()),
+            StructField("name", StringType()),
+            StructField("timestamp", StringType()),
+            StructField("res_kind", StringType())
         ])
 
 

@@ -1,9 +1,8 @@
 import sys
 import json
 from pyspark.sql.functions import from_json, udf, col
-from pyspark.sql.types import StringType, StructField, StructType
+from pyspark.sql.types import StringType
 
-from common.log_parsing.metadata import ParsingException
 from common.kafka_pipeline import KafkaPipeline
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.dict_event_creator.event_creator import EventCreator, CompositeEventCreator
@@ -59,7 +58,7 @@ def create_event_creators(configuration):
         StringField("metrics"),
         StringField("timestamp")]),
         RegexpParser(
-            r"(?s)^(?P<group>.*),name=(?P<name>.*),res_kind=(?P<res_kind>[^\(,|\s)]*)(,|\s)(?P<metrics>.*)\s(?P<timestamp>.*)"))
+            r"(?s)^(?P<group>.*),name=(?P<name>.*),res_kind=(?P<res_kind>[^\(,|\s)]*)(,|\s)(?P<metrics>.*)\s(?P<timestamp>.*)(\n)"))
 
     metrics_creator = MetricsEventCreator(Metadata([
         StringField("metrics")]),
