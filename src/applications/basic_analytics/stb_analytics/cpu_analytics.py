@@ -1,9 +1,10 @@
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
-from pyspark.sql.types import StructField, StructType, TimestampType, StringType, IntegerType
-from pyspark.sql.functions import from_unixtime
-from common.basic_analytics.aggregations import Count, Sum, Max, Min, Avg
+from pyspark.sql.types import StructField, StructType, StringType, IntegerType
+from common.basic_analytics.aggregations import Count, Sum, Max, Min, Stddev, CompoundAggregation
+from common.basic_analytics.aggregations import P01, P05, P10, P25, P50, P75, P90, P95, P99
 from pyspark.sql.functions import col
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 
 __author__ = "John Gregory Stockton"
 __maintainer__ = "John Gregory Stockton"
@@ -11,61 +12,44 @@ __copyright__ = "Liberty Global"
 __email__ = "jstockton@libertyglobal.com"
 __status__ = "Pre-Prod"
 
-#logging.basicConfig(level=logging.WARN)
-
 
 class StbAnalyticsCPU(BasicAnalyticsProcessor):
-    """This class expose method useful for cpu metrics"""
+    """This class expose method useful for cpu metrics and memory"""
 
     __dimensions = ["hardwareVersion", "firmwareVersion", "appVersion", "modelDescription"]
 
-    def _prepare_timefield(self, data_stream):
-        return data_stream.withColumn("@timestamp", from_unixtime(col("timestamp") / 1000).cast(TimestampType()))
-
     def _process_pipeline(self, read_stream):
 
-        read_stream = self._prepare_timefield(read_stream)
+        stream = read_stream \
+            .withColumn("VMStat_idlePct", col("VMStat_idlePct").cast(IntegerType())) \
+            .withColumn("VMStat_systemPct", col("VMStat_systemPct").cast(IntegerType())) \
+            .withColumn("VMStat_iowaitPct", col("VMStat_iowaitPct").cast(IntegerType())) \
+            .withColumn("VMStat_hwIrqPct", col("VMStat_hwIrqPct").cast(IntegerType())) \
+            .withColumn("VMStat_hwIrqPct", col("MemoryUsage_totalKb").cast(IntegerType())) \
+            .withColumn("MemoryUsage_totalKb", col("MemoryUsage_totalKb").cast(IntegerType()))
 
-        idle_pct = read_stream \
-            .withColumn("VMStat_idlePct", read_stream["VMStat_idlePct"].cast("Int")) \
-            .aggregate(Avg(group_fields=["hardwareVersion", "firmwareVersion",  "appVersion", "modelDescription"],
-                           aggregation_field="VMStat_idlePct",
-                           aggregation_name=self._component_name))
+        aggregation_fields = ["VMStat_idlePct", "VMStat_systemPct", "VMStat_iowaitPct", "VMStat_hwIrqPct",
+                              "MemoryUsage_totalKb", "MemoryUsage_totalKb"]
+        result = []
 
-        system_pct = read_stream \
-            .withColumn("VMStat_systemPct", read_stream["VMStat_systemPct"].cast("Int")) \
-            .aggregate(Avg(group_fields=["hardwareVersion", "firmwareVersion",  "appVersion", "modelDescription"],
-                           aggregation_field="VMStat_systemPct",
-                           aggregation_name=self._component_name))
+        for field in aggregation_fields:
+            kwargs = {'group_fields': self.__dimensions,
+                      'aggregation_name': self._component_name,
+                      'aggregation_field': field}
 
-        iowait_pct = read_stream \
-            .withColumn("VMStat_iowaitPct", read_stream["VMStat_iowaitPct"].cast("Int")) \
-            .aggregate(Avg(group_fields=["hardwareVersion", "firmwareVersion", "appVersion", "modelDescription"],
-                             aggregation_field="VMStat_iowaitPct",
-                             aggregation_name=self._component_name))
+            aggregations = [ Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
+                            P01(**kwargs), P50(**kwargs),P99(**kwargs) ]
 
-        hwirq_pct = read_stream \
-            .withColumn("VMStat_hwIrqPct", read_stream["VMStat_hwIrqPct"].cast("Int")) \
-            .aggregate(Avg(group_fields=["hardwareVersion", "firmwareVersion", "appVersion", "modelDescription"],
-                           aggregation_field="VMStat_hwIrqPct",
-                           aggregation_name=self._component_name))
+            result.append(stream.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs)))
 
-        mem_usage = read_stream \
-            .withColumn("MemoryUsage_totalKb", read_stream["MemoryUsage_totalKb"].cast("Int")) \
-            .aggregate(Avg(group_fields=["hardwareVersion", "firmwareVersion", "appVersion", "modelDescription"],
-                           aggregation_field="MemoryUsage_totalKb",
-                           aggregation_name=self._component_name))
+        return result
 
-        read_stream.writeStream.format("console").outputMode("update").start()
-        #read_stram.writeStream()
-
-        return [idle_pct, system_pct, iowait_pct, hwirq_pct, mem_usage]
-
+    def _prepare_timefield(self, data_stream):
+        return convert_epoch_to_iso(data_stream, "timestamp", "@timestamp")
 
     @staticmethod
     def create_schema():
         return StructType([
-            StructField("@timestamp", TimestampType()),
             StructField("timestamp", StringType()),
             StructField("originId", StringType()),
             StructField("MemoryUsage_freeKb", StringType()),
