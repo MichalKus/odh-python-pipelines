@@ -11,4 +11,5 @@
 checkpoints
 venv*
 
+reports
 tools/config
