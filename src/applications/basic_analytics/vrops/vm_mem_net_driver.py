@@ -24,34 +24,34 @@ class VMMemNetProcessor(BasicAnalyticsProcessor):
         :param read_stream: input stream
         """
 
-        def for_each_metric(metric_name):
+        def aggregate(aggregation_field):
             """
             Build aggregated stream for each metric
             :param metric_name: name of mem/net metric which needs to be averaged.
             :return: list of streams
             """
-            aggregation = Avg(group_fields=["res_kind", "group", "name"], aggregation_field=metric_name,
+            aggregation = Avg(group_fields=["res_kind", "group", "name"], aggregation_field=aggregation_field,
                               aggregation_name=self._component_name)
             agg_stream = read_stream \
                 .select("@timestamp", "group", "res_kind", "name", "metrics.*") \
-                .select("@timestamp", "group", "res_kind", "name", metric_name) \
+                .select("@timestamp", "group", "res_kind", "name", aggregation_field) \
                 .filter(((col("group") == "mem") | (col("group") == "net")) & (col("res_kind") == "VirtualMachine") & (
-                col(metric_name).isNotNull())) \
+                col(aggregation_field).isNotNull())) \
                 .withColumn("name", regexp_replace("name", "\.", "-")) \
                 .aggregate(aggregation)
 
             return agg_stream
 
         #MEM
-        balloonpct = for_each_metric("balloonpct")
-        host_contentionpct = for_each_metric("host_contentionpct")
-        host_demand = for_each_metric("host_demand")
-        latency_average = for_each_metric("latency_average")
+        balloonpct = aggregate("balloonpct")
+        host_contentionpct = aggregate("host_contentionpct")
+        host_demand = aggregate("host_demand")
+        latency_average = aggregate("latency_average")
 
         #NET
-        droppedpct = for_each_metric("droppedpct")
-        packetsrxpersec = for_each_metric("packetsrxpersec")
-        packetstxpersec = for_each_metric("packetstxpersec")
+        droppedpct = aggregate("droppedpct")
+        packetsrxpersec = aggregate("packetsrxpersec")
+        packetstxpersec = aggregate("packetstxpersec")
 
         return [balloonpct, host_contentionpct, host_demand, latency_average, droppedpct, packetsrxpersec,
                 packetstxpersec]
