@@ -25,7 +25,7 @@ mkdir -p `pwd`/reports/xunit-reports
 mkdir -p `pwd`/reports/coverage-reports
 
 
-docker run --rm -it -v `pwd`/reports/xunit-reports:/odh/python/.xunit-reports \
+docker run --rm -i -v `pwd`/reports/xunit-reports:/odh/python/.xunit-reports \
                 -v `pwd`/reports/coverage-reports:/odh/python/.coverage-reports ${DOCKER_IMAGE} \
                 bash -c "cd /odh/python && nosetests --nologcapture --exclude-dir=test/unit --with-xunit \
                 --xunit-file=.xunit-reports/nosetests-it.xml --with-coverage --cover-erase --cover-xml \
