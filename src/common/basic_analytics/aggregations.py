@@ -40,12 +40,15 @@ class Aggregation(object):
         metric_name_parts = [lit(self.__aggregation_name)]
 
         for group_field in self.__group_fields:
-            metric_name_parts += [lit(group_field), col(group_field)]
+            metric_name_parts += [lit(group_field)]
+            metric_name_parts += [group_field]
 
         metric_name_parts += [lit(self._aggregation_field)]
         metric_name_parts += [lit(self.get_name())] if suffix is None else [suffix]
 
-        return regexp_replace(concat_ws(".", *metric_name_parts), "\\s+", "_")
+        return concat_ws(".", *[regexp_replace(x, "[\\s\\.]+", "_") if isinstance(x, basestring)
+                                else regexp_replace(x, "\\s+", "_") for x in metric_name_parts])
+
 
     @staticmethod
     def __convert_to_underlined(name):
