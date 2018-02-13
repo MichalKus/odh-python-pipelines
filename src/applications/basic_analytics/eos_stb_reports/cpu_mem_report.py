@@ -19,7 +19,7 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
     __dimensions = ["hardwareVersion", "firmwareVersion", "appVersion", "asVersion"]
 
     def _process_pipeline(self, read_stream):
-
+        """This define the aggregation fields and re-use statistical functions from aggregation.py"""
         stream = read_stream \
             .withColumn("firmwareVersion", regexp_replace("firmwareVersion", "\.", "-")) \
             .withColumn("hardwareVersion", regexp_replace("hardwareVersion", "\.", "-")) \
