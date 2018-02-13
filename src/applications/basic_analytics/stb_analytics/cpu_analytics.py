@@ -25,7 +25,7 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
             .withColumn("VMStat_systemPct", col("VMStat_systemPct").cast(IntegerType())) \
             .withColumn("VMStat_iowaitPct", col("VMStat_iowaitPct").cast(IntegerType())) \
             .withColumn("VMStat_hwIrqPct", col("VMStat_hwIrqPct").cast(IntegerType())) \
-            .withColumn("VMStat_hwIrqPct", col("MemoryUsage_totalKb").cast(IntegerType())) \
+            .withColumn("MemoryUsage_totalKb", col("MemoryUsage_totalKb").cast(IntegerType())) \
             .withColumn("MemoryUsage_totalKb", col("MemoryUsage_totalKb").cast(IntegerType()))
 
         aggregation_fields = ["VMStat_idlePct", "VMStat_systemPct", "VMStat_iowaitPct", "VMStat_hwIrqPct",
