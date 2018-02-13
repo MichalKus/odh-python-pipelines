@@ -1,4 +1,4 @@
-from applications.basic_analytics.stb_analytics.cpu_analytics import create_processor
+from applications.basic_analytics.eos_stb_reports.cp_mem_report import create_processor
 from test.it.core.base_spark_test_case import BaseSparkProcessorTestCase
 
 
