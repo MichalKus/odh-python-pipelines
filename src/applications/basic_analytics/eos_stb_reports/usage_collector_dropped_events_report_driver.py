@@ -2,7 +2,7 @@
 The module for the driver to calculate metrics related to UsageCollector for dropped events.
 """
 from pyspark.sql.types import StructField, StructType, StringType, IntegerType
-from pyspark.sql.functions import col
+from pyspark.sql.functions import col, regexp_replace
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.basic_analytics.aggregations import Sum, Count, Max, Min, Stddev, P01, P05, P10, P25, P50, P75, P90, P95, P99, CompoundAggregation
@@ -23,6 +23,10 @@ class UsageCollectorDroppedEvents(BasicAnalyticsProcessor):
         stream = json_stream\
             .where("UsageCollectorReport_missed_events is not null")\
             .where("UsageCollectorReport_missed_events != ''") \
+            .withColumn("firmwareVersion", regexp_replace("firmwareVersion", "\.", "-")) \
+            .withColumn("hardwareVersion", regexp_replace("hardwareVersion", "\.", "-")) \
+            .withColumn("appVersion", regexp_replace("appVersion", "\.", "-")) \
+            .withColumn("asVersion", regexp_replace("asVersion", "\.", "-")) \
             .withColumn("UsageCollectorReport_missed_events", col("UsageCollectorReport_missed_events").cast(IntegerType()))
 
 
