@@ -3,7 +3,7 @@ from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from pyspark.sql.types import StructField, StructType, StringType, IntegerType
 from common.basic_analytics.aggregations import Count, Sum, Max, Min, Stddev, CompoundAggregation
 from common.basic_analytics.aggregations import P01, P05, P10, P25, P50, P75, P90, P95, P99
-from pyspark.sql.functions import col
+from pyspark.sql.functions import col, regexp_replace
 from common.spark_utils.custom_functions import convert_epoch_to_iso
 
 __author__ = "John Gregory Stockton"
@@ -21,6 +21,10 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
     def _process_pipeline(self, read_stream):
 
         stream = read_stream \
+            .withColumn("firmwareVersion", regexp_replace("firmwareVersion", "\.", "-")) \
+            .withColumn("hardwareVersion", regexp_replace("hardwareVersion", "\.", "-")) \
+            .withColumn("appVersion", regexp_replace("appVersion", "\.", "-")) \
+            .withColumn("asVersion", regexp_replace("asVersion", "\.", "-")) \
             .withColumn("VMStat_idlePct", col("VMStat_idlePct").cast(IntegerType())) \
             .withColumn("VMStat_systemPct", col("VMStat_systemPct").cast(IntegerType())) \
             .withColumn("VMStat_iowaitPct", col("VMStat_iowaitPct").cast(IntegerType())) \
