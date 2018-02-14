@@ -21,10 +21,10 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
     def _process_pipeline(self, read_stream):
         """This define the aggregation fields and re-use statistical functions from aggregation.py"""
         stream = read_stream \
-            .withColumn("firmwareVersion", regexp_replace("firmwareVersion", "\.", "-")) \
-            .withColumn("hardwareVersion", regexp_replace("hardwareVersion", "\.", "-")) \
-            .withColumn("appVersion", regexp_replace("appVersion", "\.", "-")) \
-            .withColumn("asVersion", regexp_replace("asVersion", "\.", "-")) \
+            .withColumn("firmwareVersion", regexp_replace("firmwareVersion", r"\.", "-")) \
+            .withColumn("hardwareVersion", regexp_replace("hardwareVersion", r"\.", "-")) \
+            .withColumn("appVersion", regexp_replace("appVersion", r"\.", "-")) \
+            .withColumn("asVersion", regexp_replace("asVersion", r"\.", "-")) \
             .withColumn("VMStat_idlePct", col("VMStat_idlePct").cast(IntegerType())) \
             .withColumn("VMStat_systemPct", col("VMStat_systemPct").cast(IntegerType())) \
             .withColumn("VMStat_iowaitPct", col("VMStat_iowaitPct").cast(IntegerType())) \
