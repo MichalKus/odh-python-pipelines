@@ -8,4 +8,8 @@
 # spark stuff
 **/spark-warehouse
 
+checkpoints
 venv*
+
+reports
+tools/config

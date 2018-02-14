@@ -1,0 +1,10 @@
+spark:
+  appName: eos-stb-usage-collector-dropped-events-report-basic-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+
+analytics:
+  componentName: odhecx.eosstb.be.prd.stb
+  watermark: '1 minutes'
+  window: '1 minutes'
