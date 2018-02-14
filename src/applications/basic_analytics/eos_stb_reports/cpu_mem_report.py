@@ -57,7 +57,7 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
         return StructType([
             StructField("timestamp", StringType()),
             StructField("originId", StringType()),
-            StructField("MemoryUsage_freeKb", StringType()),
+            StructField("MemoryUsage_usedKb", StringType()),
             StructField("MemoryUsage_totalKb", StringType()),
             StructField("hardwareVersion", StringType()),
             StructField("asVersion", StringType()),
