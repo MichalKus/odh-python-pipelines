@@ -24,10 +24,10 @@ class UsageCollectorDroppedEvents(BasicAnalyticsProcessor):
         stream = json_stream \
             .where('UsageCollectorReport_missed_events is not null') \
             .where('UsageCollectorReport_missed_events != \'\'') \
-            .withColumn("firmwareVersion", regexp_replace("firmwareVersion", "\.", "-")) \
-            .withColumn("hardwareVersion", regexp_replace("hardwareVersion", "\.", "-")) \
-            .withColumn("appVersion", regexp_replace("appVersion", "\.", "-")) \
-            .withColumn("asVersion", regexp_replace("asVersion", "\.", "-")) \
+            .withColumn("firmwareVersion", regexp_replace("firmwareVersion", r"\.", "-")) \
+            .withColumn("hardwareVersion", regexp_replace("hardwareVersion", r"\.", "-")) \
+            .withColumn("appVersion", regexp_replace("appVersion", r"\.", "-")) \
+            .withColumn("asVersion", regexp_replace("asVersion", r"\.", "-")) \
             .withColumn("UsageCollectorReport_missed_events",
                         col("UsageCollectorReport_missed_events").cast(IntegerType()))
 
