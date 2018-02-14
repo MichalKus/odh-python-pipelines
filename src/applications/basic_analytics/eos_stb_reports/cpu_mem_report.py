@@ -30,10 +30,10 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
             .withColumn("VMStat_iowaitPct", col("VMStat_iowaitPct").cast(IntegerType())) \
             .withColumn("VMStat_hwIrqPct", col("VMStat_hwIrqPct").cast(IntegerType())) \
             .withColumn("MemoryUsage_totalKb", col("MemoryUsage_totalKb").cast(IntegerType())) \
-            .withColumn("MemoryUsage_totalKb", col("MemoryUsage_totalKb").cast(IntegerType()))
+            .withColumn("MemoryUsage_usedKb", col("MemoryUsage_usedKb").cast(IntegerType()))
 
         aggregation_fields = ["VMStat_idlePct", "VMStat_systemPct", "VMStat_iowaitPct", "VMStat_hwIrqPct",
-                              "MemoryUsage_totalKb", "MemoryUsage_totalKb"]
+                              "MemoryUsage_totalKb", "MemoryUsage_usedKb"]
         result = []
 
         for field in aggregation_fields:
