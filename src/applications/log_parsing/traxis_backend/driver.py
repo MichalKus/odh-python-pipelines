@@ -62,9 +62,6 @@ def create_event_creators(config):
 
     write_actions_event_creator = EventCreator(
         Metadata([
-            ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
-            StringField("level"),
-            StringField("message"),
             StringField("activity"),
             StringField("task"),
             IntField("duration")
