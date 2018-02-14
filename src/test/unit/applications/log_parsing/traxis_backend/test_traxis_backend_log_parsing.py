@@ -33,7 +33,7 @@ class TraxisBackendParsingTestCase(BaseMultipleMessageParsingTestCase):
                            "[172.30.182.17:55347] [RequestId = 5a903fc1-02a5-4424-8c16-4078f83df6c4] "
                            "Tva notification received"
             }, {
-                "@timestamp": datetime(2017, 07, 10, 0, 37, 23, 829000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "@timestamp": datetime(2017, 7, 10, 0, 37, 23, 829000).replace(tzinfo=timezones["Europe/Amsterdam"]),
                 "level": "INFO",
                 "message": "OnlineTvaIngest - [172.30.182.17:55347] [RequestId = 5a903fc1-02a5-4424-8c16-4078f83df6c4] "
                            "Tva notification received",
@@ -47,7 +47,7 @@ class TraxisBackendParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "message": "2017-07-10 00:37:26,417 INFO  [105] TvaManager - [Task = Notification of type "
                            "'TvaIngestCompleted'] Loading tva version '233.1221' took '314' ms"
             }, {
-                "@timestamp": datetime(2017, 07, 10, 0, 37, 26, 417000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "@timestamp": datetime(2017, 7, 10, 0, 37, 26, 417000).replace(tzinfo=timezones["Europe/Amsterdam"]),
                 "level": "INFO",
                 "message": "TvaManager - [Task = Notification of type 'TvaIngestCompleted'] "
                            "Loading tva version '233.1221' took '314' ms",
@@ -64,7 +64,7 @@ class TraxisBackendParsingTestCase(BaseMultipleMessageParsingTestCase):
                            "deleted = 1 (total = 425429), Event set = 0, deleted = 1 (total = 200840), Channel "
                            "set = 1, deleted = 0 (total = 488), Title set = 1, deleted = 0 (total = 191667)"
             }, {
-                "@timestamp": datetime(2017, 07, 10, 0, 39, 25, 522000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "@timestamp": datetime(2017, 7, 10, 0, 39, 25, 522000).replace(tzinfo=timezones["Europe/Amsterdam"]),
                 "level": "INFO",
                 "message": "ParsingContext - [Task = TvaManagementExpirationCheck] Tva ingest completed, duration = "
                            "1478 ms, new version = 233.1222, entities set = 2, deleted = 1 (total = 425429), Event "
@@ -81,7 +81,7 @@ class TraxisBackendParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "message": "2017-07-10 00:40:25,641 INFO  [149] ParsingContext - [Task = TvaManagementExpirationCheck] "
                            "Number of write actions queued = 125. Action took 110 ms"
             }, {
-                "@timestamp": datetime(2017, 07, 10, 0, 40, 25, 641000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "@timestamp": datetime(2017, 7, 10, 0, 40, 25, 641000).replace(tzinfo=timezones["Europe/Amsterdam"]),
                 "level": "INFO",
                 "message": "ParsingContext - [Task = TvaManagementExpirationCheck] "
                            "Number of write actions queued = 125. Action took 110 ms",
