@@ -11,6 +11,8 @@ class EventCreator(AbstractEventCreator):
         Creates event creator for list parser
         :param metadata: metadata
         :param parser: list parser
+        :param matcher: matcher object to check the input line to perform the parsing step only if the line is matched
+        :param timezone_field: field name with information about timezone
         """
         AbstractEventCreator.__init__(self, metadata, parser, matcher, timezone_field)
 
