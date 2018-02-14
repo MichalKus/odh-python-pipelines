@@ -149,7 +149,7 @@ class FloatField(AbstractField):
 class AbstractEventCreator:
     __metaclass__ = ABCMeta
 
-    def __init__(self, metadata, parser, timezone_field="tz"):
+    def __init__(self, metadata, parser, matcher=None, timezone_field="tz"):
         """
         Creates event creator for list parser
         :param metadata: metadata
@@ -157,6 +157,7 @@ class AbstractEventCreator:
         """
         self._metadata = metadata
         self._parser = parser
+        self._matcher = matcher
         self._timezone_field = timezone_field
 
     def _create_context(self, row):

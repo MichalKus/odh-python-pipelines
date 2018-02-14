@@ -5,6 +5,7 @@ from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
 from common.log_parsing.dict_event_creator.event_creator import EventCreator, CompositeEventCreator
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.event_creator_tree.multisource_configuration import *
+from common.log_parsing.matchers.matcher import SubstringMatcher
 from common.log_parsing.metadata import Metadata, StringField, IntField
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
@@ -36,7 +37,8 @@ def create_event_creators(config):
             StringField("requestId")
         ]),
         RegexpParser(r"^(?P<activity>OnlineTvaIngest).*\[RequestId\s=\s(?P<requestId>[^]]+)\][\s\S]*",
-                     return_empty_dict=True)
+                     return_empty_dict=True),
+        matcher=SubstringMatcher("OnlineTvaIngest")
     )
 
     tva_manager_event_creator = EventCreator(
@@ -46,7 +48,8 @@ def create_event_creators(config):
             IntField("duration")
         ]),
         RegexpParser(r"^(?P<activity>TvaManager).*\[Task\s=\s(?P<task>[^]]+)\].*took\s'(?P<duration>\d+)'\sms[\s\S]*",
-                     return_empty_dict=True)
+                     return_empty_dict=True),
+        matcher=SubstringMatcher("TvaManager")
     )
 
     parsing_context_event_creator = EventCreator(
@@ -57,7 +60,8 @@ def create_event_creators(config):
         ]),
         RegexpParser(r"^(?P<activity>ParsingContext).*\[Task\s=\s(?P<task>[^]]+)\]\s"
                      r"Tva\singest\scompleted,\sduration\s=\s(?P<duration>\d+)\sms[\s\S]*",
-                     return_empty_dict=True)
+                     return_empty_dict=True),
+        matcher=SubstringMatcher("Tva ingest completed, duration")
     )
 
     write_actions_event_creator = EventCreator(
@@ -68,7 +72,8 @@ def create_event_creators(config):
         ]),
         RegexpParser(r"^(?P<activity>ParsingContext).*\[Task\s=\s(?P<task>[^]]+)\]\s"
                      r"Number\sof\swrite\sactions\squeued.*took\s(?P<duration>\d+)\sms[\s\S]*",
-                     return_empty_dict=True)
+                     return_empty_dict=True),
+        matcher=SubstringMatcher("Number of write actions queued")
     )
 
     return MatchField("topic", {

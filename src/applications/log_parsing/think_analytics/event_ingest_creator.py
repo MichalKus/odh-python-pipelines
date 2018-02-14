@@ -7,10 +7,10 @@ class EventIngestCreator(EventCreator):
     Extended EventCreator with checking for equals of started and finished scripts
     """
 
-    def __init__(self, metadata, parser, field_to_parse="message", timezone_field="tz"):
+    def __init__(self, metadata, parser, matcher=None, field_to_parse="message", timezone_field="tz"):
         self._metadata = metadata
         self._parser = parser
-        EventCreator.__init__(self, metadata, parser, field_to_parse, timezone_field)
+        EventCreator.__init__(self, metadata, parser, matcher, field_to_parse, timezone_field)
 
     def create(self, row):
         """
