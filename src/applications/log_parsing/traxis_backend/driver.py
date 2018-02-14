@@ -1,11 +1,10 @@
 import sys
 
 from common.kafka_pipeline import KafkaPipeline
-from common.log_parsing.list_event_creator.multiple_event_creator import MultipleEventCreator
+from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
+from common.log_parsing.dict_event_creator.event_creator import EventCreator, CompositeEventCreator
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.event_creator_tree.multisource_configuration import *
-from common.log_parsing.list_event_creator.event_creator import EventCreator
-from common.log_parsing.list_event_creator.regexp_parser import RegexpParser
 from common.log_parsing.metadata import Metadata, StringField, IntField
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
@@ -23,68 +22,67 @@ def create_event_creators(config):
 
     general_event_creator = EventCreator(
         Metadata([
-            ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+            ConfigurableTimestampField("timestamp", timezone_name, timezones_priority, "@timestamp"),
             StringField("level"),
             StringField("message")
         ]),
-        RegexpParser(r"^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S+)\s+\[[^\]]+\]\s+([\s\S]*)")
+        RegexpParser(r"^(?P<timestamp>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+"
+                     r"(?P<level>\S+)\s+\[[^\]]+\]\s+(?P<message>[\s\S]*)")
     )
 
-    event_creators = MultipleEventCreator([
-        EventCreator(
-            Metadata([
-                ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
-                StringField("level"),
-                StringField("message"),
-                StringField("activity"),
-                StringField("requestId")
-            ]),
-            RegexpParser(r"^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S+)\s+\[[^\]]+\]\s+"
-                         r"((OnlineTvaIngest).*\[RequestId\s=\s([^]]+)\][\s\S]*)")
-        ),
-        EventCreator(
-            Metadata([
-                ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
-                StringField("level"),
-                StringField("message"),
-                StringField("activity"),
-                StringField("task"),
-                IntField("duration")
-            ]),
-            RegexpParser(r"^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S+)\s+\[[^\]]+\]\s+"
-                         r"((TvaManager).*\[Task\s=\s([^]]+)\].*took\s'(\d+)'\sms[\s\S]*)")
-        ),
-        EventCreator(
-            Metadata([
-                ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
-                StringField("level"),
-                StringField("message"),
-                StringField("activity"),
-                StringField("task"),
-                IntField("duration")
-            ]),
-            RegexpParser(r"^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S+)\s+\[[^\]]+\]\s+((ParsingContext).*"
-                         r"\[Task\s=\s([^]]+)\]\sTva\singest\scompleted,\sduration\s=\s(\d+)\sms[\s\S]*)")
-        ),
-        EventCreator(
-            Metadata([
-                ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
-                StringField("level"),
-                StringField("message"),
-                StringField("activity"),
-                StringField("task"),
-                IntField("duration")
-            ]),
-            RegexpParser(r"^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d+)\s+(\S+)\s+\[[^\]]+\]\s+((ParsingContext).*"
-                         r"\[Task\s=\s([^]]+)\]\sNumber\sof\swrite\sactions\squeued.*took\s(\d+)\sms[\s\S]*)")
-        ),
-        general_event_creator
-    ])
+    tva_ingest_event_creator = EventCreator(
+        Metadata([
+            StringField("activity"),
+            StringField("requestId")
+        ]),
+        RegexpParser(r"^(?P<activity>OnlineTvaIngest).*\[RequestId\s=\s(?P<requestId>[^]]+)\][\s\S]*",
+                     return_empty_dict=True)
+    )
+
+    tva_manager_event_creator = EventCreator(
+        Metadata([
+            StringField("activity"),
+            StringField("task"),
+            IntField("duration")
+        ]),
+        RegexpParser(r"^(?P<activity>TvaManager).*\[Task\s=\s(?P<task>[^]]+)\].*took\s'(?P<duration>\d+)'\sms[\s\S]*",
+                     return_empty_dict=True)
+    )
+
+    parsing_context_event_creator = EventCreator(
+        Metadata([
+            StringField("activity"),
+            StringField("task"),
+            IntField("duration")
+        ]),
+        RegexpParser(r"^(?P<activity>ParsingContext).*\[Task\s=\s(?P<task>[^]]+)\]\s"
+                     r"Tva\singest\scompleted,\sduration\s=\s(?P<duration>\d+)\sms[\s\S]*",
+                     return_empty_dict=True)
+    )
+
+    write_actions_event_creator = EventCreator(
+        Metadata([
+            ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+            StringField("level"),
+            StringField("message"),
+            StringField("activity"),
+            StringField("task"),
+            IntField("duration")
+        ]),
+        RegexpParser(r"^(?P<activity>ParsingContext).*\[Task\s=\s(?P<task>[^]]+)\]\s"
+                     r"Number\sof\swrite\sactions\squeued.*took\s(?P<duration>\d+)\sms[\s\S]*",
+                     return_empty_dict=True)
+    )
 
     return MatchField("topic", {
         "traxis_backend_log_gen": MatchField("source", {
             "TraxisService.log": SourceConfiguration(
-                event_creators,
+                CompositeEventCreator()
+                    .add_source_parser(general_event_creator)
+                    .add_intermediate_result_parser(tva_ingest_event_creator)
+                    .add_intermediate_result_parser(tva_manager_event_creator)
+                    .add_intermediate_result_parser(parsing_context_event_creator)
+                    .add_intermediate_result_parser(write_actions_event_creator),
                 Utils.get_output_topic(config, "general")
             ),
             "TraxisServiceDistributedScheduler.log": SourceConfiguration(
