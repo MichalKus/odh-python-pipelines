@@ -37,7 +37,7 @@ class VMCpuProcessor(BasicAnalyticsProcessor):
                 .select("@timestamp", "group", "res_kind", "name", metric_name) \
                 .filter(
                 (col("group") == "cpu") & (col("res_kind") == "VirtualMachine")  & (col(metric_name).isNotNull())) \
-                .withColumn("name", regexp_replace("name", "\.", "-")) \
+                .withColumn("name", regexp_replace("name", r"\.", "-")) \
                 .aggregate(aggregation)
 
             return agg_stream
