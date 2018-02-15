@@ -2,9 +2,10 @@ import sys
 
 from common.kafka_pipeline import KafkaPipeline
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
-from common.log_parsing.dict_event_creator.event_creator import EventCreator
+from common.log_parsing.dict_event_creator.event_creator import EventCreator, CompositeEventCreator
 from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
 from common.log_parsing.event_creator_tree.multisource_configuration import MatchField, SourceConfiguration
+from common.log_parsing.matchers.matcher import SubstringMatcher
 from common.log_parsing.metadata import Metadata, StringField
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
@@ -30,9 +31,49 @@ def create_event_creators(configuration):
                      r"\s*-\s*"
                      r"(?P<message>.*)$"))
 
+    method_duration_event_creator = EventCreator(
+        Metadata(
+            [StringField("request_id", "requestId"),
+             StringField("customer_id", "customerId"),
+             StringField("method"),
+             StringField("duration")]),
+        RegexpParser(
+            r"^.*\[RequestId\s*=\s*(?P<request_id>.*)\]\s*\[CustomerId\s*=\s*(?P<customer_id>.*)\]\s*"
+            r"Executing method \'(?P<method>.*?)\' took \'(?P<duration>.*?)\'.*",
+            return_empty_dict=True),
+        matcher=SubstringMatcher("Executing method"))
+
+    method_invoked_event_creator = EventCreator(
+        Metadata(
+            [StringField("request_id", "requestId"),
+             StringField("customer_id", "customerId"),
+             StringField("method"),
+             StringField("identity"),
+             StringField("product_id", "productId")]),
+        RegexpParser(
+            r"^.*\[RequestId\s*=\s*(?P<request_id>.*)\]\s*\[CustomerId\s*=\s*(?P<customer_id>.*)\]\s*"
+            r"Method \'(?P<method>.*?)\' invoked with parameters\: identity = (?P<identity>.*?)\, productId = (?P<product_id>.*?)(\,.*|$)",
+            return_empty_dict=True),
+        matcher=SubstringMatcher("invoked with parameters"))
+
+    cannot_purchase_product_event_creator= EventCreator(
+        Metadata(
+            [StringField("request_id", "requestId"),
+             StringField("customer_id", "customerId"),
+             StringField("product_id", "productId")]),
+        RegexpParser(
+            r"^.*\[RequestId\s*=\s*(?P<request_id>.*)\]\s*\[CustomerId\s*=\s*(?P<customer_id>.*)\]\s*"
+            r"Cannot purchase products of type \'Subscription\'.*productId \'(?P<product_id>.*?)\'$",
+            return_empty_dict=True),
+        matcher=SubstringMatcher("Cannot purchase products of type"))
+
     return MatchField("source", {
         "TraxisService.log": SourceConfiguration(
-            event_creator,
+            CompositeEventCreator()
+                .add_source_parser(event_creator)
+                .add_intermediate_result_parser(method_duration_event_creator, final=True)
+                .add_intermediate_result_parser(method_invoked_event_creator, final=True)
+                .add_intermediate_result_parser(cannot_purchase_product_event_creator, final=True),
             Utils.get_output_topic(configuration, "general")
         ),
         "TraxisServiceError.log": SourceConfiguration(
