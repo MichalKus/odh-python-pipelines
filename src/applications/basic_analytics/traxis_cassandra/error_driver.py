@@ -23,7 +23,7 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
         info_or_warn_count = info_events.union(warn_events) \
             .aggregate(Count(aggregation_name=self._component_name + ".info_or_warn"))
 
-        error_count = error_events.union(warn_events) \
+        error_count = error_events \
             .aggregate(Count(aggregation_name=self._component_name + ".error"))
 
         ring_status_node_warnings = warn_events \

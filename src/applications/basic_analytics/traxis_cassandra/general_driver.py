@@ -24,7 +24,7 @@ class TraxisCassandraGeneral(BasicAnalyticsProcessor):
         info_or_warn_count = info_events.union(warn_events) \
             .aggregate(Count(aggregation_name=self._component_name + ".info_or_warn"))
 
-        error_count = error_events.union(warn_events) \
+        error_count = error_events \
             .aggregate(Count(aggregation_name=self._component_name + ".error"))
 
         daily_starts = info_events \
@@ -105,13 +105,13 @@ class TraxisCassandraGeneral(BasicAnalyticsProcessor):
         ]
 
         successful_repairs = [read_stream.where("message like \'%{0} is fully%\'".format(message_type))
-                                  .aggregate(Count(aggregation_name=self._component_name +
-                                                                    convert_to_underlined(message_type)))
+                                  .aggregate(Count(aggregation_name="{0}.{1}"
+                                                   .format(self._component_name, convert_to_underlined(message_type))))
                               for message_type in successful_repairs_message_types]
 
         return [info_or_warn_count, error_count, daily_starts, daily_ends, weekly_starts, weekly_ends, repairs,
                 compactings, node_ups, node_downs, ring_status_node_warnings, undefined_warnings
-                ].extend(successful_repairs)
+                ] + successful_repairs
 
     @staticmethod
     def create_schema():
