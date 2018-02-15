@@ -16,15 +16,22 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
     """
 
     def _process_pipeline(self, read_stream):
+        info_events = read_stream.where("level == 'INFO'")
         warn_events = read_stream.where("level == 'WARN'")
         error_events = read_stream.where("level == 'ERROR'")
+
+        info_or_warn_count = info_events.union(warn_events) \
+            .aggregate(Count(aggregation_name=self._component_name + ".info_or_warn"))
+
+        error_count = error_events.union(warn_events) \
+            .aggregate(Count(aggregation_name=self._component_name + ".error"))
 
         ring_status_node_warnings = warn_events \
             .where("message like '%Unable to determine external address "
                    "of node with internal address %'") \
-            .withColumn("host", regexp_extract("message",
-                                               r".*Unable\s+to\s+determine\s+external\s+address\s+of\s+node\s+with\s+internal\s+address\s+'(\S+)'.*",
-                                               1)) \
+            .withColumn("host",
+                        regexp_extract("message", r".*Unable\s+to\s+determine\s+external\s+address\s+of\s+node\s+"
+                                                  r"with\s+internal\s+address\s+'(\S+)'.*", 1)) \
             .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".ring_status_node_warnings"))
 
@@ -37,13 +44,21 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
         ring_status_node_errors = error_events \
             .where("message like '%Eventis.Cassandra.Service."
                    "CassandraServiceException+HostRingException%'") \
-            .withColumn("host", regexp_extract("message",
-                                               r".*Eventis\.Cassandra\.Service\.CassandraServiceException\+HostRingException.*'(\S+)'.*",
-                                               1)) \
+            .withColumn("host", regexp_extract("message", r".*Eventis\.Cassandra\.Service\.CassandraServiceException\+"
+                                                          r"HostRingException.*'(\S+)'.*", 1)) \
             .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".ring_status_node_errors"))
 
-        return [ring_status_node_warnings, undefined_warnings, ring_status_node_errors]
+        unreachable_nodes = error_events \
+            .where("message like '%Node is unreachable%'") \
+            .aggregate(Count(aggregation_name=self._component_name + ".unreachable_nodes"))
+
+        reachable_nodes = error_events \
+            .where("message like '%Node is reachable%'") \
+            .aggregate(Count(aggregation_name=self._component_name + ".reachable_nodes"))
+
+        return [info_or_warn_count, error_count, ring_status_node_warnings, undefined_warnings,
+                ring_status_node_errors, unreachable_nodes, reachable_nodes]
 
     @staticmethod
     def create_schema():
