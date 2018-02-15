@@ -19,7 +19,7 @@ class TraxisCassandraGeneral(BasicAnalyticsProcessor):
     def _process_pipeline(self, read_stream):
         info_events = read_stream.where("level == 'INFO'")
         warn_events = read_stream.where("level == 'WARN'")
-        error_events = read_stream.where("level == ERROR")
+        error_events = read_stream.where("level == 'ERROR'")
 
         info_or_warn_count = info_events.union(warn_events) \
             .aggregate(Count(aggregation_name=self._component_name + ".info_or_warn"))

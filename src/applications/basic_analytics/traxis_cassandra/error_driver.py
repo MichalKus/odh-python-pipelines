@@ -29,9 +29,8 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
         ring_status_node_warnings = warn_events \
             .where("message like '%Unable to determine external address "
                    "of node with internal address %'") \
-            .withColumn("host",
-                        regexp_extract("message", r".*Unable\s+to\s+determine\s+external\s+address\s+of\s+node\s+"
-                                                  r"with\s+internal\s+address\s+'(\S+)'.*", 1)) \
+            .withColumn("host", regexp_extract("message", r".*Unable\s+to\s+determine\s+external\s+address\s+of\s+"
+                                                          r"node\s+with\s+internal\s+address\s+'(\S+)'.*", 1)) \
             .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".ring_status_node_warnings"))
 
