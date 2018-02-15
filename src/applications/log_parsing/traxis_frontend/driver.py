@@ -70,10 +70,10 @@ def create_event_creators(configuration):
     return MatchField("source", {
         "TraxisService.log": SourceConfiguration(
             CompositeEventCreator()
-                .add_source_parser(event_creator, final=False)
-                .add_intermediate_result_parser(method_duration_event_creator)
-                .add_intermediate_result_parser(method_invoked_event_creator)
-                .add_intermediate_result_parser(cannot_purchase_product_event_creator),
+                .add_source_parser(event_creator)
+                .add_intermediate_result_parser(method_duration_event_creator, final=True)
+                .add_intermediate_result_parser(method_invoked_event_creator, final=True)
+                .add_intermediate_result_parser(cannot_purchase_product_event_creator, final=True),
             Utils.get_output_topic(configuration, "general")
         ),
         "TraxisServiceError.log": SourceConfiguration(

@@ -65,7 +65,7 @@ class CompositeEventCreator:
         self.__event_creator_list.append(ParserStep(event_creator, dependent=False, final=final))
         return self
 
-    def add_intermediate_result_parser(self, event_creator, final=True):
+    def add_intermediate_result_parser(self, event_creator, final=False):
         """
         Event creator added using this method uses event that produced by previous step rather than source event.
         For example: original message is {'message':'event is 115566"}, intermediate result that we got from

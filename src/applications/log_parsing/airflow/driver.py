@@ -79,19 +79,19 @@ def create_event_creators(configuration):
     return MatchField("source", {
         "airflow.log": SourceConfiguration(
             CompositeEventCreator()
-                .add_source_parser(general_creator, final=False)
-                .add_intermediate_result_parser(subtask_creator, final=False)
-                .add_intermediate_result_parser(crid_creator)
-                .add_intermediate_result_parser(airflow_id_creator),
+                .add_source_parser(general_creator)
+                .add_intermediate_result_parser(subtask_creator)
+                .add_intermediate_result_parser(crid_creator, final=True)
+                .add_intermediate_result_parser(airflow_id_creator, final=True),
             Utils.get_output_topic(configuration, 'worker')
         ),
         "/usr/local/airflow/logs": SourceConfiguration(
             CompositeEventCreator()
-                .add_source_parser(general_creator, final=False)
-                .add_source_parser(dag_creator, final=False)
-                .add_intermediate_result_parser(subtask_creator, final=False)
-                .add_intermediate_result_parser(crid_creator)
-                .add_intermediate_result_parser(airflow_id_creator),
+                .add_source_parser(general_creator)
+                .add_source_parser(dag_creator)
+                .add_intermediate_result_parser(subtask_creator)
+                .add_intermediate_result_parser(crid_creator, final=True)
+                .add_intermediate_result_parser(airflow_id_creator, final=True),
             Utils.get_output_topic(configuration, 'worker_dag_execution')
         )
     })

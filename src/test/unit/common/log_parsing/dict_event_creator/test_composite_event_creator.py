@@ -44,9 +44,9 @@ class CompositeEventCreatorTestCase(unittest.TestCase):
 
         event_creator = CompositeEventCreator() \
             .add_source_parser(self.main_event_creator) \
-            .add_intermediate_result_parser(url_dependent_event_creator) \
-            .add_intermediate_result_parser(method_dependent_event_creator) \
-            .add_intermediate_result_parser(duration_dependent_event_creator)
+            .add_intermediate_result_parser(url_dependent_event_creator, final=True) \
+            .add_intermediate_result_parser(method_dependent_event_creator, final=True) \
+            .add_intermediate_result_parser(duration_dependent_event_creator, final=True)
 
         self.assertEquals({"term1": "a", "term2": "first_case URL = 123", "case": "first_case", "url": "123"},
                           event_creator.create(self.row1))
@@ -77,8 +77,8 @@ class CompositeEventCreatorTestCase(unittest.TestCase):
 
         event_creator = CompositeEventCreator() \
             .add_source_parser(self.main_event_creator) \
-            .add_intermediate_result_parser(url_dependent_event_creator) \
-            .add_intermediate_result_parser(method_dependent_event_creator) \
+            .add_intermediate_result_parser(url_dependent_event_creator, final=True) \
+            .add_intermediate_result_parser(method_dependent_event_creator, final=True) \
 
         self.assertEquals({"term1": "a", "term2": "first_case URL = 123", "case": "first_case", "url": "123"},
                           event_creator.create(self.row1))
