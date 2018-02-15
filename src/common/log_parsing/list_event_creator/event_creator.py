@@ -47,7 +47,7 @@ class EventCreator(AbstractEventCreator):
         :param row: input row
         :return: list of values
         """
-        return self._parser.parse(row[self.__field_to_parse])
+        return self._parser.parse(row["message"])
 
     def get_field_to_parse(self):
         return self.__field_to_parse
