@@ -81,10 +81,10 @@ def create_event_creators(config):
             "TraxisService.log": SourceConfiguration(
                 CompositeEventCreator()
                     .add_source_parser(general_event_creator)
-                    .add_intermediate_result_parser(tva_ingest_event_creator)
-                    .add_intermediate_result_parser(tva_manager_event_creator)
-                    .add_intermediate_result_parser(parsing_context_event_creator)
-                    .add_intermediate_result_parser(write_actions_event_creator),
+                    .add_intermediate_result_parser(tva_ingest_event_creator, final=True)
+                    .add_intermediate_result_parser(tva_manager_event_creator, final=True)
+                    .add_intermediate_result_parser(parsing_context_event_creator, final=True)
+                    .add_intermediate_result_parser(write_actions_event_creator, final=True),
                 Utils.get_output_topic(config, "general")
             ),
             "TraxisServiceDistributedScheduler.log": SourceConfiguration(
