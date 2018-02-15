@@ -1,0 +1,11 @@
+spark:
+  appName: vrops-vm-datastore-disk-stats-basic-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+  consoleWriter: false
+
+analytics:
+  componentName: odhecx.eosdtv.pan.prd.vrops
+  watermark: '1 seconds'
+  window: '1 minutes'
