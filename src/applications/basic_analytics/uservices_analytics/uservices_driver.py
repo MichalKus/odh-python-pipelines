@@ -3,8 +3,8 @@ The module for the driver to calculate metrics related to uServices component.
 """
 from collections import namedtuple
 
-from pyspark.sql.functions import col
-from pyspark.sql.types import StructField, StructType, TimestampType, StringType, LongType
+from pyspark.sql.functions import col, when, regexp_extract, concat, lit
+from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
 from common.basic_analytics.aggregations import Count, Avg
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
@@ -59,8 +59,11 @@ class UServicesBasycAnalytics(BasicAnalyticsProcessor):
             .withColumn("api_method",
                         custom_translate_like(col("header.x-original-uri"), self.__header_to_api_method_mapping,
                                               "undefined")) \
-            .where(col("api_method") != "undefined") \
-            .fillna({"country": "undefined"})
+            .withColumn("country",
+                        when(col("stack").isNotNull(),
+                             regexp_extract("stack",r".*-(\w+)$", 1))
+                        .otherwise("undefined")) \
+            .where(col("api_method") != "undefined")
 
         average_duration = mapped_stream.aggregate(
             Avg(group_fields=["country", "host", "app", "app_version", "api_method"],
@@ -78,6 +81,7 @@ class UServicesBasycAnalytics(BasicAnalyticsProcessor):
         return StructType([
             StructField("@timestamp", TimestampType()),
             StructField("host", StringType()),
+            StructField("stack", StringType()),
             StructField("app", StringType()),
             StructField("app_version", StringType()),
             StructField("header", StructType([
@@ -85,8 +89,7 @@ class UServicesBasycAnalytics(BasicAnalyticsProcessor):
             ])),
             StructField("requested_uri", StringType()),
             StructField("duration_ms", StringType()),
-            StructField("status", StringType()),
-            StructField("country", StringType())
+            StructField("status", StringType())
         ])
 
 
