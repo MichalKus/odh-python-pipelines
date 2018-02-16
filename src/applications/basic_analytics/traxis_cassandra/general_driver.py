@@ -2,12 +2,12 @@
 The module for the driver to calculate metrics related to Traxis Cassandra general component.
 """
 
-from pyspark.sql.functions import regexp_extract
+from pyspark.sql.functions import regexp_extract, col
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
 from common.basic_analytics.aggregations import Count
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.spark_utils.custom_functions import convert_to_underlined
+from common.spark_utils.custom_functions import convert_to_underlined, custom_translate_regex
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
@@ -104,14 +104,17 @@ class TraxisCassandraGeneral(BasicAnalyticsProcessor):
             "TaskStatistics"
         ]
 
-        successful_repairs = [read_stream.where("message like \'%{0} is fully%\'".format(message_type))
-                                  .aggregate(Count(aggregation_name="{0}.{1}"
-                                                   .format(self._component_name, convert_to_underlined(message_type))))
-                              for message_type in successful_repairs_message_types]
+        mapping = {"{0} is fully".format(message_type): convert_to_underlined(message_type)
+                   for message_type in successful_repairs_message_types}
+
+        successful_repairs = read_stream \
+            .withColumn("type", custom_translate_regex(source_field=col("message"), mapping=mapping,
+                                                       default_value="unclassified")).where("type != 'unclassified'") \
+            .aggregate(Count(group_fields=["type"], aggregation_name=self._component_name))
 
         return [info_or_warn_count, error_count, daily_starts, daily_ends, weekly_starts, weekly_ends, repairs,
-                compactings, node_ups, node_downs, ring_status_node_warnings, undefined_warnings
-                ] + successful_repairs
+                compactings, node_ups, node_downs, ring_status_node_warnings, undefined_warnings, successful_repairs]
+
 
     @staticmethod
     def create_schema():

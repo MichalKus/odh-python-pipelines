@@ -20,8 +20,8 @@
 {"@timestamp": "2017-11-03T01:49:00.000Z", "hostname": "odhdev01", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.compactings.hostname.odhdev01.count", "value": 1}
 {"@timestamp": "2017-10-30T10:00:00.000Z", "hostname": "odhdev03", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.daily_starts.hostname.odhdev03.count", "value": 1}
 {"@timestamp": "2017-10-30T06:00:00.000Z", "hostname": "odhdev03", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.daily_starts.hostname.odhdev03.count", "value": 1}
-{"@timestamp": "2017-10-30T06:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.promotion_rule_evaluations.count", "value": 1}
-{"@timestamp": "2017-10-30T10:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.pre_order_products.count", "value": 1}
+{"@timestamp": "2017-10-30T06:00:00.000Z", "type": "promotion_rule_evaluations", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.type.promotion_rule_evaluations.count", "value": 1}
+{"@timestamp": "2017-10-30T10:00:00.000Z", "type": "pre_order_products", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.type.pre_order_products.count", "value": 1}
 {"@timestamp": "2017-10-30T22:50:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.info_or_warn.count", "value": 3}
 {"@timestamp": "2017-10-30T23:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.info_or_warn.count", "value": 2}
 {"@timestamp": "2017-10-30T23:50:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.info_or_warn.count", "value": 2}
