@@ -1,3 +1,4 @@
+"""Spark driver for parsing message from Airflow component"""
 import sys
 
 from applications.log_parsing.airflow.crid_event_creator import CridEventCreator
@@ -34,7 +35,8 @@ def create_event_creators(configuration):
             StringField("message")
         ]),
         RegexpParser(
-            r"^\[(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\] \{(?P<script>[^\}]+)\} (?P<level>\w+?) - (?P<message>(.|\s)*)"
+            r"^\[(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\] \{(?P<script>[^\}]+)\} (?P<level>\w+?) - "
+            r"(?P<message>(.|\s)*)"
         )
     )
 
@@ -53,7 +55,8 @@ def create_event_creators(configuration):
              StringField("subtask_level"),
              StringField("subtask_message")]),
         RegexpParser(
-            r"^Subtask: \[(?P<subtask_timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\] \{(?P<subtask_script>[^\}]+):\d+\} (?P<subtask_level>\w+?) - (?P<subtask_message>(?:.|\s)*)",
+            r"^Subtask: \[(?P<subtask_timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\]"
+            r" \{(?P<subtask_script>[^\}]+):\d+\} (?P<subtask_level>\w+?) - (?P<subtask_message>(?:.|\s)*)",
             return_empty_dict=True),
         matcher=SubstringMatcher("Subtask:"),
         field_to_parse="message")
@@ -79,19 +82,19 @@ def create_event_creators(configuration):
     return MatchField("source", {
         "airflow.log": SourceConfiguration(
             CompositeEventCreator()
-                .add_source_parser(general_creator)
-                .add_intermediate_result_parser(subtask_creator)
-                .add_intermediate_result_parser(crid_creator, final=True)
-                .add_intermediate_result_parser(airflow_id_creator, final=True),
+            .add_source_parser(general_creator)
+            .add_intermediate_result_parser(subtask_creator)
+            .add_intermediate_result_parser(crid_creator, final=True)
+            .add_intermediate_result_parser(airflow_id_creator, final=True),
             Utils.get_output_topic(configuration, 'worker')
         ),
         "/usr/local/airflow/logs": SourceConfiguration(
             CompositeEventCreator()
-                .add_source_parser(general_creator)
-                .add_source_parser(dag_creator)
-                .add_intermediate_result_parser(subtask_creator)
-                .add_intermediate_result_parser(crid_creator, final=True)
-                .add_intermediate_result_parser(airflow_id_creator, final=True),
+            .add_source_parser(general_creator)
+            .add_source_parser(dag_creator)
+            .add_intermediate_result_parser(subtask_creator)
+            .add_intermediate_result_parser(crid_creator, final=True)
+            .add_intermediate_result_parser(airflow_id_creator, final=True),
             Utils.get_output_topic(configuration, 'worker_dag_execution')
         )
     })

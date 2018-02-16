@@ -1,3 +1,4 @@
+"""Module with all necessary tools for creating new events during parsing log messages"""
 from common.log_parsing.metadata import AbstractEventCreator
 
 
@@ -36,7 +37,7 @@ class EventCreator(AbstractEventCreator):
         return self.__field_to_parse
 
 
-class ParserStep:
+class ParserStep(object):
     """
     One step in CompositeEventCreator, contains event_creator and two flags about dependency from previous step
     and necessity to do next parsing
@@ -48,7 +49,8 @@ class ParserStep:
         self.final = final
 
 
-class CompositeEventCreator:
+class CompositeEventCreator(object):
+    """Extension for event creator with several steps of parsing messages and their sub messages"""
     def __init__(self):
         self.__event_creator_list = list()
 
@@ -81,14 +83,14 @@ class CompositeEventCreator:
     def create(self, source_message):
         intermediate_message = {}
         result = {}
-        for parserStep in self.__event_creator_list:
-            if parserStep.dependent:
-                if parserStep.event_creator.get_field_to_parse() in intermediate_message:
-                    result = parserStep.event_creator.create(intermediate_message)
+        for parser_step in self.__event_creator_list:
+            if parser_step.dependent:
+                if parser_step.event_creator.get_field_to_parse() in intermediate_message:
+                    result = parser_step.event_creator.create(intermediate_message)
                     intermediate_message.update(result)
             else:
-                result = parserStep.event_creator.create(source_message)
+                result = parser_step.event_creator.create(source_message)
                 intermediate_message.update(result)
-            if result and parserStep.final:
+            if result and parser_step.final:
                 break
         return intermediate_message
