@@ -41,7 +41,7 @@ class UServicesBasycAnalytics(BasicAnalyticsProcessor):
         # filter useless data
         filtered_stream = read_stream.where(
             (col("duration_ms").cast("long") != 0) &
-            ~ (col("requested_uri").startswith("GET /info") | col("requested_uri").startswith("GET /prometheus"))
+            ~ (col("requested_url").startswith("GET /info") | col("requested_url").startswith("GET /prometheus"))
         )
 
         # filter data that contains necessary services
@@ -87,7 +87,7 @@ class UServicesBasycAnalytics(BasicAnalyticsProcessor):
             StructField("header", StructType([
                 StructField("x-original-uri", StringType())
             ])),
-            StructField("requested_uri", StringType()),
+            StructField("requested_url", StringType()),
             StructField("duration_ms", StringType()),
             StructField("status", StringType())
         ])
