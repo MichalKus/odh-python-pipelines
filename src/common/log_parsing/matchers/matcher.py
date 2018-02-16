@@ -1,3 +1,7 @@
+"""
+The module with classes to match messages before the parsing step
+"""
+
 import re
 from abc import ABCMeta, abstractmethod
 
@@ -22,15 +26,15 @@ class SubstringMatcher(Matcher):
     Class to match input text line with a substring.
     """
 
-    def __init__(self, str):
+    def __init__(self, substring):
         """
         Matcher constructor.
-        :param str: String to match.
+        :param substring: String to match.
         """
-        self.__str = str
+        self.__substring = substring
 
     def match(self, text):
-        return self.__str in text
+        return self.__substring in text
 
 
 class RegexpMatcher(Matcher):
