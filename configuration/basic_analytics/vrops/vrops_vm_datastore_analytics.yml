@@ -1,5 +1,5 @@
 spark:
-  appName: vrops-vm-cpu-basic-analytics
+  appName: vrops-vm-datastore-basic-analytics
   master: local[*]
   checkpointLocation: file:///spark/checkpoints
   shuffle.partitions: 1
@@ -13,7 +13,7 @@ kafka:
   topics:
     inputs:
       - odhecx_pr_eosdtv_pan_prd_vrops_v1
-    output: odhecx_out_eosdtv_pan_prd_vrops_vm_cpu_v1
+    output: odhecx_out_eosdtv_pan_prd_vrops_vm_datastore_v1
   security.protocol: SASL_PLAINTEXT
   sasl.mechanism: PLAIN
 

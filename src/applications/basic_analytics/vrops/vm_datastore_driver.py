@@ -6,7 +6,7 @@ from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from common.basic_analytics.aggregations import Avg
 
 
-class VMDatastoreDiskProcessor(BasicAnalyticsProcessor):
+class VMDatastoreProcessor(BasicAnalyticsProcessor):
     """
     VROPS Virtual Machine MEM NET Processor for averaging net stats
     """
@@ -35,26 +35,22 @@ class VMDatastoreDiskProcessor(BasicAnalyticsProcessor):
             agg_stream = read_stream \
                 .select("@timestamp", "group", "res_kind", "name", "metrics.*") \
                 .select("@timestamp", "group", "res_kind", "name", aggregation_field) \
-                .filter(((col("group") == "mem") | (col("group") == "net")) & (col("res_kind") == "VirtualMachine") & (
-                col(aggregation_field).isNotNull())) \
+                .filter(
+                (col("group") == "datastore") & (col("res_kind") == "VirtualMachine") & (col(aggregation_field).isNotNull())) \
                 .withColumn("name", regexp_replace("name", r"\.", "-")) \
                 .aggregate(aggregation)
 
             return agg_stream
 
-        #MEM
-        balloonpct = aggregate("balloonpct")
-        host_contentionpct = aggregate("host_contentionpct")
-        host_demand = aggregate("host_demand")
-        latency_average = aggregate("latency_average")
+        numberreadaveraged_average = aggregate("numberreadaveraged_average")
+        numberwriteaveraged_average = aggregate("numberwriteaveraged_average")
+        read_average = aggregate("read_average")
+        totallatency_average = aggregate("totallatency_average")
+        totalwritelatency_average = aggregate("totalwritelatency_average")
+        write_average = aggregate("write_average")
 
-        #NET
-        droppedpct = aggregate("droppedpct")
-        packetsrxpersec = aggregate("packetsrxpersec")
-        packetstxpersec = aggregate("packetstxpersec")
-
-        return [balloonpct, host_contentionpct, host_demand, latency_average, droppedpct, packetsrxpersec,
-                packetstxpersec]
+        return [numberreadaveraged_average, numberwriteaveraged_average, read_average, totallatency_average,
+                totalwritelatency_average, write_average]
 
     @staticmethod
     def create_schema():
@@ -63,13 +59,13 @@ class VMDatastoreDiskProcessor(BasicAnalyticsProcessor):
         """
         return StructType([
             StructField("metrics", StructType([
-                StructField("balloonpct", DoubleType()),
-                StructField("host_contentionpct", DoubleType()),
-                StructField("host_demand", DoubleType()),
-                StructField("latency_average", DoubleType()),
-                StructField("droppedpct", DoubleType()),
-                StructField("packetsrxpersec", DoubleType()),
-                StructField("packetstxpersec", DoubleType()),
+                StructField("numberreadaveraged_average", DoubleType()),
+                StructField("numberwriteaveraged_average", DoubleType()),
+                StructField("read_average", DoubleType()),
+                StructField("totallatency_average", DoubleType()),
+                StructField("totalreadlatency_average", DoubleType()),
+                StructField("totalwritelatency_average", DoubleType()),
+                StructField("write_average", DoubleType()),
             ])),
             StructField("group", StringType()),
             StructField("name", StringType()),
@@ -83,7 +79,7 @@ def create_processor(configuration):
     Method to create the instance of the processor
     :param configuration: dict containing configurations
     """
-    return VMMemNetProcessor(configuration, VMMemNetProcessor.create_schema())
+    return VMDatastoreProcessor(configuration, VMDatastoreProcessor.create_schema())
 
 if __name__ == "__main__":
     start_basic_analytics_pipeline(create_processor)
