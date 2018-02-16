@@ -24,6 +24,63 @@ class TraxisFrontEndParsingTestCase(BaseMultipleMessageParsingTestCase):
             }
         )
 
+    def test_traxis_service_log_method_duration(self):
+        self.assert_parsing(
+            {
+                "source": "TraxisService.log",
+                "message": "2017-06-29 16:35:33,468 DEBUG [HTTP worker thread 15] EntitlementManager - [10.64.13.180:39428] [RequestId = f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab] [CustomerId = 58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl] Executing method 'GetEntitlementForProduct' took '17' ms"
+            },
+            {
+                "@timestamp": datetime(2017, 6, 29, 16, 35, 33, 468000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "level": "DEBUG",
+                "thread_name": "HTTP worker thread 15",
+                "component": "EntitlementManager",
+                "requestId": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
+                "customerId": "58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl",
+                "method": "GetEntitlementForProduct",
+                "duration": "17",
+                "message": "[10.64.13.180:39428] [RequestId = f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab] [CustomerId = 58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl] Executing method 'GetEntitlementForProduct' took '17' ms"
+            }
+        )
+
+    def test_traxis_service_log_method_invoked(self):
+        self.assert_parsing(
+            {
+                "source": "TraxisService.log",
+                "message": "2017-06-29 16:35:33,468 DEBUG [HTTP worker thread 15] EntitlementManager - [10.64.13.180:39428] [RequestId = f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab] [CustomerId = 58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl] Method 'GetOffers' invoked with parameters: identity = Eventis.Traxis.BusinessLogicLayer.Identity, productId = crid://eventis.nl/00000000-0000-1000-0008-000100000000, twoLetterIsoLanguageCode = en"
+            },
+            {
+                "@timestamp": datetime(2017, 6, 29, 16, 35, 33, 468000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "level": "DEBUG",
+                "thread_name": "HTTP worker thread 15",
+                "component": "EntitlementManager",
+                "requestId": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
+                "customerId": "58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl",
+                "method": "GetOffers",
+                "identity": "Eventis.Traxis.BusinessLogicLayer.Identity",
+                "productId": "crid://eventis.nl/00000000-0000-1000-0008-000100000000",
+                "message": "[10.64.13.180:39428] [RequestId = f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab] [CustomerId = 58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl] Method 'GetOffers' invoked with parameters: identity = Eventis.Traxis.BusinessLogicLayer.Identity, productId = crid://eventis.nl/00000000-0000-1000-0008-000100000000, twoLetterIsoLanguageCode = en"
+            }
+        )
+
+    def test_traxis_service_log_cannot_purchase_product(self):
+        self.assert_parsing(
+            {
+                "source": "TraxisService.log",
+                "message": "2017-06-29 16:35:25,640 DEBUG [HTTP worker thread 2] BaseEntitlementManager - [10.64.13.180:39376] [RequestId = 0cc3c8cf-f3b3-4660-9a8c-54e5461106c9] [CustomerId = be73f580-5cc6-11e7-acce-916590705404_nl] Cannot purchase products of type 'Subscription': subscription purchase is not enabled. CustomerId 'be73f580-5cc6-11e7-acce-916590705404_nl', productId 'crid://eventis.nl/00000000-0000-1000-0008-000100000001'"
+            },
+            {
+                "@timestamp": datetime(2017, 6, 29, 16, 35, 25, 640000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "level": "DEBUG",
+                "thread_name": "HTTP worker thread 2",
+                "component": "BaseEntitlementManager",
+                "requestId": "0cc3c8cf-f3b3-4660-9a8c-54e5461106c9",
+                "customerId": "be73f580-5cc6-11e7-acce-916590705404_nl",
+                "productId": "crid://eventis.nl/00000000-0000-1000-0008-000100000001",
+                "message": "[10.64.13.180:39376] [RequestId = 0cc3c8cf-f3b3-4660-9a8c-54e5461106c9] [CustomerId = be73f580-5cc6-11e7-acce-916590705404_nl] Cannot purchase products of type 'Subscription': subscription purchase is not enabled. CustomerId 'be73f580-5cc6-11e7-acce-916590705404_nl', productId 'crid://eventis.nl/00000000-0000-1000-0008-000100000001'"
+            }
+        )
+
     def test_traxis_service_error_log(self):
         self.assert_parsing(
             {

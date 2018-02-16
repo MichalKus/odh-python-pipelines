@@ -21,19 +21,24 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
     def _process_pipeline(self, read_stream):
         """This define the aggregation fields and re-use statistical functions from aggregation.py"""
         stream = read_stream \
-            .withColumn("firmwareVersion", regexp_replace("firmwareVersion", "\.", "-")) \
-            .withColumn("hardwareVersion", regexp_replace("hardwareVersion", "\.", "-")) \
-            .withColumn("appVersion", regexp_replace("appVersion", "\.", "-")) \
-            .withColumn("asVersion", regexp_replace("asVersion", "\.", "-")) \
+            .withColumn("firmwareVersion", regexp_replace("firmwareVersion", r"\.", "-")) \
+            .withColumn("hardwareVersion", regexp_replace("hardwareVersion", r"\.", "-")) \
+            .withColumn("appVersion", regexp_replace("appVersion", r"\.", "-")) \
+            .withColumn("asVersion", regexp_replace("asVersion", r"\.", "-")) \
             .withColumn("VMStat_idlePct", col("VMStat_idlePct").cast(IntegerType())) \
             .withColumn("VMStat_systemPct", col("VMStat_systemPct").cast(IntegerType())) \
             .withColumn("VMStat_iowaitPct", col("VMStat_iowaitPct").cast(IntegerType())) \
             .withColumn("VMStat_hwIrqPct", col("VMStat_hwIrqPct").cast(IntegerType())) \
             .withColumn("MemoryUsage_totalKb", col("MemoryUsage_totalKb").cast(IntegerType())) \
-            .withColumn("MemoryUsage_totalKb", col("MemoryUsage_totalKb").cast(IntegerType()))
+            .withColumn("MemoryUsage_usedKb", col("MemoryUsage_usedKb").cast(IntegerType())) \
+            .withColumn("VMStat_nicePct", col("VMStat_nicePct").cast(IntegerType())) \
+            .withColumn("VMStat_userPct", col("VMStat_userPct").cast(IntegerType())) \
+            .withColumn("VMStat_swIrqPct", col("VMStat_swIrqPct").cast(IntegerType())) \
+            .withColumn("VMStat_loadAverage", col("VMStat_loadAverage").cast(IntegerType()))
 
         aggregation_fields = ["VMStat_idlePct", "VMStat_systemPct", "VMStat_iowaitPct", "VMStat_hwIrqPct",
-                              "MemoryUsage_totalKb", "MemoryUsage_totalKb"]
+                              "MemoryUsage_totalKb", "MemoryUsage_usedKb", "VMStat_nicePct",
+                              "VMStat_userPct", "VMStat_swIrqPct", "VMStat_loadAverage"]
         result = []
 
         for field in aggregation_fields:
@@ -57,7 +62,7 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
         return StructType([
             StructField("timestamp", StringType()),
             StructField("originId", StringType()),
-            StructField("MemoryUsage_freeKb", StringType()),
+            StructField("MemoryUsage_usedKb", StringType()),
             StructField("MemoryUsage_totalKb", StringType()),
             StructField("hardwareVersion", StringType()),
             StructField("asVersion", StringType()),
@@ -68,7 +73,10 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
             StructField("VMStat_iowaitPct", StringType()),
             StructField("VMStat_systemPct", StringType()),
             StructField("VMStat_swIrqPct", StringType()),
-            StructField("VMStat_hwIrqPct", StringType())
+            StructField("VMStat_hwIrqPct", StringType()),
+            StructField("VMStat_nicePct", StringType()),
+            StructField("VMStat_userPct", StringType()),
+            StructField("VMStat_loadAverage", StringType())
         ])
 
 

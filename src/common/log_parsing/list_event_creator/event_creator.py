@@ -1,17 +1,20 @@
 from common.log_parsing.metadata import ParsingException, AbstractEventCreator
 
+
 class EventCreator(AbstractEventCreator):
     """
     Creates event for list event parser
     """
 
-    def __init__(self, metadata, parser, timezone_field="tz"):
+    def __init__(self, metadata, parser, matcher=None, timezone_field="tz"):
         """
         Creates event creator for list parser
         :param metadata: metadata
         :param parser: list parser
+        :param matcher: matcher object to check the input line to perform the parsing step only if the line is matched
+        :param timezone_field: field name with information about timezone
         """
-        AbstractEventCreator.__init__(self, metadata, parser, timezone_field)
+        AbstractEventCreator.__init__(self, metadata, parser, matcher, timezone_field)
 
     def _create_with_context(self, row, context):
         """
@@ -27,7 +30,7 @@ class EventCreator(AbstractEventCreator):
                 self._metadata.get_field_by_idex(i).get_output_name(): self._metadata.get_field_by_idex(i).get_value(
                     values[i], context)
                 for i in range(len(values))
-            }
+            } if self._matcher is None or self._matcher.match(row["message"]) else {}
 
         else:
             raise ParsingException("Fields amount not equal values amount")

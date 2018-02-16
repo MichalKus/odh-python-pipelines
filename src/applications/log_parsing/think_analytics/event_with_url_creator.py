@@ -6,8 +6,16 @@ class EventWithUrlCreator(EventCreator):
     """
     Extended EventCreator with parsing URL inside message
     """
-    def __init__(self, metadata, parser, timezone_field="tz"):
-        EventCreator.__init__(self, metadata, parser, timezone_field="tz")
+
+    def __init__(self, metadata, parser, matcher=None, timezone_field="tz"):
+        """
+        Creates event creator with parsing URL
+        :param metadata: metadata
+        :param parser: list parser
+        :param matcher: matcher object to check the input line to perform the parsing step only if the line is matched
+        :param timezone_field: field name with information about timezone
+        """
+        EventCreator.__init__(self, metadata, parser, matcher, timezone_field)
         self._metadata = metadata
         self._parser = parser
 
@@ -20,8 +28,6 @@ class EventWithUrlCreator(EventCreator):
         values = super(EventWithUrlCreator, self).create(row)
         self.split_url(values)
         return values
-
-
 
     @staticmethod
     def split_url(values):
