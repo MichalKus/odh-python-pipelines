@@ -1,0 +1,3 @@
+{"res_kind":"VirtualMachine","group":"cpu","name":"lg-l-p-obo00739","value":0.01,"metric_name":"odhecx.eosdtv.pan.prd.vrops.res_kind.VirtualMachine.group.cpu.name.lg-l-p-obo00739.readypct.avg","@timestamp":"2018-02-05T12:58:00.000Z"}
+{"res_kind":"VirtualMachine","group":"cpu","name":"lg-l-p-obo00739","value":1.09,"metric_name":"odhecx.eosdtv.pan.prd.vrops.res_kind.VirtualMachine.group.cpu.name.lg-l-p-obo00739.usage_average.avg","@timestamp":"2018-02-05T12:58:00.000Z"}
+{"res_kind":"VirtualMachine","group":"cpu","name":"lg-l-p-obo00739","value":1.88,"metric_name":"odhecx.eosdtv.pan.prd.vrops.res_kind.VirtualMachine.group.cpu.name.lg-l-p-obo00739.demandpct.avg","@timestamp":"2018-02-05T12:58:00.000Z"}
