@@ -1,8 +1,23 @@
 import sys
 from common.kafka_pipeline import KafkaPipeline
 from util.utils import Utils
-from pyspark.sql.functions import from_json, lit, col, concat, regexp_replace, split
-from pyspark.sql.types import ArrayType, StringType, DoubleType, BooleanType, StructType, StructField
+from pyspark.sql.functions import from_json, lit, col
+from pyspark.sql.types import StringType, DoubleType, StructType, StructField
+
+class CorrelationPipeline(KafkaPipeline):
+    """
+    Extending Kafka Pipeline to add support for reading from hdfs (batch)
+    """
+
+    def _create_custom_read_stream(self, spark):
+        read_stream = spark.readStream.format("kafka")
+        options = self._configuration.property("kafka")
+        result = self.__set_kafka_securing_settings(read_stream, options) \
+            .option("subscribe", ",".join(self._configuration.property("kafka.topics.inputs")))
+        self.__add_option_if_exists(result, options, "maxOffsetsPerTrigger")
+        self.__add_option_if_exists(result, options, "startingOffsets")
+        self.__add_option_if_exists(result, options, "failOnDataLoss")
+        return [spark, result.load()]
 
 class VmCloudmapCorrelation(object):
     """
@@ -15,12 +30,18 @@ class VmCloudmapCorrelation(object):
         self._schema = schema
         self.kafka_output = configuration.property("kafka.topics.output")
 
-    def create(self, read_stream):
+    def create(self, custom_read_stream):
         """
         Create final stream to output to kafka
         :param read_stream:
         :return: Kafka stream
         """
+        [spark, read_stream] = custom_read_stream
+        cloudmap_df = spark.read.text('file:///spark/checkpoints/cloudmap/cloudmap_mapping.txt')
+        # json_schema = spark.read.json(cloudmap_df.rdd.map(lambda row: row.value)).schema
+        # cached_df = cloudmap_df.withColumn('json', from_json(col('value'), json_schema))
+        # cached_df.show()
+        cloudmap_df.show()
         json_stream = read_stream \
             .select(from_json(read_stream["value"].cast("string"), self._schema).alias("json")) \
             .select("json.*")
@@ -52,17 +73,12 @@ class VmCloudmapCorrelation(object):
         Schema for input stream.
         """
         return StructType([
-            StructField("metrics", StructType([
-                StructField("demandpct", DoubleType()),
-                StructField("idlepct", DoubleType()),
-                StructField("readypct", DoubleType()),
-                StructField("swapwaitpct", DoubleType()),
-                StructField("usage_average", DoubleType())
-            ])),
+            StructField("res_kind", StringType()),
             StructField("group", StringType()),
             StructField("name", StringType()),
-            StructField("timestamp", StringType()),
-            StructField("res_kind", StringType())
+            StructField("@timestamp", StringType()),
+            StructField("metric_name", StringType()),
+            StructField("value", DoubleType())
         ])
 
 def create_processor(configuration):
@@ -76,7 +92,7 @@ def create_processor(configuration):
 
 if __name__ == "__main__":
     configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
+    CorrelationPipeline(
         configuration,
         create_processor(configuration)
     ).start()
