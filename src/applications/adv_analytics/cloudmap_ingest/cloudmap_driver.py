@@ -25,6 +25,36 @@ def prepare_doc(msg):
     doc["timestamp"] = str(datetime.datetime.now())
     return doc
 
+def flatten(msg):
+    """
+    flatten nested json into lists
+    :param msg:
+    :return:
+    """
+    res = []
+    tenant = msg['tenant']
+    for epg in msg['epg']:
+        for endpoint in msg['epg'][epg]:
+            res.append([tenant, epg, endpoint['virtual_machine']])
+    new_msg = {
+        'tenant': tenant,
+        'list': res
+    }
+    return new_msg
+
+
+def export_to_hdfs(input_stream):
+    """
+
+    :param input_stream:
+    :return:
+    """
+    output = input_stream \
+        .map(lambda x: json.loads(x[1])) \
+        .map(lambda msg: flatten(msg))
+
+    return output
+
 def read_data(kafka_stream):
     """
     Take input stream and encode all topic messages into json format.
@@ -62,7 +92,9 @@ if __name__ == "__main__":
     sc.setLogLevel("WARN")
     ssc = KafkaConnector.create_spark_context(config, sc)
     input_stream = KafkaConnector(config).create_kafka_stream(ssc)
-    output_stream = read_data(input_stream)
-    sink = output_stream.foreachRDD(lambda rdd: rdd.foreachPartition(send_partition))
+    hdfs_stream = export_to_hdfs(input_stream)
+    hdfs_stream.pprint()
+    # es_stream = read_data(input_stream)
+    # sink = es_stream.foreachRDD(lambda rdd: rdd.foreachPartition(send_partition))
     ssc.start()
     ssc.awaitTermination()
