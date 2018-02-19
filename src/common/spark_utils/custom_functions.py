@@ -1,3 +1,5 @@
+import re
+
 from pyspark.sql.functions import col, lower, when, Column, from_unixtime
 from pyspark.sql.types import TimestampType
 
@@ -74,3 +76,13 @@ def convert_epoch_to_iso(data_stream, input_field_name, result_field_name):
     :return: dataframe with added TimesatmpType column
     """
     return data_stream.withColumn(result_field_name, from_unixtime(col(input_field_name) / 1000).cast(TimestampType()))
+
+
+def convert_to_underlined(text):
+    """
+    The function to convert camel-cased text to underlined
+    :param text: input text to convert
+    :return: underlined text
+    """
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', text)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
