@@ -45,7 +45,7 @@ class VropsCloudmapVMCorrelationTestCase(BaseSparkProcessorTestCase):
             for row in result:
                 print(row)
         else:
-            expected_result = self.__read_expected_result(expected_result_file)
+            expected_result = self._BaseSparkProcessorTestCase__read_expected_result(expected_result_file)
             self.maxDiff = None
             self.assertItemsEqual(expected_result, result)
 

@@ -3,9 +3,7 @@ spark:
   master: local[*]
   shuffle.partitions: 1
   outputMode: update
-  consoleWriter: true
+  consoleWriter: false
 
 analytics:
-  componentName: odhecx.eosdtv.pan.prd.vrops
-  watermark: '1 seconds'
-  window: '1 minutes'
+  hdfsFilePath: test/it/resources/adv_analytics/vrops/cloudmap_vm_correlation/input/cloudmap/cloudmap_mapping.csv

@@ -12,11 +12,11 @@ class CorrelationPipeline(KafkaPipeline):
     def _create_custom_read_stream(self, spark):
         read_stream = spark.readStream.format("kafka")
         options = self._configuration.property("kafka")
-        result = self.__set_kafka_securing_settings(read_stream, options) \
+        result = self._KafkaPipeline__set_kafka_securing_settings(read_stream, options) \
             .option("subscribe", ",".join(self._configuration.property("kafka.topics.inputs")))
-        self.__add_option_if_exists(result, options, "maxOffsetsPerTrigger")
-        self.__add_option_if_exists(result, options, "startingOffsets")
-        self.__add_option_if_exists(result, options, "failOnDataLoss")
+        self._KafkaPipeline__add_option_if_exists(result, options, "maxOffsetsPerTrigger")
+        self._KafkaPipeline__add_option_if_exists(result, options, "startingOffsets")
+        self._KafkaPipeline__add_option_if_exists(result, options, "failOnDataLoss")
         return [spark, result.load()]
 
 class VmCloudmapCorrelation(object):
@@ -42,8 +42,7 @@ class VmCloudmapCorrelation(object):
             StructField("epg", StringType(), True),
             StructField("vm", StringType(), True)])
         cloudmap_df = spark \
-            .read.csv('file:///spark/checkpoints/cloudmap/cloudmap_mapping.csv', header=False, schema=schema)
-        cloudmap_df.show()
+            .read.csv(self.__configuration.property("analytics.hdfsFilePath"), header=False, schema=schema)
         json_stream = read_stream \
             .select(from_json(read_stream["value"].cast("string"), self._schema).alias("json")) \
             .select("json.*")
@@ -56,7 +55,9 @@ class VmCloudmapCorrelation(object):
         :param dataframe:
         :return: output stream
         """
-        return dataframe
+        return dataframe \
+            .selectExpr("to_json(struct(*)) AS value") \
+            .withColumn("topic", lit(self.kafka_output))
 
     def _update_metric_name(self, stream):
         """
@@ -71,7 +72,7 @@ class VmCloudmapCorrelation(object):
             vm = row[8]
 
             new_metric_name = metric_name\
-                .replace('.name' + vm, '')\
+                .replace('.name.' + vm, '')\
                 .replace('group', '{}.epg.{}.vm.{}'.format(tenant, epg, vm))
 
             return new_metric_name
