@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 import sys
-from pyspark import SparkContext
+from pyspark import SparkContext, SparkConf
 from util.utils import Utils
 from common.adv_analytics.kafkaUtils import KafkaConnector
 import json
@@ -24,6 +24,42 @@ def prepare_doc(msg):
     doc = msg.copy()
     doc["timestamp"] = str(datetime.datetime.now())
     return doc
+
+def flatten(msg):
+    """
+    flatten nested json into lists
+    :param msg:
+    :return:
+    """
+    res = []
+    for tn in msg[1]:
+        tenant = tn['tenant']
+        for epg in tn['epg']:
+            for endpoint in tn['epg'][epg]:
+                res.append('{},{},{}'.format(tenant, epg, endpoint['virtual_machine']))
+    return res
+
+def export_to_hdfs(input_stream):
+    """
+
+    :param input_stream:
+    :return:
+    """
+    output = input_stream \
+        .map(lambda x: ('hdfs', [json.loads(x[1])])) \
+        .reduceByKey(lambda x, y: x + y) \
+        .flatMap(lambda msg: flatten(msg))
+
+    return output
+
+def hdfs_sink(rdd):
+    """
+    Save rdd to HDFS
+    :param rdd:
+    :return:
+    """
+    if not len(rdd.take(1)) == 0:
+        rdd.repartition(1).saveAsTextFile("file:///spark/checkpoints/cloudmap/cloudmap_mapping2.csv")
 
 def read_data(kafka_stream):
     """
@@ -58,11 +94,16 @@ def send_partition(iter):
 
 if __name__ == "__main__":
     config = Utils.load_config(sys.argv[1])
-    sc = SparkContext(appName=config.property('spark.appName'), master=config.property('spark.master'))
+    myConf = SparkConf().setAppName(config.property('spark.appName')).setMaster(config.property('spark.master')).set(
+        "spark.hadoop.validateOutputSpecs", "false")
+    sc = SparkContext(conf=myConf)
     sc.setLogLevel("WARN")
     ssc = KafkaConnector.create_spark_context(config, sc)
+
     input_stream = KafkaConnector(config).create_kafka_stream(ssc)
-    output_stream = read_data(input_stream)
-    sink = output_stream.foreachRDD(lambda rdd: rdd.foreachPartition(send_partition))
+    hdfs_stream = export_to_hdfs(input_stream)
+    hdfs_stream.foreachRDD(lambda rdd: hdfs_sink(rdd))
+    es_stream = read_data(input_stream)
+    sink = es_stream.foreachRDD(lambda rdd: rdd.foreachPartition(send_partition))
     ssc.start()
     ssc.awaitTermination()
