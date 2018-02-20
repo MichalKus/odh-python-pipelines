@@ -43,6 +43,7 @@ class VmCloudmapCorrelation(object):
             StructField("vm", StringType(), True)])
         cloudmap_df = spark \
             .read.csv(self.__configuration.property("analytics.hdfsFilePath"), header=False, schema=schema)
+        cloudmap_df.show()
         json_stream = read_stream \
             .select(from_json(read_stream["value"].cast("string"), self._schema).alias("json")) \
             .select("json.*")

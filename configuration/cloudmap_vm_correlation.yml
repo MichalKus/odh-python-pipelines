@@ -20,4 +20,4 @@ kafka:
   failOnDataLoss: false
 
 analytics:
-  hdfsFilePath: file:///spark/checkpoints/cloudmap/cloudmap_mapping.csv
+  hdfsFilePath: file:///spark/checkpoints/cloudmap/cloudmap_mapping2.csv
