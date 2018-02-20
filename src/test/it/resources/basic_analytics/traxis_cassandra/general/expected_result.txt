@@ -187,4 +187,5 @@
 {"@timestamp": "2017-11-03T00:40:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.info_or_warn.count", "value": 1}
 {"@timestamp": "2017-11-03T00:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.info_or_warn.count", "value": 2}
 {"@timestamp": "2017-11-03T00:20:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.info_or_warn.count", "value": 1}
-{"@timestamp": "2017-11-03T00:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.info_or_warn.count", "value": 1}
+{"@timestamp": "2017-11-03T00:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.error.count", "value": 1}
+{"@timestamp": "2017-11-03T00:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.unreachable_nodes.count", "value": 1}

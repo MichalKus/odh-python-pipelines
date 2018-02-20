@@ -297,4 +297,4 @@
 {'@timestamp': '2017-11-03T00:00:11.709Z', 'hostname': 'odhdev01', 'message': 'MonitorController - [Task = Mx4jCheck] All nodes reachable', 'level': 'INFO'}
 {'@timestamp': '2017-11-03T00:00:20.522Z', 'hostname': 'odhdev01', 'message': 'MonitorController - [Task = Mx4jCheck] All nodes reachable', 'level': 'INFO'}
 {'@timestamp': '2017-11-03T00:20:20.605Z', 'hostname': 'odhdev01', 'message': 'MonitorController - [Task = Mx4jCheck] All nodes reachable', 'level': 'INFO'}
-{'@timestamp': '2017-11-03T00:30:11.812Z', 'hostname': 'odhdev01', 'message': 'MonitorController - [Task = Mx4jCheck] All nodes reachable', 'level': 'INFO'}
+{"@timestamp": "2017-11-03T00:30:26.826Z", "hostname": "odhdev01", "message": "Scheduler - [Task = Mx4jCheck] Eventis.Cassandra.Service.CassandraServiceException+HostRingException: Node '172.30.182.20' is unreachable", "level": "ERROR"}

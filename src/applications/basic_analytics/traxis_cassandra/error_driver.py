@@ -48,16 +48,7 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
             .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".ring_status_node_errors"))
 
-        unreachable_nodes = error_events \
-            .where("message like '%Node is unreachable%'") \
-            .aggregate(Count(aggregation_name=self._component_name + ".unreachable_nodes"))
-
-        reachable_nodes = error_events \
-            .where("message like '%Node is reachable%'") \
-            .aggregate(Count(aggregation_name=self._component_name + ".reachable_nodes"))
-
-        return [info_or_warn_count, error_count, ring_status_node_warnings, undefined_warnings,
-                ring_status_node_errors, unreachable_nodes, reachable_nodes]
+        return [info_or_warn_count, error_count, ring_status_node_warnings, undefined_warnings, ring_status_node_errors]
 
     @staticmethod
     def create_schema():
