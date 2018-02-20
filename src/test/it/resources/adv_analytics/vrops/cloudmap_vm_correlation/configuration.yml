@@ -6,4 +6,4 @@ spark:
   consoleWriter: false
 
 analytics:
-  hdfsFilePath: test/it/resources/adv_analytics/vrops/cloudmap_vm_correlation/input/cloudmap/cloudmap_mapping.csv
+  hdfsFilePath: test/it/resources/adv_analytics/vrops/cloudmap_vm_correlation/input/cloudmap/part*

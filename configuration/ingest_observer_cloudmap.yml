@@ -14,7 +14,7 @@ kafka:
   saslMechanism: PLAIN
 
 hdfs:
-  outputPath: file:///spark/checkpoints/cloudmap/cloudmap_mapping
+  outputPath: file:///spark/checkpoints/cloudmap/mapping
 
 es:
   index: all_prd_cloudmap_topology

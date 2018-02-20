@@ -4,21 +4,6 @@ from util.utils import Utils
 from pyspark.sql.functions import from_json, lit, col, struct, udf
 from pyspark.sql.types import StringType, DoubleType, StructType, StructField
 
-class CorrelationPipeline(KafkaPipeline):
-    """
-    Extending Kafka Pipeline to add support for reading from hdfs (batch)
-    """
-
-    def _create_custom_read_stream(self, spark):
-        read_stream = spark.readStream.format("kafka")
-        options = self._configuration.property("kafka")
-        result = self._KafkaPipeline__set_kafka_securing_settings(read_stream, options) \
-            .option("subscribe", ",".join(self._configuration.property("kafka.topics.inputs")))
-        self._KafkaPipeline__add_option_if_exists(result, options, "maxOffsetsPerTrigger")
-        self._KafkaPipeline__add_option_if_exists(result, options, "startingOffsets")
-        self._KafkaPipeline__add_option_if_exists(result, options, "failOnDataLoss")
-        return [spark, result.load()]
-
 class VmCloudmapCorrelation(object):
     """
     Tie VM-EPG-Tenant mapping with VROPS VM metrics stream
@@ -30,20 +15,19 @@ class VmCloudmapCorrelation(object):
         self._schema = schema
         self.kafka_output = configuration.property("kafka.topics.output")
 
-    def create(self, custom_read_stream):
+    def create(self, read_stream):
         """
         Create final stream to output to kafka
         :param read_stream:
         :return: Kafka stream
         """
-        [spark, read_stream] = custom_read_stream
+        spark = read_stream.sql_ctx
         schema = StructType([
             StructField("tenant", StringType(), True),
             StructField("epg", StringType(), True),
             StructField("vm", StringType(), True)])
         cloudmap_df = spark \
             .read.csv(self.__configuration.property("analytics.hdfsFilePath"), header=False, schema=schema)
-        cloudmap_df.show()
         json_stream = read_stream \
             .select(from_json(read_stream["value"].cast("string"), self._schema).alias("json")) \
             .select("json.*")
@@ -120,7 +104,7 @@ def create_processor(configuration):
 
 if __name__ == "__main__":
     configuration = Utils.load_config(sys.argv[:])
-    CorrelationPipeline(
+    KafkaPipeline(
         configuration,
         create_processor(configuration)
     ).start()
