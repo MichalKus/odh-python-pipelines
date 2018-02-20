@@ -33,9 +33,9 @@ def create_event_creators(configuration):
             CompositeEventCreator()
             .add_source_parser(Stagis.ee_event_creator(timezone_name, timezones_priority))
             .add_intermediate_result_parser(Stagis.model_state_event_creator())
-            .add_intermediate_result_parser(Stagis.received_delta_server_notification_event_creator())
-            .add_intermediate_result_parser(Stagis.tva_delta_server_request_event_creator())
-            .add_intermediate_result_parser(Stagis.tva_delta_server_response_event_creator()),
+            .add_intermediate_result_parser(Stagis.received_delta_server_notification_event_creator(), final=True)
+            .add_intermediate_result_parser(Stagis.tva_delta_server_request_event_creator(), final=True)
+            .add_intermediate_result_parser(Stagis.tva_delta_server_response_event_creator(), final=True),
             Utils.get_output_topic(configuration, "general")
         ),
         "stagis_log_err": SourceConfiguration(
