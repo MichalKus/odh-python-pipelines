@@ -30,10 +30,15 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
             .withColumn("VMStat_iowaitPct", col("VMStat_iowaitPct").cast(IntegerType())) \
             .withColumn("VMStat_hwIrqPct", col("VMStat_hwIrqPct").cast(IntegerType())) \
             .withColumn("MemoryUsage_totalKb", col("MemoryUsage_totalKb").cast(IntegerType())) \
-            .withColumn("MemoryUsage_usedKb", col("MemoryUsage_usedKb").cast(IntegerType()))
+            .withColumn("MemoryUsage_usedKb", col("MemoryUsage_usedKb").cast(IntegerType())) \
+            .withColumn("VMStat_nicePct", col("VMStat_nicePct").cast(IntegerType())) \
+            .withColumn("VMStat_userPct", col("VMStat_userPct").cast(IntegerType())) \
+            .withColumn("VMStat_swIrqPct", col("VMStat_swIrqPct").cast(IntegerType())) \
+            .withColumn("VMStat_loadAverage", col("VMStat_loadAverage").cast(IntegerType()))
 
         aggregation_fields = ["VMStat_idlePct", "VMStat_systemPct", "VMStat_iowaitPct", "VMStat_hwIrqPct",
-                              "MemoryUsage_totalKb", "MemoryUsage_usedKb"]
+                              "MemoryUsage_totalKb", "MemoryUsage_usedKb", "VMStat_nicePct",
+                              "VMStat_userPct", "VMStat_swIrqPct", "VMStat_loadAverage"]
         result = []
 
         for field in aggregation_fields:
@@ -68,7 +73,10 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
             StructField("VMStat_iowaitPct", StringType()),
             StructField("VMStat_systemPct", StringType()),
             StructField("VMStat_swIrqPct", StringType()),
-            StructField("VMStat_hwIrqPct", StringType())
+            StructField("VMStat_hwIrqPct", StringType()),
+            StructField("VMStat_nicePct", StringType()),
+            StructField("VMStat_userPct", StringType()),
+            StructField("VMStat_loadAverage", StringType())
         ])
 
 
