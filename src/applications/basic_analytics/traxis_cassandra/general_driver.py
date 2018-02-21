@@ -5,7 +5,7 @@ The module for the driver to calculate metrics related to Traxis Cassandra gener
 from pyspark.sql.functions import regexp_extract, col
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
-from common.basic_analytics.aggregations import Count
+from common.basic_analytics.aggregations import Count, DistinctCount
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.spark_utils.custom_functions import convert_to_underlined, custom_translate_regex
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
@@ -33,7 +33,10 @@ class TraxisCassandraGeneral(BasicAnalyticsProcessor):
                 self.node_downs(info_events),
                 self.ring_status_node_warnings(warn_events),
                 self.undefined_warnings(warn_events),
-                self.successful_repairs(read_stream)]
+                self.successful_repairs(read_stream),
+                self.unreachable_nodes(error_events),
+                self.reachable_nodes(read_stream),
+                self.memtable_flush(read_stream)]
 
     def count(self, events, metric_name):
         return events \
@@ -134,6 +137,23 @@ class TraxisCassandraGeneral(BasicAnalyticsProcessor):
             .withColumn("type", custom_translate_regex(source_field=col("message"), mapping=mapping,
                                                        default_value="unclassified")).where("type != 'unclassified'") \
             .aggregate(Count(group_fields=["type"], aggregation_name=self._component_name))
+
+    def unreachable_nodes(self, events):
+        return events \
+            .where("message like '%Node % is unreachable%'") \
+            .aggregate(DistinctCount(group_fields=["hostname"], aggregation_field="hostname",
+                                     aggregation_name=self._component_name + ".unreachable_nodes"))
+
+    def reachable_nodes(self, events):
+        return events \
+            .where("not(message like '%Node % is unreachable%')") \
+            .aggregate(DistinctCount(group_fields=["hostname"], aggregation_field="hostname",
+                                     aggregation_name=self._component_name + ".reachable_nodes"))
+
+    def memtable_flush(self, events):
+        return events \
+            .where("message like '%Heap is%'") \
+            .aggregate(Count(aggregation_name=self._component_name + ".memtable_flush"))
 
     @staticmethod
     def create_schema():
