@@ -19,3 +19,4 @@ analytics:
   componentName: vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra
   watermark: 10 minutes
   window: 1 minute
+  reachable_nodes_window: 10 minutes
