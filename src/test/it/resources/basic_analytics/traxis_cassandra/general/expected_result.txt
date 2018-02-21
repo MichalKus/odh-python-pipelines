@@ -435,3 +435,5 @@
 {"@timestamp": "2017-11-03T00:00:00.000Z", "hostname": "odhdev01", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.reachable_nodes.hostname.odhdev01.hostname.distinct_count", "value": 1}
 {"@timestamp": "2017-11-03T00:20:00.000Z", "hostname": "odhdev01", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.reachable_nodes.hostname.odhdev01.hostname.distinct_count", "value": 1}
 {"@timestamp": "2017-11-03T00:30:00.000Z", "hostname": "odhdev01", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.unreachable_nodes.hostname.odhdev01.hostname.distinct_count", "value": 1}
+{"@timestamp": "2017-11-03T00:20:00.000Z", "hostname": "odhdev01", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.undefined_warnings.hostname.odhdev01.count", "value": 1}
+{"@timestamp": "2017-11-03T00:20:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.general.memtable_flush.count", "value": 1}
