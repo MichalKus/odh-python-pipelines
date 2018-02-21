@@ -17,7 +17,24 @@ class TraxisFrontendGeneral(BasicAnalyticsProcessor):
     """
 
     def _process_pipeline(self, read_stream):
-        trace_stream = read_stream.where("level = 'TRACE'") \
+        trace_events = read_stream.where("level = 'TRACE'")
+        info_events = read_stream.where("level == 'INFO'")
+        warn_events = read_stream.where("level == 'WARN'")
+        error_events = read_stream.where("level == 'ERROR'")
+
+        return [self.count(info_events.union(warn_events), "info_or_warn"),
+                self.count(error_events, "error"),
+                self.trace_metrics(trace_events),
+                self.warn_metrics(warn_events),
+                self.info_metrics(info_events),
+                self.unclassified_successful_stream(read_stream)]
+
+    def count(self, events, metric_name):
+        return events \
+            .aggregate(Count(aggregation_name="{0}.{1}".format(self._component_name, metric_name)))
+
+    def trace_metrics(self, events):
+        return events \
             .withColumn("counter",
                         custom_translate_like(
                             source_field=col("message"),
@@ -44,7 +61,8 @@ class TraxisFrontendGeneral(BasicAnalyticsProcessor):
             .aggregate(Count(group_fields=["hostname", "counter"],
                              aggregation_name=self._component_name))
 
-        warn_stream = read_stream.where("level = 'WARN'") \
+    def warn_metrics(self, events):
+        return events \
             .withColumn("counter",
                         custom_translate_like(
                             source_field=col("message"),
@@ -58,7 +76,8 @@ class TraxisFrontendGeneral(BasicAnalyticsProcessor):
             .aggregate(Count(group_fields=["hostname", "counter"],
                              aggregation_name=self._component_name))
 
-        info_stream = read_stream.where("level = 'INFO'") \
+    def info_metrics(self, events):
+        return events \
             .withColumn("counter",
                         custom_translate_like(
                             source_field=col("message"),
@@ -70,13 +89,12 @@ class TraxisFrontendGeneral(BasicAnalyticsProcessor):
             .aggregate(Count(group_fields=["hostname", "counter"],
                              aggregation_name=self._component_name))
 
-        unclassified_successful_stream = read_stream \
+    def unclassified_successful_stream(self, events):
+        return events \
             .where("level in ('INFO', 'DEBUG', 'VERBOSE', 'TRACE') and lower(message) like '%succe%'") \
             .withColumn("counter", lit("unclassified_successful")) \
             .aggregate(Count(group_fields=["hostname", "counter"],
                              aggregation_name=self._component_name))
-
-        return [trace_stream, warn_stream, info_stream, unclassified_successful_stream]
 
     @staticmethod
     def create_schema():
