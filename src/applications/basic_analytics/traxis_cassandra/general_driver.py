@@ -142,14 +142,12 @@ class TraxisCassandraGeneral(BasicAnalyticsProcessor):
         return events \
             .where("message like '%Node % is unreachable%'") \
             .aggregate(DistinctCount(group_fields=["hostname"], aggregation_field="hostname",
-                                     aggregation_window=self._get_interval_duration("reachable_nodes_window"),
                                      aggregation_name=self._component_name + ".unreachable_nodes"))
 
     def reachable_nodes(self, events):
         return events \
             .where("not(message like '%Node % is unreachable%')") \
             .aggregate(DistinctCount(group_fields=["hostname"], aggregation_field="hostname",
-                                     aggregation_window=self._get_interval_duration("reachable_nodes_window"),
                                      aggregation_name=self._component_name + ".reachable_nodes"))
 
     def memtable_flush(self, events):
