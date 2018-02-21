@@ -59,7 +59,7 @@ def hdfs_sink(rdd):
     :return:
     """
     if not len(rdd.take(1)) == 0:
-        rdd.repartition(1).saveAsTextFile("file:///spark/checkpoints/cloudmap/cloudmap_mapping2.csv")
+        rdd.repartition(1).saveAsTextFile(config.property('es.host'))
 
 def read_data(kafka_stream):
     """
