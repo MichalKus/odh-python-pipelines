@@ -22,7 +22,7 @@ class StagisMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "causality_id": "7ce7119-4504-4908-8041-0fb10cbe26b6",
                 "thread_id": "369",
                 "class_name": "EntityCounter",
-                "task": "TVA Delta Server respond",
+                "task": "TVA Delta Server response",
                 "duration": 1576,
                 "status": "OK",
                 "message": "TVA Delta Server respond with status code 'OK' in '1576' ms"
@@ -38,7 +38,7 @@ class StagisMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                  "causality_id": "7ce7119-4504-4908-8041-0fb10cbe26b6",
                  "thread_id": "369",
                  "class_name": "EntityCounter",
-                 "task": "TVA Delta Request Starting",
+                 "task": "TVA Delta Server request",
                  "sequence_number": "15132539107630000",
                  "message": "TVA Delta Request Starting => http://BE-W-P-OBO00159:9000/TVAMain?SyncAfter=15132539107630000, sequence number: 15132539107630000"
              }),
@@ -52,7 +52,7 @@ class StagisMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                  "causality_id": "7ce7119-4504-4908-8041-0fb10cbe26b6",
                  "thread_id": "369",
                  "class_name": "EntityCounter",
-                 "task": "Received Delta Server Notification",
+                 "task": "Notification",
                  "sequence_number": "15132539107630000",
                  "message": "Received Delta Server Notification Sequence Number: 15132539107630000, Last Sequence Number: 15132539107630000, LogicalServerId: 'PRODIS_170906160628'"
              }),
@@ -68,7 +68,7 @@ class StagisMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                  "causality_id": "7ce7119-4504-4908-8041-0fb10cbe26b6",
                  "thread_id": "369",
                  "class_name": "EntityCounter",
-                 "task": "Model state after committing transaction",
+                 "task": "Committing Transaction",
                  "sequence_number": "15132539721087218",
                  "number": "63861022",
                  "entities": 447464,
@@ -77,8 +77,8 @@ class StagisMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                  "events": 242420,
                  "programs": 132061,
                  "groups": 59377,
-                 "OnDemandPrograms": 7993,
-                 "BroadcastEvents": 5263,
+                 "on_demand_programs": 7993,
+                 "broadcast_events": 5263,
                  "message": "[Model] Model state after committing transaction [Sequence number: 15132539721087218 - Timestamp: 14/12/2017 12:19:32 - Number: 63861022] Entities: 447464 - Links: 1394780 - Channels: 350 - Events: 242420 - Programs: 132061 - Groups: 59377 - OnDemandPrograms: 7993 - BroadcastEvents: 5263"
              }),
             ({
