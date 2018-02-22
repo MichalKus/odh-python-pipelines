@@ -59,7 +59,7 @@ def hdfs_sink(rdd):
     :return:
     """
     if not len(rdd.take(1)) == 0:
-        rdd.repartition(1).saveAsTextFile(config.property('es.host'))
+        rdd.repartition(1).saveAsTextFile(config.property('hdfs.outputPath'))
 
 def read_data(kafka_stream):
     """
