@@ -57,6 +57,30 @@ def create_event_creators(configuration):
     })
 
 
+class StagisEventCreator(EventCreator):
+    """
+    Replaces extracted task value with the one from dictionary
+    """
+
+    __dictionary = {
+        "TVA Delta Server respond": "TVA Delta Server response",
+        "TVA Delta Request Starting": "TVA Delta Server request",
+        "Received Delta Server Notification": "Notification",
+        "Model state after committing transaction": "Committing Transaction"
+    }
+
+    def _convert_row_to_event_values(self, row):
+        parse_result = self._parser.parse(row["message"])
+        if parse_result:
+            parse_result[0] = self.__replace_task_name(parse_result[0])
+        return parse_result
+
+    def __replace_task_name(self, text):
+        if text in self.__dictionary:
+            text = text.replace(text, self.__dictionary[text])
+        return text
+
+
 class Stagis(object):
     """
     Contains methods for creation EventCreator for specific logs
@@ -121,7 +145,7 @@ class Stagis(object):
 
     @staticmethod
     def tva_delta_server_response_event_creator():
-        return EventCreator(
+        return StagisEventCreator(
             Metadata([
                 StringField("task"),
                 StringField("status"),
@@ -134,7 +158,7 @@ class Stagis(object):
 
     @staticmethod
     def tva_delta_server_request_event_creator():
-        return EventCreator(
+        return StagisEventCreator(
             Metadata([
                 StringField("task"),
                 StringField("sequence_number")
@@ -146,7 +170,7 @@ class Stagis(object):
 
     @staticmethod
     def received_delta_server_notification_event_creator():
-        return EventCreator(
+        return StagisEventCreator(
             Metadata([
                 StringField("task"),
                 StringField("sequence_number")
@@ -158,7 +182,7 @@ class Stagis(object):
 
     @staticmethod
     def model_state_event_creator():
-        return EventCreator(
+        return StagisEventCreator(
             Metadata([
                 StringField("task"),
                 StringField("sequence_number"),
@@ -169,8 +193,8 @@ class Stagis(object):
                 IntField("events"),
                 IntField("programs"),
                 IntField("groups"),
-                IntField("OnDemandPrograms"),
-                IntField("BroadcastEvents"),
+                IntField("on_demand_programs"),
+                IntField("broadcast_events"),
             ]),
             RegexpParser(
                 r"^\[Model\] (?P<task>Model state after committing transaction) "
