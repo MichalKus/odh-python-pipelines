@@ -8,7 +8,7 @@ from collections import namedtuple
 
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 from pyspark.sql.functions import col, lower
-from common.spark_utils.custom_functions import custom_translate_regex
+from common.spark_utils.custom_functions import custom_translate_like
 
 InfoMessage = namedtuple('InfoMessage', 'instance_name message')
 
@@ -54,36 +54,33 @@ class StagisBasicAnalytics(BasicAnalyticsProcessor):
         count_by_instance = read_stream.aggregate(Count(group_fields=["instance_name"],
                                                         aggregation_name=self._component_name))
 
-        mapping = \
-            {
-                "saved": "catalog_injestion_success",
-                "cannot download TVA": "catalog_injestion_failure",
-                "Successfully published. 'Full'": "full_feed_published",
-                "Successfully published. 'Delta": "delta_feeds_published",
-                "Updating": "catalog_update",
-                "Inserting": "catalog_insert",
-                "PRODIS": "prodis_delta_pull_requests",
-                "traxis succeeded": "subscription_manager_traxis",
-                "Subscriber added": "subscriber_addition",
-                "Subscriber removed": "subscriber_removal"
-            }
-
         other_metrics = read_stream \
             .where((col("message").like("%saved%") & (col("level") == "INFO"))
-                   | (col("message").like("%cannot download TVA%") & (col("level") == "ERROR"))
-                   | (col("message").like("%Successfully published. 'Full'%"))
-                   | (col("message").like("%Successfully published. 'Delta%"))
-                   | (col("message").like("%Updating%") & (col("level") == "INFO") & (lower(col("class_name")) == "p"))
-                   | (col("message").like("%Inserting%") & (col("level") == "INFO") & (lower(col("class_name")) == "p"))
-                   | (col("message").like("%'PRODIS%"))
-                   | (col("message").like("%traxis succeeded%"))
+                   | (col("message").like("%cannot download% TVA%") & (col("level") == "ERROR"))
+                   | (col("message").like("Successfully published. 'Full'%"))
+                   | (col("message").like("Successfully published. 'Delta'%"))
+                   | (col("message").like("Updating%") & (col("level") == "INFO") & (lower(col("class_name")) == "p"))
+                   | (col("message").like("Inserting%") & (col("level") == "INFO") & (lower(col("class_name")) == "p"))
+                   | (col("message").like("'PRODIS%"))
+                   | (col("message").like("%traxis% succeeded%"))
                    | (col("message").like("%Subscriber added%"))
                    | (col("message").like("%Subscriber removed%"))
                    ) \
             .withColumn("message_type",
-                        custom_translate_regex(
+                        custom_translate_like(
                             source_field=col("message"),
-                            mapping=mapping,
+                            mappings_pair=[
+                                (["saved"], "catalog_ingestion_success"),
+                                (["cannot download", "TVA"], "catalog_ingestion_failure"),
+                                (["Successfully published. 'Full'"], "full_feed_published"),
+                                (["Successfully published. 'Delta'"], "delta_feeds_published"),
+                                (["Updating"], "catalog_update"),
+                                (["Inserting"], "catalog_insert"),
+                                (["'PRODIS"], "prodis_delta_pull_requests"),
+                                (["traxis", "succeeded"], "subscription_manager_traxis"),
+                                (["Subscriber added"], "subscriber_addition"),
+                                (["Subscriber removed"], "subscriber_removal")
+                            ],
                             default_value="unclassified")) \
             .aggregate(Count(group_fields="message_type", aggregation_name=self._component_name))
 

@@ -20,10 +20,10 @@
 {"instance_name": "PullBasedPublisher", "hostname": "test1", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.instance_name.PullBasedPublisher.level.WARN.count", "value": 1, "level": "WARN"}
 {"instance_name": "TVA Filepublisher", "hostname": "test1", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.instance_name.TVA_Filepublisher.level.WARN.count", "value": 1, "level": "WARN"}
 {"instance_name": "Tva2Prodis", "hostname": "test1", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.instance_name.Tva2Prodis.level.WARN.count", "value": 1, "level": "WARN"}
-{"instance_name": "TVA Filepublisher", "hostname": "test1", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.instance_name.TVA_Filepublisher.level.ERROR.count", "value": 1, "level": "ERROR"}
+{"instance_name": "TVA Filepublisher", "hostname": "test1", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.instance_name.TVA_Filepublisher.level.ERROR.count", "value": 2, "level": "ERROR"}
 {"instance_name": "Tva2Prodis", "hostname": "test1", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.instance_name.Tva2Prodis.level.INFO.count", "value": 1, "level": "INFO"}
 {"instance_name": "TVA Filepublisher", "hostname": "test1", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.instance_name.TVA_Filepublisher.level.INFO.count", "value": 1, "level": "INFO"}
-{"@timestamp": "2017-03-29T04:09:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.count", "value": 32}
+{"@timestamp": "2017-03-29T04:09:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.count", "value": 34}
 {"instance_name": "Nagra ELK Import DEX EPG", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.Nagra_ELK_Import_DEX_EPG.count", "value": 3}
 {"instance_name": "TVA listings Ingester", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.TVA_listings_Ingester.count", "value": 3}
 {"instance_name": "DefaultsProvider", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.DefaultsProvider.count", "value": 3}
@@ -31,10 +31,10 @@
 {"instance_name": "Online Prodis VOD ingest", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.Online_Prodis_VOD_ingest.count", "value": 3}
 {"instance_name": "PullBasedPublisher", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.PullBasedPublisher.count", "value": 3}
 {"instance_name": "Nagra ELK Export DIM", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.Nagra_ELK_Export_DIM.count", "value": 3}
-{"instance_name": "TVA Filepublisher", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.TVA_Filepublisher.count", "value": 9}
+{"instance_name": "TVA Filepublisher", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.TVA_Filepublisher.count", "value": 11}
 {"instance_name": "Tva2Prodis", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.Tva2Prodis.count", "value": 2}
-{"@timestamp": "2017-03-29T04:09:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.level.INFO.count", "value": 15, "level": "INFO"}
-{"@timestamp": "2017-03-29T04:09:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.level.ERROR.count", "value": 8, "level": "ERROR"}
+{"@timestamp": "2017-03-29T04:09:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.level.INFO.count", "value": 16, "level": "INFO"}
+{"@timestamp": "2017-03-29T04:09:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.level.ERROR.count", "value": 9, "level": "ERROR"}
 {"@timestamp": "2017-03-29T04:09:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.level.WARN.count", "value": 9, "level": "WARN"}
 {"instance_name": "Nagra ELK Import DEX EPG", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.Nagra_ELK_Import_DEX_EPG.level.INFO.count", "value": 1, "level": "INFO"}
 {"instance_name": "TVA listings Ingester", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.TVA_listings_Ingester.level.ERROR.count", "value": 1, "level": "ERROR"}
@@ -59,16 +59,19 @@
 {"instance_name": "PullBasedPublisher", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.PullBasedPublisher.level.WARN.count", "value": 1, "level": "WARN"}
 {"instance_name": "TVA Filepublisher", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.TVA_Filepublisher.level.WARN.count", "value": 1, "level": "WARN"}
 {"instance_name": "Tva2Prodis", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.Tva2Prodis.level.WARN.count", "value": 1, "level": "WARN"}
-{"instance_name": "TVA Filepublisher", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.TVA_Filepublisher.level.ERROR.count", "value": 1, "level": "ERROR"}
+{"instance_name": "TVA Filepublisher", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.TVA_Filepublisher.level.ERROR.count", "value": 2, "level": "ERROR"}
 {"instance_name": "Tva2Prodis", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.Tva2Prodis.level.INFO.count", "value": 1, "level": "INFO"}
-{"instance_name": "TVA Filepublisher", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.TVA_Filepublisher.level.INFO.count", "value": 7, "level": "INFO"}
-{"class_name": "FtpInput", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.class_name.FtpInput.count", "value": 30}
-{"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "delta_feeds_published", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.delta_feeds_published.count", "value": 1}
-{"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "full_feed_published", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.full_feed_published.count", "value": 1}
+{"instance_name": "TVA Filepublisher", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.TVA_Filepublisher.level.INFO.count", "value": 8, "level": "INFO"}
+{"class_name": "FtpInput", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.class_name.FtpInput.count", "value": 32}
 {"class_name": "p", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.class_name.p.count", "value": 1}
 {"class_name": "P", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.class_name.P.count", "value": 1}
+{"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "catalog_ingestion_success", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.catalog_ingestion_success.count", "value": 1}
+{"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "catalog_ingestion_failure", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.catalog_ingestion_failure.count", "value": 1}
+{"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "full_feed_published", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.full_feed_published.count", "value": 1}
+{"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "delta_feeds_published", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.delta_feeds_published.count", "value": 1}
 {"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "catalog_insert", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.catalog_insert.count", "value": 1}
 {"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "catalog_update", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.catalog_update.count", "value": 1}
 {"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "subscription_manager_traxis", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.subscription_manager_traxis.count", "value": 1}
 {"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "subscriber_addition", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.subscriber_addition.count", "value": 1}
 {"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "subscriber_removal", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.subscriber_removal.count", "value": 1}
+{"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "prodis_delta_pull_requests", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.prodis_delta_pull_requests.count", "value": 1}
