@@ -7,7 +7,7 @@ from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from collections import namedtuple
 
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
-from pyspark.sql.functions import col, lower
+from pyspark.sql.functions import col, lower, lit
 from common.spark_utils.custom_functions import custom_translate_like
 
 InfoMessage = namedtuple('InfoMessage', 'instance_name message')
@@ -47,8 +47,16 @@ class StagisBasicAnalytics(BasicAnalyticsProcessor):
                                                       aggregation_name=self._component_name))
         count_by_hostname = read_stream.aggregate(Count(group_fields=["hostname"],
                                             aggregation_name=self._component_name))
-        count_by_hostname_and_level = read_stream.aggregate(Count(group_fields=["hostname", "level"],
-                                                         aggregation_name=self._component_name))
+
+        count_by_hostname_and_common_levels = read_stream\
+            .where((col("level") == "INFO") | (col("level") == "WARN") | (col("level") == "ERROR"))\
+            .aggregate(Count(group_fields=["hostname", "level"], aggregation_name=self._component_name))
+
+        count_by_hostname_and_other_levels = read_stream \
+            .where((col("level") != "INFO") & (col("level") != "WARN") & (col("level") != "ERROR")) \
+            .withColumn("level", lit("other"))\
+            .aggregate(Count(group_fields=["hostname", "level"], aggregation_name=self._component_name))
+
         count_by_instance_and_level = read_stream.aggregate(Count(group_fields=["instance_name", "level"],
                                                             aggregation_name=self._component_name))
         count_by_instance = read_stream.aggregate(Count(group_fields=["instance_name"],
@@ -84,8 +92,8 @@ class StagisBasicAnalytics(BasicAnalyticsProcessor):
                             default_value="unclassified")) \
             .aggregate(Count(group_fields="message_type", aggregation_name=self._component_name))
 
-        return [by_specific_info_messages, count_by_classname, count_by_hostname,
-                count_by_hostname_and_level, count_by_instance_and_level, count_by_instance, other_metrics]
+        return [by_specific_info_messages, count_by_classname, count_by_hostname, count_by_hostname_and_common_levels,
+                count_by_hostname_and_other_levels, count_by_instance_and_level, count_by_instance, other_metrics]
 
     @staticmethod
     def create_schema():
