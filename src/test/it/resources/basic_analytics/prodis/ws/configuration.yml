@@ -5,6 +5,6 @@ spark:
   outputMode: update
 
 analytics:
-  componentName: vagrant.eosdtv.lab5aobo.tst.heapp.prodis.ws
+  componentName: prodis.ws
   watermark: '1 minutes'
   window: '1 minutes'

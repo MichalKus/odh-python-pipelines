@@ -47,7 +47,7 @@ class BaseSparkProcessorTestCase(unittest.TestCase):
     def __read_expected_result(expected_result_file):
         with open(expected_result_file) as json_file:
             lines = filter(
-                lambda json_line: json_line.strip() != "",
+                lambda json_line: json_line.strip() != "" and not json_line.strip().startswith("//"),
                 json_file.readlines()
             )
         return [json.loads(line) for line in lines]

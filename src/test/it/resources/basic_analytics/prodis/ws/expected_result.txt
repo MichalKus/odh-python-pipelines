@@ -1,5 +1,88 @@
-{"group": "unclassified", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.prodis.ws.hostname.odhdev03.group.unclassified.instance_name.undefined.level.SUCCESS.count", "level": "SUCCESS", "@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "odhdev03", "value": 1, "instance_name": "undefined"}
-{"group": "asset", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.prodis.ws.hostname.odhdev03.group.asset.instance_name.TSTV_3D_Port.level.SUCCESS.count", "level": "SUCCESS", "@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "odhdev03", "value": 1, "instance_name": "TSTV 3D Port"}
-{"group": "unclassified", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.prodis.ws.hostname.odhdev03.group.unclassified.instance_name.undefined.level.SUCCESS.count", "level": "SUCCESS", "@timestamp": "2017-05-13T14:55:00.000Z", "hostname": "odhdev03", "value": 1, "instance_name": "undefined"}
-{"group": "asset", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.prodis.ws.hostname.odhdev03.group.asset.instance_name.TSTV_3D_Port.level.SUCCESS.count", "level": "SUCCESS", "@timestamp": "2017-06-02T16:01:00.000Z", "hostname": "odhdev03", "value": 3, "instance_name": "TSTV 3D Port"}
-{"group": "asset", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.prodis.ws.hostname.odhdev03.group.asset.instance_name.TSTV_3D_Port.level.ERROR.count", "level": "ERROR", "@timestamp": "2017-06-02T16:01:00.000Z", "hostname": "odhdev03", "value": 3, "instance_name": "TSTV 3D Port"}
+// Asset propagation
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "asset propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.asset_propagation.level.SUCCESS.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "asset propagation", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.asset_propagation.level.ERROR.count", "value": 1}
+//total
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "asset propagation", "metric_name": "prodis.ws.hostname.test1.group.asset_propagation.count", "value": 2}
+
+
+// Product propagation
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "product propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.product_propagation.level.SUCCESS.count", "value": 2}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "product propagation", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.product_propagation.level.ERROR.count", "value": 1}
+//total
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "product propagation", "metric_name": "prodis.ws.hostname.test1.group.product_propagation.count", "value": 3}
+
+
+// Title propagation
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "title propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.title_propagation.level.SUCCESS.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "title propagation", "level": "WARN", "metric_name": "prodis.ws.hostname.test1.group.title_propagation.level.WARN.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "title propagation", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.title_propagation.level.ERROR.count", "value": 1}
+//total
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "title propagation", "metric_name": "prodis.ws.hostname.test1.group.title_propagation.count", "value": 3}
+
+
+// Image propagation
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "image propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.image_propagation.level.SUCCESS.count", "value": 1}
+//total
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "image propagation", "metric_name": "prodis.ws.hostname.test1.group.image_propagation.count", "value": 1}
+
+
+// Series propagation
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "series propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.series_propagation.level.SUCCESS.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "series propagation", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.series_propagation.level.ERROR.count", "value": 1}
+//total
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "series propagation", "metric_name": "prodis.ws.hostname.test1.group.series_propagation.count", "value": 2}
+
+
+// Series propagation
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "service propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.service_propagation.level.SUCCESS.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "service propagation", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.service_propagation.level.ERROR.count", "value": 1}
+//total
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "service propagation", "metric_name": "prodis.ws.hostname.test1.group.service_propagation.count", "value": 2}
+
+
+// Ingest information
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "ingest information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.ingest_information.level.SUCCESS.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "ingest information", "level": "WARN", "metric_name": "prodis.ws.hostname.test1.group.ingest_information.level.WARN.count", "value": 1}
+//total
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "ingest information", "metric_name": "prodis.ws.hostname.test1.group.ingest_information.count", "value": 2}
+
+
+// Hosted information
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "hosted information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.hosted_information.level.SUCCESS.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "hosted information", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.hosted_information.level.ERROR.count", "value": 1}
+//total
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "hosted information", "metric_name": "prodis.ws.hostname.test1.group.hosted_information.count", "value": 2}
+
+
+// Schedule information
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "schedule information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.schedule_information.level.SUCCESS.count", "value": 2}
+//total
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "schedule information", "metric_name": "prodis.ws.hostname.test1.group.schedule_information.count", "value": 2}
+
+
+// WatchDog information
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "watchdog information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.watchdog_information.level.SUCCESS.count", "value": 2}
+//total
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "watchdog information", "metric_name": "prodis.ws.hostname.test1.group.watchdog_information.count", "value": 2}
+
+
+// Change detection information
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "change detection information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.change_detection_information.level.SUCCESS.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "change detection information", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.change_detection_information.level.ERROR.count", "value": 1}
+//total
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "change detection information", "metric_name": "prodis.ws.hostname.test1.group.change_detection_information.count", "value": 2}
+
+
+//Main / Global information
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "main or global information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.main_or_global_information.level.SUCCESS.count", "value": 3}
+//total
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "main or global information", "metric_name": "prodis.ws.hostname.test1.group.main_or_global_information.count", "value": 3}
+
+
+//Prodis oparations
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "level": "SUCCESS", "metric_name": "prodis.ws.prodis_operations.hostname.test1.level.SUCCESS.count", "value": 10}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "level": "WARN", "metric_name": "prodis.ws.prodis_operations.hostname.test1.level.WARN.count", "value": 2}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "level": "ERROR", "metric_name": "prodis.ws.prodis_operations.hostname.test1.level.ERROR.count", "value": 7}
+//total
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "metric_name": "prodis.ws.prodis_operations.hostname.test1.count", "value": 26}
+
