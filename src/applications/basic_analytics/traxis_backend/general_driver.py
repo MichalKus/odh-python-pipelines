@@ -18,21 +18,33 @@ class TraxisBackendGeneral(BasicAnalyticsProcessor):
         info_events = read_stream.where("level == 'INFO'")
         warn_events = read_stream.where("level == 'WARN'")
         trace_events = read_stream.where("level == 'TRACE'")
+        error_events = read_stream.where("level == 'ERROR'")
 
-        tva_success_ingest = info_events \
+        info_or_warn_count = info_events.union(warn_events) \
+            .aggregate(Count(aggregation_name=self._component_name + ".info_or_warn"))
+
+        error_count = error_events \
+            .aggregate(Count(aggregation_name=self._component_name + ".error"))
+
+        tva_full_ingest = read_stream \
+            .where("message like '%Starting full ingest%'") \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".tva_full_ingest_initiated"))
+
+        tva_delta_ingest = read_stream \
+            .where("message like '%Starting delta ingest%'") \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".tva_delta_ingest_initiated"))
+
+        tva_expiry_check = read_stream \
+            .where("message like '%Expired items detected%'") \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".tva_expiry_check"))
+
+        tva_ingest_completed = read_stream \
             .where("message like '%Tva ingest completed%'") \
             .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".tva_success_ingest"))
-
-        tva_delta_ingest = info_events \
-            .where("message like '%New sequence number%is different from current%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".tva_delta_ingest"))
-
-        tva_full_ingest = info_events \
-            .where("message like '%[Task = TvaManagementFullOnlineIngest] Starting full ingest%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".tva_full_ingest"))
+                             aggregation_name=self._component_name + ".tva_ingest_completed"))
 
         started_service = info_events \
             .where("message like '%Service - Traxis Service Started%'") \
@@ -85,10 +97,10 @@ class TraxisBackendGeneral(BasicAnalyticsProcessor):
             .aggregate(Count(group_fields=["hostname"],
                              aggregation_name=self._component_name + ".customer_provisioning_delete"))
 
-        return [tva_success_ingest, tva_delta_ingest, tva_full_ingest, started_service,
+        return [info_or_warn_count, error_count, tva_expiry_check, tva_delta_ingest, tva_full_ingest,
+                tva_ingest_completed, started_service,
                 stopped_service, tva_ingest_error, customer_provisioning_error, undefined_warnings,
-                customer_provisioning_new, customer_provisioning_update,
-                customer_provisioning_delete]
+                customer_provisioning_new, customer_provisioning_update,customer_provisioning_delete]
 
     @staticmethod
     def create_schema():
