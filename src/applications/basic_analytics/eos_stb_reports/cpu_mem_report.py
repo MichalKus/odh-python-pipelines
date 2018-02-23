@@ -1,7 +1,7 @@
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from pyspark.sql.types import StructField, StructType, StringType, IntegerType
-from common.basic_analytics.aggregations import Count, Sum, Max, Min, Stddev, CompoundAggregation
+from common.basic_analytics.aggregations import Count, Max, Min, Stddev, CompoundAggregation
 from common.basic_analytics.aggregations import P01, P05, P10, P25, P50, P75, P90, P95, P99
 from pyspark.sql.functions import col, regexp_replace
 from common.spark_utils.custom_functions import convert_epoch_to_iso
@@ -46,7 +46,7 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
                       'aggregation_name': self._component_name,
                       'aggregation_field': field}
 
-            aggregations = [Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
+            aggregations = [Count(**kwargs), Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
                             P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
                             P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)]
 
