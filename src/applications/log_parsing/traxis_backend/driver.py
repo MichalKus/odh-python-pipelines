@@ -38,9 +38,9 @@ def create_event_creators(config):
     tva_ingest_event_creator = EventCreator(
         Metadata([
             StringField("activity"),
-            StringField("requestId")
+            StringField("request_id")
         ]),
-        RegexpParser(r"^(?P<activity>OnlineTvaIngest).*\[RequestId\s=\s(?P<requestId>[^]]+)\][\s\S]*",
+        RegexpParser(r"^(?P<activity>OnlineTvaIngest).*\[RequestId\s=\s(?P<request_id>[^]]+)\][\s\S]*",
                      return_empty_dict=True),
         matcher=SubstringMatcher("OnlineTvaIngest")
     )
@@ -49,10 +49,11 @@ def create_event_creators(config):
         Metadata([
             StringField("activity"),
             StringField("task"),
-            IntField("duration")
+            IntField("duration_ms")
         ]),
-        RegexpParser(r"^(?P<activity>TvaManager).*\[Task\s=\s(?P<task>[^]]+)\].*took\s'(?P<duration>\d+)'\sms[\s\S]*",
-                     return_empty_dict=True),
+        RegexpParser(
+            r"^(?P<activity>TvaManager).*\[Task\s=\s(?P<task>[^]]+)\].*took\s'(?P<duration_ms>\d+)'\sms[\s\S]*",
+            return_empty_dict=True),
         matcher=SubstringMatcher("TvaManager")
     )
 
@@ -60,10 +61,10 @@ def create_event_creators(config):
         Metadata([
             StringField("activity"),
             StringField("task"),
-            IntField("duration")
+            IntField("duration_ms")
         ]),
         RegexpParser(r"^(?P<activity>ParsingContext).*\[Task\s=\s(?P<task>[^]]+)\]\s"
-                     r"Tva\singest\scompleted,\sduration\s=\s(?P<duration>\d+)\sms[\s\S]*",
+                     r"Tva\singest\scompleted,\sduration\s=\s(?P<duration_ms>\d+)\sms[\s\S]*",
                      return_empty_dict=True),
         matcher=SubstringMatcher("Tva ingest completed, duration")
     )
@@ -72,10 +73,10 @@ def create_event_creators(config):
         Metadata([
             StringField("activity"),
             StringField("task"),
-            IntField("duration")
+            IntField("duration_ms")
         ]),
         RegexpParser(r"^(?P<activity>ParsingContext).*\[Task\s=\s(?P<task>[^]]+)\]\s"
-                     r"Number\sof\swrite\sactions\squeued.*took\s(?P<duration>\d+)\sms[\s\S]*",
+                     r"Number\sof\swrite\sactions\squeued.*took\s(?P<duration_ms>\d+)\sms[\s\S]*",
                      return_empty_dict=True),
         matcher=SubstringMatcher("Number of write actions queued")
     )
