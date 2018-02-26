@@ -2,18 +2,41 @@ from __future__ import print_function
 
 import sys
 from pyspark import SparkContext, SparkConf
-from util.utils import Utils
-from common.adv_analytics.kafkaUtils import KafkaConnector
+from kafka import KafkaProducer, errors
 import json
 import requests
 import datetime
 
+from util.utils import Utils
+from common.adv_analytics.kafkaUtils import KafkaConnector
+
 def json_check(msg):
+    """
+    check if message is a valid json
+    :param msg: string
+    :return: Boolean
+    """
     try:
         json.loads(msg[1])
     except (ValueError, TypeError) as e:
         return False
     return True
+
+
+def form_json(msg):
+    """
+    Transform string to dict
+    TN_CHU_PROD_CF,EPG_CF_RENG_REP_01,uc-l-p-obo00025
+    :param msg: string
+    :return: dict
+    """
+    [tn, epg, vm] = msg.split(',')
+    return {
+        "tenant": tn,
+        "epg": epg,
+        "virtual_machine": vm
+    }
+
 
 def prepare_doc(msg):
     """
@@ -24,6 +47,7 @@ def prepare_doc(msg):
     doc = msg.copy()
     doc["timestamp"] = str(datetime.datetime.now())
     return doc
+
 
 def flatten(msg):
     """
@@ -39,6 +63,7 @@ def flatten(msg):
                 res.append('{},{},{}'.format(tenant, epg, endpoint['virtual_machine']))
     return res
 
+
 def export_to_hdfs(input_stream):
     """
 
@@ -52,6 +77,7 @@ def export_to_hdfs(input_stream):
 
     return output
 
+
 def hdfs_sink(rdd):
     """
     Save rdd to HDFS
@@ -60,6 +86,7 @@ def hdfs_sink(rdd):
     """
     if not len(rdd.take(1)) == 0:
         rdd.repartition(1).saveAsTextFile(config.property('hdfs.outputPath'))
+
 
 def read_data(kafka_stream):
     """
@@ -74,6 +101,7 @@ def read_data(kafka_stream):
         .map(lambda msg: prepare_doc(msg))
     return rdd_stream
 
+
 def es_sink(doc):
     """
     Export to ES
@@ -84,13 +112,44 @@ def es_sink(doc):
     }
     url = "http://{}/{}/obo/{}".format(config.property('es.host'), config.property('es.index'), doc["tenant"])
     try:
-        r = requests.request("PUT", url, data=json.dumps(doc), headers=headers)
+        requests.request("PUT", url, data=json.dumps(doc), headers=headers)
     except requests.ConnectionError:
-        print("ERROR::SPARK-CloudmapIngestionProcessing::Connection Error with ES")
+        pass
 
-def send_partition(iter):
+
+def send_partition_es(iter):
+    """
+    Sink to ES
+    :param iter:
+    :return:
+    """
     for record in iter:
         es_sink(record)
+
+
+def kafka_sink(topic, msg, producer):
+    """
+    Send json message into kafka topic. Avoid async operation to guarantee
+    msg is delivered.
+    """
+    try:
+        producer.send(topic, json.dumps(msg).encode('utf-8')).get(timeout=30)
+    except errors.KafkaTimeoutError:
+        pass
+
+
+def send_partition_kafka(iter):
+    """
+    Sink to kafka
+    :param iter:
+    :return:
+    """
+    topic = config.property('kafka.topicOutput')
+    producer = KafkaProducer(bootstrap_servers = config.property('kafka.bootstrapServers').split(','))
+    for record in iter:
+        kafka_sink(topic, record, producer)
+    producer.flush()
+
 
 if __name__ == "__main__":
     config = Utils.load_config(sys.argv[1])
@@ -102,8 +161,10 @@ if __name__ == "__main__":
 
     input_stream = KafkaConnector(config).create_kafka_stream(ssc)
     hdfs_stream = export_to_hdfs(input_stream)
+    hdfs_stream.cache()
     hdfs_stream.foreachRDD(lambda rdd: hdfs_sink(rdd))
+    hdfs_stream.map(lambda msg: form_json(msg)).foreachRDD(lambda rdd: rdd.foreachPartition(send_partition_kafka))
     es_stream = read_data(input_stream)
-    sink = es_stream.foreachRDD(lambda rdd: rdd.foreachPartition(send_partition))
+    sink = es_stream.foreachRDD(lambda rdd: rdd.foreachPartition(send_partition_es))
     ssc.start()
     ssc.awaitTermination()
