@@ -38,7 +38,7 @@ class TraxisBackendParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "message": "OnlineTvaIngest - [172.30.182.17:55347] [RequestId = 5a903fc1-02a5-4424-8c16-4078f83df6c4] "
                            "Tva notification received",
                 "activity": "OnlineTvaIngest",
-                "requestId": "5a903fc1-02a5-4424-8c16-4078f83df6c4"
+                "request_id": "5a903fc1-02a5-4424-8c16-4078f83df6c4"
             }
         ), (
             {
@@ -53,7 +53,7 @@ class TraxisBackendParsingTestCase(BaseMultipleMessageParsingTestCase):
                            "Loading tva version '233.1221' took '314' ms",
                 "activity": "TvaManager",
                 "task": "Notification of type 'TvaIngestCompleted'",
-                "duration": 314
+                "duration_ms": 314
             }
         ), (
             {
@@ -72,7 +72,7 @@ class TraxisBackendParsingTestCase(BaseMultipleMessageParsingTestCase):
                            "Title set = 1, deleted = 0 (total = 191667)",
                 "activity": "ParsingContext",
                 "task": "TvaManagementExpirationCheck",
-                "duration": 1478
+                "duration_ms": 1478
             }
         ), (
             {
@@ -87,7 +87,7 @@ class TraxisBackendParsingTestCase(BaseMultipleMessageParsingTestCase):
                            "Number of write actions queued = 125. Action took 110 ms",
                 "activity": "ParsingContext",
                 "task": "TvaManagementExpirationCheck",
-                "duration": 110
+                "duration_ms": 110
             }
         ), (
             {
