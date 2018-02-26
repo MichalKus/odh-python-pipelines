@@ -1,5 +1,5 @@
 """
-The module for the driver to parse log messages from Traxis Backend component.
+Spark driver for parsing message related to the backend of the Traxis component
 """
 
 import sys
@@ -85,11 +85,11 @@ def create_event_creators(config):
         "traxis_backend_log_gen": MatchField("source", {
             "TraxisService.log": SourceConfiguration(
                 CompositeEventCreator()
-                    .add_source_parser(general_event_creator)
-                    .add_intermediate_result_parser(tva_ingest_event_creator)
-                    .add_intermediate_result_parser(tva_manager_event_creator)
-                    .add_intermediate_result_parser(parsing_context_event_creator)
-                    .add_intermediate_result_parser(write_actions_event_creator),
+                .add_source_parser(general_event_creator)
+                .add_intermediate_result_parser(tva_ingest_event_creator, final=True)
+                .add_intermediate_result_parser(tva_manager_event_creator, final=True)
+                .add_intermediate_result_parser(parsing_context_event_creator, final=True)
+                .add_intermediate_result_parser(write_actions_event_creator, final=True),
                 Utils.get_output_topic(config, "general")
             ),
             "TraxisServiceDistributedScheduler.log": SourceConfiguration(

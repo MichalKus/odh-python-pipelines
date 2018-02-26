@@ -37,7 +37,7 @@ class VMMemNetProcessor(BasicAnalyticsProcessor):
                 .select("@timestamp", "group", "res_kind", "name", aggregation_field) \
                 .filter(((col("group") == "mem") | (col("group") == "net")) & (col("res_kind") == "VirtualMachine") & (
                 col(aggregation_field).isNotNull())) \
-                .withColumn("name", regexp_replace("name", "\.", "-")) \
+                .withColumn("name", regexp_replace("name", r"\.", "-")) \
                 .aggregate(aggregation)
 
             return agg_stream

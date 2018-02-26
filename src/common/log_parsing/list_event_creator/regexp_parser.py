@@ -8,7 +8,7 @@ class RegexpParser:
     Parses event using regex
     """
 
-    def __init__(self, pattern, match=True):
+    def __init__(self, pattern, match=True, return_empty_list=False):
         """
         Creates regex parser
         :param pattern: regex pattern
@@ -16,6 +16,7 @@ class RegexpParser:
         """
         self.__pattern = re.compile(pattern)
         self.__match = match
+        self.__return_empty_list = return_empty_list
 
     def parse(self, text):
         """
@@ -26,5 +27,7 @@ class RegexpParser:
         """
         if not self.__match or self.__pattern.match(text):
             return list(chain.from_iterable(self.__pattern.findall(text)))
+        elif self.__return_empty_list:
+            return []
         else:
             raise ParsingException("Text does not match the pattern.")

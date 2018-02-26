@@ -1,0 +1,6 @@
+## TODO: Rename this file to `config`
+
+# Tag associated with your docker image
+DOCKER_TAG="usage_collector_dropped_events_report_driver"
+# Path to your test driver file
+TEST_APP_DRIVER_PATH="test/it/applications/basic_analytics/eos_stb_reports/test_usage_collector_dropped_events_report_driver.py"

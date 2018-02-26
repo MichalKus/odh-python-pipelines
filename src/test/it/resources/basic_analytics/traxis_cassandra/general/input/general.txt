@@ -296,5 +296,5 @@
 {'@timestamp': '2017-11-03T00:40:11.850Z', 'hostname': 'odhdev01', 'message': 'MonitorController - [Task = Mx4jCheck] All nodes reachable', 'level': 'INFO'}
 {'@timestamp': '2017-11-03T00:00:11.709Z', 'hostname': 'odhdev01', 'message': 'MonitorController - [Task = Mx4jCheck] All nodes reachable', 'level': 'INFO'}
 {'@timestamp': '2017-11-03T00:00:20.522Z', 'hostname': 'odhdev01', 'message': 'MonitorController - [Task = Mx4jCheck] All nodes reachable', 'level': 'INFO'}
-{'@timestamp': '2017-11-03T00:20:20.605Z', 'hostname': 'odhdev01', 'message': 'MonitorController - [Task = Mx4jCheck] All nodes reachable', 'level': 'INFO'}
-{'@timestamp': '2017-11-03T00:30:11.812Z', 'hostname': 'odhdev01', 'message': 'MonitorController - [Task = Mx4jCheck] All nodes reachable', 'level': 'INFO'}
+{'@timestamp': '2017-11-03T00:20:20.605Z', 'hostname': 'odhdev01', 'message': "Heap is 0.7514394429202329 full.  You may need to reduce memtable and/or cache sizes.  Cassandra will now flush up to the two largest memtables to free up memory.  Adjust flush_largest_memtables_at threshold in cassandra.yaml if you don't want Cassandra to do this automatically", 'level': 'WARN'}
+{"@timestamp": "2017-11-03T00:30:26.826Z", "hostname": "odhdev01", "message": "Scheduler - [Task = Mx4jCheck] Eventis.Cassandra.Service.CassandraServiceException+HostRingException: Node '172.30.182.20' is unreachable", "level": "ERROR"}

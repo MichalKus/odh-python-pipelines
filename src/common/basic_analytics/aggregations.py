@@ -3,13 +3,14 @@ The module to define aggregations for an input dataframes.
 Aggregation class defines common methods for all aggregations.
 """
 
-import re
 from abc import ABCMeta, abstractmethod
 
 from pyspark.sql.functions import lit, avg, count, sum, max, min, col, stddev, expr, regexp_replace
 from pyspark.sql.functions import window, concat_ws, approx_count_distinct, explode, create_map
 from pyspark.sql.types import DecimalType
 from itertools import chain
+
+from common.spark_utils.custom_functions import convert_to_underlined
 
 
 class Aggregation(object):
@@ -49,12 +50,6 @@ class Aggregation(object):
         return concat_ws(".", *[regexp_replace(x, "[\\s\\.]+", "_") if isinstance(x, basestring)
                                 else regexp_replace(x, "\\s+", "_") for x in metric_name_parts])
 
-
-    @staticmethod
-    def __convert_to_underlined(name):
-        s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-        return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
-
     def aggregate(self, grouped_dataframe):
         """
         Abstract aggregation
@@ -85,7 +80,7 @@ class Aggregation(object):
         return df
 
     def get_name(self):
-        return self.__convert_to_underlined(self.__class__.__name__)
+        return convert_to_underlined(self.__class__.__name__)
 
 
 class AggregatedDataFrame(object):
