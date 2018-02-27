@@ -1,12 +1,15 @@
 import sys
 
 from common.kafka_pipeline import KafkaPipeline
+from common.log_parsing.dict_event_creator.event_creator import CompositeEventCreator
 from common.log_parsing.event_creator_tree.multisource_configuration import MatchField, SourceConfiguration
 from common.log_parsing.list_event_creator.event_creator import EventCreator
 from common.log_parsing.list_event_creator.multiline_event_creator import MultilineEventCreator
+from common.log_parsing.list_event_creator.regexp_parser import RegexpParser
 from common.log_parsing.list_event_creator.splitter_parser import SplitterParser
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
-from common.log_parsing.metadata import Metadata, StringField
+from common.log_parsing.matchers.matcher import SubstringMatcher
+from common.log_parsing.metadata import Metadata, StringField, IntField
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util import Utils
 
@@ -27,7 +30,12 @@ def create_event_creators(configuration):
 
     return MatchField("topic", {
         "stagis_log_gen": SourceConfiguration(
-            Stagis.ee_event_creator(timezone_name, timezones_priority),
+            CompositeEventCreator()
+            .add_source_parser(Stagis.ee_event_creator(timezone_name, timezones_priority))
+            .add_intermediate_result_parser(Stagis.model_state_event_creator(), final=True)
+            .add_intermediate_result_parser(Stagis.received_delta_server_notification_event_creator(), final=True)
+            .add_intermediate_result_parser(Stagis.tva_delta_server_request_event_creator(), final=True)
+            .add_intermediate_result_parser(Stagis.tva_delta_server_response_event_creator(), final=True),
             Utils.get_output_topic(configuration, "general")
         ),
         "stagis_log_err": SourceConfiguration(
@@ -49,7 +57,31 @@ def create_event_creators(configuration):
     })
 
 
-class Stagis:
+class StagisEventCreator(EventCreator):
+    """
+    Replaces extracted task value with the one from dictionary
+    """
+
+    __dictionary = {
+        "TVA Delta Server respond": "TVA Delta Server response",
+        "TVA Delta Request Starting": "TVA Delta Server request",
+        "Received Delta Server Notification": "Notification",
+        "Model state after committing transaction": "Committing Transaction"
+    }
+
+    def _convert_row_to_event_values(self, row):
+        parse_result = self._parser.parse(row["message"])
+        if parse_result:
+            parse_result[0] = self.__replace_task_name(parse_result[0])
+        return parse_result
+
+    def __replace_task_name(self, text):
+        if text in self.__dictionary:
+            text = text.replace(text, self.__dictionary[text])
+        return text
+
+
+class Stagis(object):
     """
     Contains methods for creation EventCreator for specific logs
     """
@@ -110,6 +142,68 @@ class Stagis:
                 StringField("message")
             ]),
             SplitterParser("|", is_trim=True), [take_first, concat])
+
+    @staticmethod
+    def tva_delta_server_response_event_creator():
+        return StagisEventCreator(
+            Metadata([
+                StringField("task"),
+                StringField("status"),
+                IntField("duration")
+            ]),
+            RegexpParser(
+                r"^(?P<task>TVA Delta Server respond) with status code '(?P<status>\S+)' in '(?P<duration>\d+)' ms\s*",
+                return_empty_list=True),
+            matcher=SubstringMatcher("TVA Delta Server respond"))
+
+    @staticmethod
+    def tva_delta_server_request_event_creator():
+        return StagisEventCreator(
+            Metadata([
+                StringField("task"),
+                StringField("sequence_number")
+            ]),
+            RegexpParser(
+                r"^(?P<task>TVA Delta Request Starting).+sequence number: (?P<sequence_number>\d+)\s*",
+                return_empty_list=True),
+            matcher=SubstringMatcher("TVA Delta Request Starting"))
+
+    @staticmethod
+    def received_delta_server_notification_event_creator():
+        return StagisEventCreator(
+            Metadata([
+                StringField("task"),
+                StringField("sequence_number")
+            ]),
+            RegexpParser(
+                r"^(?P<task>Received Delta Server Notification) Sequence Number: (?P<sequence_number>\d+).*",
+                return_empty_list=True),
+            matcher=SubstringMatcher("Received Delta Server Notification"))
+
+    @staticmethod
+    def model_state_event_creator():
+        return StagisEventCreator(
+            Metadata([
+                StringField("task"),
+                StringField("sequence_number"),
+                StringField("number"),
+                IntField("entities"),
+                IntField("links"),
+                IntField("channels"),
+                IntField("events"),
+                IntField("programs"),
+                IntField("groups"),
+                IntField("on_demand_programs"),
+                IntField("broadcast_events"),
+            ]),
+            RegexpParser(
+                r"^\[Model\] (?P<task>Model state after committing transaction) "
+                r"\[Sequence number: (?P<sequence_number>\d+).*Number: (?P<number>\d+)\] "
+                r"Entities: (?P<entities>\d+) - Links: (?P<links>\d+) - Channels: (?P<channels>\d+)"
+                r" - Events: (?P<events>\d+) - Programs: (?P<programs>\d+) - Groups: (?P<groups>\d+)"
+                r" - OnDemandPrograms: (?P<OnDemandPrograms>\d+) - BroadcastEvents: (?P<BroadcastEvents>\d+)\s*",
+                return_empty_list=True),
+            matcher=SubstringMatcher("Model state after committing transaction"))
 
 
 if __name__ == "__main__":

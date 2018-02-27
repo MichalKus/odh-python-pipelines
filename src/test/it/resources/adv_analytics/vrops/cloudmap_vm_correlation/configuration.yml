@@ -1,0 +1,9 @@
+spark:
+  appName: vrops-cloudmap-vm-correlation-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+  consoleWriter: false
+
+analytics:
+  hdfsFilePath: test/it/resources/adv_analytics/vrops/cloudmap_vm_correlation/input/cloudmap/part*

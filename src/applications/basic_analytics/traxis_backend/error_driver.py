@@ -16,8 +16,15 @@ class TraxisBackendError(BasicAnalyticsProcessor):
     """
 
     def _process_pipeline(self, read_stream):
+        info_events = read_stream.where("level == 'INFO'")
         warn_events = read_stream.where("level == 'WARN'")
         error_events = read_stream.where("level == 'ERROR'")
+
+        info_or_warn_count = info_events.union(warn_events) \
+            .aggregate(Count(aggregation_name=self._component_name + ".info_or_warn"))
+
+        error_count = error_events \
+            .aggregate(Count(aggregation_name=self._component_name + ".error"))
 
         tva_ingest_error = warn_events \
             .where("message like '%One or more validation errors detected during tva ingest%'") \
@@ -48,7 +55,7 @@ class TraxisBackendError(BasicAnalyticsProcessor):
             .aggregate(Count(group_fields=["hostname"],
                              aggregation_name=self._component_name + ".undefined_errors"))
 
-        return [tva_ingest_error, customer_provisioning_error, undefined_warnings,
+        return [info_or_warn_count, error_count, tva_ingest_error, customer_provisioning_error, undefined_warnings,
                 cassandra_errors, undefined_errors]
 
     @staticmethod

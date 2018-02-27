@@ -1,3 +1,4 @@
+"""Spark driver for parsing message from Traxis Frontend component"""
 import sys
 
 from common.kafka_pipeline import KafkaPipeline
@@ -12,6 +13,11 @@ from util.utils import Utils
 
 
 def create_event_creators(configuration):
+    """
+    Method creates configuration for Traxis Frontend Component
+    :param configuration
+    :return: MatchField configuration for Traxis Frontend
+    """
     timezone_name = configuration.property("timezone.name")
     timezones_priority = configuration.property("timezone.priority", "dic")
 
@@ -52,11 +58,12 @@ def create_event_creators(configuration):
              StringField("product_id", "productId")]),
         RegexpParser(
             r"^.*\[RequestId\s*=\s*(?P<request_id>.*)\]\s*\[CustomerId\s*=\s*(?P<customer_id>.*)\]\s*"
-            r"Method \'(?P<method>.*?)\' invoked with parameters\: identity = (?P<identity>.*?)\, productId = (?P<product_id>.*?)(\,.*|$)",
+            r"Method \'(?P<method>.*?)\' invoked with parameters\: identity = (?P<identity>.*?)\, productId ="
+            r" (?P<product_id>.*?)(\,.*|$)",
             return_empty_dict=True),
         matcher=SubstringMatcher("invoked with parameters"))
 
-    cannot_purchase_product_event_creator= EventCreator(
+    cannot_purchase_product_event_creator = EventCreator(
         Metadata(
             [StringField("request_id", "requestId"),
              StringField("customer_id", "customerId"),
@@ -70,10 +77,10 @@ def create_event_creators(configuration):
     return MatchField("source", {
         "TraxisService.log": SourceConfiguration(
             CompositeEventCreator()
-                .add_source_parser(event_creator)
-                .add_intermediate_result_parser(method_duration_event_creator, final=True)
-                .add_intermediate_result_parser(method_invoked_event_creator, final=True)
-                .add_intermediate_result_parser(cannot_purchase_product_event_creator, final=True),
+            .add_source_parser(event_creator)
+            .add_intermediate_result_parser(method_duration_event_creator, final=True)
+            .add_intermediate_result_parser(method_invoked_event_creator, final=True)
+            .add_intermediate_result_parser(cannot_purchase_product_event_creator, final=True),
             Utils.get_output_topic(configuration, "general")
         ),
         "TraxisServiceError.log": SourceConfiguration(

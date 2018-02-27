@@ -2,12 +2,12 @@
 The module for the driver to calculate metrics related to Prodis WS component.
 """
 
+from pyspark.sql.functions import col, lower, when
 from pyspark.sql.types import TimestampType, StructType, StructField, StringType
-from pyspark.sql.functions import col, regexp_replace, lower, when
 
 from common.basic_analytics.aggregations import Count
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.spark_utils.custom_functions import custom_translate_regex
+from common.spark_utils.custom_functions import custom_translate_like
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
@@ -16,46 +16,54 @@ class ProdisWS(BasicAnalyticsProcessor):
     The processor implementation to calculate metrics related to Prodis WS component.
     """
 
-    def _process_pipeline(self, source_stream):
-        mapping_thread_name_to_group = \
-            {
-                "ingest thread": "ingest",
-                "asset propagation thread": "asset",
-                "product propagation thread": "product",
-                "series propagation thread": "product",
-                "title propagation thread": "title",
-                "hosted thread": "hosted",
-                "scheduled task thread": "scheduled",
-            }
-        prepared_stream = source_stream \
-            .withColumn("group",
-                        custom_translate_regex(source_field=lower(col("thread_name")),
-                                               mapping=mapping_thread_name_to_group,
-                                               default_value="unclassified")) \
-            .withColumn("level_updated",
-                        when(
-                            (col("level") == "INFO") &
-                            (
-                                (col("message").contains("successfully initialized port"))
-                                |
-                                ~(col("message").rlike("^[^']*(['][^']*?['])*[^']*succe.*"))
-                            ),
-                            "SUCCESS")
-                        .otherwise(col("level"))) \
-            .withColumn("level", col("level_updated")) \
-            .drop("level_updated") \
-            .withColumn("instance_name_updated",
-                        when(col("instance_name") == "", "undefined")
-                        .otherwise(regexp_replace("instance_name", "Cleanpu", "Cleanup"))
-                        ) \
-            .withColumn("instance_name", col("instance_name_updated")) \
-            .drop("instance_name_updated") \
-            .na.fill("instance_name", "undefined") \
-            .where(col("level").isin("SUCCESS", "ERROR", "WARN", "FATAL"))
+    __mapping_thread_name_to_group = [
+        (["asset propagation thread"], "asset propagation"),
+        (["product propagation thread"], "product propagation"),
+        (["series propagation thread"], "series propagation"),
+        (["service propagation thread"], "service propagation"),
+        (["scheduled task thread"], "schedule information"),
+        (["title propagation thread"], "title propagation"),
+        (["hosted thread"], "hosted information"),
+        (["ingest thread"], "ingest information"),
+        (["image propagation thread"], "image propagation"),
+        (["watch dog thread"], "watchdog information"),
+        (["change detection thread"], "change detection information"),
+        (["main thread"], "main or global information"),
+        (["global propagation thread"], "main or global information"),
+    ]
 
-        counts = prepared_stream.aggregate(
-            Count(group_fields=["hostname", "group", "instance_name", "level"], aggregation_name=self._component_name))
-        return [counts]
+    def _process_pipeline(self, source_stream):
+        filtered_stream = source_stream \
+            .where(col("level") != "DEBUG") \
+            .withColumn("level_updated",
+                        when((col("level") == "INFO"), "SUCCESS")
+                        .when((col("level") == "FATAL"), "ERROR")
+                        .otherwise(col("level"))) \
+            .withColumn("level", col("level_updated"))
+
+        stream_with_mapped_groups = filtered_stream \
+            .withColumn("group", custom_translate_like(source_field=lower(col("thread_name")),
+                                                       mappings_pair=self.__mapping_thread_name_to_group,
+                                                       default_value="unclassified"))
+
+        count_by_level = stream_with_mapped_groups \
+            .where((col("level") != "SUCCESS") | lower(col("message")).like("%succe%")) \
+            .aggregate(
+            Count(group_fields=["hostname", "level"], aggregation_name=self._component_name + ".prodis_operations"))
+
+        total_count = stream_with_mapped_groups \
+            .aggregate(
+            Count(group_fields=["hostname"], aggregation_name=self._component_name + ".prodis_operations"))
+
+        total_count_by_group = stream_with_mapped_groups \
+            .aggregate(
+            Count(group_fields=["hostname", "group"], aggregation_name=self._component_name))
+
+        count_by_group_and_level = stream_with_mapped_groups \
+            .aggregate(
+            Count(group_fields=["hostname", "group", "level"], aggregation_name=self._component_name))
+
+        return [total_count, count_by_level, total_count_by_group, count_by_group_and_level]
 
     @staticmethod
     def create_schema():

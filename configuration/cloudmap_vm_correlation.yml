@@ -1,0 +1,23 @@
+spark:
+  appName: vrops-cloudmap-vm-correlation-test
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints/vrops/cloudmap/
+  shuffle.partitions: 1
+  consoleWriter: true
+  outputMode: update
+
+kafka:
+  maxOffsetsPerTrigger: 100000
+  bootstrap.servers: 192.168.100.1:9094,192.168.100.2:9094,192.168.100.3:9094,192.168.100.4:9094,192.168.100.5:9094,192.168.100.6:9094,192.168.100.7:9094,192.168.100.8:9094,192.168.100.9:9094,192.168.100.10:9094,192.168.100.11:9094,192.168.100.12:9094,192.168.100.13:9094,192.168.100.14:9094,192.168.100.15:9094,192.168.100.16:9094,192.168.100.17:9094,192.168.100.18:9094
+  startingOffsets: latest
+  topics:
+    inputs:
+      - odhecx_pr_eosdtv_pan_prd_vrops_vm_cpu_v1
+      - odhecx_pr_eosdtv_pan_prd_vrops_vm_mem_net_v1
+    output: odhecx_pr_eosdtv_pan_prd_vrops_vm_metrics_v1
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
+  failOnDataLoss: false
+
+analytics:
+  hdfsFilePath: file:///spark/checkpoints/cloudmap/cloudmap_mapping2.csv

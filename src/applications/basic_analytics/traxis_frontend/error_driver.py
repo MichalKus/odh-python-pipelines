@@ -17,7 +17,20 @@ class TraxisFrontendError(BasicAnalyticsProcessor):
     """
 
     def _process_pipeline(self, read_stream):
-        error_stream = read_stream.where("level = 'ERROR'") \
+        info_events = read_stream.where("level == 'INFO'")
+        warn_events = read_stream.where("level == 'WARN'")
+        error_events = read_stream.where("level == 'ERROR'")
+
+        return [self.count(info_events.union(warn_events), "info_or_warn"),
+                self.count(error_events, "error"),
+                self.error_metrics(read_stream)]
+
+    def count(self, events, metric_name):
+        return events \
+            .aggregate(Count(aggregation_name="{0}.{1}".format(self._component_name, metric_name)))
+
+    def error_metrics(self, events):
+        error_stream = events.where("level = 'ERROR'") \
             .withColumn("counter",
                         custom_translate_like(
                             source_field=col("message"),
@@ -26,14 +39,13 @@ class TraxisFrontendError(BasicAnalyticsProcessor):
                                 (["NetworkTimeCheckError"], "ntp_error")
                             ],
                             default_value="unclassifed_errors"))
-        warn_and_fatal_stream = read_stream.where("level in ('WARN', 'FATAL')") \
+
+        warn_and_fatal_stream = events.where("level in ('WARN', 'FATAL')") \
             .withColumn("counter", lit("unclassifed_errors"))
 
-        result_stream = error_stream.union(warn_and_fatal_stream) \
+        return error_stream.union(warn_and_fatal_stream) \
             .aggregate(Count(group_fields=["hostname", "counter"],
                              aggregation_name=self._component_name))
-
-        return [result_stream]
 
     @staticmethod
     def create_schema():
