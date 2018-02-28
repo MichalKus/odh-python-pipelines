@@ -1,7 +1,7 @@
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from pyspark.sql.types import StructField, StructType, StringType, IntegerType
-from common.basic_analytics.aggregations import Count, Max, Min, Stddev, CompoundAggregation
+from common.basic_analytics.aggregations import Count, Sum, Max, Min, Stddev, CompoundAggregation
 from common.basic_analytics.aggregations import P01, P05, P10, P25, P50, P75, P90, P95, P99
 from pyspark.sql.functions import col, regexp_replace
 from common.spark_utils.custom_functions import convert_epoch_to_iso
@@ -29,7 +29,8 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
             .withColumn("VMStat_systemPct", col("VMStat_systemPct").cast(IntegerType())) \
             .withColumn("VMStat_iowaitPct", col("VMStat_iowaitPct").cast(IntegerType())) \
             .withColumn("VMStat_hwIrqPct", col("VMStat_hwIrqPct").cast(IntegerType())) \
-            .withColumn("MemoryUsage_totalKb", col("MemoryUsage_totalKb").cast(IntegerType())) \
+            .withColumn("MemoryUsage_freeKb", col("MemoryUsage_freeKb").cast(IntegerType())) \
+            .withColumn("MemoryUsage_cachedKb", col("MemoryUsage_cachedKb").cast(IntegerType())) \
             .withColumn("MemoryUsage_usedKb", col("MemoryUsage_usedKb").cast(IntegerType())) \
             .withColumn("VMStat_nicePct", col("VMStat_nicePct").cast(IntegerType())) \
             .withColumn("VMStat_userPct", col("VMStat_userPct").cast(IntegerType())) \
@@ -37,8 +38,11 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
             .withColumn("VMStat_loadAverage", col("VMStat_loadAverage").cast(IntegerType()))
 
         aggregation_fields = ["VMStat_idlePct", "VMStat_systemPct", "VMStat_iowaitPct", "VMStat_hwIrqPct",
-                              "MemoryUsage_totalKb", "MemoryUsage_usedKb", "VMStat_nicePct",
-                              "VMStat_userPct", "VMStat_swIrqPct", "VMStat_loadAverage"]
+                              "MemoryUsage_usedKb", "MemoryUsage_freeKb", "MemoryUsage_cachedKb",
+                              "VMStat_nicePct","VMStat_userPct", "VMStat_swIrqPct", "VMStat_loadAverage"]
+
+        aggregation_fields_with_sum = ["MemoryUsage_usedKb", "MemoryUsage_freeKb", "MemoryUsage_cachedKb"]
+
         result = []
 
         for field in aggregation_fields:
@@ -49,6 +53,9 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
             aggregations = [Count(**kwargs), Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
                             P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
                             P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)]
+
+            if kwargs["aggregation_field"] in aggregation_fields_with_sum:
+                aggregations.append(Sum(**kwargs))
 
             result.append(stream.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs)))
 
@@ -63,7 +70,8 @@ class StbAnalyticsCPU(BasicAnalyticsProcessor):
             StructField("timestamp", StringType()),
             StructField("originId", StringType()),
             StructField("MemoryUsage_usedKb", StringType()),
-            StructField("MemoryUsage_totalKb", StringType()),
+            StructField("MemoryUsage_freeKb", StringType()),
+            StructField("MemoryUsage_cachedKb", StringType()),
             StructField("hardwareVersion", StringType()),
             StructField("asVersion", StringType()),
             StructField("modelDescription", StringType()),
