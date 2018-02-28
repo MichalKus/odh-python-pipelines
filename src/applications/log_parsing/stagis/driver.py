@@ -1,5 +1,6 @@
 import sys
 
+from applications.log_parsing.stagis.stagis_event_creator import StagisEventCreator
 from common.kafka_pipeline import KafkaPipeline
 from common.log_parsing.dict_event_creator.event_creator import CompositeEventCreator
 from common.log_parsing.event_creator_tree.multisource_configuration import MatchField, SourceConfiguration
@@ -55,30 +56,6 @@ def create_event_creators(configuration):
             Utils.get_output_topic(configuration, "wcf")
         )
     })
-
-
-class StagisEventCreator(EventCreator):
-    """
-    Replaces extracted task value with the one from dictionary
-    """
-
-    __dictionary = {
-        "TVA Delta Server respond": "TVA Delta Server response",
-        "TVA Delta Request Starting": "TVA Delta Server request",
-        "Received Delta Server Notification": "Notification",
-        "Model state after committing transaction": "Committing Transaction"
-    }
-
-    def _convert_row_to_event_values(self, row):
-        parse_result = self._parser.parse(row["message"])
-        if parse_result:
-            parse_result[0] = self.__replace_task_name(parse_result[0])
-        return parse_result
-
-    def __replace_task_name(self, text):
-        if text in self.__dictionary:
-            text = text.replace(text, self.__dictionary[text])
-        return text
 
 
 class Stagis(object):
