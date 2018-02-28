@@ -10,6 +10,7 @@ from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.basic_analytics.aggregations import Count, DistinctCount, Sum
+from common.spark_utils.custom_functions import custom_translate_like
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
@@ -19,6 +20,20 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
     """
 
     def _process_pipeline(self, read_stream):
+        """
+        Main pipeline for concatenation all aggregation queries in one list
+        :param read_stream: input stream with events from dag kafka topic
+        :return: list of all aggregated metrics
+        """
+        return self.__process_common_events(read_stream) + self.__process_tva_events(read_stream) + \
+               self.__process_hi_res_events(read_stream) + self.__process_hi_res_on_mpx_events(read_stream)
+
+    def __process_common_events(self, read_stream):
+        """
+        Aggregation for events to calculate common metrics
+        :param read_stream: input stream with events from dag kafka topic
+        :return: list of aggregated metrics
+        """
         dag_count = read_stream \
             .select(col("hostname"), col("@timestamp"), col("dag")) \
             .aggregate(DistinctCount(group_fields=["hostname"], aggregation_field="dag",
@@ -32,16 +47,21 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
                         .otherwise(lit("failure"))) \
             .aggregate(Count(group_fields=["dag", "task", "status"], aggregation_name=self._component_name))
 
-        # Fetch and process TVA file
+        return [dag_count, success_and_failures_counts]
+
+    def __process_tva_events(self, read_stream):
+        """
+        Aggregation for events with information about TVA
+        :param read_stream: input stream with events from dag kafka topic
+        :return: list of aggregated metrics
+        """
         fetch_and_process_tva_file_events = read_stream \
             .where("task == 'fetch_and_process_tva_file'")
 
-        # Number of TVA downloads
         tva_downloads_count = fetch_and_process_tva_file_events \
             .where("subtask_message like 'Downloading%'") \
             .aggregate(Count(group_fields=["dag", "task"], aggregation_name=self._component_name + ".tva_downloads"))
 
-        # Number of images in TVA file
         tva_images_to_process_sum = fetch_and_process_tva_file_events \
             .where("subtask_message like 'Images batch to process%images to process%'") \
             .withColumn("images_to_process",
@@ -49,7 +69,6 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
             .aggregate(Sum(group_fields=["dag", "task"], aggregation_field="images_to_process",
                            aggregation_name=self._component_name + ".tva_images_to_process"))
 
-        # Number of images processed per TVA file
         tva_images_processed_events = fetch_and_process_tva_file_events \
             .where("subtask_message like 'Images processed: creating:%updating%'")
 
@@ -65,11 +84,18 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
             .aggregate(Sum(group_fields=["dag", "task"], aggregation_field="images_updating",
                            aggregation_name=self._component_name + ".tva_images_processed_updating"))
 
-        # Perform high res images quality check
+        return [tva_downloads_count, tva_images_to_process_sum,
+                tva_images_processed_creating_sum, tva_images_processed_updating_sum]
+
+    def __process_hi_res_events(self, read_stream):
+        """
+        Aggregation for events with information about loading high_resolution images
+        :param read_stream: input stream with events from dag kafka topic
+        :return: list of aggregated metrics
+        """
         perform_high_res_images_events = read_stream \
             .where("task == 'perform_high_resolution_images_qc'")
 
-        # Number of images processed
         perform_high_res_images_processed_success_sum = perform_high_res_images_events \
             .where("subtask_message like 'Images processed:%'") \
             .withColumn("images_success",
@@ -94,30 +120,36 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
             .aggregate(Sum(group_fields=["dag", "task"], aggregation_field="images_error",
                            aggregation_name=self._component_name + ".hi_res_images_processed_error"))
 
-        # Number of high resolution portrait
-        perform_high_res_images_portrait_count = perform_high_res_images_events \
-            .where(col("subtask_message").like("%image_type='HighResPortrait'%status='qc_success'%")) \
-            .aggregate(Count(group_fields=["dag", "task"],
-                             aggregation_name=self._component_name + ".hi_res_images_portrait"))
+        __mapping_image_type = [
+            (["image_type='HighResPortrait'", "status='qc_success'"], "hi_res_images_portrait"),
+            (["image_type='HighResLandscape'", "status='qc_success'"], "hi_res_images_landscape")
+        ]
 
-        # Number of high resolution landscape
-        perform_high_res_images_landscape_count = perform_high_res_images_events \
-            .where(col("subtask_message").like("%image_type='HighResLandscape'%status='qc_success'%")) \
-            .aggregate(Count(group_fields=["dag", "task"],
-                             aggregation_name=self._component_name + ".hi_res_images_landscape"))
+        perform_high_res_images_type_count = perform_high_res_images_events \
+            .withColumn("image_type", custom_translate_like(source_field=col("subtask_message"),
+                                                            mappings_pair=__mapping_image_type,
+                                                            default_value="unclassified")) \
+            .where("image_type != 'unclassified'") \
+            .aggregate(Count(group_fields=["dag", "task", "image_type"],
+                             aggregation_name=self._component_name))
 
-        # Amount of High Resolution image links "forwarded" to MPX per TVA download
+        return [perform_high_res_images_processed_success_sum, perform_high_res_images_processed_retry_sum,
+                perform_high_res_images_processed_error_sum, perform_high_res_images_type_count
+                ]
+
+    def __process_hi_res_on_mpx_events(self, read_stream):
+        """
+        Aggregation for events with information about high_resolution and loading to mpx
+        :param read_stream: input stream with events from dag kafka topic
+        :return: list of aggregated metrics
+        """
         upload_high_res_images_created_on_mpx_count = read_stream \
             .where("task == 'upload_high_resolution_images_to_mpx'") \
             .where("subtask_message like '%Image was created on MPX:%'") \
             .aggregate(Count(group_fields=["dag", "task"],
                              aggregation_name=self._component_name + ".hi_res_images_created_on_mpx"))
 
-        return [dag_count, success_and_failures_counts, tva_downloads_count, tva_images_to_process_sum,
-                tva_images_processed_creating_sum, tva_images_processed_updating_sum,
-                perform_high_res_images_processed_success_sum, perform_high_res_images_processed_retry_sum,
-                perform_high_res_images_processed_error_sum, perform_high_res_images_portrait_count,
-                perform_high_res_images_landscape_count, upload_high_res_images_created_on_mpx_count]
+        return [upload_high_res_images_created_on_mpx_count]
 
     @staticmethod
     def create_schema():
@@ -133,7 +165,6 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
 
 def create_processor(configuration):
     """Method to create the instance of the processor"""
-
     return AirflowWorkerDag(configuration, AirflowWorkerDag.create_schema())
 
 
