@@ -33,8 +33,8 @@ class VMDatastoreProcessor(BasicAnalyticsProcessor):
             aggregation = Avg(group_fields=["res_kind", "group", "name"], aggregation_field=aggregation_field,
                               aggregation_name=self._component_name)
             agg_stream = read_stream \
-                .select("@timestamp", "group", "res_kind", "name", "metrics.*") \
-                .select("@timestamp", "group", "res_kind", "name", aggregation_field) \
+                .select("@timestamp", "group", "res_kind", "name",
+                        col("metrics.{}".format(aggregation_field)).alias(aggregation_field)) \
                 .filter(
                 (col("group") == "datastore") & (col("res_kind") == "VirtualMachine") & (col(aggregation_field).isNotNull())) \
                 .withColumn("name", regexp_replace("name", r"\.", "-")) \
