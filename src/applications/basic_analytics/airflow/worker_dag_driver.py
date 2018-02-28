@@ -96,29 +96,31 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
         perform_high_res_images_events = read_stream \
             .where("task == 'perform_high_resolution_images_qc'")
 
-        perform_high_res_images_processed_success_sum = perform_high_res_images_events \
-            .where("subtask_message like 'Images processed:%'") \
-            .withColumn("images_success",
-                        regexp_extract("subtask_message",
-                                       r"^Images processed: qc_success: (\d+), qc_retry: (\d+), qc_error: (\d+).*", 1)) \
-            .aggregate(Sum(group_fields=["dag", "task"], aggregation_field="images_success",
-                           aggregation_name=self._component_name + ".hi_res_images_processed_success"))
+        def __process_images_processed_status(column_name, regex_group_number, component_suffix):
+            """
+            Calculate aggregated metric for specific column
+            :param column_name: New column name for value of processed images
+            :param regex_group_number: index of group in regex pattern
+            :param component_suffix: name of suffix for metric
+            :return: aggregated metric for specific column
+            """
+            return perform_high_res_images_events \
+                .where("subtask_message like 'Images processed:%'") \
+                .withColumn(column_name,
+                            regexp_extract("subtask_message",
+                                           r"^Images processed: qc_success: (\d+), qc_retry: (\d+), qc_error: (\d+).*",
+                                           regex_group_number)) \
+                .aggregate(Sum(group_fields=["dag", "task"], aggregation_field=column_name,
+                               aggregation_name=self._component_name + "." + component_suffix))
 
-        perform_high_res_images_processed_retry_sum = perform_high_res_images_events \
-            .where("subtask_message like 'Images processed:%'") \
-            .withColumn("images_retry",
-                        regexp_extract("subtask_message",
-                                       r"^Images processed: qc_success: (\d+), qc_retry: (\d+), qc_error: (\d+).*", 2)) \
-            .aggregate(Sum(group_fields=["dag", "task"], aggregation_field="images_retry",
-                           aggregation_name=self._component_name + ".hi_res_images_processed_retry"))
+        perform_high_res_images_processed_success_sum = \
+            __process_images_processed_status("images_success", 1, "hi_res_images_processed_success")
 
-        perform_high_res_images_processed_error_sum = perform_high_res_images_events \
-            .where("subtask_message like 'Images processed:%'") \
-            .withColumn("images_error",
-                        regexp_extract("subtask_message",
-                                       r"^Images processed: qc_success: (\d+), qc_retry: (\d+), qc_error: (\d+).*", 3)) \
-            .aggregate(Sum(group_fields=["dag", "task"], aggregation_field="images_error",
-                           aggregation_name=self._component_name + ".hi_res_images_processed_error"))
+        perform_high_res_images_processed_retry_sum = \
+            __process_images_processed_status("images_retry", 2, "hi_res_images_processed_retry")
+
+        perform_high_res_images_processed_error_sum = \
+            __process_images_processed_status("images_error", 3, "hi_res_images_processed_error")
 
         __mapping_image_type = [
             (["image_type='HighResPortrait'", "status='qc_success'"], "hi_res_images_portrait"),
