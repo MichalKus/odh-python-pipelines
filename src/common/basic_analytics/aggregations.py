@@ -92,8 +92,8 @@ class AggregatedDataFrame(object):
         self.__dataframe = dataframe
         self.__aggregations = aggregations if isinstance(aggregations, list) else [aggregations]
 
-    def results(self, window, time_column):
-        return [aggregation.apply(self.__dataframe, window, time_column) for aggregation in self.__aggregations]
+    def results(self, aggregation_window, time_column):
+        return [aggregation.apply(self.__dataframe, aggregation_window, time_column) for aggregation in self.__aggregations]
 
 
 class Avg(Aggregation):
