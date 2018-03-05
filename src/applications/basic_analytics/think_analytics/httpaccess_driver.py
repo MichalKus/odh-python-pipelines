@@ -28,7 +28,7 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
         avg_response_time_stream = read_stream \
             .withColumn("response_time", read_stream["response_time"].cast("Int")) \
             .aggregate(
-            Avg(group_fields=["hostname"], aggregation_field="response_time", aggregation_name=self._component_name))
+                Avg(group_fields=["hostname"], aggregation_field="response_time", aggregation_name=self._component_name))
 
         count_responses_stream = read_stream \
             .aggregate(Count(group_fields=["hostname"], aggregation_name=self._component_name + ".responses"))

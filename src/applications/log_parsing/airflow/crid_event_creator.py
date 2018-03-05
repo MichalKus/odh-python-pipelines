@@ -1,3 +1,7 @@
+"""
+Creators for airflow:
+- CridEventCreator
+"""
 from common.log_parsing.dict_event_creator.event_creator import EventCreator
 
 
@@ -8,7 +12,7 @@ class CridEventCreator(EventCreator):
 
     def create(self, row):
         """
-        Parse row with Parser and then parse URL
+        Parse row and if it contains 'crid' field replace escaped characters
         :param row: Row from kafka topic
         :return: list of all fields with all URL parameters
         """

@@ -3,7 +3,7 @@ The module for the driver to calculate metrics related to uServices component.
 """
 from collections import namedtuple
 
-from pyspark.sql.functions import col, when, regexp_extract, concat, lit
+from pyspark.sql.functions import col, when, regexp_extract, lit
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
 from common.basic_analytics.aggregations import Count, Avg
@@ -45,11 +45,14 @@ class UServicesBasycAnalytics(BasicAnalyticsProcessor):
         )
 
         # filter data that contains necessary services
-        uservices_predicates = map(
-            lambda uservice_info: ((col("app") == uservice_info.app)
-                                   &
-                                   (col("header.x-original-uri").like("%/" + uservice_info.api_method + "%"))),
-            self.__target_uservices)
+
+        uservices_predicates = [
+            (
+                (col("app") == uservice_info.app)
+                &
+                (col("header.x-original-uri").like("%/" + uservice_info.api_method + "%"))
+            )
+            for uservice_info in self.__target_uservices]
 
         # join predicates into one condition
         uservices_filter = reduce(lambda col1, col2: col1.__or__(col2), uservices_predicates)
@@ -61,7 +64,7 @@ class UServicesBasycAnalytics(BasicAnalyticsProcessor):
                                               "undefined")) \
             .withColumn("country",
                         when(col("stack").isNotNull(),
-                             regexp_extract("stack",r".*-(\w+)$", 1))
+                             regexp_extract("stack", r".*-(\w+)$", 1))
                         .otherwise("undefined")) \
             .where(col("api_method") != "undefined")
 

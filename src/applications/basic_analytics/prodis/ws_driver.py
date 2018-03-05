@@ -49,18 +49,15 @@ class ProdisWS(BasicAnalyticsProcessor):
         count_by_level = stream_with_mapped_groups \
             .where((col("level") != "SUCCESS") | lower(col("message")).like("%succe%")) \
             .aggregate(
-            Count(group_fields=["hostname", "level"], aggregation_name=self._component_name + ".prodis_operations"))
+                Count(group_fields=["hostname", "level"], aggregation_name=self._component_name + ".prodis_operations"))
 
-        total_count = stream_with_mapped_groups \
-            .aggregate(
+        total_count = stream_with_mapped_groups.aggregate(
             Count(group_fields=["hostname"], aggregation_name=self._component_name + ".prodis_operations"))
 
-        total_count_by_group = stream_with_mapped_groups \
-            .aggregate(
+        total_count_by_group = stream_with_mapped_groups.aggregate(
             Count(group_fields=["hostname", "group"], aggregation_name=self._component_name))
 
-        count_by_group_and_level = stream_with_mapped_groups \
-            .aggregate(
+        count_by_group_and_level = stream_with_mapped_groups.aggregate(
             Count(group_fields=["hostname", "group", "level"], aggregation_name=self._component_name))
 
         return [total_count, count_by_level, total_count_by_group, count_by_group_and_level]
