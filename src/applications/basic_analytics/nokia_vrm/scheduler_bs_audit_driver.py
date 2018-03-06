@@ -1,14 +1,12 @@
-import sys
 from collections import namedtuple
 
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
+from pyspark.sql.functions import col
+from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
-from common.kafka_pipeline import KafkaPipeline
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.basic_analytics.aggregations import Count
-from common.spark_utils.custom_functions import custom_translate
-from util.utils import Utils
+from common.spark_utils.custom_functions import custom_translate_regex
+from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 QueryFilter = namedtuple("QueryFilter", "level message name")
 
@@ -51,7 +49,7 @@ class NokiaVrmSchedulerBSAudit(BasicAnalyticsProcessor):
         return [read_stream
                     .where(query)
                     .withColumn("message_type",
-                                custom_translate(
+                                custom_translate_regex(
                                     source_field=col("message"),
                                     mapping=dict(
                                         (".*" + query_filter.message + ".*", query_filter.name) for query_filter in
@@ -81,8 +79,4 @@ def create_processor(configuration):
 
 
 if __name__ == "__main__":
-    configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
-        configuration,
-        create_processor(configuration)
-    ).start()
+    start_basic_analytics_pipeline(create_processor)
