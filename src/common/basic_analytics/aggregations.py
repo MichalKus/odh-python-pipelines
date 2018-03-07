@@ -34,10 +34,10 @@ class Aggregation(object):
         window_aggreagated_df = input_dataframe.groupBy(window(time_column, actual_window), *self.__group_fields)
         aggregated_dataframe = self.aggregate(window_aggreagated_df)
         if "metric_name" not in aggregated_dataframe.columns:
-            aggregated_dataframe = self._construct_metric_name(aggregated_dataframe)
+            aggregated_dataframe = self._add_metric_name_column(aggregated_dataframe)
         return aggregated_dataframe
 
-    def _construct_metric_name(self, df, suffix=None):
+    def _add_metric_name_column(self, df, suffix=None):
         metric_name_parts = [lit(self.__aggregation_name)]
 
         for group_field in self.__group_fields:
@@ -274,8 +274,8 @@ class CompoundAggregation(Aggregation):
         result = grouped_dataframe.agg(*aggregations)
         for aggregation in self.__aggregations:
             result = aggregation.post_process(result)
-        return self._construct_metric_name(
-            result.withColumn("map", map_column)
-            .select("*", explode(col("map")).alias("metric_name", "value"))
-            .drop("map")
-            .drop(*aggregation_names), col("metric_name"))
+        result = result\
+            .withColumn("map", map_column)\
+            .select("*", explode(col("map")).alias("metric_name", "value"))\
+            .drop("map").drop(*aggregation_names)
+        return self._add_metric_name_column(result, col("metric_name"))
