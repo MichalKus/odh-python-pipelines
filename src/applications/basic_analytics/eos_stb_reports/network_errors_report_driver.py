@@ -28,7 +28,7 @@ class NetworkErrorsStbBasicAnalytics(BasicAnalyticsProcessor):
                 "ConnectivityTestReport_downstreamBitrate_error",
                 col("ConnectivityTestReport_downstreamBitrate").cast(IntegerType())
             ) \
-                .withColumn(
+            .withColumn(
                 "ConnectivityTestReport_upstreamBitrate_error",
                 col("ConnectivityTestReport_upstreamBitrate").cast(IntegerType())
             )
