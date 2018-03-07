@@ -23,7 +23,7 @@
 {"instance_name": "TVA Filepublisher", "hostname": "test1", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.instance_name.TVA_Filepublisher.level.ERROR.count", "value": 2, "level": "ERROR"}
 {"instance_name": "Tva2Prodis", "hostname": "test1", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.instance_name.Tva2Prodis.level.INFO.count", "value": 1, "level": "INFO"}
 {"instance_name": "TVA Filepublisher", "hostname": "test1", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.instance_name.TVA_Filepublisher.level.INFO.count", "value": 1, "level": "INFO"}
-{"@timestamp": "2017-03-29T04:09:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.count", "value": 35}
+{"@timestamp": "2017-03-29T04:09:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.count", "value": 36}
 {"instance_name": "Nagra ELK Import DEX EPG", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.Nagra_ELK_Import_DEX_EPG.count", "value": 3}
 {"instance_name": "TVA listings Ingester", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.TVA_listings_Ingester.count", "value": 3}
 {"instance_name": "DefaultsProvider", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.DefaultsProvider.count", "value": 3}
@@ -63,7 +63,7 @@
 {"instance_name": "Tva2Prodis", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.Tva2Prodis.level.INFO.count", "value": 1, "level": "INFO"}
 {"instance_name": "TVA Filepublisher", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.TVA_Filepublisher.level.INFO.count", "value": 8, "level": "INFO"}
 {"instance_name": "TVA Filepublisher", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.TVA_Filepublisher.level.something.count", "value": 1, "level": "something"}
-{"class_name": "FtpInput", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.class_name.FtpInput.count", "value": 33}
+{"class_name": "FtpInput", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.class_name.FtpInput.count", "value": 34}
 {"class_name": "p", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.class_name.p.count", "value": 1}
 {"class_name": "P", "@timestamp": "2017-03-29T04:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.class_name.P.count", "value": 1}
 {"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "catalog_ingestion_success", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.catalog_ingestion_success.count", "value": 1}
@@ -76,4 +76,6 @@
 {"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "subscriber_addition", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.subscriber_addition.count", "value": 1}
 {"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "subscriber_removal", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.subscriber_removal.count", "value": 1}
 {"@timestamp": "2017-03-29T04:09:00.000Z", "message_type": "prodis_delta_pull_requests", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.message_type.prodis_delta_pull_requests.count", "value": 1}
-{"@timestamp": "2017-03-29T04:09:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.level.other.count", "value": 1, "level": "other"}
+{"@timestamp": "2017-03-29T04:09:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.hostname.test1.level.other.count", "value": 2, "level": "other"}
+{"@timestamp": "2017-03-29T04:09:00.000Z", "instance_name": "", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.EMPTY.level.something.count", "value": 1, "level": "something"}
+{"@timestamp": "2017-03-29T04:09:00.000Z", "instance_name": "", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stagis.instance_name.EMPTY.count", "value": 1}
