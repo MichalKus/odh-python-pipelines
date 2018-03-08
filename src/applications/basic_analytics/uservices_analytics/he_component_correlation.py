@@ -1,4 +1,4 @@
-from pyspark.sql.functions import col, regexp_replace, split, size, when, concat, lit
+from pyspark.sql.functions import col, split, size, when, concat, lit
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, TimestampType
 
 from common.basic_analytics.aggregations import Count, Max, Min, Avg, CompoundAggregation
@@ -8,7 +8,7 @@ from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
     """
-    VROPS Virtual Machine CPU Processor for averaging cpu stats
+    Collect uservice inbound & outbound requests metric which are tied with HE components
     """
 
     def _pre_process(self, stream):
@@ -34,7 +34,7 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
             .withColumn("dest", split(col("http.request"), "/").getItem(1)) \
             .withColumn("app", split(col("http.useragent"), "/").getItem(0)) \
             .withColumn("duration_ms", col("http.duration") * 1000) \
-            .select("@timestamp", "tenant", "app", "dest", "duration_ms")
+            .select("@timestamp", "tenant", "app", "dest", "duration_ms", "host")
 
         end2end = filtered \
             .where((col("duration_ms") > 0) & (col("request") != "/info")) \
@@ -56,11 +56,11 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
 
     def _agg_uservice2component_duration(self, stream):
         """
-        Aggregate uservice - he component call counts
+        Aggregate uservice - he component call duration
         :param stream:
         :return:
         """
-        kwargs = {'group_fields': ["tenant", "app", "dest"],
+        kwargs = {'group_fields': ["tenant", "app", "dest", "host"],
                   'aggregation_field': "duration_ms",
                   'aggregation_name': self._component_name}
 
@@ -70,7 +70,7 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
 
     def _agg_end2end(self, stream):
         """
-        Aggregate uservice - he component call counts
+        Aggregate end to end calls from STB - uservice
         :param stream:
         :return:
         """
@@ -91,7 +91,9 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
 
         pre_processed_streams = self._pre_process(read_stream)
 
-        return [self._agg_uservice2component_count(pre_processed_streams[0])]
+        return [self._agg_uservice2component_count(pre_processed_streams[0]),
+                self._agg_uservice2component_duration(pre_processed_streams[1]),
+                self._agg_end2end(pre_processed_streams[2])]
 
     @staticmethod
     def create_schema():
@@ -107,6 +109,7 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
             StructField("header", StructType([
                 StructField("x-request-id", StringType())
             ])),
+            StructField("host", StringType()),
             StructField("message", StringType()),
             StructField("request", StringType()),
             StructField("status", StringType()),
