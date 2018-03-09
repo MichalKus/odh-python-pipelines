@@ -22,9 +22,10 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
             .withColumn("tenant", col("tenant").getItem(size(col("tenant")) - 1))
 
         uservice2component_count = filtered \
-            .where((col("message").startswith("Attempting")) | (col("message").startswith("Successfully"))) \
+            .where((col("message").startswith("Attempting")) | (col("message").startswith("Successfully")) | (col("message").startswith("Failed to call"))) \
             .withColumn("calls", when(col("message").startswith("Attempting"), "attempts").when(
-            col("message").startswith("Successfully"), "success")) \
+            col("message").startswith("Successfully"), "success").when(
+            col("message").startswith("Failed to call"), "failures")) \
             .withColumn("requests", lit(1)) \
             .withColumn("dest", split(col("message"), "/").getItem(3)) \
             .select("@timestamp", "tenant", "app", "dest", "calls", "requests")

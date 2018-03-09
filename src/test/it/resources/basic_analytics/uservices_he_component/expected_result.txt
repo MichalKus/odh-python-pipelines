@@ -2,6 +2,7 @@
 {"tenant":"be","app":"recording-service","dest":"vrm-ea","calls":"attempts","value":2,"metric_name":"logs-uservices.tenant.be.app.recording-service.dest.vrm-ea.calls.attempts.requests.count","@timestamp":"2018-03-08T08:18:00.000Z"}
 {"tenant":"de","app":"discovery-service","dest":"traxis-web","calls":"success","value":3,"metric_name":"logs-uservices.tenant.de.app.discovery-service.dest.traxis-web.calls.success.requests.count","@timestamp":"2018-03-08T08:18:00.000Z"}
 {"tenant":"de","app":"discovery-service","dest":"reng","calls":"success","value":3,"metric_name":"logs-uservices.tenant.de.app.discovery-service.dest.reng.calls.success.requests.count","@timestamp":"2018-03-08T08:18:00.000Z"}
+{"tenant":"be","app":"vod-service","dest":"traxis-web","calls":"failures","value":1,"metric_name":"logs-uservices.tenant.be.app.vod-service.dest.traxis-web.calls.failures.requests.count","@timestamp":"2018-03-09T07:30:00.000Z"}
 {"tenant":"be","app":"recording-service","status":"2xx","metric_name":"logs-uservices.tenant.be.app.recording-service.status.2xx.duration_ms.max","value":1200.0,"@timestamp":"2018-03-08T08:20:00.000Z"}
 {"tenant":"be","app":"recording-service","status":"2xx","metric_name":"logs-uservices.tenant.be.app.recording-service.status.2xx.duration_ms.min","value":1200.0,"@timestamp":"2018-03-08T08:20:00.000Z"}
 {"tenant":"be","app":"recording-service","status":"2xx","metric_name":"logs-uservices.tenant.be.app.recording-service.status.2xx.duration_ms.avg","value":1200.0,"@timestamp":"2018-03-08T08:20:00.000Z"}
