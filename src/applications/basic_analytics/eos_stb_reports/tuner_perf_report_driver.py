@@ -95,24 +95,20 @@ class TunerPerfReport(BasicAnalyticsProcessor):
         aggregations_ls.extend(aggregation_fields_without_sum)
         aggregations_ls.extend(aggregation_fields_with_sum)
 
-        result = []
+        aggregations = []
 
         for field in aggregations_ls:
-            kwargs = {'group_fields': self.__dimensions,
-                      'aggregation_name': self._component_name,
-                      'aggregation_field': field
-                      }
+            kwargs = {'aggregation_field': field}
 
-            aggregations = [Count(**kwargs), Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
-                            P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
-                            P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)]
+            aggregations.extend([Count(**kwargs), Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
+                                 P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
+                                 P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)])
 
             if kwargs["aggregation_field"] in aggregation_fields_with_sum:
                 aggregations.append(Sum(**kwargs))
 
-            result.append(pre_result_df.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs)))
-
-        return result
+        return [pre_result_df.aggregate(CompoundAggregation(aggregations=aggregations, group_fields=self.__dimensions,
+                                                            aggregation_name=self._component_name))]
 
 
     @staticmethod

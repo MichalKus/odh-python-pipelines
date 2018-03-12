@@ -31,20 +31,14 @@ class UsageCollectorDroppedEvents(BasicAnalyticsProcessor):
             .withColumn("UsageCollectorReport_missed_events",
                         col("UsageCollectorReport_missed_events").cast(IntegerType()))
 
-        aggregation_field = "UsageCollectorReport_missed_events"
-        result = []
-
-        kwargs = {'group_fields': self.__dimensions,
-                  'aggregation_name': self._component_name,
-                  'aggregation_field': aggregation_field}
+        kwargs = {"aggregation_field": "UsageCollectorReport_missed_events"}
 
         aggregations = [Sum(**kwargs), Count(**kwargs), Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
                         P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
                         P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)]
 
-        result.append(stream.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs)))
-
-        return result
+        return [stream.aggregate(CompoundAggregation(aggregations=aggregations, group_fields=self.__dimensions,
+                                                     aggregation_name=self._component_name))]
 
     @staticmethod
     def create_schema():
