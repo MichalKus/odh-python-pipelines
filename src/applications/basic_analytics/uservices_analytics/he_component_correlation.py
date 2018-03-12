@@ -63,13 +63,12 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
         :param stream:
         :return:
         """
-        kwargs = {'group_fields': ["tenant", "app", "dest", "host"],
-                  'aggregation_field': "duration_ms",
-                  'aggregation_name': self._component_name}
+        kwargs = {'aggregation_field': "duration_ms"}
 
         aggregations = [Max(**kwargs), Min(**kwargs), Avg(**kwargs)]
 
-        return stream.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs))
+        return stream.aggregate(CompoundAggregation(aggregations=aggregations, aggregation_name=self._component_name,
+                                                    group_fields=["tenant", "app", "dest", "host"]))
 
     def _agg_end2end(self, stream):
         """
@@ -77,13 +76,12 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
         :param stream:
         :return:
         """
-        kwargs = {'group_fields': ["tenant", "app", "status"],
-                  'aggregation_field': "duration_ms",
-                  'aggregation_name': self._component_name}
+        kwargs = {'aggregation_field': "duration_ms"}
 
         aggregations = [Max(**kwargs), Min(**kwargs), Avg(**kwargs)]
 
-        return stream.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs))
+        return stream.aggregate(CompoundAggregation(aggregations=aggregations, aggregation_name=self._component_name,
+                                                    group_fields=["tenant", "app", "status"]))
 
     def _process_pipeline(self, read_stream):
         """
