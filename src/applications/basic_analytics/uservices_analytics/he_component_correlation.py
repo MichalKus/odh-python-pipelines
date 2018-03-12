@@ -22,10 +22,12 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
             .withColumn("tenant", col("tenant").getItem(size(col("tenant")) - 1))
 
         uservice2component_count = filtered \
-            .where((col("message").startswith("Attempting")) | (col("message").startswith("Successfully")) | (col("message").startswith("Failed to call"))) \
-            .withColumn("calls", when(col("message").startswith("Attempting"), "attempts").when(
-            col("message").startswith("Successfully"), "success").when(
-            col("message").startswith("Failed to call"), "failures")) \
+            .where((col("message").startswith("Attempting"))
+                   | (col("message").startswith("Successfully"))
+                   | (col("message").startswith("Failed to call"))) \
+            .withColumn("calls", when(col("message").startswith("Attempting"), "attempts")
+                        .when(col("message").startswith("Successfully"), "success")
+                        .when(col("message").startswith("Failed to call"), "failures")) \
             .withColumn("requests", lit(1)) \
             .withColumn("dest", split(col("message"), "/").getItem(3)) \
             .select("@timestamp", "tenant", "app", "dest", "calls", "requests")
@@ -51,7 +53,7 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
         :return:
         """
         aggregation = Count(group_fields=["tenant", "app", "dest", "calls"], aggregation_field="requests",
-                          aggregation_name=self._component_name)
+                            aggregation_name=self._component_name)
 
         return stream.aggregate(aggregation)
 
@@ -82,7 +84,6 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
         aggregations = [Max(**kwargs), Min(**kwargs), Avg(**kwargs)]
 
         return stream.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs))
-
 
     def _process_pipeline(self, read_stream):
         """
@@ -129,6 +130,7 @@ def create_processor(configuration):
     :param configuration: dict containing configurations
     """
     return UserviceHeComponentProcessor(configuration, UserviceHeComponentProcessor.create_schema())
+
 
 if __name__ == "__main__":
     start_basic_analytics_pipeline(create_processor)
