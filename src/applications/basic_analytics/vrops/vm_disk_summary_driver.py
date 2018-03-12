@@ -6,9 +6,9 @@ from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from common.basic_analytics.aggregations import Avg
 
 
-class VMDatastoreProcessor(BasicAnalyticsProcessor):
+class VMDiskSummaryProcessor(BasicAnalyticsProcessor):
     """
-    VROPS Virtual Machine MEM NET Processor for averaging net stats
+    VROPS Virtual Machine Processor for averaging Disk/Virtual Disk/Summary stats
     """
 
     def _prepare_timefield(self, data_stream):
@@ -24,7 +24,7 @@ class VMDatastoreProcessor(BasicAnalyticsProcessor):
         :param read_stream: input stream
         """
 
-        def aggregate(aggregation_field):
+        def aggregate(aggregation_field, group):
             """
             Build aggregated stream for each metric
             :param metric_name: name of mem/net metric which needs to be averaged.
@@ -36,21 +36,18 @@ class VMDatastoreProcessor(BasicAnalyticsProcessor):
                 .select("@timestamp", "group", "res_kind", "name",
                         col("metrics.{}".format(aggregation_field)).alias(aggregation_field)) \
                 .filter(
-                (col("group") == "datastore") & (col("res_kind") == "VirtualMachine") & (col(aggregation_field).isNotNull())) \
+                (col("group") == group) & (col("res_kind") == "VirtualMachine") & (col(aggregation_field).isNotNull())) \
                 .withColumn("name", regexp_replace("name", r"\.", "-")) \
                 .aggregate(aggregation)
 
             return agg_stream
 
-        numberreadaveraged_average = aggregate("numberreadaveraged_average")
-        numberwriteaveraged_average = aggregate("numberwriteaveraged_average")
-        read_average = aggregate("read_average")
-        totallatency_average = aggregate("totallatency_average")
-        totalwritelatency_average = aggregate("totalwritelatency_average")
-        write_average = aggregate("write_average")
+        disk_usage_average = aggregate("usage_average", "disk")
+        virtualdisk_write_average = aggregate("write_average", "virtualdisk")
+        virtualdisk_read_average = aggregate("read_average", "virtualdisk")
+        summary_workload_indicator = aggregate("workload_indicator", "summary")
 
-        return [numberreadaveraged_average, numberwriteaveraged_average, read_average, totallatency_average,
-                totalwritelatency_average, write_average]
+        return [disk_usage_average, virtualdisk_write_average, virtualdisk_read_average, summary_workload_indicator]
 
     @staticmethod
     def create_schema():
@@ -59,13 +56,10 @@ class VMDatastoreProcessor(BasicAnalyticsProcessor):
         """
         return StructType([
             StructField("metrics", StructType([
-                StructField("numberreadaveraged_average", DoubleType()),
-                StructField("numberwriteaveraged_average", DoubleType()),
-                StructField("read_average", DoubleType()),
-                StructField("totallatency_average", DoubleType()),
-                StructField("totalreadlatency_average", DoubleType()),
-                StructField("totalwritelatency_average", DoubleType()),
+                StructField("usage_average", DoubleType()),
                 StructField("write_average", DoubleType()),
+                StructField("read_average", DoubleType()),
+                StructField("workload_indicator", DoubleType())
             ])),
             StructField("group", StringType()),
             StructField("name", StringType()),
@@ -79,7 +73,7 @@ def create_processor(configuration):
     Method to create the instance of the processor
     :param configuration: dict containing configurations
     """
-    return VMDatastoreProcessor(configuration, VMDatastoreProcessor.create_schema())
+    return VMDiskSummaryProcessor(configuration, VMDiskSummaryProcessor.create_schema())
 
 if __name__ == "__main__":
     start_basic_analytics_pipeline(create_processor)
