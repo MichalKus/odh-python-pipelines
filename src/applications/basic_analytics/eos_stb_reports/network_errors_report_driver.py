@@ -34,17 +34,17 @@ class NetworkErrorsStbBasicAnalytics(BasicAnalyticsProcessor):
             )
 
         aggregation_fields = ["Ethernet_TxErrors", "Ethernet_RxErrors", "Wifi_TxErrors", "Wifi_RxErrors"]
-        result = []
+        aggregations = []
 
         for field in aggregation_fields:
-            kwargs = {'group_fields': self.__dimensions,
-                      'aggregation_name': self._component_name,
-                      'aggregation_field': field}
+            kwargs = {'aggregation_field': field}
 
-            aggregations = [Sum(**kwargs), Count(**kwargs), Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
+            aggregations.extend([Sum(**kwargs), Count(**kwargs), Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
                             P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
-                            P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)]
-            result.append(stream.aggregate(CompoundAggregation(aggregations=aggregations, **kwargs)))
+                            P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)])
+
+        result = [stream.aggregate(CompoundAggregation(aggregations=aggregations, group_fields=self.__dimensions,
+                                                       aggregation_name=self._component_name))]
 
         self.__append_connectivity_fields(stream, result)
         return result

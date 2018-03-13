@@ -28,6 +28,12 @@ class Aggregation(object):
         self.__aggregation_window = aggregation_window
         self.__aggregation_name = aggregation_name
 
+    def get_aggregation_field(self):
+        return self._aggregation_field
+
+    def get_alias(self):
+        return self.get_aggregation_field() + "_" + self.get_name()
+
     def apply(self, input_dataframe, aggregation_window, time_column):
         actual_window = self.__aggregation_window \
             if self.__aggregation_window is not None else aggregation_window
@@ -170,7 +176,7 @@ class Percentile(Aggregation):
         """
 
     def post_process(self, df):
-        column_name = self.get_name()
+        column_name = self.get_alias()
         return df.withColumn(column_name, col(column_name).getItem(0))
 
 
@@ -258,19 +264,19 @@ class CompoundAggregation(Aggregation):
     """
     Computes collection of aggregations in "one go"
     """
-    def __init__(self, aggregations, group_fields=None, aggregation_field=None,
-                 aggregation_window=None, aggregation_name=None):
+    def __init__(self, aggregations, group_fields=None, aggregation_name=None):
         self.__aggregations = aggregations
-        super(CompoundAggregation, self).__init__(group_fields, aggregation_field, aggregation_window, aggregation_name)
+        super(CompoundAggregation, self).__init__(group_fields=group_fields, aggregation_name=aggregation_name)
 
     def get_aggregation(self):
         return None
 
     def aggregate(self, grouped_dataframe):
-        aggregation_names = [aggregation.get_name() for aggregation in self.__aggregations]
-        aggregations = [aggregation.get_aggregation().alias(aggregation.get_name())
+        aggregation_names = [aggregation.get_alias() for aggregation in self.__aggregations]
+        aggregations = [aggregation.get_aggregation().alias(aggregation.get_alias())
                         for aggregation in self.__aggregations]
-        map_column = create_map(list(chain(*((lit(agg), col(agg)) for agg in aggregation_names)))).alias("map")
+        map_column = create_map(list(chain(*((lit(agg.get_aggregation_field() + "." + agg.get_name()),
+                                              col(agg.get_alias())) for agg in self.__aggregations)))).alias("map")
         result = grouped_dataframe.agg(*aggregations)
         for aggregation in self.__aggregations:
             result = aggregation.post_process(result)
