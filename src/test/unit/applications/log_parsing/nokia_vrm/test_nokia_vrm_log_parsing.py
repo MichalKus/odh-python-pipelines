@@ -6,6 +6,7 @@ from test.unit.core.base_message_parsing_test_cases import BaseMultipleMessagePa
 from util.configuration import Configuration
 from common.log_parsing.timezone_metadata import timezones
 
+
 class NokiaVrmMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
     event_creators = create_event_creators(Configuration(dict={"timezone": {"name": "Europe/Amsterdam"}}))
 
