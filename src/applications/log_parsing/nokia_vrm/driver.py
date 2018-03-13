@@ -1,7 +1,8 @@
 from common.log_parsing.event_creator_tree.multisource_configuration import MatchField, SourceConfiguration
 from common.log_parsing.list_event_creator.event_creator import EventCreator
 from common.log_parsing.list_event_creator.splitter_parser import SplitterParser
-from common.log_parsing.metadata import Metadata, TimestampField, StringField
+from common.log_parsing.metadata import Metadata, StringField
+from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.kafka_pipeline_helper import start_log_parsing_pipeline
 from util.utils import Utils
 
@@ -12,57 +13,67 @@ def create_event_creators(configuration=None):
     :param configuration: YML config
     :return: Tree of event_creators
     """
-    nokia_vrm_scheduler_audit_csv = EventCreator(Metadata([TimestampField("@timestamp", "%d-%b-%Y %H:%M:%S.%f"),
-                                                           StringField("level"),
-                                                           StringField("unknown_field"),
-                                                           StringField("event_id"),
-                                                           StringField("domain"),
-                                                           StringField("ip"),
-                                                           StringField("method"),
-                                                           StringField("params"),
-                                                           StringField("description"),
-                                                           StringField("message")]),
-                                                 SplitterParser("|", is_trim=True))
 
-    nokia_vrm_audit_csv = EventCreator(Metadata([TimestampField("@timestamp", "%d-%b-%Y %H:%M:%S.%f"),
-                                                 StringField("level"),
-                                                 StringField("event_id"),
-                                                 StringField("domain"),
-                                                 StringField("ip"),
-                                                 StringField("method"),
-                                                 StringField("params"),
-                                                 StringField("description"),
-                                                 StringField("message")]),
-                                       SplitterParser("|", is_trim=True))
+    timezone_name = configuration.property("timezone.name")
+    timezones_property = configuration.property("timezone.priority", "dic")
 
-    nokia_vrm_cdvr_audit_csv = EventCreator(Metadata([TimestampField("@timestamp", "%d-%b-%Y %H:%M:%S.%f"),
-                                                      StringField("level"),
-                                                      StringField("event_id"),
-                                                      StringField("domain"),
-                                                      StringField("ip"),
-                                                      StringField("method"),
-                                                      StringField("params"),
-                                                      StringField("description"),
-                                                      StringField("message")]),
-                                            SplitterParser("|", is_trim=True))
+    nokia_vrm_scheduler_audit_csv = EventCreator(Metadata([
+        ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+        StringField("level"),
+        StringField("unknown_field"),
+        StringField("event_id"),
+        StringField("domain"),
+        StringField("ip"),
+        StringField("method"),
+        StringField("params"),
+        StringField("description"),
+        StringField("message")]),
+        SplitterParser("|", is_trim=True))
 
-    nokia_vrm_ds_audit_csv = EventCreator(Metadata([TimestampField("@timestamp", "%d-%b-%Y %H:%M:%S.%f"),
-                                                    StringField("level"),
-                                                    StringField("event_id_1"),
-                                                    StringField("event_id_2"),
-                                                    StringField("domain"),
-                                                    StringField("ip"),
-                                                    StringField("method"),
-                                                    StringField("params"),
-                                                    StringField("description"),
-                                                    StringField("message")]),
-                                          SplitterParser("|", is_trim=True))
+    nokia_vrm_audit_csv = EventCreator(Metadata([
+        ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+        StringField("level"),
+        StringField("event_id"),
+        StringField("domain"),
+        StringField("ip"),
+        StringField("method"),
+        StringField("params"),
+        StringField("description"),
+        StringField("message")]),
+        SplitterParser("|", is_trim=True))
 
-    nokia_vrm_bs_lgi_lgienh_api_audit_csv = EventCreator(Metadata([TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S.%f"),
-                                                                   StringField("level"),
-                                                                   StringField("endpoint"),
-                                                                   StringField("request")]),
-                                                         SplitterParser("|", is_trim=True))
+    nokia_vrm_cdvr_audit_csv = EventCreator(Metadata([
+        ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+        StringField("level"),
+        StringField("event_id"),
+        StringField("domain"),
+        StringField("ip"),
+        StringField("method"),
+        StringField("params"),
+        StringField("description"),
+        StringField("message")]),
+        SplitterParser("|", is_trim=True))
+
+    nokia_vrm_ds_audit_csv = EventCreator(Metadata([
+        ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+        StringField("level"),
+        StringField("event_id_1"),
+        StringField("event_id_2"),
+        StringField("domain"),
+        StringField("ip"),
+        StringField("method"),
+        StringField("params"),
+        StringField("description"),
+        StringField("message")]),
+        SplitterParser("|", is_trim=True))
+
+    nokia_vrm_bs_lgi_lgienh_api_audit_csv = EventCreator(
+        Metadata([
+            ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+            StringField("level"),
+            StringField("endpoint"),
+            StringField("request")]),
+        SplitterParser("|", is_trim=True))
 
     return MatchField("source", {
         "scheduler_bs_audit.log": SourceConfiguration(
