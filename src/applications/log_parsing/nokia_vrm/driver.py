@@ -59,10 +59,10 @@ def create_event_creators(configuration=None):
                                           SplitterParser("|", is_trim=True))
 
     nokia_vrm_bs_lgi_lgienh_api_audit_csv = EventCreator(Metadata([TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S.%f"),
-                                                    StringField("level"),
-                                                    StringField("endpoint"),
-                                                    StringField("request")]),
-                                          SplitterParser("|", is_trim=True))
+                                                                   StringField("level"),
+                                                                   StringField("endpoint"),
+                                                                   StringField("request")]),
+                                                         SplitterParser("|", is_trim=True))
 
     return MatchField("source", {
         "scheduler_bs_audit.log": SourceConfiguration(
@@ -81,10 +81,16 @@ def create_event_creators(configuration=None):
             nokia_vrm_cdvr_audit_csv,
             Utils.get_output_topic(configuration, "cdvr_bs_audit")
         ),
-        "epg_audit.log": SourceConfiguration(
-            nokia_vrm_ds_audit_csv,
-            Utils.get_output_topic(configuration, "epg_audit")
-        ),
+        "epg_audit.log": MatchField("topic", {
+            "nokiavrmds_epgaudit": SourceConfiguration(
+                nokia_vrm_ds_audit_csv,
+                Utils.get_output_topic(configuration, "epg_ds_audit")
+            ),
+            "nokiavrmbs_epgaudit": SourceConfiguration(
+                nokia_vrm_ds_audit_csv,
+                Utils.get_output_topic(configuration, "epg_bs_audit")
+            )
+        }),
         "cDVR_audit.log": SourceConfiguration(
             nokia_vrm_ds_audit_csv,
             Utils.get_output_topic(configuration, "cdvr_ds_audit")

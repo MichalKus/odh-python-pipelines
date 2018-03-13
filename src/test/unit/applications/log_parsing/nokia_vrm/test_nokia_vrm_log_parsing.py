@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from applications.log_parsing.nokia_vrm.driver import create_event_creators
+from common.log_parsing.metadata import ParsingException
 from test.unit.core.base_message_parsing_test_cases import BaseMultipleMessageParsingTestCase
 
 
@@ -84,8 +85,9 @@ class NokiaVrmMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
             }
         )
 
-    def test_epg_audit(self):
+    def test_epg_ds_audit(self):
         self.assert_parsing({
+            "topic": "nokiavrmds_epgaudit",
             "source": "/opt/vrm/jetty-dvr-console-BS/logs/epg_audit.log",
             "message": "29-Nov-2017 19:30:01.480 | ERROR | 685767e5-7da7-4b15-bc90-c2dae3d129e6 | 640572db-5331-48c3-a446-072ad80c02d1 | INTERNAL | 10.95.97.66 | [[PUT] /epg/data/Event] | [{schema=2.0, entries=true, query=.where(eq(e.internalId,49229),or(eq(e.locked,null()),eq(e.locked,false()))), count=true}] | Data access unrecoverable error | Unrecoverable error details: Duplicate entry '' for key 'alternateId'"
         },
@@ -101,6 +103,34 @@ class NokiaVrmMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "description": "Data access unrecoverable error",
                 "message": "Unrecoverable error details: Duplicate entry '' for key 'alternateId'"
             })
+
+    def test_epg_bs_audit(self):
+        self.assert_parsing({
+            "topic": "nokiavrmbs_epgaudit",
+            "source": "/opt/vrm/jetty-dvr-console-BS/logs/epg_audit.log",
+            "message": "29-Nov-2017 19:30:01.480 | ERROR | 685767e5-7da7-4b15-bc90-c2dae3d129e6 | 640572db-5331-48c3-a446-072ad80c02d1 | INTERNAL | 10.95.97.66 | [[PUT] /epg/data/Event] | [{schema=2.0, entries=true, query=.where(eq(e.internalId,49229),or(eq(e.locked,null()),eq(e.locked,false()))), count=true}] | Data access unrecoverable error | Unrecoverable error details: Duplicate entry '' for key 'alternateId'"
+        },
+            {
+                "@timestamp": datetime(2017, 11, 29, 19, 30, 01, 480000),
+                "level": "ERROR",
+                "event_id_1": "685767e5-7da7-4b15-bc90-c2dae3d129e6",
+                "event_id_2": "640572db-5331-48c3-a446-072ad80c02d1",
+                "domain": "INTERNAL",
+                "ip": "10.95.97.66",
+                "method": "[[PUT] /epg/data/Event]",
+                "params": "[{schema=2.0, entries=true, query=.where(eq(e.internalId,49229),or(eq(e.locked,null()),eq(e.locked,false()))), count=true}]",
+                "description": "Data access unrecoverable error",
+                "message": "Unrecoverable error details: Duplicate entry '' for key 'alternateId'"
+            })
+
+    def test_epg_audit_fails_with_non_existing_topic(self):
+        row = {
+            "topic": "invalid_topic",
+            "source": "/opt/vrm/jetty-dvr-console-BS/logs/epg_audit.log",
+            "message": "29-Nov-2017 19:30:01.480 | ERROR | 685767e5-7da7-4b15-bc90-c2dae3d129e6 | 640572db-5331-48c3-a446-072ad80c02d1 | INTERNAL | 10.95.97.66 | [[PUT] /epg/data/Event] | [{schema=2.0, entries=true, query=.where(eq(e.internalId,49229),or(eq(e.locked,null()),eq(e.locked,false()))), count=true}] | Data access unrecoverable error | Unrecoverable error details: Duplicate entry '' for key 'alternateId'"
+        }
+        with self.assertRaises(ParsingException):
+            self.event_creators.get_parsing_context(row).event_creator.create(row)
 
     def test_cdvr_audit(self):
         self.assert_parsing({
