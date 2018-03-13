@@ -6,7 +6,7 @@ Aggregation class defines common methods for all aggregations.
 from abc import ABCMeta, abstractmethod
 
 from pyspark.sql.functions import lit, avg, count, sum, max, min, col, stddev, expr, regexp_replace
-from pyspark.sql.functions import window, concat_ws, approx_count_distinct, explode, create_map
+from pyspark.sql.functions import window, concat_ws, approx_count_distinct, explode, create_map, when
 from pyspark.sql.types import DecimalType
 from itertools import chain
 
@@ -34,10 +34,10 @@ class Aggregation(object):
         window_aggreagated_df = input_dataframe.groupBy(window(time_column, actual_window), *self.__group_fields)
         aggregated_dataframe = self.aggregate(window_aggreagated_df)
         if "metric_name" not in aggregated_dataframe.columns:
-            aggregated_dataframe = aggregated_dataframe.withColumn("metric_name", self._construct_metric_name())
+            aggregated_dataframe = self._add_metric_name_column(aggregated_dataframe)
         return aggregated_dataframe
 
-    def _construct_metric_name(self, suffix=None):
+    def _add_metric_name_column(self, df, suffix=None):
         metric_name_parts = [lit(self.__aggregation_name)]
 
         for group_field in self.__group_fields:
@@ -47,8 +47,12 @@ class Aggregation(object):
         metric_name_parts += [lit(self._aggregation_field)]
         metric_name_parts += [lit(self.get_name())] if suffix is None else [suffix]
 
-        return concat_ws(".", *[regexp_replace(x, "[\\s\\.]+", "_") if isinstance(x, basestring)
-                                else regexp_replace(x, "\\s+", "_") for x in metric_name_parts])
+        metric_name = concat_ws(".", *[(regexp_replace(x, "[\\s\\.]+", "_")) if isinstance(x, basestring)
+                                       else regexp_replace(x, "\\s+", "_") for x in metric_name_parts])
+
+        df = df.withColumn("metric_name", metric_name)\
+            .withColumn("metric_name", regexp_replace("metric_name", "\\.\\.", ".EMPTY."))
+        return df
 
     def aggregate(self, grouped_dataframe):
         """
@@ -270,9 +274,8 @@ class CompoundAggregation(Aggregation):
         result = grouped_dataframe.agg(*aggregations)
         for aggregation in self.__aggregations:
             result = aggregation.post_process(result)
-        return result\
+        result = result\
             .withColumn("map", map_column)\
             .select("*", explode(col("map")).alias("metric_name", "value"))\
-            .withColumn("metric_name", self._construct_metric_name(col("metric_name")))\
-            .drop("map")\
-            .drop(*aggregation_names)
+            .drop("map").drop(*aggregation_names)
+        return self._add_metric_name_column(result, col("metric_name"))

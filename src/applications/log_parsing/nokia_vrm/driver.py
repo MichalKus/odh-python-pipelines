@@ -1,11 +1,8 @@
-import sys
-
-from common.kafka_pipeline import KafkaPipeline
 from common.log_parsing.event_creator_tree.multisource_configuration import MatchField, SourceConfiguration
 from common.log_parsing.list_event_creator.event_creator import EventCreator
 from common.log_parsing.list_event_creator.splitter_parser import SplitterParser
-from common.log_parsing.log_parsing_processor import LogParsingProcessor
-from common.log_parsing.metadata import *
+from common.log_parsing.metadata import Metadata, TimestampField, StringField
+from util.kafka_pipeline_helper import start_log_parsing_pipeline
 from util.utils import Utils
 
 
@@ -112,8 +109,4 @@ def create_event_creators(configuration=None):
 
 
 if __name__ == "__main__":
-    configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
-        configuration,
-        LogParsingProcessor(configuration, create_event_creators(configuration))
-    ).start()
+    start_log_parsing_pipeline(create_event_creators)
