@@ -20,7 +20,7 @@ def create_event_creators(configuration=None):
     nokia_vrm_scheduler_audit_csv = EventCreator(Metadata([
         ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
         StringField("level"),
-        StringField("unknown_field"),
+        StringField("field1"),
         StringField("event_id"),
         StringField("domain"),
         StringField("ip"),
@@ -31,18 +31,6 @@ def create_event_creators(configuration=None):
         SplitterParser("|", is_trim=True))
 
     nokia_vrm_audit_csv = EventCreator(Metadata([
-        ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
-        StringField("level"),
-        StringField("event_id"),
-        StringField("domain"),
-        StringField("ip"),
-        StringField("method"),
-        StringField("params"),
-        StringField("description"),
-        StringField("message")]),
-        SplitterParser("|", is_trim=True))
-
-    nokia_vrm_cdvr_audit_csv = EventCreator(Metadata([
         ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
         StringField("level"),
         StringField("event_id"),
@@ -89,7 +77,7 @@ def create_event_creators(configuration=None):
             Utils.get_output_topic(configuration, "authentication_bs_audit")
         ),
         "cdvr_bs_audit.log": SourceConfiguration(
-            nokia_vrm_cdvr_audit_csv,
+            nokia_vrm_audit_csv,
             Utils.get_output_topic(configuration, "cdvr_bs_audit")
         ),
         "epg_audit.log": MatchField("topic", {
