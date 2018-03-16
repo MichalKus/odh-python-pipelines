@@ -58,7 +58,7 @@ class AbstractField:
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self, name, output_name=None):
+    def __init__(self, name="any_field", output_name=None):
         """
         :param name: field's name
         :param output_name: field's output name
