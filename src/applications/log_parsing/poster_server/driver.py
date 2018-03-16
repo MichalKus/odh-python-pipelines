@@ -5,7 +5,8 @@ from common.log_parsing.list_event_creator.event_creator import EventCreator
 from common.log_parsing.list_event_creator.regexp_parser import RegexpParser
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration, MatchField
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
-from common.log_parsing.metadata import Metadata, StringField, TimestampField
+from common.log_parsing.metadata import Metadata, StringField
+from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
 
 
@@ -15,12 +16,16 @@ def create_event_creators(configuration=None):
     :param configuration: YML config
     :return: Tree of event_creators
     """
-    poster_server_log = EventCreator(Metadata([TimestampField("@timestamp", "%Y-%m-%d %H:%M:%S.%f"),
+
+    timezone_name = configuration.property("timezone.name")
+    timezones_property = configuration.property("timezone.priority", "dic")
+
+    poster_server_log = EventCreator(Metadata([ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
                                                StringField("level"),
                                                StringField("module"),
                                                StringField("message")]),
                                      RegexpParser(
-                                         r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})"
+                                         r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\,\d{3})"
                                          r"\s+(?P<level>\w+?)\s+(?P<module>\w+)\s+(?P<message>.*)"))
 
     return MatchField("source", {
