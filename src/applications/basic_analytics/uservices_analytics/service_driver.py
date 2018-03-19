@@ -49,9 +49,9 @@ class MicroServices(object):
         """
         inbound = ['jetty_requests', 'jetty_requests_count', 'jetty_responses_total']
         outbound = ['org_apache_http_client_HttpClient_requests_count',
-                   'org_apache_http_client_HttpClient_responses_total']
+                    'org_apache_http_client_HttpClient_responses_total', 'org_apache_http_client_HttpClient_requests']
         jvm = ['jvm_memory_heap_used', 'jvm_memory_non_heap_used', 'jvm_gc_PS_MarkSweep_time',
-               'jvm_gc_PS_Scavenge_time', 'jvm_gc_PS_Scavenge_count', 'jvm_gc_PS_MarkSweep_count']
+               'jvm_gc_PS_Scavenge_time', 'jvm_gc_PS_Scavenge_count', 'jvm_gc_PS_MarkSweep_count', 'jvm_attribute_uptime']
         jvm_w = ['%jvm_threads_%', '%jvm_memory_pools_%']
 
         http_jvm_stream = stream \
