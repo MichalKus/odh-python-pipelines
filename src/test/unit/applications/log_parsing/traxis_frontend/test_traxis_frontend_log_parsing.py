@@ -63,6 +63,124 @@ class TraxisFrontEndParsingTestCase(BaseMultipleMessageParsingTestCase):
             }
         )
 
+    def test_traxis_service_log_query_metrics_with_requester_id_and_customer_id(self):
+        self.assert_parsing(
+            {
+                "source": "TraxisService.log",
+                "message": "2017-06-29 16:35:33,468 DEBUG [HTTP worker thread 15] EntitlementManager - [10.64.13.180:39428] [RequestId = f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab] [CustomerId = 58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl] QueryMetrics: ResponseTimeInMilliseconds = 3, QueueTimeInMilliseconds = 0, ResponseLengthInBytes = 2195, CassandraRequestCount = 0, CassandraRequestTotalResponseTimeInMicroseconds = , CassandraRequestAverageResponseTimeInMicroseconds = , ExternalRequestCount = 0, ExternalRequestTotalResponseTimeInMilliseconds = , ResourceEvaluationCount = 1"
+            },
+            {
+                "@timestamp": datetime(2017, 6, 29, 16, 35, 33, 468000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "level": "DEBUG",
+                "thread_name": "HTTP worker thread 15",
+                "component": "EntitlementManager",
+                "request_id": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
+                "customer_id": "58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl",
+                "response_time_in_milliseconds": 3,
+                "queue_time_in_milliseconds": 0,
+                "response_length_in_bytes": 2195,
+                "cassandra_request_count": 0,
+                "external_request_count": 0,
+                "resource_evaluation_count": 1,
+                "query_metrics": " ResponseTimeInMilliseconds = 3, QueueTimeInMilliseconds = 0, ResponseLengthInBytes = 2195, CassandraRequestCount = 0, CassandraRequestTotalResponseTimeInMicroseconds = , CassandraRequestAverageResponseTimeInMicroseconds = , ExternalRequestCount = 0, ExternalRequestTotalResponseTimeInMilliseconds = , ResourceEvaluationCount = 1",
+                "message": "[10.64.13.180:39428] [RequestId = f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab] [CustomerId = 58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl] QueryMetrics: ResponseTimeInMilliseconds = 3, QueueTimeInMilliseconds = 0, ResponseLengthInBytes = 2195, CassandraRequestCount = 0, CassandraRequestTotalResponseTimeInMicroseconds = , CassandraRequestAverageResponseTimeInMicroseconds = , ExternalRequestCount = 0, ExternalRequestTotalResponseTimeInMilliseconds = , ResourceEvaluationCount = 1"
+            }
+        )
+
+    def test_traxis_service_log_query_metrics_with_requester_id_and_customer_id_in_revert_order(self):
+        self.assert_parsing(
+            {
+                "source": "TraxisService.log",
+                "message": "2017-06-29 16:35:33,468 DEBUG [HTTP worker thread 15] EntitlementManager - [10.64.13.180:39428] [CustomerId = 58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl] [RequestId = f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab] QueryMetrics: ResponseTimeInMilliseconds = 3, QueueTimeInMilliseconds = 0, ResponseLengthInBytes = 2195, CassandraRequestCount = 0, CassandraRequestTotalResponseTimeInMicroseconds = , CassandraRequestAverageResponseTimeInMicroseconds = , ExternalRequestCount = 0, ExternalRequestTotalResponseTimeInMilliseconds = , ResourceEvaluationCount = 1"
+            },
+            {
+                "@timestamp": datetime(2017, 6, 29, 16, 35, 33, 468000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "level": "DEBUG",
+                "thread_name": "HTTP worker thread 15",
+                "component": "EntitlementManager",
+                "request_id": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
+                "customer_id": "58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl",
+                "response_time_in_milliseconds": 3,
+                "queue_time_in_milliseconds": 0,
+                "response_length_in_bytes": 2195,
+                "cassandra_request_count": 0,
+                "external_request_count": 0,
+                "resource_evaluation_count": 1,
+                "query_metrics": " ResponseTimeInMilliseconds = 3, QueueTimeInMilliseconds = 0, ResponseLengthInBytes = 2195, CassandraRequestCount = 0, CassandraRequestTotalResponseTimeInMicroseconds = , CassandraRequestAverageResponseTimeInMicroseconds = , ExternalRequestCount = 0, ExternalRequestTotalResponseTimeInMilliseconds = , ResourceEvaluationCount = 1",
+                "message": "[10.64.13.180:39428] [CustomerId = 58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl] [RequestId = f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab] QueryMetrics: ResponseTimeInMilliseconds = 3, QueueTimeInMilliseconds = 0, ResponseLengthInBytes = 2195, CassandraRequestCount = 0, CassandraRequestTotalResponseTimeInMicroseconds = , CassandraRequestAverageResponseTimeInMicroseconds = , ExternalRequestCount = 0, ExternalRequestTotalResponseTimeInMilliseconds = , ResourceEvaluationCount = 1"
+            }
+        )
+
+    def test_traxis_service_log_query_metrics_with_only_query_metrics(self):
+        self.assert_parsing(
+            {
+                "source": "TraxisService.log",
+                "message": "2017-06-29 16:35:33,468 DEBUG [HTTP worker thread 15] EntitlementManager - [10.64.13.180:39428] QueryMetrics: ResponseTimeInMilliseconds = 3, QueueTimeInMilliseconds = 0, ResponseLengthInBytes = 2195, CassandraRequestCount = 0, CassandraRequestTotalResponseTimeInMicroseconds = , CassandraRequestAverageResponseTimeInMicroseconds = , ExternalRequestCount = 0, ExternalRequestTotalResponseTimeInMilliseconds = , ResourceEvaluationCount = 1"
+            },
+            {
+                "@timestamp": datetime(2017, 6, 29, 16, 35, 33, 468000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "level": "DEBUG",
+                "request_id": None,
+                "customer_id": None,
+                "thread_name": "HTTP worker thread 15",
+                "component": "EntitlementManager",
+                "response_time_in_milliseconds": 3,
+                "queue_time_in_milliseconds": 0,
+                "response_length_in_bytes": 2195,
+                "cassandra_request_count": 0,
+                "external_request_count": 0,
+                "resource_evaluation_count": 1,
+                "query_metrics": " ResponseTimeInMilliseconds = 3, QueueTimeInMilliseconds = 0, ResponseLengthInBytes = 2195, CassandraRequestCount = 0, CassandraRequestTotalResponseTimeInMicroseconds = , CassandraRequestAverageResponseTimeInMicroseconds = , ExternalRequestCount = 0, ExternalRequestTotalResponseTimeInMilliseconds = , ResourceEvaluationCount = 1",
+                "message": "[10.64.13.180:39428] QueryMetrics: ResponseTimeInMilliseconds = 3, QueueTimeInMilliseconds = 0, ResponseLengthInBytes = 2195, CassandraRequestCount = 0, CassandraRequestTotalResponseTimeInMicroseconds = , CassandraRequestAverageResponseTimeInMicroseconds = , ExternalRequestCount = 0, ExternalRequestTotalResponseTimeInMilliseconds = , ResourceEvaluationCount = 1"
+            }
+        )
+
+    def test_traxis_service_log_query_metrics_with_request_id(self):
+        self.assert_parsing(
+            {
+                "source": "TraxisService.log",
+                "message": "2017-06-29 16:35:33,468 DEBUG [HTTP worker thread 15] EntitlementManager - [10.64.13.180:39428] [RequestId = f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab] QueryMetrics: ResponseTimeInMilliseconds = 3, QueueTimeInMilliseconds = 0, ResponseLengthInBytes = 2195, CassandraRequestCount = 0, CassandraRequestTotalResponseTimeInMicroseconds = , CassandraRequestAverageResponseTimeInMicroseconds = , ExternalRequestCount = 0, ExternalRequestTotalResponseTimeInMilliseconds = , ResourceEvaluationCount = 1"
+            },
+            {
+                "@timestamp": datetime(2017, 6, 29, 16, 35, 33, 468000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "level": "DEBUG",
+                "thread_name": "HTTP worker thread 15",
+                "component": "EntitlementManager",
+                "request_id": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
+                "customer_id": None,
+                "response_time_in_milliseconds": 3,
+                "queue_time_in_milliseconds": 0,
+                "response_length_in_bytes": 2195,
+                "cassandra_request_count": 0,
+                "external_request_count": 0,
+                "resource_evaluation_count": 1,
+                "query_metrics": " ResponseTimeInMilliseconds = 3, QueueTimeInMilliseconds = 0, ResponseLengthInBytes = 2195, CassandraRequestCount = 0, CassandraRequestTotalResponseTimeInMicroseconds = , CassandraRequestAverageResponseTimeInMicroseconds = , ExternalRequestCount = 0, ExternalRequestTotalResponseTimeInMilliseconds = , ResourceEvaluationCount = 1",
+                "message": "[10.64.13.180:39428] [RequestId = f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab] QueryMetrics: ResponseTimeInMilliseconds = 3, QueueTimeInMilliseconds = 0, ResponseLengthInBytes = 2195, CassandraRequestCount = 0, CassandraRequestTotalResponseTimeInMicroseconds = , CassandraRequestAverageResponseTimeInMicroseconds = , ExternalRequestCount = 0, ExternalRequestTotalResponseTimeInMilliseconds = , ResourceEvaluationCount = 1"
+            })
+
+    def test_traxis_service_log_query_metrics_with_customer_id(self):
+        self.assert_parsing(
+            {
+                "source": "TraxisService.log",
+                "message": "2017-06-29 16:35:33,468 DEBUG [HTTP worker thread 15] EntitlementManager - [10.64.13.180:39428] [CustomerId = f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab] QueryMetrics: ResponseTimeInMilliseconds = 3, QueueTimeInMilliseconds = 0, ResponseLengthInBytes = 2195, CassandraRequestCount = 0, CassandraRequestTotalResponseTimeInMicroseconds = , CassandraRequestAverageResponseTimeInMicroseconds = , ExternalRequestCount = 0, ExternalRequestTotalResponseTimeInMilliseconds = , ResourceEvaluationCount = 1"
+            },
+            {
+                "@timestamp": datetime(2017, 6, 29, 16, 35, 33, 468000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "level": "DEBUG",
+                "thread_name": "HTTP worker thread 15",
+                "component": "EntitlementManager",
+                "customer_id": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
+                "request_id": None,
+                "response_time_in_milliseconds": 3,
+                "queue_time_in_milliseconds": 0,
+                "response_length_in_bytes": 2195,
+                "cassandra_request_count": 0,
+                "external_request_count": 0,
+                "resource_evaluation_count": 1,
+                "query_metrics": " ResponseTimeInMilliseconds = 3, QueueTimeInMilliseconds = 0, ResponseLengthInBytes = 2195, CassandraRequestCount = 0, CassandraRequestTotalResponseTimeInMicroseconds = , CassandraRequestAverageResponseTimeInMicroseconds = , ExternalRequestCount = 0, ExternalRequestTotalResponseTimeInMilliseconds = , ResourceEvaluationCount = 1",
+                "message": "[10.64.13.180:39428] [CustomerId = f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab] QueryMetrics: ResponseTimeInMilliseconds = 3, QueueTimeInMilliseconds = 0, ResponseLengthInBytes = 2195, CassandraRequestCount = 0, CassandraRequestTotalResponseTimeInMicroseconds = , CassandraRequestAverageResponseTimeInMicroseconds = , ExternalRequestCount = 0, ExternalRequestTotalResponseTimeInMilliseconds = , ResourceEvaluationCount = 1"
+            })
+
     def test_traxis_service_log_cannot_purchase_product(self):
         self.assert_parsing(
             {
