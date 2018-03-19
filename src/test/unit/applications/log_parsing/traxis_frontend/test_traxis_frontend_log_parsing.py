@@ -111,7 +111,7 @@ class TraxisFrontEndParsingTestCase(BaseMultipleMessageParsingTestCase):
             }
         )
 
-    def test_traxis_service_log_query_metrics_with_no_requester_id_and_customer_id(self):
+    def test_traxis_service_log_query_metrics_with_only_query_metrics(self):
         self.assert_parsing(
             {
                 "source": "TraxisService.log",
