@@ -11,7 +11,6 @@ from common.log_parsing.event_creator_tree.multisource_configuration import Matc
 from common.log_parsing.matchers.matcher import SubstringMatcher
 from common.log_parsing.metadata import Metadata, StringField, IntField
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
-from common.log_parsing.transformer import Transformer
 from util.utils import Utils
 
 
@@ -89,7 +88,7 @@ def create_event_creators(configuration):
         matcher=SubstringMatcher("QueryMetrics"))
 
     key_value_event_creator = SingleTypeEventCreator(IntField(None),
-                                                     KeyValueParser(",", "=", Transformer('(?<!^)(?=[A-Z])', '_')),
+                                                     KeyValueParser(",", "="),
                                                      field_to_parse="query_metrics")
 
     return MatchField("source", {

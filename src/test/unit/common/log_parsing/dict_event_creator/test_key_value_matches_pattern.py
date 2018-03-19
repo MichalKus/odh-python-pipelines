@@ -2,13 +2,10 @@ import unittest
 
 from common.log_parsing.metadata import ParsingException
 from common.log_parsing.dict_event_creator.key_value_parser import KeyValueParser
-from common.log_parsing.transformer import Transformer
 
 
 class KeyValueParserTestCase(unittest.TestCase):
-
-    transformer = Transformer('(?<!^)(?=[A-Z])', '_')
-    parser = KeyValueParser(",", "=", transformer)
+    parser = KeyValueParser(",", "=")
 
     def test_parse_non_empty_fields(self):
         self.assertEquals({"t1": "a", "t2": "b", "t3": "c"}, self.parser.parse("t1 = a , t2 = b , t3 = c "))
