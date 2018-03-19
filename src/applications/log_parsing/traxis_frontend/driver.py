@@ -1,13 +1,15 @@
 """Spark driver for parsing message from Traxis Frontend component"""
 import sys
 
+from common.log_parsing.dict_event_creator.single_type_event_creator import SingleTypeEventCreator
 from common.kafka_pipeline import KafkaPipeline
+from common.log_parsing.dict_event_creator.key_value_parser import KeyValueParser
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.dict_event_creator.event_creator import EventCreator, CompositeEventCreator
 from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
 from common.log_parsing.event_creator_tree.multisource_configuration import MatchField, SourceConfiguration
 from common.log_parsing.matchers.matcher import SubstringMatcher
-from common.log_parsing.metadata import Metadata, StringField
+from common.log_parsing.metadata import Metadata, StringField, IntField
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
 
@@ -74,10 +76,27 @@ def create_event_creators(configuration):
             return_empty_dict=True),
         matcher=SubstringMatcher("Cannot purchase products of type"))
 
+    query_metrics_event_creator = EventCreator(
+        Metadata(
+            [StringField("query_metrics"),
+             StringField("request_id"),
+             StringField("customer_id")]),
+        RegexpParser(
+            r"^.*?(?:\s*|(?:\[RequestId\s*=\s*(?P<request_id>.*?)\])?|(?:\[CustomerId\s*=\s*("
+            r"?P<customer_id>.*?)\]))*QueryMetrics:(?P<query_metrics>.*)",
+            return_empty_dict=True),
+        matcher=SubstringMatcher("QueryMetrics"))
+
+    key_value_event_creator = SingleTypeEventCreator(IntField(None),
+                                                     KeyValueParser(",", "="),
+                                                     field_to_parse="query_metrics")
+
     return MatchField("source", {
         "TraxisService.log": SourceConfiguration(
             CompositeEventCreator()
             .add_source_parser(event_creator)
+            .add_intermediate_result_parser(query_metrics_event_creator)
+            .add_intermediate_result_parser(key_value_event_creator, final=True)
             .add_intermediate_result_parser(method_duration_event_creator, final=True)
             .add_intermediate_result_parser(method_invoked_event_creator, final=True)
             .add_intermediate_result_parser(cannot_purchase_product_event_creator, final=True),

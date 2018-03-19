@@ -1,6 +1,5 @@
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
-from dateutil.parser import parse
 
 CONTEXT_TIMEZONE = "timezone"
 
