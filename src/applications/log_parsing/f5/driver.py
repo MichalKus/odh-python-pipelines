@@ -9,6 +9,7 @@ from common.log_parsing.dict_event_creator.event_creator import CompositeEventCr
 from common.log_parsing.dict_event_creator.key_value_parser import KeyValueParser
 from common.log_parsing.dict_event_creator.long_timestamp_parser import LongTimestampParser
 from common.log_parsing.dict_event_creator.single_type_event_creator import SingleTypeEventCreator
+from common.log_parsing.dict_event_creator.update_metadata_event_creator import UpdateMetadataEventCreator
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.metadata import StringField, Metadata
@@ -42,10 +43,15 @@ def create_event_creators(config):
         LongTimestampParser("timestamp"), field_to_parse="eoc_timestamp"
     )
 
+    update_metadata_event_creator = UpdateMetadataEventCreator(
+        Metadata([StringField("x-dev", "stb_id")]),
+    )
+
     return SourceConfiguration(
         CompositeEventCreator()
         .add_source_parser(message_general_event_creator)
         .add_intermediate_result_parser(request_header_event_creator)
+        .add_intermediate_result_parser(update_metadata_event_creator)
         .add_intermediate_result_parser(timestamp_event_creator),
         Utils.get_output_topic(config, 'f5_general')
     )

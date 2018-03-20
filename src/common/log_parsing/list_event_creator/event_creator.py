@@ -30,8 +30,8 @@ class EventCreator(AbstractEventCreator):
             values = self._convert_row_to_event_values(row)
             if self._metadata.get_fields_amount() == len(values):
                 return {
-                    self._metadata.get_field_by_idex(i).get_output_name():
-                        self._metadata.get_field_by_idex(i).get_value(values[i], context)
+                    self._metadata.get_field_by_index(i).get_output_name():
+                        self._metadata.get_field_by_index(i).get_value(values[i], context)
                     for i in range(len(values))
                 }
             elif len(values) == 0:
