@@ -27,7 +27,7 @@ class LongTimestampParser(object):
         try:
             long_timestamp = long(text)
             return {
-                self.__field: datetime.datetime.fromtimestamp(long_timestamp).strftime('%Y-%m-%d %H:%M:%S')
+                self.__field: datetime.datetime.utcfromtimestamp(long_timestamp).strftime('%Y-%m-%d %H:%M:%S')
             }
         except ValueError:
             if self.__return_empty_dict:
