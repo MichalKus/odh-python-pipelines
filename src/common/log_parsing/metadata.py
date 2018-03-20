@@ -27,7 +27,7 @@ class Metadata:
         """
         return len(self.__fields)
 
-    def get_field_by_idex(self, index):
+    def get_field_by_index(self, index):
         """
         Returns field's metadata by index
         :param index: field's index
