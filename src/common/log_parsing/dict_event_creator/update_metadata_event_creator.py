@@ -22,7 +22,6 @@ class UpdateMetadataEventCreator(AbstractEventCreator):
         :exception ParsingException if converting goes wrong.
         """
 
-        print(type(row))
         for field in [self._metadata.get_field_by_index(index) for index in range(self._metadata.get_fields_amount())]:
             row[field.get_output_name()] = row.pop(field.get_name())
 

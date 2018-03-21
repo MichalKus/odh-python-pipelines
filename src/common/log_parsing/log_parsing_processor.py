@@ -19,10 +19,13 @@ class LogParsingProcessor:
 
     def create(self, read_stream):
         create_full_event_udf = udf(self.__create_full_event, self.__get_udf_result_schema())
-        return [read_stream.select(
-            from_json(read_stream["value"].cast("string"), self.__get_message_schema()).alias("json")) \
-                    .select(create_full_event_udf("json").alias("result")) \
+        return [self._extract_json(read_stream)
+                    .select(create_full_event_udf("json").alias("result"))
                     .selectExpr("result.topic AS topic", "result.json AS value")]
+
+    def _extract_json(self, stream):
+        return stream \
+            .select(from_json(stream["value"].cast("string"), self.__get_message_schema()).alias("json"))
 
     @staticmethod
     def __get_message_schema():
@@ -50,8 +53,13 @@ class LogParsingProcessor:
         except ParsingException as exception:
             topic = self.__dlq_topic
             result = {"message": row.message, "reason": exception.message}
+
+        return topic, json.dumps(self._enrich_result(result, row), default=self.__json_serial)
+
+    @staticmethod
+    def _enrich_result(result, row):
         result.update({"hostname": row.beat.hostname, "environment": row.topic, "source": row.source})
-        return topic, json.dumps(result, default=self.__json_serial)
+        return result
 
     def __get_parsing_objects(self, row):
         return self.__event_creators_tree.get_parsing_objects(row)

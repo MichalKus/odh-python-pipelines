@@ -2,3 +2,7 @@ spark:
   appName: log-parsing-processor
   master: local[*]
   shuffle.partitions: 1
+
+timezone:
+  name: UTC
+  priority: dic
