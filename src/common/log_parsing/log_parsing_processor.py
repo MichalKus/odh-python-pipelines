@@ -58,7 +58,8 @@ class LogParsingProcessor:
 
     @staticmethod
     def _enrich_result(result, row):
-        return result.update({"hostname": row.beat.hostname, "environment": row.topic, "source": row.source})
+        result.update({"hostname": row.beat.hostname, "environment": row.topic, "source": row.source})
+        return result
 
     def __get_parsing_objects(self, row):
         return self.__event_creators_tree.get_parsing_objects(row)
