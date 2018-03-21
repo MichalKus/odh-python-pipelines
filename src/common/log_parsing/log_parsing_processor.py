@@ -18,11 +18,14 @@ class LogParsingProcessor:
         self.__dlq_topic = configuration.property("kafka.topics.dlq")
 
     def create(self, read_stream):
-        create_full_event_udf = udf(self._create_full_event, self._get_udf_result_schema())
-        return [read_stream.select(
-            from_json(read_stream["value"].cast("string"), self.__get_message_schema()).alias("json")) \
-                    .select(create_full_event_udf("json").alias("result")) \
+        create_full_event_udf = udf(self.__create_full_event, self.__get_udf_result_schema())
+        return [self._extract_json(read_stream)
+                    .select(create_full_event_udf("json").alias("result"))
                     .selectExpr("result.topic AS topic", "result.json AS value")]
+
+    def _extract_json(self, stream):
+        return stream \
+            .select(from_json(stream["value"].cast("string"), self.__get_message_schema()).alias("json"))
 
     @staticmethod
     def __get_message_schema():
@@ -36,13 +39,13 @@ class LogParsingProcessor:
         ])
 
     @staticmethod
-    def _get_udf_result_schema():
+    def __get_udf_result_schema():
         return StructType([
             StructField("topic", StringType()),
             StructField("json", StringType())
         ])
 
-    def _create_full_event(self, row):
+    def __create_full_event(self, row):
         try:
             source_configuration = self.__event_creators_tree.get_parsing_context(row)
             result = source_configuration.event_creator.create(row)
@@ -51,19 +54,14 @@ class LogParsingProcessor:
             topic = self.__dlq_topic
             result = {"message": row.message, "reason": exception.message}
 
-        self.__enrich_result(result, "hostname", row.beat.hostname)
-        self.__enrich_result(result, "environment", row.topic)
-        self.__enrich_result(result, "source", row.source)
+        return topic, json.dumps(self._enrich_result(result, row), default=self.__json_serial)
 
-        return topic, json.dumps(result, default=self.__json_serial)
+    @staticmethod
+    def _enrich_result(result, row):
+        return result.update({"hostname": row.beat.hostname, "environment": row.topic, "source": row.source})
 
     def __get_parsing_objects(self, row):
         return self.__event_creators_tree.get_parsing_objects(row)
-
-    @staticmethod
-    def __enrich_result(result, field, value):
-        if field not in result:
-            result.update({field: value})
 
     @staticmethod
     def __json_serial(value):
