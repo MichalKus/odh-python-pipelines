@@ -18,7 +18,7 @@ class LogParsingProcessor:
         self.__dlq_topic = configuration.property("kafka.topics.dlq")
 
     def create(self, read_stream):
-        create_full_event_udf = udf(self.__create_full_event, self.__get_udf_result_schema())
+        create_full_event_udf = udf(self._create_full_event, self._get_udf_result_schema())
         return [read_stream.select(
             from_json(read_stream["value"].cast("string"), self.__get_message_schema()).alias("json")) \
                     .select(create_full_event_udf("json").alias("result")) \
@@ -36,13 +36,13 @@ class LogParsingProcessor:
         ])
 
     @staticmethod
-    def __get_udf_result_schema():
+    def _get_udf_result_schema():
         return StructType([
             StructField("topic", StringType()),
             StructField("json", StringType())
         ])
 
-    def __create_full_event(self, row):
+    def _create_full_event(self, row):
         try:
             source_configuration = self.__event_creators_tree.get_parsing_context(row)
             result = source_configuration.event_creator.create(row)
@@ -50,11 +50,20 @@ class LogParsingProcessor:
         except ParsingException as exception:
             topic = self.__dlq_topic
             result = {"message": row.message, "reason": exception.message}
-        result.update({"hostname": row.beat.hostname, "environment": row.topic, "source": row.source})
+
+        self.__enrich_result(result, "hostname", row.beat.hostname)
+        self.__enrich_result(result, "environment", row.topic)
+        self.__enrich_result(result, "source", row.source)
+
         return topic, json.dumps(result, default=self.__json_serial)
 
     def __get_parsing_objects(self, row):
         return self.__event_creators_tree.get_parsing_objects(row)
+
+    @staticmethod
+    def __enrich_result(result, field, value):
+        if field not in result:
+            result.update({field: value})
 
     @staticmethod
     def __json_serial(value):
