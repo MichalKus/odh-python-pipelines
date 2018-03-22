@@ -1,0 +1,10 @@
+spark:
+  appName: extrahop-peal-basic-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+
+analytics:
+  componentName: extrahop.peal
+  watermark: '1 minutes'
+  window: '10 minutes'
