@@ -75,7 +75,7 @@ class AirflowWorkerDagExec(BasicAnalyticsProcessor):
 
         airflow_manager = stream \
             .where(col("topic").isNotNull()) \
-            .filter(regex_filter_udf(col("message"))) \
+            .where(regex_filter_udf(col("message"))) \
             .withColumn("message",
                         regex_extract_udf(col("message"))) \
             .withColumn('tenant', col("message").getItem(0)) \
