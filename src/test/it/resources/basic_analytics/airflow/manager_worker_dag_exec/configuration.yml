@@ -1,0 +1,11 @@
+spark:
+  appName: airflow-worker-manager-dag-basic-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+  consoleWriter: false
+
+analytics:
+  componentName: odhecx.eosdtv.be.prd.airflow
+  watermark: '1 minutes'
+  window: '1 minutes'

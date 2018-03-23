@@ -1,0 +1,24 @@
+spark:
+  appName: airflow-worker-manager-dag-exec-basic-analytics
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+  shuffle.partitions: 1
+  consoleWriter: true
+  outputMode: update
+
+kafka:
+  maxOffsetsPerTrigger: 100000
+  bootstrap.servers: test1:9094
+  startingOffsets: earliest
+  topics:
+    inputs:
+      - odhecx_in_eosdtv_pan_prd_heapp_airflowmanager_scheduler_latest_log_v1
+      - odhecx_pro_eosdtv_be_prd_heapp_airflow_worker_dag_execution_log_v1
+    output: odhecx_pr_eosdtv_be_prd_heapp_airflow_worker_scheduler_dag_execution_log_v1
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
+
+analytics:
+  componentName: odhecx.eosdtv.be.prd.airflow
+  watermark: '1 minutes'
+  window: '1 minutes'
