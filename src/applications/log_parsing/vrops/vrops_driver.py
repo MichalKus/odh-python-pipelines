@@ -58,7 +58,7 @@ def create_event_creators(configuration):
         StringField("metrics"),
         StringField("timestamp")]),
         RegexpParser(
-            r"(?s)^(?P<group>.*),name=(?P<name>.*),res_kind=(?P<res_kind>[^\(,|\s)]*)(,|\s)(?P<metrics>.*)\s(?P<timestamp>.*)(\n)"))
+            r"(?s)^(?P<timestamp>.*);.*name=(?P<name>[^,]*).*kind=(?P<res_kind>[^,]*).*measurement=(?P<group>\w*).*;(?P<metrics>.*)\n"))
 
     metrics_creator = MetricsEventCreator(Metadata([
         StringField("metrics")]),
