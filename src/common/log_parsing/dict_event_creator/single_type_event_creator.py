@@ -1,6 +1,5 @@
 """
-Creator for traxis_frontend:
-- KeyValueEventCreator
+Creates events for dict parser
 """
 from common.log_parsing.metadata import AbstractEventCreator
 
@@ -34,5 +33,8 @@ class SingleTypeEventCreator(AbstractEventCreator):
             for field, value in self._parser.parse(row[self.__field_to_parse]).items()
         } if self._matcher is None or self._matcher.match(row[self.__field_to_parse]) else {}
 
-    def get_field_to_parse(self):
-        return self.__field_to_parse
+    def parse_if_field_exist(self, row):
+        if self.__field_to_parse in row:
+            return self.create(row)
+        else:
+            return {}
