@@ -42,12 +42,17 @@ class VMDiskSummaryProcessor(BasicAnalyticsProcessor):
 
             return agg_stream
 
+        freespace_total = aggregate("freespace_total", "guestfilesystem")
+        percentage_total = aggregate("percentage_total", "guestfilesystem")
+        capacity_total = aggregate("capacity_total", "guestfilesystem")
+        usage_total = aggregate("usage_total", "guestfilesystem")
         disk_usage_average = aggregate("usage_average", "disk")
         virtualdisk_write_average = aggregate("write_average", "virtualdisk")
         virtualdisk_read_average = aggregate("read_average", "virtualdisk")
         summary_workload_indicator = aggregate("workload_indicator", "summary")
 
-        return [disk_usage_average, virtualdisk_write_average, virtualdisk_read_average, summary_workload_indicator]
+        return [freespace_total, percentage_total, capacity_total, usage_total, disk_usage_average,
+                virtualdisk_write_average, virtualdisk_read_average, summary_workload_indicator]
 
     @staticmethod
     def create_schema():
@@ -56,6 +61,10 @@ class VMDiskSummaryProcessor(BasicAnalyticsProcessor):
         """
         return StructType([
             StructField("metrics", StructType([
+                StructField("freespace_total", DoubleType()),
+                StructField("percentage_total", DoubleType()),
+                StructField("capacity_total", DoubleType()),
+                StructField("usage_total", DoubleType()),
                 StructField("usage_average", DoubleType()),
                 StructField("write_average", DoubleType()),
                 StructField("read_average", DoubleType()),
