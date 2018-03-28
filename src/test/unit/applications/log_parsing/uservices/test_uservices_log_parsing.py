@@ -80,16 +80,16 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
                 },
                 "host": "lg-l-p-obo00579",
                 "@version": "1",
-                "http.referer": "-",
-                "http.request": "/reng/RE/REController.do?contentSourceId=1&clientType=399&method=lgiAdaptiveSearch&subscriberId=6b10a120-ce10-11e7-8a8a-5fa419531185_ch%23MasterProfile&term=News&lgiContentItemInstanceId=%5B1%5Dimi%3A00100000001950EC&contentItemId=%5B2%5Dcrid%3A%2F%2Ftelenet.be%2Ffcdf57b1-1cc4-4e13-ad34-c348b26315c7&startResults=0&maxResults=1&applyMarketingBias=true&filterVodAvailableNow=true",
-                "http.method": "GET",
-                "http.local_port": "80",
-                "http.useragent": "discovery-service/0.25.1 TentacleClient/5.10.0 Jersey/2.25.1",
-                "http.proxy_to": "reng:80",
-                "http.duration": 0.018,
-                "http.protocol": "HTTP/1.1",
-                "http.urlpath": "/reng/RE/REController.do",
-                "http.urlquery": "contentSourceId=1&clientType=399&method=lgiAdaptiveSearch&subscriberId=6b10a120-ce10-11e7-8a8a-5fa419531185_ch%23MasterProfile&term=News&lgiContentItemInstanceId=%5B1%5Dimi%3A00100000001950EC&contentItemId=%5B2%5Dcrid%3A%2F%2Ftelenet.be%2Ffcdf57b1-1cc4-4e13-ad34-c348b26315c7&startResults=0&maxResults=1&applyMarketingBias=true&filterVodAvailableNow=true",
+                "http_referer": "-",
+                "http_request": "/reng/RE/REController.do?contentSourceId=1&clientType=399&method=lgiAdaptiveSearch&subscriberId=6b10a120-ce10-11e7-8a8a-5fa419531185_ch%23MasterProfile&term=News&lgiContentItemInstanceId=%5B1%5Dimi%3A00100000001950EC&contentItemId=%5B2%5Dcrid%3A%2F%2Ftelenet.be%2Ffcdf57b1-1cc4-4e13-ad34-c348b26315c7&startResults=0&maxResults=1&applyMarketingBias=true&filterVodAvailableNow=true",
+                "http_method": "GET",
+                "http_local_port": "80",
+                "http_useragent": "discovery-service/0.25.1 TentacleClient/5.10.0 Jersey/2.25.1",
+                "http_proxy_to": "reng:80",
+                "http_duration": 0.018,
+                "http_protocol": "HTTP/1.1",
+                "http_urlpath": "/reng/RE/REController.do",
+                "http_urlquery": "contentSourceId=1&clientType=399&method=lgiAdaptiveSearch&subscriberId=6b10a120-ce10-11e7-8a8a-5fa419531185_ch%23MasterProfile&term=News&lgiContentItemInstanceId=%5B1%5Dimi%3A00100000001950EC&contentItemId=%5B2%5Dcrid%3A%2F%2Ftelenet.be%2Ffcdf57b1-1cc4-4e13-ad34-c348b26315c7&startResults=0&maxResults=1&applyMarketingBias=true&filterVodAvailableNow=true",
                 "content_source_id": "1",
                 "client_type": "399",
                 "method": "lgiAdaptiveSearch",
@@ -104,10 +104,10 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "max_results": "1",
                 "apply_marketing_bias": "true",
                 "filter_vod_available_now": "true",
-                "http.bytes": 636,
-                "http.clientip": "172.16.96.133",
-                "http.domain": "gateway",
-                "http.status": 200,
+                "http_bytes": 636,
+                "http_clientip": "172.16.96.133",
+                "http_domain": "gateway",
+                "http_status": 200,
                 "upstream_response_time": "0.018",
                 "x-cus": "-"
             }
@@ -125,7 +125,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
 
-                "http.urlquery": "contentSourceId=1&clientType=399&method=lgiAdaptiveSearch&subscriberId=6b10a120-ce10-11e7-8a8a-5fa419531185_ch%23MasterProfile&term=News&lgiContentItemInstanceId=%5B1%5Dimi%3A00100000001950EC&contentItemId=%5B2%5Dcrid%3A%2F%2Ffcdf57b1-1cc4-4e13-ad34-c348b26315c7&startResults=0&maxResults=1&applyMarketingBias=true&filterVodAvailableNow=true",
+                "http_urlquery": "contentSourceId=1&clientType=399&method=lgiAdaptiveSearch&subscriberId=6b10a120-ce10-11e7-8a8a-5fa419531185_ch%23MasterProfile&term=News&lgiContentItemInstanceId=%5B1%5Dimi%3A00100000001950EC&contentItemId=%5B2%5Dcrid%3A%2F%2Ffcdf57b1-1cc4-4e13-ad34-c348b26315c7&startResults=0&maxResults=1&applyMarketingBias=true&filterVodAvailableNow=true",
                 "content_source_id": "1",
                 "client_type": "399",
                 "method": "lgiAdaptiveSearch",
@@ -154,7 +154,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
 
-                "http.urlquery": "subscriberId=1e1e8640-17b0-11e8-93dc-e71e3a262bec_de%23MasterProfile",
+                "http_urlquery": "subscriberId=1e1e8640-17b0-11e8-93dc-e71e3a262bec_de%23MasterProfile",
                 "subscriber_id": "1e1e8640-17b0-11e8-93dc-e71e3a262bec_de%23MasterProfile",
                 "clean_subscriber_id": "1e1e8640-17b0-11e8-93dc-e71e3a262bec"
             }
@@ -172,7 +172,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
 
-                "http.urlquery": "contentItemId=%5B2%5Dcrid%3A%2F%2Ftelenet.be%2Fdc8f839f-dd41-49bf-842f-e6208e08ee02",
+                "http_urlquery": "contentItemId=%5B2%5Dcrid%3A%2F%2Ftelenet.be%2Fdc8f839f-dd41-49bf-842f-e6208e08ee02",
                 "content_item_id": "%5B2%5Dcrid%3A%2F%2Ftelenet.be%2Fdc8f839f-dd41-49bf-842f-e6208e08ee02",
                 "clean_content_item_id": "dc8f839f-dd41-49bf-842f-e6208e08ee02"
             }
@@ -190,7 +190,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
 
-                "http.urlquery": "contentItemId=crid%3A%2F%2Fbds.tv%2F134877645",
+                "http_urlquery": "contentItemId=crid%3A%2F%2Fbds.tv%2F134877645",
                 "content_item_id": "crid%3A%2F%2Fbds.tv%2F134877645",
             }
         )
@@ -207,7 +207,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
 
-                "http.urlquery": "lgiContentItemInstanceId=%5B1%5Dimi%3A0010000000185C2C",
+                "http_urlquery": "lgiContentItemInstanceId=%5B1%5Dimi%3A0010000000185C2C",
                 "lgi_content_item_instance_id": "%5B1%5Dimi%3A0010000000185C2C",
                 "clean_lgi_content_item_instance_id": "0010000000185C2C"
             }
@@ -226,7 +226,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
                 "app": "recording-service",
-                "header.x-original-uri": "/recording-service/customers/1a2a5370-dc2d-11e7-a33c-8ffe245e867f_nl/bookings?language=nl&limit=2147483647&isAdult=false",
+                "header_x-original-uri": "/recording-service/customers/1a2a5370-dc2d-11e7-a33c-8ffe245e867f_nl/bookings?language=nl&limit=2147483647&isAdult=false",
                 "api_method": "bookings"
             }
         )
@@ -244,7 +244,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
                 "app": "recording-service",
-                "header.x-original-uri": "/recording-service/customers/93071743-eb84-4f01-9d92-53d8ad503789_be/recordings/contextual?language=en",
+                "header_x-original-uri": "/recording-service/customers/93071743-eb84-4f01-9d92-53d8ad503789_be/recordings/contextual?language=en",
                 "api_method": "recordings"
             }
         )
@@ -262,7 +262,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
                 "app": "purchase-service",
-                "header.x-original-uri": "/purchase-service/customers/c6ffb300-f529-11e7-93dc-e71e3a262bec_de/history",
+                "header_x-original-uri": "/purchase-service/customers/c6ffb300-f529-11e7-93dc-e71e3a262bec_de/history",
                 "api_method": "history"
             }
         )
@@ -280,7 +280,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
                 "app": "purchase-service",
-                "header.x-original-uri": "/purchase-service/customers/c6ffb300-f529-11e7-93dc-e71e3a262bec_de/entitlements/3C36E4-EOSSTB-003398520902",
+                "header_x-original-uri": "/purchase-service/customers/c6ffb300-f529-11e7-93dc-e71e3a262bec_de/entitlements/3C36E4-EOSSTB-003398520902",
                 "api_method": "entitlements"
             }
         )
@@ -298,7 +298,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
                 "app": "vod-service",
-                "header.x-original-uri": "/vod-service/v2/contextualvod/omw_playmore_nl?country=be&language=nl&profileId=86e4425d-9405-4a60-9b07-d3b105d9c27e_be~~23MasterProfile&optIn=true",
+                "header_x-original-uri": "/vod-service/v2/contextualvod/omw_playmore_nl?country=be&language=nl&profileId=86e4425d-9405-4a60-9b07-d3b105d9c27e_be~~23MasterProfile&optIn=true",
                 "api_method": "contextualvod"
             }
         )
@@ -316,7 +316,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
                 "app": "vod-service",
-                "header.x-original-uri": "/vod-service/v2/detailscreen/crid:~~2F~~2Ftelenet.be~~2F486e1365-35fd-46b1-ac04-d42e173e7dfa?country=be&language=nl&profileId=12c41366-0a93-4e54-b1b6-efcf22c132b9_be~~23MasterProfile&t",
+                "header_x-original-uri": "/vod-service/v2/detailscreen/crid:~~2F~~2Ftelenet.be~~2F486e1365-35fd-46b1-ac04-d42e173e7dfa?country=be&language=nl&profileId=12c41366-0a93-4e54-b1b6-efcf22c132b9_be~~23MasterProfile&t",
                 "api_method": "detailscreen"
             }
         )
@@ -334,7 +334,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
                 "app": "vod-service",
-                "header.x-original-uri": "/vod-service/v2/gridscreen/omw_hzn4_vod/crid:~~2F~~2Fschange.com~~2F99cd6cce-f330-4dda-a8cb-190711ffb735?country=de&language=en&sortType=ordinal&sortDirection=as",
+                "header_x-original-uri": "/vod-service/v2/gridscreen/omw_hzn4_vod/crid:~~2F~~2Fschange.com~~2F99cd6cce-f330-4dda-a8cb-190711ffb735?country=de&language=en&sortType=ordinal&sortDirection=as",
                 "api_method": "gridscreen"
             }
         )
@@ -352,7 +352,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
                 "app": "discovery-service",
-                "header.x-original-uri": "/discovery-service/v1/learn-actions",
+                "header_x-original-uri": "/discovery-service/v1/learn-actions",
                 "api_method": "learn-actions"
             }
         )
@@ -370,7 +370,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
                 "app": "discovery-service",
-                "header.x-original-uri": "/discovery-service/v1/search/contents?clientType=399&contentSourceId=1&searchTerm=News&startResults=0&maxResults=1&includeNotEntitled=true&profileId=d53facd0-cab",
+                "header_x-original-uri": "/discovery-service/v1/search/contents?clientType=399&contentSourceId=1&searchTerm=News&startResults=0&maxResults=1&includeNotEntitled=true&profileId=d53facd0-cab",
                 "api_method": "search"
             }
         )
@@ -388,7 +388,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
                 "app": "discovery-service",
-                "header.x-original-uri": "/discovery-service/v1/recommendations/more-like-this?clientType=305&contentSourceId=1&contentSourceId=2&profileId=12c41366-0a93-4e54-b1b6-efcf22c132b9_be~~23Mast",
+                "header_x-original-uri": "/discovery-service/v1/recommendations/more-like-this?clientType=305&contentSourceId=1&contentSourceId=2&profileId=12c41366-0a93-4e54-b1b6-efcf22c132b9_be~~23Mast",
                 "api_method": "recommendations"
             }
         )
@@ -406,7 +406,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
                 "app": "session-service",
-                "header.x-original-uri": "/session-service/session/channels/Nederland_1_HD?startTime=2018-01-16T15:07:39Z",
+                "header_x-original-uri": "/session-service/session/channels/Nederland_1_HD?startTime=2018-01-16T15:07:39Z",
                 "api_method": "channels"
             }
         )
@@ -424,7 +424,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
                 "app": "session-service",
-                "header.x-original-uri": "/session-service/session/cpes/3C36E4-EOSSTB-003356297204/replay/events/crid:~~2F~~2Fbds.tv~~2F19867244,imi:00100000000E8423    => extract cpes",
+                "header_x-original-uri": "/session-service/session/cpes/3C36E4-EOSSTB-003356297204/replay/events/crid:~~2F~~2Fbds.tv~~2F19867244,imi:00100000000E8423    => extract cpes",
                 "api_method": "cpes"
             }
         )

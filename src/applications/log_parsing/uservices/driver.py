@@ -28,7 +28,7 @@ def create_event_creators(config):
 
     json_event_creator = SingleTypeEventCreator(StringField(None),
                                                 JsonParser(keys_mapper=None, values_mapper=None, flatten=True,
-                                                           delimiter='.', fields_to_flat=["http", "header"]))
+                                                           delimiter='_', fields_to_flat=["http", "header"]))
 
     timestamp_event_creator = EventCreator(
         Metadata(
@@ -38,7 +38,7 @@ def create_event_creators(config):
 
     http_url_query_event_creator = SingleTypeEventCreator(StringField(None),
                                                           KeyValueParser("&", "=", keys_mapper=convert_to_underlined),
-                                                          field_to_parse="http.urlquery")
+                                                          field_to_parse="http_urlquery")
 
     clean_subscriber_id_event_creator = EventCreator(
         Metadata(
@@ -65,7 +65,7 @@ def create_event_creators(config):
         field_to_parse="lgi_content_item_instance_id")
 
     api_methods_event_creator = MultiFieldsEventCreator(StringField("api_method"),
-                                                        ["app", "header.x-original-uri"],
+                                                        ["app", "header_x-original-uri"],
                                                         [(["recording-service", "bookings"], "bookings"),
                                                          (["recording-service", "recordings"], "recordings"),
                                                          (["purchase-service", "history"], "history"),
