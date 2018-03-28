@@ -33,11 +33,8 @@ class EventCreator(AbstractEventCreator):
             for field, value in self._parser.parse(row[self.__field_to_parse]).items()
         } if self._matcher is None or self._matcher.match(row[self.__field_to_parse]) else {}
 
-    def parse_if_field_exist(self, row):
-        if self.__field_to_parse in row:
-            return self.create(row)
-        else:
-            return {}
+    def contains_fields_to_parse(self, row):
+        return self.__field_to_parse in row
 
 
 class ParserStep(object):
@@ -86,10 +83,12 @@ class CompositeEventCreator(object):
 
     def create(self, source_message):
         intermediate_message = {}
+        result = {}
         for parser_step in self.__event_creator_list:
             if parser_step.dependent:
-                result = parser_step.event_creator.parse_if_field_exist(intermediate_message)
-                intermediate_message.update(result)
+                if parser_step.event_creator.contains_fields_to_parse(intermediate_message):
+                    result = parser_step.event_creator.create(intermediate_message)
+                    intermediate_message.update(result)
             else:
                 result = parser_step.event_creator.create(source_message)
                 intermediate_message.update(result)

@@ -27,8 +27,5 @@ class UpdateMetadataEventCreator(AbstractEventCreator):
 
         return row
 
-    def parse_if_field_exist(self, row):
-        if self._metadata.get_field_by_index(0).get_name() in row.keys():
-            return self.create(row)
-        else:
-            return {}
+    def contains_fields_to_parse(self, row):
+        return self._metadata.get_field_by_index(0).get_name() in row.keys()

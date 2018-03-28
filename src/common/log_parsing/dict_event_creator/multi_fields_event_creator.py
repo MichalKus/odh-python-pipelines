@@ -33,28 +33,25 @@ class MultiFieldsEventCreator(AbstractEventCreator):
         """
         result = None
         for values, match_result in self.__match_fields:
-            matched = True
-            dictionary = zip(self.__fields, values)
-            for field, value in dictionary:
-                if self.__full_match:
-                    if value != row.get(field):
-                        matched = False
-                        break
-                else:
-                    if (not row.get(field)) or (value not in row.get(field)):
-                        matched = False
-                        break
-            if matched:
+            if self.__fields_match(values, row):
                 result = match_result
         return {self.__value_type.get_output_name(): result} if result else {}
 
-    def parse_if_field_exist(self, row):
+    def __fields_match(self, values, row):
+        dictionary = zip(self.__fields, values)
+        for field, value in dictionary:
+            if self.__full_match:
+                if value != row.get(field):
+                    return False
+            else:
+                if (not row.get(field)) or (value not in row.get(field)):
+                    return False
+        return True
+
+    def contains_fields_to_parse(self, row):
         """
-        Checks if row contains fields to parse and return dict with produced events, otherwise return empty dict
+        Checks if row contains fields to parse
         :param row: input row
-        :return: dict
+        :return: boolean
         """
-        if set(self.__fields).issubset(row.keys()):
-            return self.create(row)
-        else:
-            return {}
+        return set(self.__fields).issubset(row.keys())

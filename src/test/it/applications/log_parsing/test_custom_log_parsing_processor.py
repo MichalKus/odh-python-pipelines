@@ -3,7 +3,7 @@ from common.log_parsing.custom_log_parsing_processor import CustomLogParsingProc
 from test.it.core.base_spark_test_case import BaseSparkProcessorTestCase
 
 
-class FlumeLogParsingProcessorTestCase(BaseSparkProcessorTestCase):
+class CustomLogParsingProcessorTestCase(BaseSparkProcessorTestCase):
     """
     Test case to check CustomLogParsingProcessor
     """

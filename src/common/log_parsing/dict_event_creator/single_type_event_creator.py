@@ -33,8 +33,5 @@ class SingleTypeEventCreator(AbstractEventCreator):
             for field, value in self._parser.parse(row[self.__field_to_parse]).items()
         } if self._matcher is None or self._matcher.match(row[self.__field_to_parse]) else {}
 
-    def parse_if_field_exist(self, row):
-        if self.__field_to_parse in row:
-            return self.create(row)
-        else:
-            return {}
+    def contains_fields_to_parse(self, row):
+        return self.__field_to_parse in row

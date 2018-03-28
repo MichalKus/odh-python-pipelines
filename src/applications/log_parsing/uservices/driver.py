@@ -44,7 +44,7 @@ def create_event_creators(config):
         Metadata(
             [StringField("clean_subscriber_id")]),
         RegexpParser(
-            r"(?P<clean_subscriber_id>^.*)_.*",
+            r"(?P<clean_subscriber_id>^.*?)_.*",
             return_empty_dict=True),
         field_to_parse="subscriber_id")
 
