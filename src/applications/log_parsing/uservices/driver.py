@@ -7,7 +7,7 @@ from common.log_parsing.dict_event_creator.multi_fields_event_creator import Mul
 from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
 from common.log_parsing.dict_event_creator.single_type_event_creator import SingleTypeEventCreator
 from common.kafka_pipeline import KafkaPipeline
-from common.log_parsing.flume_log_parsing_processor import FlumeLogParsingProcessor
+from common.log_parsing.custom_log_parsing_processor import CustomLogParsingProcessor
 from common.log_parsing.dict_event_creator.event_creator import EventCreator, CompositeEventCreator
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration
 from common.log_parsing.metadata import StringField, Metadata
@@ -96,5 +96,5 @@ if __name__ == "__main__":
     configuration = Utils.load_config(sys.argv[:])
     KafkaPipeline(
         configuration,
-        FlumeLogParsingProcessor(configuration, create_event_creators(configuration))
+        CustomLogParsingProcessor(configuration, create_event_creators(configuration))
     ).start()

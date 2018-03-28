@@ -1,11 +1,11 @@
 from applications.log_parsing.f5.driver import create_event_creators
-from common.log_parsing.flume_log_parsing_processor import FlumeLogParsingProcessor
+from common.log_parsing.custom_log_parsing_processor import CustomLogParsingProcessor
 from test.it.core.base_spark_test_case import BaseSparkProcessorTestCase
 
 
 class FlumeLogParsingProcessorTestCase(BaseSparkProcessorTestCase):
     """
-    Test case to check FlumeLogParsingProcessor
+    Test case to check CustomLogParsingProcessor
     """
 
     def test_log_parsing_processor_success(self):
@@ -18,4 +18,4 @@ class FlumeLogParsingProcessorTestCase(BaseSparkProcessorTestCase):
 
     @staticmethod
     def __create_processor(configuration):
-        return FlumeLogParsingProcessor(configuration, create_event_creators(configuration))
+        return CustomLogParsingProcessor(configuration, create_event_creators(configuration))
