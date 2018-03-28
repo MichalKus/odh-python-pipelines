@@ -58,7 +58,7 @@ class VROPSParsingTestCase(BaseMultipleMessageParsingTestCase):
         self.assert_parsing(
             {
                 "source": "VROPS.log",
-                "message": "1518112552376;name=nlcsapesxp010.csa.internal,kind=HostSystem,measurement=cpu;cpu_id=31 idle_summation=9855.2001953125,used_summation=117.13333129882812,usage_average=0.5806666612625122\n"
+                "message": "1518112552376;name=nlcsapesxp010.csa.internal,kind=HostSystem,measurement=cpu,cpu_id=31;idle_summation=9855.2001953125,used_summation=117.13333129882812,usage_average=0.5806666612625122\n"
             },
             {
                 "group": "cpu",
@@ -104,7 +104,7 @@ class VROPSParsingTestCase(BaseMultipleMessageParsingTestCase):
         self.assert_parsing(
             {
                 "source": "VROPS.log",
-                "message": "net,identifier=vmnic0,uuid=4f671cc2-06a4-4a24-806c-8fc329feb74a,name=lg-l-p-uxp00007,adapter=VMWARE,kind=VirtualMachine usage_average=0.0,demand=0.0,bytesrx_average=0.0,packetstxpersec=0.0,transmitted_workload=0.0,transmitted_average=0.0,maxobserved_kbps=25600.0,maxobserved_rx_kbps=12800.0,received_average=0.0,maxobserved_tx_kbps=12800.0,packetsrxpersec=0.0,received_workload=0.0,usage_workload=0.0,bytestx_average=0.0 1522077287436\n"
+                "message": "1522077287436;identifier=vmnic0,uuid=4f671cc2-06a4-4a24-806c-8fc329feb74a,name=lg-l-p-uxp00007,adapter=VMWARE,kind=VirtualMachine,measurement=net;usage_average=0.0,demand=0.0,bytesrx_average=0.0,packetstxpersec=0.0,transmitted_workload=0.0,transmitted_average=0.0,maxobserved_kbps=25600.0,maxobserved_rx_kbps=12800.0,received_average=0.0,maxobserved_tx_kbps=12800.0,packetsrxpersec=0.0,received_workload=0.0,usage_workload=0.0,bytestx_average=0.0\n"
             },
             {
                 "group": "net",
@@ -119,7 +119,7 @@ class VROPSParsingTestCase(BaseMultipleMessageParsingTestCase):
         self.assert_parsing(
             {
                 "source": "VROPS.log",
-                "message": "guestfilesystem,uuid=7daf42e4-3ccf-4126-a3cd-cf5a3f2f053d,name=lg-l-p-obo00533,adapter=VMWARE,kind=VirtualMachine freespace_total=74.46806335449219,percentage_total=5.159259796142578,capacity_total=78.5190658569336,usage_total=4.051002502441406 1522091397392\n"
+                "message": "1522091397392;uuid=7daf42e4-3ccf-4126-a3cd-cf5a3f2f053d,name=lg-l-p-obo00533,adapter=VMWARE,kind=VirtualMachine,measurement=guestfilesystem;freespace_total=74.46806335449219,percentage_total=5.159259796142578,capacity_total=78.5190658569336,usage_total=4.051002502441406\n"
             },
             {
                 "group": "guestfilesystem",
