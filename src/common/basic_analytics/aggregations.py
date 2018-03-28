@@ -41,7 +41,7 @@ class Aggregation(object):
     def get_use_udf(self):
         return self.__use_udf
 
-    def quote_special_chars(self, column):
+    def __quote_special_chars(self, column):
             if isinstance(column, basestring):
                 if self.get_use_udf():
                     column = self.__quote_chars_udf(column)
@@ -69,7 +69,7 @@ class Aggregation(object):
         metric_name_parts += [lit(self._aggregation_field)]
         metric_name_parts += [lit(self.get_name())] if suffix is None else [suffix]
 
-        metric_name = concat_ws(".", *[self.quote_special_chars(column) for column in metric_name_parts])
+        metric_name = concat_ws(".", *[self.__quote_special_chars(column) for column in metric_name_parts])
 
         df = df.withColumn("metric_name", metric_name)\
             .withColumn("metric_name", regexp_replace("metric_name", "\\.\\.", ".EMPTY."))
