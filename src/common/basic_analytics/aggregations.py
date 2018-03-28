@@ -6,9 +6,10 @@ Aggregation class defines common methods for all aggregations.
 from abc import ABCMeta, abstractmethod
 
 from pyspark.sql.functions import lit, avg, count, sum, max, min, col, stddev, expr, regexp_replace
-from pyspark.sql.functions import window, concat_ws, approx_count_distinct, explode, create_map, when
-from pyspark.sql.types import DecimalType
+from pyspark.sql.functions import window, concat_ws, approx_count_distinct, explode, create_map, udf, when
+from pyspark.sql.types import DecimalType, StringType
 from itertools import chain
+from urllib import quote
 
 from common.spark_utils.custom_functions import convert_to_underlined
 
@@ -21,18 +22,32 @@ class Aggregation(object):
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, group_fields=None, aggregation_field=None, aggregation_window=None, aggregation_name=None):
+    def __init__(self, group_fields=None, aggregation_field=None, aggregation_window=None, aggregation_name=None,
+                 use_udf=False):
         self.__group_fields = [] if group_fields is None else \
             group_fields if isinstance(group_fields, list) else [group_fields]
         self._aggregation_field = aggregation_field
         self.__aggregation_window = aggregation_window
         self.__aggregation_name = aggregation_name
+        self.__use_udf = use_udf
+        self.__quote_chars_udf = udf(lambda column: quote(column.encode("UTF-8"), ""), StringType())
 
     def get_aggregation_field(self):
         return self._aggregation_field
 
     def get_alias(self):
         return self.get_aggregation_field() + "_" + self.get_name()
+
+    def get_use_udf(self):
+        return self.__use_udf
+
+    def quote_special_chars(self, column):
+            if isinstance(column, basestring):
+                if self.get_use_udf():
+                    column = self.__quote_chars_udf(column)
+                return regexp_replace(regexp_replace(column, "\\.",  "%2E"), "\\s+", "%20")
+            else:
+                return regexp_replace(column, "\\s+", "%20")
 
     def apply(self, input_dataframe, aggregation_window, time_column):
         actual_window = self.__aggregation_window \
@@ -44,6 +59,7 @@ class Aggregation(object):
         return aggregated_dataframe
 
     def _add_metric_name_column(self, df, suffix=None):
+
         metric_name_parts = [lit(self.__aggregation_name)]
 
         for group_field in self.__group_fields:
@@ -53,8 +69,7 @@ class Aggregation(object):
         metric_name_parts += [lit(self._aggregation_field)]
         metric_name_parts += [lit(self.get_name())] if suffix is None else [suffix]
 
-        metric_name = concat_ws(".", *[(regexp_replace(x, "[\\s\\.]+", "_")) if isinstance(x, basestring)
-                                       else regexp_replace(x, "\\s+", "_") for x in metric_name_parts])
+        metric_name = concat_ws(".", *[self.quote_special_chars(column) for column in metric_name_parts])
 
         df = df.withColumn("metric_name", metric_name)\
             .withColumn("metric_name", regexp_replace("metric_name", "\\.\\.", ".EMPTY."))

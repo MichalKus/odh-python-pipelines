@@ -1,82 +1,82 @@
 // Asset propagation
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "asset propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.asset_propagation.level.SUCCESS.count", "value": 1}
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "asset propagation", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.asset_propagation.level.ERROR.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "asset propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.asset%20propagation.level.SUCCESS.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "asset propagation", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.asset%20propagation.level.ERROR.count", "value": 1}
 //total
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "asset propagation", "metric_name": "prodis.ws.hostname.test1.group.asset_propagation.count", "value": 2}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "asset propagation", "metric_name": "prodis.ws.hostname.test1.group.asset%20propagation.count", "value": 2}
 
 
 // Product propagation
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "product propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.product_propagation.level.SUCCESS.count", "value": 2}
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "product propagation", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.product_propagation.level.ERROR.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "product propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.product%20propagation.level.SUCCESS.count", "value": 2}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "product propagation", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.product%20propagation.level.ERROR.count", "value": 1}
 //total
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "product propagation", "metric_name": "prodis.ws.hostname.test1.group.product_propagation.count", "value": 3}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "product propagation", "metric_name": "prodis.ws.hostname.test1.group.product%20propagation.count", "value": 3}
 
 
 // Title propagation
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "title propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.title_propagation.level.SUCCESS.count", "value": 1}
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "title propagation", "level": "WARN", "metric_name": "prodis.ws.hostname.test1.group.title_propagation.level.WARN.count", "value": 1}
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "title propagation", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.title_propagation.level.ERROR.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "title propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.title%20propagation.level.SUCCESS.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "title propagation", "level": "WARN", "metric_name": "prodis.ws.hostname.test1.group.title%20propagation.level.WARN.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "title propagation", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.title%20propagation.level.ERROR.count", "value": 1}
 //total
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "title propagation", "metric_name": "prodis.ws.hostname.test1.group.title_propagation.count", "value": 3}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "title propagation", "metric_name": "prodis.ws.hostname.test1.group.title%20propagation.count", "value": 3}
 
 
 // Image propagation
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "image propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.image_propagation.level.SUCCESS.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "image propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.image%20propagation.level.SUCCESS.count", "value": 1}
 //total
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "image propagation", "metric_name": "prodis.ws.hostname.test1.group.image_propagation.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "image propagation", "metric_name": "prodis.ws.hostname.test1.group.image%20propagation.count", "value": 1}
 
 
 // Series propagation
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "series propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.series_propagation.level.SUCCESS.count", "value": 1}
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "series propagation", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.series_propagation.level.ERROR.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "series propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.series%20propagation.level.SUCCESS.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "series propagation", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.series%20propagation.level.ERROR.count", "value": 1}
 //total
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "series propagation", "metric_name": "prodis.ws.hostname.test1.group.series_propagation.count", "value": 2}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "series propagation", "metric_name": "prodis.ws.hostname.test1.group.series%20propagation.count", "value": 2}
 
 
 // Series propagation
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "service propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.service_propagation.level.SUCCESS.count", "value": 1}
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "service propagation", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.service_propagation.level.ERROR.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "service propagation", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.service%20propagation.level.SUCCESS.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "service propagation", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.service%20propagation.level.ERROR.count", "value": 1}
 //total
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "service propagation", "metric_name": "prodis.ws.hostname.test1.group.service_propagation.count", "value": 2}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "service propagation", "metric_name": "prodis.ws.hostname.test1.group.service%20propagation.count", "value": 2}
 
 
 // Ingest information
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "ingest information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.ingest_information.level.SUCCESS.count", "value": 1}
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "ingest information", "level": "WARN", "metric_name": "prodis.ws.hostname.test1.group.ingest_information.level.WARN.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "ingest information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.ingest%20information.level.SUCCESS.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "ingest information", "level": "WARN", "metric_name": "prodis.ws.hostname.test1.group.ingest%20information.level.WARN.count", "value": 1}
 //total
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "ingest information", "metric_name": "prodis.ws.hostname.test1.group.ingest_information.count", "value": 2}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "ingest information", "metric_name": "prodis.ws.hostname.test1.group.ingest%20information.count", "value": 2}
 
 
 // Hosted information
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "hosted information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.hosted_information.level.SUCCESS.count", "value": 1}
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "hosted information", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.hosted_information.level.ERROR.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "hosted information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.hosted%20information.level.SUCCESS.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "hosted information", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.hosted%20information.level.ERROR.count", "value": 1}
 //total
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "hosted information", "metric_name": "prodis.ws.hostname.test1.group.hosted_information.count", "value": 2}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "hosted information", "metric_name": "prodis.ws.hostname.test1.group.hosted%20information.count", "value": 2}
 
 
 // Schedule information
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "schedule information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.schedule_information.level.SUCCESS.count", "value": 2}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "schedule information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.schedule%20information.level.SUCCESS.count", "value": 2}
 //total
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "schedule information", "metric_name": "prodis.ws.hostname.test1.group.schedule_information.count", "value": 2}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "schedule information", "metric_name": "prodis.ws.hostname.test1.group.schedule%20information.count", "value": 2}
 
 
 // WatchDog information
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "watchdog information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.watchdog_information.level.SUCCESS.count", "value": 2}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "watchdog information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.watchdog%20information.level.SUCCESS.count", "value": 2}
 //total
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "watchdog information", "metric_name": "prodis.ws.hostname.test1.group.watchdog_information.count", "value": 2}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "watchdog information", "metric_name": "prodis.ws.hostname.test1.group.watchdog%20information.count", "value": 2}
 
 
 // Change detection information
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "change detection information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.change_detection_information.level.SUCCESS.count", "value": 1}
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "change detection information", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.change_detection_information.level.ERROR.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "change detection information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.change%20detection%20information.level.SUCCESS.count", "value": 1}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "change detection information", "level": "ERROR", "metric_name": "prodis.ws.hostname.test1.group.change%20detection%20information.level.ERROR.count", "value": 1}
 //total
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "change detection information", "metric_name": "prodis.ws.hostname.test1.group.change_detection_information.count", "value": 2}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "change detection information", "metric_name": "prodis.ws.hostname.test1.group.change%20detection%20information.count", "value": 2}
 
 
 //Main / Global information
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "main or global information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.main_or_global_information.level.SUCCESS.count", "value": 3}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "main or global information", "level": "SUCCESS", "metric_name": "prodis.ws.hostname.test1.group.main%20or%20global%20information.level.SUCCESS.count", "value": 3}
 //total
-{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "main or global information", "metric_name": "prodis.ws.hostname.test1.group.main_or_global_information.count", "value": 3}
+{"@timestamp": "2017-06-02T16:00:00.000Z", "hostname": "test1", "group": "main or global information", "metric_name": "prodis.ws.hostname.test1.group.main%20or%20global%20information.count", "value": 3}
 
 
 //Prodis oparations

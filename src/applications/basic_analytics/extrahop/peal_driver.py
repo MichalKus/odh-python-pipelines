@@ -25,11 +25,13 @@ class ExtrahopPeal(BasicAnalyticsProcessor):
         avg_latency_by_uri_stream = read_stream \
             .aggregate(Avg(group_fields=["uri"],
                            aggregation_field="latency",
-                           aggregation_name=self._component_name))
+                           aggregation_name=self._component_name,
+                           use_udf=True))
 
         count_by_uri_and_status_stream = read_stream \
             .aggregate(Count(group_fields=["uri", "status"],
-                             aggregation_name=self._component_name))
+                             aggregation_name=self._component_name,
+                             use_udf=True))
 
         return [count_by_payload_status_stream, count_by_status_stream,
                 avg_latency_by_uri_stream, count_by_uri_and_status_stream]
