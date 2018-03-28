@@ -113,35 +113,6 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             }
         )
 
-    def test_uservices_log_with_content_item_id_that_does_not_contain_telenet_be(self):
-        self.assert_parsing(
-            {
-                "message": json.dumps(
-                    {
-                        "http": {
-                            "urlquery": "contentSourceId=1&clientType=399&method=lgiAdaptiveSearch&subscriberId=6b10a120-ce10-11e7-8a8a-5fa419531185_ch%23MasterProfile&term=News&lgiContentItemInstanceId=%5B1%5Dimi%3A00100000001950EC&contentItemId=%5B2%5Dcrid%3A%2F%2Ffcdf57b1-1cc4-4e13-ad34-c348b26315c7&startResults=0&maxResults=1&applyMarketingBias=true&filterVodAvailableNow=true",
-                        },
-                    })
-            },
-            {
-
-                "http_urlquery": "contentSourceId=1&clientType=399&method=lgiAdaptiveSearch&subscriberId=6b10a120-ce10-11e7-8a8a-5fa419531185_ch%23MasterProfile&term=News&lgiContentItemInstanceId=%5B1%5Dimi%3A00100000001950EC&contentItemId=%5B2%5Dcrid%3A%2F%2Ffcdf57b1-1cc4-4e13-ad34-c348b26315c7&startResults=0&maxResults=1&applyMarketingBias=true&filterVodAvailableNow=true",
-                "content_source_id": "1",
-                "client_type": "399",
-                "method": "lgiAdaptiveSearch",
-                "subscriber_id": "6b10a120-ce10-11e7-8a8a-5fa419531185_ch%23MasterProfile",
-                "clean_subscriber_id": "6b10a120-ce10-11e7-8a8a-5fa419531185",
-                "term": "News",
-                "lgi_content_item_instance_id": "%5B1%5Dimi%3A00100000001950EC",
-                "clean_lgi_content_item_instance_id": "00100000001950EC",
-                "content_item_id": "%5B2%5Dcrid%3A%2F%2Ffcdf57b1-1cc4-4e13-ad34-c348b26315c7",
-                "start_results": "0",
-                "max_results": "1",
-                "apply_marketing_bias": "true",
-                "filter_vod_available_now": "true",
-            }
-        )
-
     def test_uservices_log_parse_and_clean_subscriber_id(self):
         self.assert_parsing(
             {
