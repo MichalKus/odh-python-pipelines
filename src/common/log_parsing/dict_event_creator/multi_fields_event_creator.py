@@ -1,4 +1,3 @@
-from common.log_parsing.matchers.matcher import Matcher
 from common.log_parsing.metadata import AbstractEventCreator
 
 
@@ -40,9 +39,11 @@ class MultiFieldsEventCreator(AbstractEventCreator):
                 if self.__full_match:
                     if value != row.get(field):
                         matched = False
+                        break
                 else:
                     if (not row.get(field)) or (value not in row.get(field)):
                         matched = False
+                        break
             if matched:
                 result = match_result
         return {self.__value_type.get_output_name(): result} if result else {}
