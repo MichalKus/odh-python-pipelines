@@ -23,3 +23,9 @@ class StagisEventCreator(EventCreator):
         if text in dictionary:
             text = text.replace(text, dictionary[text])
         return text
+
+    def parse_if_field_exist(self, row):
+        if self.get_field_to_parse() in row.keys():
+            return self.create(row)
+        else:
+            return {}
