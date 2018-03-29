@@ -38,12 +38,12 @@ class Aggregation(object):
     def get_alias(self):
         return self.get_aggregation_field() + "_" + self.get_name()
 
-    def get_use_udf(self):
+    def __get_use_udf(self):
         return self.__use_udf
 
     def __quote_special_chars(self, column):
             if isinstance(column, basestring):
-                if self.get_use_udf():
+                if self.__get_use_udf():
                     column = self.__quote_chars_udf(column)
                 return regexp_replace(regexp_replace(column, "\\.",  "%2E"), "\\s+", "%20")
             else:
