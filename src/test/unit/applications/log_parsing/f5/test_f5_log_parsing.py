@@ -47,7 +47,7 @@ class F5MessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "server_latency": "0",
                 "url_string": "/report",
                 "vs_name": "/Common/OBO_ODH_DEU_443",
-                "stb_id": "3C36E4-EOSSTB-003392565903",
+                "x-dev": "3C36E4-EOSSTB-003392565903",
                 "x-forwarded-for": "213.46.252.136"
             }
         )
