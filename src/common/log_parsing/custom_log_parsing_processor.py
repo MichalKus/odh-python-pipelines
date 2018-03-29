@@ -5,7 +5,7 @@ from common.log_parsing.log_parsing_processor import LogParsingProcessor
 
 class CustomLogParsingProcessor(LogParsingProcessor):
     """
-    A processor implementation to parse messages that differ from typical messages produced by fileBeat
+    A processor implementation to parse messages that differ from typical messages produced by file_beat
     """
 
     def _extract_json(self, stream):
