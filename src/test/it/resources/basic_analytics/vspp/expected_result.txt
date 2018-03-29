@@ -1,0 +1,4 @@
+{"@timestamp": "2018-03-25T13:30:00.000Z", "message_type": "total_count_of_cc_error", "metric_name": "vspp.diagnosticsserver.message_type.total_count_of_cc_error.count", "value": 2}
+{"@timestamp": "2018-03-25T13:30:00.000Z", "message_type": "total_count_of_cc_ingest_session_service_error", "metric_name": "vspp.diagnosticsserver.message_type.total_count_of_cc_ingest_session_service_error.count", "value": 1}
+{"@timestamp": "2018-03-25T13:30:00.000Z", "message_type": "total_count_of_cc_corrupt_teletext_index_error", "metric_name": "vspp.diagnosticsserver.message_type.total_count_of_cc_corrupt_teletext_index_error.count", "value": 1}
+

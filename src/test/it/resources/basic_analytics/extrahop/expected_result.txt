@@ -1,0 +1,29 @@
+{"@timestamp": "2018-03-21T10:10:00.000Z", "uri": "osbcorp.vtr.cl:8000/autenticarClienteVtrGo", "value": 64.87, "metric_name": "extrahop.peal.uri.osbcorp%2Evtr%2Ecl%3A8000%2FautenticarClienteVtrGo.latency.avg"}
+{"@timestamp": "2018-03-21T08:10:00.000Z", "uri": "osbcorp.vtr.cl:8000/autenticarClienteVtrGo", "value": 290.46, "metric_name": "extrahop.peal.uri.osbcorp%2Evtr%2Ecl%3A8000%2FautenticarClienteVtrGo.latency.avg"}
+{"@timestamp": "2018-03-21T06:40:00.000Z", "uri": "osbcorp.vtr.cl:8000/autenticarClienteVtrGo", "value": 116.08, "metric_name": "extrahop.peal.uri.osbcorp%2Evtr%2Ecl%3A8000%2FautenticarClienteVtrGo.latency.avg"}
+{"@timestamp": "2018-03-21T10:40:00.000Z", "uri": "osbcorp.vtr.cl:8000/obtenerPerfilClienteVtrGo", "value": 40.04, "metric_name": "extrahop.peal.uri.osbcorp%2Evtr%2Ecl%3A8000%2FobtenerPerfilClienteVtrGo.latency.avg"}
+{"@timestamp": "2018-03-21T05:00:00.000Z", "uri": "osbcorp.vtr.cl:8000/obtenerPerfilClienteVtrGo", "value": 432.49, "metric_name": "extrahop.peal.uri.osbcorp%2Evtr%2Ecl%3A8000%2FobtenerPerfilClienteVtrGo.latency.avg"}
+{"@timestamp": "2018-03-21T03:30:00.000Z", "uri": "osbcorp.vtr.cl:8000/autenticarClienteVtrGo", "value": 13044.84, "metric_name": "extrahop.peal.uri.osbcorp%2Evtr%2Ecl%3A8000%2FautenticarClienteVtrGo.latency.avg"}
+
+{"status": "200", "@timestamp": "2018-03-21T10:10:00.000Z", "metric_name": "extrahop.peal.status.200.count", "value": 1}
+{"status": "200", "@timestamp": "2018-03-21T08:10:00.000Z", "metric_name": "extrahop.peal.status.200.count", "value": 1}
+{"status": "200", "@timestamp": "2018-03-21T06:40:00.000Z", "metric_name": "extrahop.peal.status.200.count", "value": 1}
+{"status": "200", "@timestamp": "2018-03-21T10:40:00.000Z", "metric_name": "extrahop.peal.status.200.count", "value": 1}
+{"status": "200", "@timestamp": "2018-03-21T05:00:00.000Z", "metric_name": "extrahop.peal.status.200.count", "value": 1}
+{"status": "500", "@timestamp": "2018-03-21T03:30:00.000Z", "metric_name": "extrahop.peal.status.500.count", "value": 1}
+{"status": "0", "@timestamp": "2018-03-21T05:00:00.000Z", "metric_name": "extrahop.peal.status.0.count", "value": 1}
+
+{"status": "200", "@timestamp": "2018-03-21T10:10:00.000Z", "uri": "osbcorp.vtr.cl:8000/autenticarClienteVtrGo", "value": 1, "metric_name": "extrahop.peal.uri.osbcorp%2Evtr%2Ecl%3A8000%2FautenticarClienteVtrGo.status.200.count"}
+{"status": "200", "@timestamp": "2018-03-21T08:10:00.000Z", "uri": "osbcorp.vtr.cl:8000/autenticarClienteVtrGo", "value": 1, "metric_name": "extrahop.peal.uri.osbcorp%2Evtr%2Ecl%3A8000%2FautenticarClienteVtrGo.status.200.count"}
+{"status": "200", "@timestamp": "2018-03-21T06:40:00.000Z", "uri": "osbcorp.vtr.cl:8000/autenticarClienteVtrGo", "value": 1, "metric_name": "extrahop.peal.uri.osbcorp%2Evtr%2Ecl%3A8000%2FautenticarClienteVtrGo.status.200.count"}
+{"status": "200", "@timestamp": "2018-03-21T10:40:00.000Z", "uri": "osbcorp.vtr.cl:8000/obtenerPerfilClienteVtrGo", "value": 1, "metric_name": "extrahop.peal.uri.osbcorp%2Evtr%2Ecl%3A8000%2FobtenerPerfilClienteVtrGo.status.200.count"}
+{"status": "200", "@timestamp": "2018-03-21T05:00:00.000Z", "uri": "osbcorp.vtr.cl:8000/obtenerPerfilClienteVtrGo", "value": 1, "metric_name": "extrahop.peal.uri.osbcorp%2Evtr%2Ecl%3A8000%2FobtenerPerfilClienteVtrGo.status.200.count"}
+{"status": "500", "@timestamp": "2018-03-21T03:30:00.000Z", "uri": "osbcorp.vtr.cl:8000/autenticarClienteVtrGo", "value": 1, "metric_name": "extrahop.peal.uri.osbcorp%2Evtr%2Ecl%3A8000%2FautenticarClienteVtrGo.status.500.count"}
+{"status": "0", "@timestamp": "2018-03-21T05:00:00.000Z", "uri": "osbcorp.vtr.cl:8000/obtenerPerfilClienteVtrGo", "value": 1, "metric_name": "extrahop.peal.uri.osbcorp%2Evtr%2Ecl%3A8000%2FobtenerPerfilClienteVtrGo.status.0.count"}
+
+{"payload_status": "Undefined", "@timestamp": "2018-03-21T10:10:00.000Z", "metric_name": "extrahop.peal.payload_status.Undefined.count", "value": 1}
+{"payload_status": "NOK", "@timestamp": "2018-03-21T08:10:00.000Z", "metric_name": "extrahop.peal.payload_status.NOK.count", "value": 1}
+{"payload_status": "NOK", "@timestamp": "2018-03-21T06:40:00.000Z", "metric_name": "extrahop.peal.payload_status.NOK.count", "value": 1}
+{"payload_status": "Undefined", "@timestamp": "2018-03-21T10:40:00.000Z", "metric_name": "extrahop.peal.payload_status.Undefined.count", "value": 1}
+{"payload_status": "Undefined", "@timestamp": "2018-03-21T05:00:00.000Z", "metric_name": "extrahop.peal.payload_status.Undefined.count", "value": 2}
+{"payload_status": "Undefined", "@timestamp": "2018-03-21T03:30:00.000Z", "metric_name": "extrahop.peal.payload_status.Undefined.count", "value": 1}
