@@ -23,3 +23,6 @@ class StagisEventCreator(EventCreator):
         if text in dictionary:
             text = text.replace(text, dictionary[text])
         return text
+
+    def contains_fields_to_parse(self, row):
+        return self.get_field_to_parse() in row.keys()

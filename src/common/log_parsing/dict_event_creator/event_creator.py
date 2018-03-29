@@ -33,8 +33,8 @@ class EventCreator(AbstractEventCreator):
             for field, value in self._parser.parse(row[self.__field_to_parse]).items()
         } if self._matcher is None or self._matcher.match(row[self.__field_to_parse]) else {}
 
-    def get_field_to_parse(self):
-        return self.__field_to_parse
+    def contains_fields_to_parse(self, row):
+        return self.__field_to_parse in row
 
 
 class ParserStep(object):
@@ -51,6 +51,7 @@ class ParserStep(object):
 
 class CompositeEventCreator(object):
     """Extension for event creator with several steps of parsing messages and their sub messages"""
+
     def __init__(self):
         self.__event_creator_list = list()
 
@@ -85,7 +86,7 @@ class CompositeEventCreator(object):
         result = {}
         for parser_step in self.__event_creator_list:
             if parser_step.dependent:
-                if parser_step.event_creator.get_field_to_parse() in intermediate_message:
+                if parser_step.event_creator.contains_fields_to_parse(intermediate_message):
                     result = parser_step.event_creator.create(intermediate_message)
                     intermediate_message.update(result)
             else:
