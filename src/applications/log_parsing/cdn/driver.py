@@ -19,9 +19,9 @@ from util.utils import Utils
 
 def create_event_creators(configuration=None):
     """
-    Method creates configuration for UServices Component
+    Method creates configuration for CDN
     :param configuration
-    :return: Composite event creator for UServices
+    :return: Composite event creator for CDN
     """
 
     timezone_name = configuration.property("timezone.name")
