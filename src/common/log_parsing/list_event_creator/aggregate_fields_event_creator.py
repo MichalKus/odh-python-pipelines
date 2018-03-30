@@ -8,7 +8,7 @@ from common.log_parsing.list_event_creator.event_creator import EventCreator
 
 class AggregateFieldsEventCreator(EventCreator):
     """
-    Extended EventCreator with checking for equals of started and finished scripts
+    Event creator that can aggregate fields after initial parsing
     """
 
     def __init__(self, metadata, parser, fields_mappings=None, agg_func=lambda x, y: x + y,
@@ -16,7 +16,7 @@ class AggregateFieldsEventCreator(EventCreator):
         """
         Creates extended event creator
         :param metadata: metadata
-        :param parser: dict parser
+        :param parser: parser
         :param matcher: matcher object to check the input line to perform the parsing step only if the line is matched
         :param field_to_parse: field that uses as source for creating event
         :param timezone_field: field name with information about timezone
