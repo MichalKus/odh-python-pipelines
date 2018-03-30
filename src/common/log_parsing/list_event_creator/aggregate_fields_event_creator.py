@@ -11,7 +11,7 @@ class AggregateFieldsEventCreator(EventCreator):
     Event creator that can aggregate fields after initial parsing
     """
 
-    def __init__(self, metadata, parser, fields_mappings=None, agg_func=lambda x, y: x + y,
+    def __init__(self, metadata, parser, fields_mappings=None, agg_func=lambda x, y: x + " " + y,
                  matcher=None, field_to_parse="message", timezone_field="tz"):
         """
         Creates event creator
@@ -22,7 +22,6 @@ class AggregateFieldsEventCreator(EventCreator):
         :param timezone_field: field name with information about timezone
         :param fields_mappings: list of FieldsMappings
         """
-
         for fields_mapping in fields_mappings:
             if not callable(agg_func) or len(getargspec(agg_func).args) != len(
                 fields_mapping.get_fields_to_aggregate()):
@@ -60,6 +59,7 @@ class FieldsMapping(object):
     Case class that contain list of fields to aggregate,
     result field and boolean flag that indicates removing of intermediate fields
     """
+
     def __init__(self, fields_to_aggregate, result_field, remove_intermediate_fields=False):
         if (not fields_to_aggregate and not isinstance(fields_to_aggregate, list)) \
             or (not result_field and isinstance(result_field, str)):
