@@ -6,7 +6,7 @@ from util.configuration import Configuration
 from common.log_parsing.timezone_metadata import timezones
 
 
-class NokiaVrmMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
+class CdnParsingTestCase(BaseMultipleMessageParsingTestCase):
     event_creators = create_event_creators(Configuration(dict={"timezone": {"name": "Europe/Amsterdam"}}))
 
     def test_cdn(self):
