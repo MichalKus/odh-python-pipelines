@@ -1,5 +1,5 @@
 """
-    CDN driver
+    Spark driver for parsing message from CDN component
 """
 import sys
 
