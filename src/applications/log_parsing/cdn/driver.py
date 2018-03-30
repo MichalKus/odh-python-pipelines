@@ -1,8 +1,12 @@
+"""
+    CDN driver
+"""
 import sys
 
 from common.kafka_pipeline import KafkaPipeline
 from common.log_parsing.dict_event_creator.event_creator import CompositeEventCreator
-from common.log_parsing.list_event_creator.aggregate_fields_event_creator import AggregateFieldsEventCreator
+from common.log_parsing.list_event_creator.aggregate_fields_event_creator import AggregateFieldsEventCreator, \
+    FieldsMapping
 from common.log_parsing.dict_event_creator.event_creator import EventCreator
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration
 from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
@@ -58,8 +62,8 @@ def create_event_creators(configuration=None):
         StringField("additional_headers"),
         StringField("unknown_field3"),
         StringField("unknown_field4")]),
-        SplitterParser("\t", is_trim=True), result_field="date_time", fields_to_aggregate=["date", "time"],
-        remove_intermediate_fields=True, agg_func=lambda x, y: x + " " + y)
+        SplitterParser("\t", is_trim=True), [FieldsMapping(["date", "time"], "date_time", True)],
+        agg_func=lambda x, y: x + " " + y)
 
     timestamp_event_creator = EventCreator(Metadata([
         ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp")]),
@@ -68,8 +72,8 @@ def create_event_creators(configuration=None):
 
     return SourceConfiguration(
         CompositeEventCreator()
-        .add_source_parser(cdn_log)
-        .add_intermediate_result_parser(timestamp_event_creator),
+            .add_source_parser(cdn_log)
+            .add_intermediate_result_parser(timestamp_event_creator),
         Utils.get_output_topic(configuration, "cdn_log")
     )
 
