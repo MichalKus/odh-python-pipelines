@@ -14,7 +14,7 @@ class AggregateFieldsEventCreator(EventCreator):
     def __init__(self, metadata, parser, fields_mappings=None, agg_func=lambda x, y: x + y,
                  matcher=None, field_to_parse="message", timezone_field="tz"):
         """
-        Creates extended event creator
+        Creates event creator
         :param metadata: metadata
         :param parser: parser
         :param matcher: matcher object to check the input line to perform the parsing step only if the line is matched
@@ -38,7 +38,7 @@ class AggregateFieldsEventCreator(EventCreator):
 
     def create(self, row):
         """
-        Parse row with Parser and then check for equals of started and finished script names
+        Parse row with Parser and then aggregate intermediate fields
         :param row: Row from kafka topic
         :return: list of all fields
         """
