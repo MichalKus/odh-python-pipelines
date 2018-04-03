@@ -33,7 +33,7 @@ def create_event_creators(config):
     timestamp_event_creator = EventCreator(
         Metadata(
             [ConfigurableTimestampField("timestamp", timezone_name, timezones_priority, "@timestamp")]),
-        RegexpParser("^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z)"), field_to_parse="@timestamp"
+        RegexpParser(r"^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z)"), field_to_parse="@timestamp"
     )
 
     http_url_query_event_creator = SingleTypeEventCreator(StringField(None),
