@@ -5,8 +5,9 @@ Spark driver for parsing message related to the backend of the Traxis component
 import sys
 
 from common.kafka_pipeline import KafkaPipeline
-from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
-from common.log_parsing.dict_event_creator.event_creator import EventCreator, CompositeEventCreator
+from common.log_parsing.dict_event_creator.parsers.regexp_parser import RegexpParser
+from common.log_parsing.dict_event_creator.event_creator import EventCreator
+from common.log_parsing.composite_event_creator import CompositeEventCreator
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.event_creator_tree.multisource_configuration import *
 from common.log_parsing.matchers.matcher import SubstringMatcher

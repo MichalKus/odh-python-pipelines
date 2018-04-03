@@ -2,7 +2,7 @@ import unittest
 
 from common.log_parsing.metadata import *
 from common.log_parsing.dict_event_creator.event_creator import EventCreator
-from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
+from common.log_parsing.dict_event_creator.parsers.regexp_parser import RegexpParser
 
 
 class EventCreatorTestCase(unittest.TestCase):

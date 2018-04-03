@@ -1,4 +1,5 @@
-from common.log_parsing.list_event_creator.splitter_parser import SplitterParser
+"""Parser http_access logs"""
+from common.log_parsing.list_event_creator.parsers.splitter_parser import SplitterParser
 
 
 class HttpAccessParser(object, SplitterParser):

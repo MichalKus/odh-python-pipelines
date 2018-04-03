@@ -1,5 +1,4 @@
 import re
-from itertools import chain
 from common.log_parsing.metadata import ParsingException
 
 
@@ -12,7 +11,6 @@ class RegexpMatchesParser:
         """
         Creates finditer parser
         :param pattern: regex pattern
-        :param match: match needed flag
         """
         self.__pattern = pattern
 

@@ -1,7 +1,10 @@
+"""
+Predicate event creator
+"""
 from common.log_parsing.metadata import AbstractEventCreator
 
 
-class MultiFieldsEventCreator(AbstractEventCreator):
+class PredicateEventCreator(AbstractEventCreator):
     """
     Creates events for multiple match fields
     """
@@ -26,7 +29,7 @@ class MultiFieldsEventCreator(AbstractEventCreator):
 
     def _create_with_context(self, row, context):
         """
-        Converts row to typed values according metadata.
+        Converts row.
         :param row: input row.
         :param context: dictionary with additional data.
         :return: map representing event where key is event field name and value is field value.
@@ -44,7 +47,7 @@ class MultiFieldsEventCreator(AbstractEventCreator):
                 if value != row.get(field):
                     return False
             else:
-                if (not row.get(field)) or (value not in row.get(field)):
+                if not row.get(field) or value not in row.get(field):
                     return False
         return True
 

@@ -1,16 +1,21 @@
+"""Spark driver for parsing message from VROPS component"""
 import sys
 import json
+
+import re
 from pyspark.sql.functions import from_json, udf, col
 from pyspark.sql.types import StringType
 
 from common.kafka_pipeline import KafkaPipeline
+from common.log_parsing.list_event_creator.mutate_event_creator import MutateEventCreator, FieldsMapping
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
-from common.log_parsing.dict_event_creator.event_creator import EventCreator, CompositeEventCreator
-from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
+from common.log_parsing.dict_event_creator.event_creator import EventCreator
+from common.log_parsing.composite_event_creator import CompositeEventCreator
+from common.log_parsing.dict_event_creator.parsers.regexp_parser import RegexpParser
 from common.log_parsing.event_creator_tree.multisource_configuration import MatchField, SourceConfiguration
 from common.log_parsing.metadata import Metadata, StringField
-from applications.log_parsing.vrops.metrics_event_creator import MetricsEventCreator
 from util.utils import Utils
+
 
 class CustomLogParsingProcessor(LogParsingProcessor):
     """
@@ -44,12 +49,40 @@ class CustomLogParsingProcessor(LogParsingProcessor):
                     .select(create_full_event_udf("json").alias("result")) \
                     .selectExpr("result.topic AS topic", "result.json AS value")]
 
+
 def create_event_creators(configuration):
     """
     Method creates configuration for VROPS Component all metrics
     :param configuration:
     :return: MatchField configuration for VROPS
     """
+
+    def custom_dict(metrics):
+        """
+       convert influx str to dict
+       :param metrics: input dict
+       """
+        pairs = []
+        split = re.split(r'[, ]', metrics)
+        res = []
+        for x in split:
+            if '=' in x:
+                res.append(x)
+            else:
+                try:
+                    res[-1] = res[-1] + x
+                except IndexError:
+                    pass
+        for x in res:
+            [key, metric_value] = x.split('=')
+            try:
+                value = float(metric_value)
+            except ValueError:
+                value = metric_value
+            pairs.append((key, value))
+        return dict(pairs)
+
+    custom_dict_event_creator = MutateEventCreator(None, [FieldsMapping(["metrics"], "metrics")], custom_dict)
 
     general_creator = EventCreator(Metadata([
         StringField("group"),
@@ -58,9 +91,10 @@ def create_event_creators(configuration):
         StringField("metrics"),
         StringField("timestamp")]),
         RegexpParser(
-            r"(?s)^(?P<group>\w*),.*name=(?P<name>[^,]*).*kind=(?P<res_kind>[^,]*)\s(?P<metrics>.*)\s(?P<timestamp>.*)\n"))
+            r"(?s)^(?P<group>\w*),.*name=(?P<name>[^,]*).*kind=(?P<res_kind>[^,]*)\s"
+            r"(?P<metrics>.*)\s(?P<timestamp>.*)\n"))
 
-    metrics_creator = MetricsEventCreator(Metadata([
+    metrics_creator = EventCreator(Metadata([
         StringField("metrics")]),
         RegexpParser(r"(?s)^(?P<metrics>[^\[^,]+\S+]*)",
                      return_empty_dict=True),
@@ -70,14 +104,15 @@ def create_event_creators(configuration):
         "VROPS.log": SourceConfiguration(
             CompositeEventCreator()
                 .add_source_parser(general_creator)
-                .add_intermediate_result_parser(metrics_creator),
+                .add_intermediate_result_parser(metrics_creator)
+                .add_intermediate_result_parser(custom_dict_event_creator)
+            ,
             Utils.get_output_topic(configuration, "vrops")
         )
     })
 
+
 if __name__ == "__main__":
-
-
     configuration = Utils.load_config(sys.argv[:])
     KafkaPipeline(
         configuration,

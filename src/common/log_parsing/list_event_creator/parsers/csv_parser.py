@@ -10,7 +10,6 @@ class CsvParser:
         """
         Creates instances for split parsing
         :param delimiter: delimiter
-        :param is_trim: flag to trim or not fields
         """
         self._delimiter = delimiter
         self._quotechar = quotechar

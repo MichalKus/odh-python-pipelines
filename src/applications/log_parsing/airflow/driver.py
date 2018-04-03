@@ -1,12 +1,12 @@
 """Spark driver for parsing message from Airflow component"""
 import sys
 
-from applications.log_parsing.airflow.crid_event_creator import CridEventCreator
 from common.kafka_pipeline import KafkaPipeline
-from common.log_parsing.dict_event_creator.event_creator import CompositeEventCreator
+from common.log_parsing.composite_event_creator import CompositeEventCreator
 from common.log_parsing.dict_event_creator.event_creator import EventCreator
-from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
+from common.log_parsing.dict_event_creator.parsers.regexp_parser import RegexpParser
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration, MatchField
+from common.log_parsing.list_event_creator.mutate_event_creator import MutateEventCreator, FieldsMapping
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.matchers.matcher import SubstringMatcher
 from common.log_parsing.metadata import Metadata, StringField
@@ -61,7 +61,7 @@ def create_event_creators(configuration):
         matcher=SubstringMatcher("Subtask:"),
         field_to_parse="message")
 
-    crid_creator = CridEventCreator(
+    crid_creator = EventCreator(
         Metadata([
             StringField("crid")
         ]),
@@ -69,6 +69,9 @@ def create_event_creators(configuration):
                      return_empty_dict=True),
         matcher=SubstringMatcher("Fabrix input:"),
         field_to_parse="subtask_message")
+
+    clean_crid_creator = MutateEventCreator(None, [FieldsMapping(["crid"], "crid")],
+                                            lambda x: x.replace("~~3A", ":").replace("~~2F", "/"))
 
     airflow_id_creator = EventCreator(
         Metadata([
@@ -84,17 +87,19 @@ def create_event_creators(configuration):
             CompositeEventCreator()
             .add_source_parser(general_creator)
             .add_intermediate_result_parser(subtask_creator)
-            .add_intermediate_result_parser(crid_creator, final=True)
+            .add_intermediate_result_parser(crid_creator)
+            .add_intermediate_result_parser(clean_crid_creator, final=True)
             .add_intermediate_result_parser(airflow_id_creator, final=True),
             Utils.get_output_topic(configuration, 'worker')
         ),
         "/usr/local/airflow/logs": SourceConfiguration(
             CompositeEventCreator()
-            .add_source_parser(general_creator)
-            .add_source_parser(dag_creator)
-            .add_intermediate_result_parser(subtask_creator)
-            .add_intermediate_result_parser(crid_creator, final=True)
-            .add_intermediate_result_parser(airflow_id_creator, final=True),
+                .add_source_parser(general_creator)
+                .add_source_parser(dag_creator)
+                .add_intermediate_result_parser(subtask_creator)
+                .add_intermediate_result_parser(crid_creator)
+                .add_intermediate_result_parser(clean_crid_creator, final=True)
+                .add_intermediate_result_parser(airflow_id_creator, final=True),
             Utils.get_output_topic(configuration, 'worker_dag_execution')
         )
     })

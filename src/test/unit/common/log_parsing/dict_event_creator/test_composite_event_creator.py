@@ -2,8 +2,9 @@ import unittest
 
 from common.log_parsing.matchers.matcher import SubstringMatcher
 from common.log_parsing.metadata import *
-from common.log_parsing.dict_event_creator.event_creator import EventCreator, CompositeEventCreator
-from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
+from common.log_parsing.dict_event_creator.event_creator import EventCreator
+from common.log_parsing.composite_event_creator import CompositeEventCreator
+from common.log_parsing.dict_event_creator.parsers.regexp_parser import RegexpParser
 
 
 class CompositeEventCreatorTestCase(unittest.TestCase):

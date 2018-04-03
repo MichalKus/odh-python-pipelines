@@ -3,24 +3,19 @@
 """
 from inspect import getargspec
 
-from common.log_parsing.list_event_creator.event_creator import EventCreator
+from common.log_parsing.dict_event_creator.event_creator import EventCreator
 
 
-class AggregateFieldsEventCreator(EventCreator):
+class MutateEventCreator(EventCreator):
     """
-    Event creator that can aggregate fields after initial parsing
+    Event creator that aggregates fields
     """
 
-    def __init__(self, metadata, parser, fields_mappings=None, agg_func=lambda x, y: x + " " + y,
-                 matcher=None, field_to_parse="message", timezone_field="tz"):
+    def __init__(self, metadata=None, fields_mappings=None, agg_func=lambda x, y: x + " " + y):
         """
         Creates event creator
-        :param metadata: metadata
-        :param parser: parser
-        :param matcher: matcher object to check the input line to perform the parsing step only if the line is matched
-        :param field_to_parse: field that uses as source for creating event
-        :param timezone_field: field name with information about timezone
         :param fields_mappings: list of FieldsMappings
+        :param agg_func function that aggregates values
         """
         for fields_mapping in fields_mappings:
             if not callable(agg_func) or len(getargspec(agg_func).args) != len(
@@ -29,29 +24,36 @@ class AggregateFieldsEventCreator(EventCreator):
                     "Aggregate function must take same arguments count as "
                     "fields_to_aggregate count and produce single argument!")
 
-        self._metadata = metadata
-        self._parser = parser
         self.__fields_mappings = fields_mappings
         self.__agg_func = agg_func
-        EventCreator.__init__(self, metadata, parser, matcher, field_to_parse, timezone_field)
+        self.__metadata = metadata
+        EventCreator.__init__(self, metadata, None)
 
-    def create(self, row):
+    def _create_with_context(self, row, context):
         """
-        Parse row with Parser and then aggregate intermediate fields
+        Aggregate fields
         :param row: Row from kafka topic
         :return: list of all fields
         """
 
-        values = super(AggregateFieldsEventCreator, self).create(row)
         for fields_mapping in self.__fields_mappings:
-            values_to_agg = map(lambda x: values[x], fields_mapping.get_fields_to_aggregate())
-            result_value = reduce(self.__agg_func, values_to_agg)
+            values_to_agg = map(lambda x: row[x], fields_mapping.get_fields_to_aggregate())
+            result_value = self.__agg_func(*values_to_agg)
             if fields_mapping.get_remove_intermediate_fields():
                 for field in fields_mapping.get_fields_to_aggregate():
-                    del values[field]
-            values.update({fields_mapping.get_result_field(): result_value})
+                    del row[field]
+            if self._metadata and self._metadata.get_field_by_name(fields_mapping.get_result_field()):
+                row.update({self._metadata.get_field_by_name(fields_mapping.get_result_field()).get_output_name():
+                    self._metadata.get_field_by_name(fields_mapping.get_result_field()).get_value(
+                        result_value, context)})
+            else:
+                row.update({fields_mapping.get_result_field(): result_value})
+        return row
 
-        return values
+    def contains_fields_to_parse(self, row):
+        fields = map(lambda x: x.get_fields_to_aggregate(), self.__fields_mappings)
+        return set(reduce(lambda x, y: x.get_fields_to_aggregate() + y.get_fields_to_aggregate(),
+                          fields)).issubset(set(row.keys()))
 
 
 class FieldsMapping(object):
