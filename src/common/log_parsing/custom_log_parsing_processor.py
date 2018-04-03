@@ -3,9 +3,9 @@ from pyspark.sql.functions import struct
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 
 
-class FlumeLogParsingProcessor(LogParsingProcessor):
+class CustomLogParsingProcessor(LogParsingProcessor):
     """
-    A processor implementation to parse messages from Apache Flume,
+    A processor implementation to parse messages that differ from typical messages produced by file_beat
     """
 
     def _extract_json(self, stream):

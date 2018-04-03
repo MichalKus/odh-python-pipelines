@@ -86,3 +86,26 @@ def convert_to_underlined(text):
     """
     s1 = re.sub('([^-])([A-Z][a-z]+)', r'\1_\2', text)
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+
+
+def flatten_json(nested_json, delimiter='.', fields_to_flat=None):
+    """
+    The function to convert json to flatten json like
+    {"a":1, "b":{"c":1}} -> {"a":1, "b.c":1}
+    :param fields_to_flat: fields that needed to be flat (if None then all fields become flat)
+    :param delimiter: symbol that appears in flat json keys
+    :param nested_json: input json
+    :return: flatten json
+    """
+
+    def recursive_flatten(init, left_key='', delim='.', fields=None):
+        result_json = {}
+        for right_key, value in init.items():
+            key = left_key + right_key
+            if isinstance(value, dict) and (not fields or fields.__contains__(key)):
+                result_json.update(recursive_flatten(value, key + delim, delim, fields))
+            else:
+                result_json[key] = value
+        return result_json
+
+    return recursive_flatten(nested_json, '', delimiter, fields_to_flat)

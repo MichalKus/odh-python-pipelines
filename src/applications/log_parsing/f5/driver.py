@@ -10,7 +10,7 @@ from common.log_parsing.dict_event_creator.key_value_parser import KeyValueParse
 from common.log_parsing.dict_event_creator.long_timestamp_parser import LongTimestampParser
 from common.log_parsing.dict_event_creator.single_type_event_creator import SingleTypeEventCreator
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration
-from common.log_parsing.flume_log_parsing_processor import FlumeLogParsingProcessor
+from common.log_parsing.custom_log_parsing_processor import CustomLogParsingProcessor
 from common.log_parsing.metadata import StringField, Metadata
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
@@ -55,5 +55,5 @@ if __name__ == "__main__":
     configuration = Utils.load_config(sys.argv[:])
     KafkaPipeline(
         configuration,
-        FlumeLogParsingProcessor(configuration, create_event_creators(configuration))
+        CustomLogParsingProcessor(configuration, create_event_creators(configuration))
     ).start()
