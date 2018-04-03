@@ -42,12 +42,12 @@ class Aggregation(object):
         return self.__use_udf
 
     def __quote_special_chars(self, column):
-            if isinstance(column, basestring):
-                if self.__get_use_udf():
-                    column = self.__quote_chars_udf(column)
-                return regexp_replace(regexp_replace(column, "\\.",  "%2E"), "\\s+", "%20")
-            else:
-                return regexp_replace(column, "\\s+", "%20")
+        if isinstance(column, basestring):
+            if self.__get_use_udf():
+                column = self.__quote_chars_udf(column)
+            return regexp_replace(regexp_replace(column, "\\.",  "%2E"), "\\s+", "%20")
+        else:
+            return regexp_replace(column, "\\s+", "%20")
 
     def apply(self, input_dataframe, aggregation_window, time_column):
         actual_window = self.__aggregation_window \
@@ -118,7 +118,8 @@ class AggregatedDataFrame(object):
         self.__aggregations = aggregations if isinstance(aggregations, list) else [aggregations]
 
     def results(self, aggregation_window, time_column):
-        return [aggregation.apply(self.__dataframe, aggregation_window, time_column) for aggregation in self.__aggregations]
+        return [aggregation.apply(self.__dataframe, aggregation_window, time_column)
+                for aggregation in self.__aggregations]
 
 
 class Avg(Aggregation):
