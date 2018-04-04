@@ -17,7 +17,7 @@ class VsppDiagnosticServer(BasicAnalyticsProcessor):
 
     def _process_pipeline(self, read_stream):
         mapping = {
-            ".*error got \\d*, expected \\d*, packet \\d*.*":
+            r".*error got \d*, expected \d*, packet \d*.*":
                 "total_count_of_cc_error",
             ".*Ingest session service error, failed starting session handler, nested error:.*":
                 "total_count_of_cc_ingest_session_service_error",
