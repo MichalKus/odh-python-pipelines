@@ -42,6 +42,12 @@ class EventWithUrlCreator(EventCreator):
             allparameters = url[1]
             params = dict(urlparse.parse_qsl(allparameters))
             params.update({"action": url[0]})
+            if "subscriberId" in params.keys():
+                params["customer-id"] = params["subscriberId"]
+                del params["subscriberId"]
+            if "contentItemId" in params.keys():
+                params["crid"] = "crid{}".format(params["contentItemId"].split('crid')[-1])
+                del params["contentItemId"]
             values.update(params)
         else:
             values.update({"action": url[0]})
