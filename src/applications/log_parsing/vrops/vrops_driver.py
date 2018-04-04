@@ -19,6 +19,7 @@ class CustomLogParsingProcessor(LogParsingProcessor):
 
     def __init__(self, configuration, event_creators_tree):
         self._LogParsingProcessor__event_creators_tree = event_creators_tree
+        self._LogParsingProcessor__dlq_topic = configuration.property("kafka.topics.dlq")
         self.__input_topic = configuration.property("kafka.topics.inputs")[0]
 
     def udf_format_influx(self, message):
@@ -58,7 +59,7 @@ def create_event_creators(configuration):
         StringField("metrics"),
         StringField("timestamp")]),
         RegexpParser(
-            r"(?s)^(?P<group>\w*),.*name=(?P<name>[^,]*).*kind=(?P<res_kind>[^,]*)\s(?P<metrics>.*)\s(?P<timestamp>.*)\n"))
+            r"(?s)^(?P<group>[-\w]*),.*name=(?P<name>[^,]*).*kind=(?P<res_kind>[^,]*)\s(?P<metrics>.*)\s(?P<timestamp>.*)\n"))
 
     metrics_creator = MetricsEventCreator(Metadata([
         StringField("metrics")]),

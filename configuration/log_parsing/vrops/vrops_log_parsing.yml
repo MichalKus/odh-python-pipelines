@@ -12,7 +12,7 @@ kafka:
   topics:
     dlq: odhecx_pro_deadletterqueue
     inputs:
-      - odhecx_in_eosdtv_pan_prd_vrops_v1
+      - odhecx_in_eosdtv_pan_prd_vrops_v2
     outputs:
       vrops: odhecx_pr_eosdtv_pan_prd_vrops_v1
   security.protocol: SASL_PLAINTEXT
