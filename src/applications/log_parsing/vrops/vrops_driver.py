@@ -90,10 +90,8 @@ def create_event_creators(configuration):
         StringField("res_kind"),
         StringField("metrics"),
         StringField("timestamp")]),
-        RegexpParser(
-            r"(?s)^(?P<group>[-\w]*),.*name=(?P<name>[^,]*).*kind=(?P<res_kind>[^,]*)\s(?P<metrics>.*)\s(?P<timestamp>.*)\n"))
-            r"(?s)^(?P<group>\w*),.*name=(?P<name>[^,]*).*kind=(?P<res_kind>[^,]*)\s"
-            r"(?P<metrics>.*)\s(?P<timestamp>.*)\n"))
+        RegexpParser(r"(?s)^(?P<group>[-\w]*),.*name=(?P<name>[^,]*).*kind=(?P<res_kind>[^,]*)"
+                     r"\s(?P<metrics>.*)\s(?P<timestamp>.*)\n"))
 
     metrics_creator = EventCreator(Metadata([
         StringField("metrics")]),
@@ -104,9 +102,9 @@ def create_event_creators(configuration):
     return MatchField("source", {
         "VROPS.log": SourceConfiguration(
             CompositeEventCreator()
-                .add_source_parser(general_creator)
-                .add_intermediate_result_parser(metrics_creator)
-                .add_intermediate_result_parser(custom_dict_event_creator)
+            .add_source_parser(general_creator)
+            .add_intermediate_result_parser(metrics_creator)
+            .add_intermediate_result_parser(custom_dict_event_creator)
             ,
             Utils.get_output_topic(configuration, "vrops")
         )
