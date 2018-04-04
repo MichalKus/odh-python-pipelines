@@ -1,9 +1,10 @@
+"""Module for key/value parser"""
 from common.log_parsing.metadata import ParsingException
 from common.spark_utils.custom_functions import convert_to_underlined
 
 
-class KeyValueParser:
-
+class KeyValueParser(object):
+    """Parser for strings that contain key/value sequence"""
     def __init__(self, sequence_separator, key_value_separator,
                  keys_mapper=None, values_mapper=None,
                  skip_parsing_exceptions=False):
@@ -31,7 +32,7 @@ class KeyValueParser:
 
     def parse(self, text):
         """
-        Parses text using pattern
+        Parses text as key/value sequence
         :param text: input text
         :return: parsed dict
         :raises: ParsingException when text doesn't confirm key/value format

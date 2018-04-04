@@ -1,5 +1,5 @@
 import unittest
-from common.log_parsing.list_event_creator.mutate_event_creator import MutateEventCreator, \
+from common.log_parsing.dict_event_creator.mutate_event_creator import MutateEventCreator, \
     FieldsMapping
 from common.log_parsing.metadata import Metadata, FloatField
 

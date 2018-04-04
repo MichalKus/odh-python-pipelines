@@ -1,3 +1,4 @@
+"""Module for custom functions"""
 import re
 
 from pyspark.sql.functions import col, lower, when, Column, from_unixtime

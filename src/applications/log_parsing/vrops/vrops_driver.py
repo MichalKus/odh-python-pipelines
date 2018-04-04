@@ -7,7 +7,7 @@ from pyspark.sql.functions import from_json, udf, col
 from pyspark.sql.types import StringType
 
 from common.kafka_pipeline import KafkaPipeline
-from common.log_parsing.list_event_creator.mutate_event_creator import MutateEventCreator, FieldsMapping
+from common.log_parsing.dict_event_creator.mutate_event_creator import MutateEventCreator, FieldsMapping
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.dict_event_creator.event_creator import EventCreator
 from common.log_parsing.composite_event_creator import CompositeEventCreator

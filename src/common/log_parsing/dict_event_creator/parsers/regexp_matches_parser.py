@@ -1,8 +1,9 @@
+"""Module for regexp parser"""
 import re
 from common.log_parsing.metadata import ParsingException
 
 
-class RegexpMatchesParser:
+class RegexpMatchesParser(object):
     """
     Parses event using regex finditer
     """

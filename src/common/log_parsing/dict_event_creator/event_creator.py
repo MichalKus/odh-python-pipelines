@@ -1,4 +1,4 @@
-"""Module with all necessary tools for creating new events during parsing log messages"""
+"""Module with necessary tools for creating new events during parsing log messages"""
 from common.log_parsing.metadata import AbstractEventCreator
 
 
