@@ -24,6 +24,7 @@ class CustomLogParsingProcessor(LogParsingProcessor):
 
     def __init__(self, configuration, event_creators_tree):
         self._LogParsingProcessor__event_creators_tree = event_creators_tree
+        self._LogParsingProcessor__dlq_topic = configuration.property("kafka.topics.dlq")
         self.__input_topic = configuration.property("kafka.topics.inputs")[0]
 
     def udf_format_influx(self, message):
@@ -48,7 +49,6 @@ class CustomLogParsingProcessor(LogParsingProcessor):
                     .select(from_json(col("new_value"), self._LogParsingProcessor__get_message_schema()).alias("json")) \
                     .select(create_full_event_udf("json").alias("result")) \
                     .selectExpr("result.topic AS topic", "result.json AS value")]
-
 
 def create_event_creators(configuration):
     """
@@ -91,6 +91,7 @@ def create_event_creators(configuration):
         StringField("metrics"),
         StringField("timestamp")]),
         RegexpParser(
+            r"(?s)^(?P<group>[-\w]*),.*name=(?P<name>[^,]*).*kind=(?P<res_kind>[^,]*)\s(?P<metrics>.*)\s(?P<timestamp>.*)\n"))
             r"(?s)^(?P<group>\w*),.*name=(?P<name>[^,]*).*kind=(?P<res_kind>[^,]*)\s"
             r"(?P<metrics>.*)\s(?P<timestamp>.*)\n"))
 
