@@ -51,7 +51,7 @@ class CustomLogParsingProcessor(LogParsingProcessor):
                     .selectExpr("result.topic AS topic", "result.json AS value")]
 
 
-def custom_dict(metrics):
+def convert_influx_str(metrics):
     """
    convert influx str to dict
    :param metrics: input dict
@@ -76,6 +76,7 @@ def custom_dict(metrics):
         pairs.append((key, value))
     return dict(pairs)
 
+
 def create_event_creators(configuration):
     """
     Method creates configuration for VROPS Component all metrics
@@ -83,7 +84,7 @@ def create_event_creators(configuration):
     :return: MatchField configuration for VROPS
     """
 
-    custom_dict_event_creator = MutateEventCreator(None, [FieldsMapping(["metrics"], "metrics")], custom_dict)
+    custom_dict_event_creator = MutateEventCreator(None, [FieldsMapping(["metrics"], "metrics")], convert_influx_str)
 
     general_creator = EventCreator(Metadata([
         StringField("group"),
