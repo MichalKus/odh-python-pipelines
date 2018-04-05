@@ -1,5 +1,5 @@
 """
-Predicate event creator
+Module for PredicateEventCreator class
 """
 from common.log_parsing.metadata import AbstractEventCreator
 

@@ -4,7 +4,10 @@ from common.spark_utils.custom_functions import convert_to_underlined
 
 
 class KeyValueParser(object):
-    """Parser for strings that contain key/value sequence"""
+    """
+    Parser for strings that contain key/value sequence
+    """
+
     def __init__(self, sequence_separator, key_value_separator,
                  keys_mapper=None, values_mapper=None,
                  skip_parsing_exceptions=False):

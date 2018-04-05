@@ -77,7 +77,7 @@ class Stagis(object):
             "Model state after committing transaction": "Committing Transaction"
         }
         if text in dictionary.keys():
-            text = dictionary[text]
+            return dictionary[text]
         return text
 
     @staticmethod

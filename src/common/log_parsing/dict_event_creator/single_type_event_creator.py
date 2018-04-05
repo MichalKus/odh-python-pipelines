@@ -1,5 +1,5 @@
 """
-Creates events for key-value parser
+Module for SingleTypeEventCreatorClass that can use key/value parser
 """
 from common.log_parsing.metadata import AbstractEventCreator
 

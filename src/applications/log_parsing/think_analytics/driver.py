@@ -27,21 +27,6 @@ def create_event_creators(configuration):
     timezone_name = configuration.property("timezone.name")
     timezones_priority = configuration.property("timezone.priority", "dic")
 
-    def duration_update(started_script, finished_script, finished_time, timestamp):
-        """
-        if started script equals finished script duration is calculated
-        :param started_script
-        :param finished_script
-        :param finished_time
-        :param timestamp
-        :return: duration
-        ":exception: ParsingException
-        """
-        if started_script == finished_script:
-            return abs(finished_time - timestamp).seconds
-        else:
-            raise ParsingException("Message contains different started and finished scripts")
-
     duration_event_creator = MutateEventCreator(None,
                                                 [FieldsMapping(["started_script", "finished_script", "finished_time",
                                                                 "@timestamp"], "duration")],
@@ -190,6 +175,21 @@ def create_event_creators(configuration):
         )
     })
 
+
+def duration_update(started_script, finished_script, finished_time, timestamp):
+    """
+    if started script equals finished script duration is calculated
+    :param started_script
+    :param finished_script
+    :param finished_time
+    :param timestamp
+    :return: duration
+    ":exception: ParsingException
+    """
+    if started_script == finished_script:
+        return abs(finished_time - timestamp).seconds
+    else:
+        raise ParsingException("Message contains different started and finished scripts")
 
 if __name__ == "__main__":
     configuration = Utils.load_config(sys.argv[:])

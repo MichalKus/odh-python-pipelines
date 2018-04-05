@@ -1,5 +1,5 @@
 """
-    Event creator that can aggregate fields after parsing
+    Module for Event creator that can aggregate fields after parsing
 """
 from inspect import getargspec
 
