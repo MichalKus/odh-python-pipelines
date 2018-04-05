@@ -43,11 +43,14 @@ class EventWithUrlCreator(EventCreator):
             params = dict(urlparse.parse_qsl(allparameters))
             params.update({"action": url[0]})
             if "subscriberId" in params.keys():
-                params["customer-id"] = params["subscriberId"]
+                params["traxis-profile-id"] = params["subscriberId"]
                 del params["subscriberId"]
             if "contentItemId" in params.keys():
                 params["crid"] = "crid{}".format(params["contentItemId"].split('crid')[-1])
                 del params["contentItemId"]
+            if "intRequestId" in params.keys():
+                params["request-id"] = params["intRequestId"]
+                del params["intRequestId"]
             values.update(params)
         else:
             values.update({"action": url[0]})
