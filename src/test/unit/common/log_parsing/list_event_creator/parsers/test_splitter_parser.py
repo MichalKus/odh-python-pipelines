@@ -1,5 +1,5 @@
 import unittest
-from common.log_parsing.list_event_creator.splitter_parser import SplitterParser
+from common.log_parsing.list_event_creator.parsers.splitter_parser import SplitterParser
 
 
 class SplitParseTestCase(unittest.TestCase):

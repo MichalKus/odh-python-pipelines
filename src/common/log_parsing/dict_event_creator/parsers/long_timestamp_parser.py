@@ -1,3 +1,4 @@
+"""Module for longTimestampParser"""
 import datetime
 
 from common.log_parsing.metadata import ParsingException

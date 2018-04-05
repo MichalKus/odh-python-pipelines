@@ -1,14 +1,15 @@
 """Spark driver for parsing message from Traxis Frontend component"""
 import sys
 
-from common.log_parsing.dict_event_creator.json_parser import JsonParser
-from common.log_parsing.dict_event_creator.key_value_parser import KeyValueParser
-from common.log_parsing.dict_event_creator.multi_fields_event_creator import MultiFieldsEventCreator
-from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
+from common.log_parsing.dict_event_creator.parsers.json_parser import JsonParser
+from common.log_parsing.dict_event_creator.parsers.key_value_parser import KeyValueParser
+from common.log_parsing.dict_event_creator.predicate_event_creator import PredicateEventCreator
+from common.log_parsing.dict_event_creator.parsers.regexp_parser import RegexpParser
 from common.log_parsing.dict_event_creator.single_type_event_creator import SingleTypeEventCreator
 from common.kafka_pipeline import KafkaPipeline
 from common.log_parsing.custom_log_parsing_processor import CustomLogParsingProcessor
-from common.log_parsing.dict_event_creator.event_creator import EventCreator, CompositeEventCreator
+from common.log_parsing.dict_event_creator.event_creator import EventCreator
+from common.log_parsing.composite_event_creator import CompositeEventCreator
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration
 from common.log_parsing.metadata import StringField, Metadata
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
@@ -64,9 +65,9 @@ def create_event_creators(config):
             return_empty_dict=True),
         field_to_parse="lgi_content_item_instance_id")
 
-    api_methods_event_creator = MultiFieldsEventCreator(StringField("api_method"),
-                                                        ["app", "header_x-original-uri"],
-                                                        [(["recording-service", "bookings"], "bookings"),
+    api_methods_event_creator = PredicateEventCreator(StringField("api_method"),
+                                                      ["app", "header_x-original-uri"],
+                                                      [(["recording-service", "bookings"], "bookings"),
                                                          (["recording-service", "recordings"], "recordings"),
                                                          (["purchase-service", "history"], "history"),
                                                          (["purchase-service", "entitlements"], "entitlements"),

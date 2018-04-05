@@ -1,6 +1,6 @@
 import unittest
 
-from common.log_parsing.dict_event_creator.json_parser import JsonParser
+from common.log_parsing.dict_event_creator.parsers.json_parser import JsonParser
 from common.log_parsing.metadata import ParsingException
 
 

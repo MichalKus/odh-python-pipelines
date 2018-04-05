@@ -1,3 +1,4 @@
+"""Module for json parser that is used in log-parsing"""
 import json
 import six
 
@@ -5,8 +6,10 @@ from common.log_parsing.metadata import ParsingException
 from common.spark_utils.custom_functions import flatten_json
 
 
-class JsonParser:
-
+class JsonParser(object):
+    """
+    Parser for strings in json format
+    """
     def __init__(self, keys_mapper=None, values_mapper=None, flatten=False, delimiter='.', fields_to_flat=None):
         self.__keys_mapper = keys_mapper
         self.__values_mapper = values_mapper

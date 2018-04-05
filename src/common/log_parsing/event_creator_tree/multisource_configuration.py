@@ -1,9 +1,10 @@
+"""Module for utility classes related to configuration"""
 from abc import ABCMeta, abstractmethod
 
 from common.log_parsing.metadata import ParsingException
 
 
-class MultisourceConfiguration:
+class MultisourceConfiguration(object):
     """
     Interface for all nodes in configuration tree
     """
@@ -29,14 +30,14 @@ class MatchField(MultisourceConfiguration):
         self.__direct_match = direct_match
         self.__children_map = children_map
 
-    def add_child(self, childrenNode):
+    def add_child(self, children_node):
         """
         Add new pattern for field_name
-        :param childrenNode: Additional pattern for existing field_name
+        :param children_node: Additional pattern for existing field_name
         """
-        for key, value in childrenNode:
+        for key, value in children_node:
             assert isinstance(value, MultisourceConfiguration)
-            self.__children_map.update(childrenNode)
+            self.__children_map.update(children_node)
 
     def get_parsing_context(self, row):
         """

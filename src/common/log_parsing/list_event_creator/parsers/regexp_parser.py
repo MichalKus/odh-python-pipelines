@@ -1,9 +1,10 @@
+"""Module for RegexpParser"""
 import re
 from itertools import chain
 from common.log_parsing.metadata import ParsingException
 
 
-class RegexpParser:
+class RegexpParser(object):
     """
     Parses event using regex
     """

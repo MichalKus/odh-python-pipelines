@@ -1,7 +1,7 @@
 import unittest
 
 from common.log_parsing.dict_event_creator.single_type_event_creator import SingleTypeEventCreator
-from common.log_parsing.dict_event_creator.key_value_parser import KeyValueParser
+from common.log_parsing.dict_event_creator.parsers.key_value_parser import KeyValueParser
 from common.log_parsing.metadata import *
 
 
