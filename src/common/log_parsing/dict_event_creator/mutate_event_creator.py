@@ -35,7 +35,7 @@ class MutateEventCreator(EventCreator):
         :param row: Row from kafka topic
         :return: list of all fields
         """
-
+        result = {}
         for fields_mapping in self.__fields_mappings:
             values_to_agg = map(lambda x: row[x], fields_mapping.get_fields_to_aggregate())
             result_value = self.__agg_func(*values_to_agg)
@@ -43,12 +43,12 @@ class MutateEventCreator(EventCreator):
                 for field in fields_mapping.get_fields_to_aggregate():
                     del row[field]
             if self._metadata and self._metadata.get_field_by_name(fields_mapping.get_result_field()):
-                row.update({self._metadata.get_field_by_name(fields_mapping.get_result_field()).get_output_name():
+                result.update({self._metadata.get_field_by_name(fields_mapping.get_result_field()).get_output_name():
                     self._metadata.get_field_by_name(fields_mapping.get_result_field()).get_value(
                         result_value, context)})
             else:
-                row.update({fields_mapping.get_result_field(): result_value})
-        return row
+                result.update({fields_mapping.get_result_field(): result_value})
+        return result
 
     def contains_fields_to_parse(self, row):
         fields = map(lambda x: x.get_fields_to_aggregate(), self.__fields_mappings)
