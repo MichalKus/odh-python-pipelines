@@ -1,10 +1,8 @@
 import sys
 
 from common.kafka_pipeline import KafkaPipeline
-# from common.log_parsing.list_event_creator.event_creator import EventCreator
 from common.log_parsing.dict_event_creator.event_creator import CompositeEventCreator, EventCreator
 from common.log_parsing.dict_event_creator.regexp_parser import RegexpParser
-# from common.log_parsing.list_event_creator.regexp_parser import RegexpParser
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration, MatchField
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.metadata import Metadata, StringField
