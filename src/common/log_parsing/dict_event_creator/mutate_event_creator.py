@@ -1,5 +1,5 @@
 """
-    Event creator that can aggregate fields after parsing
+    Module for Event creator that can aggregate fields after parsing
 """
 from inspect import getargspec
 
@@ -30,12 +30,6 @@ class MutateEventCreator(EventCreator):
         EventCreator.__init__(self, metadata, None)
 
     def _create_with_context(self, row, context):
-        """
-        Aggregate fields
-        :param row: Row from kafka topic
-        :return: list of all fields
-        """
-
         for fields_mapping in self.__fields_mappings:
             values_to_agg = map(lambda x: row[x], fields_mapping.get_fields_to_aggregate())
             result_value = self.__agg_func(*values_to_agg)

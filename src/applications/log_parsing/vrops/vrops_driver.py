@@ -50,37 +50,38 @@ class CustomLogParsingProcessor(LogParsingProcessor):
                     .select(create_full_event_udf("json").alias("result")) \
                     .selectExpr("result.topic AS topic", "result.json AS value")]
 
+
+def custom_dict(metrics):
+    """
+   convert influx str to dict
+   :param metrics: input dict
+   """
+    pairs = []
+    split = re.split(r'[, ]', metrics)
+    res = []
+    for x in split:
+        if '=' in x:
+            res.append(x)
+        else:
+            try:
+                res[-1] = res[-1] + x
+            except IndexError:
+                pass
+    for x in res:
+        [key, metric_value] = x.split('=')
+        try:
+            value = float(metric_value)
+        except ValueError:
+            value = metric_value
+        pairs.append((key, value))
+    return dict(pairs)
+
 def create_event_creators(configuration):
     """
     Method creates configuration for VROPS Component all metrics
     :param configuration:
     :return: MatchField configuration for VROPS
     """
-
-    def custom_dict(metrics):
-        """
-       convert influx str to dict
-       :param metrics: input dict
-       """
-        pairs = []
-        split = re.split(r'[, ]', metrics)
-        res = []
-        for x in split:
-            if '=' in x:
-                res.append(x)
-            else:
-                try:
-                    res[-1] = res[-1] + x
-                except IndexError:
-                    pass
-        for x in res:
-            [key, metric_value] = x.split('=')
-            try:
-                value = float(metric_value)
-            except ValueError:
-                value = metric_value
-            pairs.append((key, value))
-        return dict(pairs)
 
     custom_dict_event_creator = MutateEventCreator(None, [FieldsMapping(["metrics"], "metrics")], custom_dict)
 
@@ -109,7 +110,6 @@ def create_event_creators(configuration):
             Utils.get_output_topic(configuration, "vrops")
         )
     })
-
 
 if __name__ == "__main__":
     configuration = Utils.load_config(sys.argv[:])

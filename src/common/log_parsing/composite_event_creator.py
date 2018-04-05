@@ -1,4 +1,4 @@
-"""Composite event creator"""
+"""Module for classes related to CompositeEventCreator class"""
 
 
 class CompositeEventCreator(object):
