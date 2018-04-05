@@ -1,3 +1,4 @@
+"""Spark driver for parsing message from Poster Server component"""
 import sys
 
 from common.kafka_pipeline import KafkaPipeline
@@ -21,13 +22,14 @@ def create_event_creators(configuration=None):
     timezone_name = configuration.property("timezone.name")
     timezones_property = configuration.property("timezone.priority", "dic")
 
-    poster_server_log = EventCreator(Metadata([ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
-                                               StringField("level"),
-                                               StringField("module"),
-                                               StringField("message")]),
-                                     RegexpParser(
-                                         r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\,\d{3})"
-                                         r"\s+(?P<level>\w+?)\s+(?P<module>\w+)\s+(?P<message>.*)"))
+    poster_server_log = EventCreator(
+        Metadata([ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+                  StringField("level"),
+                  StringField("module"),
+                  StringField("message")]),
+        RegexpParser(
+            r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\,\d{3})"
+            r"\s+(?P<level>\w+?)\s+(?P<module>\w+)\s+(?P<message>.*)"))
 
     crid_creator = CridEventCreator(Metadata([
         StringField("message")]),

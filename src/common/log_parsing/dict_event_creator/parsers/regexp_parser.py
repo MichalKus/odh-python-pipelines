@@ -1,9 +1,10 @@
+"""Regexp Parser"""
 import re
 
 from common.log_parsing.metadata import ParsingException
 
 
-class RegexpParser:
+class RegexpParser(object):
     """
     Parses event using regex and named groups
     """
@@ -12,7 +13,7 @@ class RegexpParser:
         """
         Creates regex parser with named groups
         :param pattern: regex pattern
-        :param return_none_if_not_mach: define if we need empty dict rather exception
+        :param return_empty_dict: define if we need empty dict rather exception
         """
         self.__pattern = re.compile(pattern)
         self.__return_empty_dict = return_empty_dict

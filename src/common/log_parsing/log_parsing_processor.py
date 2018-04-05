@@ -1,3 +1,4 @@
+"""Module for common LogParsingProcessor"""
 from common.log_parsing.metadata import ParsingException
 
 from pyspark.sql.types import *
@@ -8,7 +9,7 @@ from datetime import date, datetime
 from dateutil import tz
 
 
-class LogParsingProcessor:
+class LogParsingProcessor(object):
     """
     Pipeline for log parsing
     """

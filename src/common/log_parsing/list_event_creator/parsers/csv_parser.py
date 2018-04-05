@@ -1,7 +1,9 @@
+"""Module for csv parser"""
 import csv
 from StringIO import StringIO
 
-class CsvParser:
+
+class CsvParser(object):
     """
     Parses event using csv format
     """
@@ -10,7 +12,6 @@ class CsvParser:
         """
         Creates instances for split parsing
         :param delimiter: delimiter
-        :param is_trim: flag to trim or not fields
         """
         self._delimiter = delimiter
         self._quotechar = quotechar
@@ -23,6 +24,7 @@ class CsvParser:
         :return: parsed list
         """
         row_as_file = StringIO(text)
-        csv_reader = csv.reader(row_as_file, delimiter=self._delimiter, quotechar=self._quotechar, skipinitialspace=self._skipinitialspace)
+        csv_reader = csv.reader(row_as_file, delimiter=self._delimiter, quotechar=self._quotechar,
+                                skipinitialspace=self._skipinitialspace)
         for parsed_list in csv_reader:
             return parsed_list

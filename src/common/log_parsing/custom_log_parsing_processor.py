@@ -1,3 +1,4 @@
+"""Module for CustomLogParsingProcessor"""
 from pyspark.sql.functions import struct
 
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
