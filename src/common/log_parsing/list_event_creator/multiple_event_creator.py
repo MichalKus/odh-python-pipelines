@@ -1,4 +1,4 @@
-"""Event creator that tries to use several list event creators"""
+"""Module for MultipleEventCreator class"""
 from common.log_parsing.metadata import ParsingException
 
 

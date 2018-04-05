@@ -1,19 +1,18 @@
 """
 Module for PredicateEventCreator class
 """
-from common.log_parsing.metadata import AbstractEventCreator
 
 
 class PredicateEventCreator(object):
     """
-    Creates events for multiple match fields
+    Creates events for multiple match_fields
     """
 
     def __init__(self, fields, match_fields, full_match=False):
         """
         :param fields: fields that should match
         :param match_fields: match values and related event creator or dictionary that
-        should appear in result in match case
+        should appear in result if fields values match are matched
         :param full_match:
         :exception Exception
         """

@@ -8,7 +8,7 @@ from common.log_parsing.dict_event_creator.event_creator import EventCreator
 
 class MutateEventCreator(EventCreator):
     """
-    Event creator that aggregates fields
+    Event creator that aggregates fields using specified aggregate function
     """
 
     def __init__(self, metadata=None, fields_mappings=None, agg_func=lambda x, y: x + " " + y):
@@ -30,11 +30,6 @@ class MutateEventCreator(EventCreator):
         EventCreator.__init__(self, metadata, None)
 
     def _create_with_context(self, row, context):
-        """
-        Aggregate fields
-        :param row: Row from kafka topic
-        :return: list of all fields
-        """
         result = {}
         for fields_mapping in self.__fields_mappings:
             values_to_agg = map(lambda x: row[x], fields_mapping.get_fields_to_aggregate())
