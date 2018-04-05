@@ -30,7 +30,7 @@ class PosterServerMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                 'message': '2018-04-03 13:42:01,986 INFO  ImageTransformer               Queueing the generation of (D:\\PosterServer\\.resized\\OndemandImages\\BE\\PI\\crid~~3A~~2F~~2Ftelenet.be~~2F21a46636-c0e8-4865-a752-94a1ce45eda2\\120x0_Box_96x96dpi_Jpg\\95d0cf239b261388c554b3fae1d65e78.jpg)'
             },
             {
-                '@timestamp': datetime(2018, 4, 3, 13, 42, 01, 986000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                '@timestamp': datetime(2018, 4, 3, 13, 42, 1, 986000).replace(tzinfo=timezones["Europe/Amsterdam"]),
                 'level': 'INFO',
                 'module': 'ImageTransformer',
                 'message': 'Queueing the generation of (D:\\PosterServer\\.resized\\OndemandImages\\BE\\PI\\crid~~3A~~2F~~2Ftelenet.be~~2F21a46636-c0e8-4865-a752-94a1ce45eda2\\120x0_Box_96x96dpi_Jpg\\95d0cf239b261388c554b3fae1d65e78.jpg)',

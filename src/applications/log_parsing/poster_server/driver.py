@@ -53,6 +53,7 @@ def create_event_creators(configuration=None):
         )
     })
 
+
 if __name__ == "__main__":
     configuration = Utils.load_config(sys.argv[:])
     KafkaPipeline(
