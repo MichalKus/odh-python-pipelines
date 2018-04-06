@@ -84,7 +84,7 @@ def create_event_creators(configuration):
     :return: MatchField configuration for VROPS
     """
 
-    custom_dict_event_creator = MutateEventCreator(None, [FieldsMapping(["metrics"], "metrics")], convert_influx_str)
+    custom_dict_event_creator = MutateEventCreator(None, [FieldsMapping(["metrics"], "metrics"), convert_influx_str])
 
     general_creator = EventCreator(Metadata([
         StringField("group"),
