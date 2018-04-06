@@ -8,7 +8,7 @@ class EventWithUrlCreator(object):
     Extended EventCreator with parsing URL inside message
     """
 
-    def __init__(self, url_field="url", url_query_field=None, delete_source_field=False):
+    def __init__(self, url_field="url", url_query_field=None, delete_source_field=False, keys_to_underscore=True):
         """
         Creates event creator with parsing URL or only url query
         :param url_field: field that contains full url with or without parameters
@@ -17,6 +17,7 @@ class EventWithUrlCreator(object):
         self._url_field = url_field
         self._url_query_field = url_query_field
         self._delete_source_field = delete_source_field
+        self._keys_to_underscore = keys_to_underscore
 
     def create(self, row):
         """
@@ -36,7 +37,8 @@ class EventWithUrlCreator(object):
             params = dict(urlparse.parse_qsl(values[self._url_query_field]))
             if self._delete_source_field:
                 del values[self._url_query_field]
-            return dict(map(lambda x: (convert_to_underlined(x[0]), x[1]), params.items()))
+            return dict(map(lambda x: (convert_to_underlined(x[0]), x[1]), params.items())) \
+                if self._keys_to_underscore else params
 
         url = values[self._url_field].split("?")
         if self._delete_source_field:
@@ -44,7 +46,8 @@ class EventWithUrlCreator(object):
         if len(url) >= 2:
             all_parameters = url[1]
             params = dict(urlparse.parse_qsl(all_parameters))
-            params = dict(map(lambda x: (convert_to_underlined(x[0]), x[1]), params.items()))
+            if self._keys_to_underscore:
+                params = dict(map(lambda x: (convert_to_underlined(x[0]), x[1]), params.items()))
             params.update({"action": url[0]})
             return params
         else:

@@ -19,7 +19,7 @@ class MutateEventCreator(EventCreator):
         """
         for fields_mapping in fields_mappings:
             if not callable(agg_func) or len(getargspec(agg_func).args) != len(
-                fields_mapping.get_fields_to_aggregate()):
+                    fields_mapping.get_fields_to_aggregate()):
                 raise ValueError(
                     "Aggregate function must take same arguments count as "
                     "fields_to_aggregate count and produce single argument!")
@@ -38,7 +38,8 @@ class MutateEventCreator(EventCreator):
                 for field in fields_mapping.get_fields_to_aggregate():
                     del row[field]
             if self._metadata and self._metadata.get_field_by_name(fields_mapping.get_result_field()):
-                result.update({self._metadata.get_field_by_name(fields_mapping.get_result_field()).get_output_name():
+                result.update({
+                    self._metadata.get_field_by_name(fields_mapping.get_result_field()).get_output_name():
                     self._metadata.get_field_by_name(fields_mapping.get_result_field()).get_value(
                         result_value, context)})
             else:
@@ -59,7 +60,7 @@ class FieldsMapping(object):
 
     def __init__(self, fields_to_aggregate, result_field, remove_intermediate_fields=False):
         if (not fields_to_aggregate and not isinstance(fields_to_aggregate, list)) \
-            or (not result_field and isinstance(result_field, str)):
+                or (not result_field and isinstance(result_field, str)):
             raise ValueError("Expected not None arguments")
         self.__fields_to_aggregate = fields_to_aggregate
         self.__result_field = result_field

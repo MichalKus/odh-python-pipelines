@@ -26,10 +26,10 @@ class ThinkAnalyticsMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "http_version": "HTTP/1.1",
                 "response_code": "200",
                 "response_time": "14",
-                "content_source_id": "1",
-                "client_type": "399",
+                "contentSourceId": "1",
+                "clientType": "399",
                 "method": "lgiAdaptiveSearch",
-                "subscriber_id": "278e3270-4d12-11e7-85f5-e5a72ae6734d_nl",
+                "subscriberId": "278e3270-4d12-11e7-85f5-e5a72ae6734d_nl",
                 "action": "/RE/REController.do"
             }
         )

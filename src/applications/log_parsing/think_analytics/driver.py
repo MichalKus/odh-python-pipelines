@@ -57,7 +57,7 @@ def create_event_creators(configuration):
                 )
             )
             .add_intermediate_result_parser(concat_timestamp_event_creator)
-            .add_intermediate_result_parser(EventWithUrlCreator(delete_source_field=True)),
+            .add_intermediate_result_parser(EventWithUrlCreator(delete_source_field=True, keys_to_underscore=False)),
             Utils.get_output_topic(configuration, "httpaccess")
         ),
         "RE_SystemOut.log": SourceConfiguration(
