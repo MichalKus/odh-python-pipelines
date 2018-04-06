@@ -82,7 +82,7 @@ class Stagis(object):
 
     @staticmethod
     def replacer_event_creator():
-        return MutateEventCreator(None, [FieldsMapping(["task"], "task")], Stagis._replace_task_name)
+        return MutateEventCreator(None, [FieldsMapping(["task"], "task", Stagis._replace_task_name)])
 
     @staticmethod
     def ee_event_creator(timezone_name, timezones_priority):

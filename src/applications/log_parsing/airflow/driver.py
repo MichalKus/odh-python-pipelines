@@ -70,8 +70,8 @@ def create_event_creators(configuration):
         matcher=SubstringMatcher("Fabrix input:"),
         field_to_parse="subtask_message")
 
-    clean_crid_creator = MutateEventCreator(None, [FieldsMapping(["crid"], "crid")],
-                                            lambda x: x.replace("~~3A", ":").replace("~~2F", "/"))
+    clean_crid_creator = MutateEventCreator(None, [FieldsMapping(
+        ["crid"], "crid", lambda x: x.replace("~~3A", ":").replace("~~2F", "/"))])
 
     airflow_id_creator = EventCreator(
         Metadata([

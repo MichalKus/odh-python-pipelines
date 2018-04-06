@@ -9,7 +9,7 @@ class MultiFieldEventCreatorTestCase(unittest.TestCase):
     value_type = StringField("output_field")
     row = {"field1": "abc", "field2": "xyz", "field3": "****"}
 
-    event_creator = MutateEventCreator(None, [FieldsMapping(["field1"], "output_field")], lambda x: "value2")
+    event_creator = MutateEventCreator(None, [FieldsMapping(["field1"], "output_field", lambda x: "value2")])
 
     def test_event_create_field_with_matched_value(self):
         predicate_event_creator = PredicateEventCreator(["field1", "field2"], [(["a", "*"], None),

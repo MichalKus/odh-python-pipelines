@@ -29,13 +29,12 @@ def create_event_creators(configuration):
 
     duration_event_creator = MutateEventCreator(None,
                                                 [FieldsMapping(["started_script", "finished_script", "finished_time",
-                                                                "@timestamp"], "duration")],
-                                                duration_update)
+                                                                "@timestamp"], "duration", duration_update)])
 
     concat_timestamp_event_creator = MutateEventCreator(
         Metadata(
             [ConfigurableTimestampField("timestamp", timezone_name, timezones_priority, "@timestamp", dayfirst=True)]),
-        [FieldsMapping(["date", "time"], "timestamp", True)])
+        [FieldsMapping(["date", "time"], "timestamp", remove_intermediate_fields=True)])
 
     return MatchField("source", {
         "localhost_access_log": SourceConfiguration(
