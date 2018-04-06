@@ -84,7 +84,7 @@ def create_event_creators(configuration):
     :return: MatchField configuration for VROPS
     """
 
-    custom_dict_event_creator = MutateEventCreator(None, [FieldsMapping(["metrics"], "metrics"), convert_influx_str])
+    custom_dict_event_creator = MutateEventCreator(None, [FieldsMapping(["metrics"], "metrics", convert_influx_str)])
 
     general_creator = EventCreator(Metadata([
         StringField("group"),
@@ -104,13 +104,14 @@ def create_event_creators(configuration):
     return MatchField("source", {
         "VROPS.log": SourceConfiguration(
             CompositeEventCreator()
-            .add_source_parser(general_creator)
-            .add_intermediate_result_parser(metrics_creator)
-            .add_intermediate_result_parser(custom_dict_event_creator)
+                .add_source_parser(general_creator)
+                .add_intermediate_result_parser(metrics_creator)
+                .add_intermediate_result_parser(custom_dict_event_creator)
             ,
             Utils.get_output_topic(configuration, "vrops")
         )
     })
+
 
 if __name__ == "__main__":
     configuration = Utils.load_config(sys.argv[:])
