@@ -42,12 +42,12 @@ class Aggregation(object):
         return self.__use_udf
 
     def __quote_special_chars(self, column):
-            if isinstance(column, basestring):
-                if self.__get_use_udf():
-                    column = self.__quote_chars_udf(column)
-                return regexp_replace(regexp_replace(column, "\\.",  "%2E"), "\\s+", "%20")
-            else:
-                return regexp_replace(column, "\\s+", "%20")
+        if isinstance(column, basestring):
+            if self.__get_use_udf():
+                column = self.__quote_chars_udf(column)
+            return regexp_replace(regexp_replace(column, r"\.",  "%2E"), r"\s+", "%20")
+        else:
+            return regexp_replace(column, r"\s+", "%20")
 
     def apply(self, input_dataframe, aggregation_window, time_column):
         actual_window = self.__aggregation_window \
@@ -72,7 +72,7 @@ class Aggregation(object):
         metric_name = concat_ws(".", *[self.__quote_special_chars(column) for column in metric_name_parts])
 
         df = df.withColumn("metric_name", metric_name)\
-            .withColumn("metric_name", regexp_replace("metric_name", "\\.\\.", ".EMPTY."))
+            .withColumn("metric_name", regexp_replace("metric_name", r"\.\.", ".EMPTY."))
         return df
 
     def aggregate(self, grouped_dataframe):
@@ -118,7 +118,8 @@ class AggregatedDataFrame(object):
         self.__aggregations = aggregations if isinstance(aggregations, list) else [aggregations]
 
     def results(self, aggregation_window, time_column):
-        return [aggregation.apply(self.__dataframe, aggregation_window, time_column) for aggregation in self.__aggregations]
+        return [aggregation.apply(self.__dataframe, aggregation_window, time_column)
+                for aggregation in self.__aggregations]
 
 
 class Avg(Aggregation):
