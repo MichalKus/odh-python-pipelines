@@ -153,7 +153,7 @@ def create_event_creators(configuration):
         ),
         "RE_Ingest.log": SourceConfiguration(
             CompositeEventCreator()
-                .add_source_parser(
+            .add_source_parser(
                 DictEventCreator(
                     Metadata([
                         StringField("started_script"),
@@ -190,6 +190,7 @@ def duration_update(started_script, finished_script, finished_time, timestamp):
         return abs(finished_time - timestamp).seconds
     else:
         raise ParsingException("Message contains different started and finished scripts")
+
 
 if __name__ == "__main__":
     configuration = Utils.load_config(sys.argv[:])
