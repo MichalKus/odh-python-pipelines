@@ -65,8 +65,7 @@ def create_event_creators(configuration=None):
 
     cdn_log_with_timestamp = MutateEventCreator(Metadata([
         ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp")]),
-        [FieldsMapping(["date", "time"], "timestamp", True)],
-        agg_func=lambda x, y: x + " " + y)
+        [FieldsMapping(["date", "time"], "timestamp", lambda x, y: x + " " + y, True)])
 
     return SourceConfiguration(
         CompositeEventCreator()

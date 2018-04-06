@@ -1,4 +1,4 @@
-"""List event creator"""
+"""Module for List event creator"""
 from common.log_parsing.metadata import ParsingException, AbstractEventCreator
 
 

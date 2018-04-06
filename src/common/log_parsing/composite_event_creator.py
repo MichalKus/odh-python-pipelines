@@ -48,6 +48,9 @@ class CompositeEventCreator(object):
                 break
         return intermediate_message
 
+    def contains_fields_to_parse(self, row):
+        return self.__event_creator_list[0].event_creator.contains_fields_to_parse(row)
+
 
 class ParserStep(object):
     """

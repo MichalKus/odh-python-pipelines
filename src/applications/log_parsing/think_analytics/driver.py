@@ -1,8 +1,7 @@
 """Spark driver for parsing message from Think Analytics component"""
 import sys
 
-from applications.log_parsing.think_analytics.event_with_url_creator import EventWithUrlCreator
-from applications.log_parsing.think_analytics.http_access_parser import HttpAccessParser
+from common.log_parsing.dict_event_creator.event_with_url_creator import EventWithUrlCreator
 from common.kafka_pipeline import KafkaPipeline
 from common.log_parsing.composite_event_creator import CompositeEventCreator
 from common.log_parsing.dict_event_creator.event_creator import EventCreator as DictEventCreator
@@ -12,6 +11,7 @@ from common.log_parsing.list_event_creator.event_creator import EventCreator
 from common.log_parsing.dict_event_creator.mutate_event_creator import MutateEventCreator, FieldsMapping
 from common.log_parsing.list_event_creator.parsers.csv_parser import CsvParser
 from common.log_parsing.list_event_creator.parsers.regexp_parser import RegexpParser
+from common.log_parsing.list_event_creator.parsers.splitter_parser import SplitterParser
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.metadata import Metadata, StringField, ParsingException
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
@@ -29,29 +29,34 @@ def create_event_creators(configuration):
 
     duration_event_creator = MutateEventCreator(None,
                                                 [FieldsMapping(["started_script", "finished_script", "finished_time",
-                                                                "@timestamp"], "duration")],
-                                                duration_update)
+                                                                "@timestamp"], "duration", duration_update)])
 
     concat_timestamp_event_creator = MutateEventCreator(
         Metadata(
             [ConfigurableTimestampField("timestamp", timezone_name, timezones_priority, "@timestamp", dayfirst=True)]),
-        [FieldsMapping(["date", "time"], "timestamp", True)])
+        [FieldsMapping(["date", "time"], "timestamp", remove_intermediate_fields=True)])
 
     return MatchField("source", {
         "localhost_access_log": SourceConfiguration(
-            EventWithUrlCreator(
-                Metadata([
-                    ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
-                    StringField("ip"),
-                    StringField("thread"),
-                    StringField("http_method"),
-                    StringField("url"),
-                    StringField("http_version"),
-                    StringField("response_code"),
-                    StringField("response_time")
-                ]),
-                HttpAccessParser(is_trim=True)
-            ),
+            CompositeEventCreator()
+            .add_source_parser(
+                EventCreator(
+                    Metadata([
+                        StringField("date"),
+                        StringField("time"),
+                        StringField("ip"),
+                        StringField("thread"),
+                        StringField("http_method"),
+                        StringField("url"),
+                        StringField("http_version"),
+                        StringField("response_code"),
+                        StringField("response_time")
+                    ]),
+                    SplitterParser(delimiter=" ", is_trim=True)
+                )
+            )
+            .add_intermediate_result_parser(concat_timestamp_event_creator)
+            .add_intermediate_result_parser(EventWithUrlCreator(delete_source_field=True, keys_to_underscore=False)),
             Utils.get_output_topic(configuration, "httpaccess")
         ),
         "RE_SystemOut.log": SourceConfiguration(
@@ -85,10 +90,9 @@ def create_event_creators(configuration):
         ),
         "Central.log": SourceConfiguration(
             CompositeEventCreator()
-                .add_source_parser(
+            .add_source_parser(
                 EventCreator(
                     Metadata([
-                        # ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority, dayfirst=True),
                         StringField("date"),
                         StringField("time"),
                         StringField("level"),
@@ -102,7 +106,7 @@ def create_event_creators(configuration):
                     CsvParser(",", '"')
                 )
             )
-                .add_intermediate_result_parser(concat_timestamp_event_creator),
+            .add_intermediate_result_parser(concat_timestamp_event_creator),
             Utils.get_output_topic(configuration, "central")
         ),
         "thinkenterprise.log": SourceConfiguration(
@@ -148,7 +152,7 @@ def create_event_creators(configuration):
         ),
         "RE_Ingest.log": SourceConfiguration(
             CompositeEventCreator()
-                .add_source_parser(
+            .add_source_parser(
                 DictEventCreator(
                     Metadata([
                         StringField("started_script"),
@@ -185,6 +189,7 @@ def duration_update(started_script, finished_script, finished_time, timestamp):
         return abs(finished_time - timestamp).seconds
     else:
         raise ParsingException("Message contains different started and finished scripts")
+
 
 if __name__ == "__main__":
     configuration = Utils.load_config(sys.argv[:])
