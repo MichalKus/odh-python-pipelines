@@ -1,16 +1,18 @@
-from common.log_parsing.metadata import AbstractEventCreator
+"""
+Module for PredicateEventCreator class
+"""
 
 
-class MultiFieldsEventCreator(AbstractEventCreator):
+class PredicateEventCreator(object):
     """
-    Creates events for multiple match fields
+    Creates events for multiple match_fields
     """
 
-    def __init__(self, value_type, fields, match_fields, full_match=False):
+    def __init__(self, fields, match_fields, full_match=False):
         """
-        :param value_type: value type
         :param fields: fields that should match
-        :param match_fields: values that should match with fields values
+        :param match_fields: match values and related event creator or dictionary that
+        should appear in result if fields values match are matched
         :param full_match:
         :exception Exception
         """
@@ -18,24 +20,24 @@ class MultiFieldsEventCreator(AbstractEventCreator):
             if len(keys) != len(fields):
                 raise ValueError("Fields count must be equal to matching fields count!")
 
-        AbstractEventCreator.__init__(self, None, None, None)
         self.__match_fields = match_fields
-        self.__value_type = value_type
         self.__fields = fields
         self.__full_match = full_match
 
-    def _create_with_context(self, row, context):
+    def create(self, row):
         """
-        Converts row to typed values according metadata.
+        Creates events according to matched event creator or dictionary.
         :param row: input row.
-        :param context: dictionary with additional data.
         :return: map representing event where key is event field name and value is field value.
         """
-        result = None
-        for values, match_result in self.__match_fields:
+        result = {}
+        for values, event_creator in self.__match_fields:
             if self.__fields_match(values, row):
-                result = match_result
-        return {self.__value_type.get_output_name(): result} if result else {}
+                if isinstance(event_creator, dict):
+                    result.update(event_creator)
+                else:
+                    result.update(event_creator.create(row))
+        return result
 
     def __fields_match(self, values, row):
         dictionary = zip(self.__fields, values)
@@ -44,7 +46,7 @@ class MultiFieldsEventCreator(AbstractEventCreator):
                 if value != row.get(field):
                     return False
             else:
-                if (not row.get(field)) or (value not in row.get(field)):
+                if not row.get(field) or value not in row.get(field):
                     return False
         return True
 

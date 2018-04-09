@@ -1,5 +1,5 @@
 import unittest
-from common.log_parsing.list_event_creator.csv_parser import CsvParser
+from common.log_parsing.list_event_creator.parsers.csv_parser import CsvParser
 
 
 class CsvParseTestCase(unittest.TestCase):

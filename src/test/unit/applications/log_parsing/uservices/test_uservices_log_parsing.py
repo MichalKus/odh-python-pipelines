@@ -93,13 +93,10 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "content_source_id": "1",
                 "client_type": "399",
                 "method": "lgiAdaptiveSearch",
-                "subscriber_id": "6b10a120-ce10-11e7-8a8a-5fa419531185_ch%23MasterProfile",
-                "clean_subscriber_id": "6b10a120-ce10-11e7-8a8a-5fa419531185",
+                "subscriber_id": "6b10a120-ce10-11e7-8a8a-5fa419531185_ch#MasterProfile",
                 "term": "News",
-                "lgi_content_item_instance_id": "%5B1%5Dimi%3A00100000001950EC",
-                "clean_lgi_content_item_instance_id": "00100000001950EC",
-                "content_item_id": "%5B2%5Dcrid%3A%2F%2Ftelenet.be%2Ffcdf57b1-1cc4-4e13-ad34-c348b26315c7",
-                "clean_content_item_id": "fcdf57b1-1cc4-4e13-ad34-c348b26315c7",
+                "lgi_content_item_instance_id": "[1]imi:00100000001950EC",
+                "content_item_id": "[2]crid://telenet.be/fcdf57b1-1cc4-4e13-ad34-c348b26315c7",
                 "start_results": "0",
                 "max_results": "1",
                 "apply_marketing_bias": "true",
@@ -126,8 +123,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             {
 
                 "http_urlquery": "subscriberId=1e1e8640-17b0-11e8-93dc-e71e3a262bec_de%23MasterProfile",
-                "subscriber_id": "1e1e8640-17b0-11e8-93dc-e71e3a262bec_de%23MasterProfile",
-                "clean_subscriber_id": "1e1e8640-17b0-11e8-93dc-e71e3a262bec"
+                "subscriber_id": "1e1e8640-17b0-11e8-93dc-e71e3a262bec_de#MasterProfile",
             }
         )
 
@@ -144,8 +140,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             {
 
                 "http_urlquery": "contentItemId=%5B2%5Dcrid%3A%2F%2Ftelenet.be%2Fdc8f839f-dd41-49bf-842f-e6208e08ee02",
-                "content_item_id": "%5B2%5Dcrid%3A%2F%2Ftelenet.be%2Fdc8f839f-dd41-49bf-842f-e6208e08ee02",
-                "clean_content_item_id": "dc8f839f-dd41-49bf-842f-e6208e08ee02"
+                "content_item_id": "[2]crid://telenet.be/dc8f839f-dd41-49bf-842f-e6208e08ee02",
             }
         )
 
@@ -162,7 +157,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             {
 
                 "http_urlquery": "contentItemId=crid%3A%2F%2Fbds.tv%2F134877645",
-                "content_item_id": "crid%3A%2F%2Fbds.tv%2F134877645",
+                "content_item_id": "crid://bds.tv/134877645",
             }
         )
 
@@ -179,8 +174,7 @@ class UServicesParsingTestCase(BaseMultipleMessageParsingTestCase):
             {
 
                 "http_urlquery": "lgiContentItemInstanceId=%5B1%5Dimi%3A0010000000185C2C",
-                "lgi_content_item_instance_id": "%5B1%5Dimi%3A0010000000185C2C",
-                "clean_lgi_content_item_instance_id": "0010000000185C2C"
+                "lgi_content_item_instance_id": "[1]imi:0010000000185C2C",
             }
         )
 

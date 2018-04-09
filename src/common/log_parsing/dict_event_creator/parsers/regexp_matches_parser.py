@@ -1,9 +1,9 @@
+"""Module for regexp parser"""
 import re
-from itertools import chain
 from common.log_parsing.metadata import ParsingException
 
 
-class RegexpMatchesParser:
+class RegexpMatchesParser(object):
     """
     Parses event using regex finditer
     """
@@ -12,7 +12,6 @@ class RegexpMatchesParser:
         """
         Creates finditer parser
         :param pattern: regex pattern
-        :param match: match needed flag
         """
         self.__pattern = pattern
 

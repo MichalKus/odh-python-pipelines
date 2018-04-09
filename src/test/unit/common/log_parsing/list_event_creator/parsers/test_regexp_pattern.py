@@ -1,7 +1,7 @@
 import unittest
 
 from common.log_parsing.metadata import ParsingException
-from common.log_parsing.list_event_creator.regexp_parser import RegexpParser
+from common.log_parsing.list_event_creator.parsers.regexp_parser import RegexpParser
 
 
 class RegexpParserTestCase(unittest.TestCase):
