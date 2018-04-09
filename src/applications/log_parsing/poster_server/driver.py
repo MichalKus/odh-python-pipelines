@@ -9,7 +9,6 @@ from common.log_parsing.event_creator_tree.multisource_configuration import Sour
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.metadata import Metadata, StringField
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
-from applications.log_parsing.poster_server.crid_event_creator import CridEventCreator
 from util.utils import Utils
 
 
@@ -32,9 +31,11 @@ def create_event_creators(configuration=None):
             r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\,\d{3})"
             r"\s+(?P<level>\w+?)\s+(?P<module>\w+)\s+(?P<message>.*)"))
 
-    crid_creator = CridEventCreator(Metadata([
-        StringField("message")]),
-        RegexpParser(r"(?s)^(?P<message>.*)",
+    crid_creator = EventCreator(
+        Metadata([
+            StringField("crid")
+        ]),
+        RegexpParser(r".*(?P<crid>crid[^\\]*)",
                      return_empty_dict=True),
         field_to_parse="message")
 
