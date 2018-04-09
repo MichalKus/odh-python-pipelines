@@ -28,6 +28,7 @@ class ThinkAnalyticsMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "response_time": "5",
                 "contentSourceId": "1",
                 'contentItemInstanceId': 'imi:001000000020B7F0',
+                'contentItemId': 'crid://telenet.be/e36c8aef-2934-45bd-ae22-244c8e796d6d',
                 'crid': 'crid://telenet.be/e36c8aef-2934-45bd-ae22-244c8e796d6d',
                 "clientType": "300",
                 "method": "learnAction",

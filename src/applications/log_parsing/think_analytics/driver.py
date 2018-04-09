@@ -40,7 +40,7 @@ def create_event_creators(configuration):
         fields_mappings=[FieldsMapping(["subscriberId"], "traxis-profile-id", lambda x: x, True)])
 
     content_item_id_event_creator = MutateEventCreator(fields_mappings=[
-        FieldsMapping(["contentItemId"], "crid", lambda x: "crid{}".format(x.split('crid')[-1]), True)])
+        FieldsMapping(["contentItemId"], "crid", lambda x: "crid{}".format(x.split('crid')[-1]), False)])
 
     int_request_id_event_creator = MutateEventCreator(
         fields_mappings=[FieldsMapping(["intRequestId"], "request-id", lambda x: x, True)])
