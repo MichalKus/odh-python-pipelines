@@ -40,51 +40,67 @@ def create_event_creators(configuration):
                      r"\s*-\s*"
                      r"(?P<message>.*)$"))
 
+    ip_event_creator = EventCreator(
+        Metadata(
+            [StringField("ip")]),
+        RegexpParser(
+            r"^\[(?P<ip>[0-9,\.: ]*?)\].*",
+            return_empty_dict=True))
+
+    request_id_event_creator = EventCreator(
+        Metadata(
+            [StringField("request_id", "request-id")]),
+        RegexpParser(
+            r".*\[RequestId = (?P<request_id>.*?)\].*",
+            return_empty_dict=True))
+
+    obo_customer_id_event_creator = EventCreator(
+        Metadata(
+            [StringField("obo_customer_id", "obo-customer-id")]),
+        RegexpParser(
+            r".*\[CustomerId = (?P<obo_customer_id>.*?)\].*",
+            return_empty_dict=True))
+
+    x_request_id_event_creator = EventCreator(
+        Metadata(
+            [StringField("x_request_id", "x-request-id")]),
+        RegexpParser(
+            r".*x-request-id: (?P<x_request_id>[a-z0-9- ]*).*",
+            return_empty_dict=True))
+
     method_duration_event_creator = EventCreator(
         Metadata(
-            [StringField("request_id", "requestId"),
-             StringField("customer_id", "customerId"),
-             StringField("method"),
+            [StringField("method"),
              StringField("duration")]),
         RegexpParser(
-            r"^.*\[RequestId\s*=\s*(?P<request_id>.*)\]\s*\[CustomerId\s*=\s*(?P<customer_id>.*)\]\s*"
-            r"Executing method \'(?P<method>.*?)\' took \'(?P<duration>.*?)\'.*",
+            r"^.*Executing method \'(?P<method>.*?)\' took \'(?P<duration>.*?)\'.*",
             return_empty_dict=True),
         matcher=SubstringMatcher("Executing method"))
 
     method_invoked_event_creator = EventCreator(
         Metadata(
-            [StringField("request_id", "requestId"),
-             StringField("customer_id", "customerId"),
-             StringField("method"),
+            [StringField("method"),
              StringField("identity"),
              StringField("product_id", "productId")]),
         RegexpParser(
-            r"^.*\[RequestId\s*=\s*(?P<request_id>.*)\]\s*\[CustomerId\s*=\s*(?P<customer_id>.*)\]\s*"
-            r"Method \'(?P<method>.*?)\' invoked with parameters\: identity = (?P<identity>.*?)\, productId ="
+            r"^.*Method \'(?P<method>.*?)\' invoked with parameters\: identity = (?P<identity>.*?)\, productId ="
             r" (?P<product_id>.*?)(\,.*|$)",
             return_empty_dict=True),
         matcher=SubstringMatcher("invoked with parameters"))
 
     cannot_purchase_product_event_creator = EventCreator(
         Metadata(
-            [StringField("request_id", "requestId"),
-             StringField("customer_id", "customerId"),
-             StringField("product_id", "productId")]),
+            [StringField("product_id", "productId")]),
         RegexpParser(
-            r"^.*\[RequestId\s*=\s*(?P<request_id>.*)\]\s*\[CustomerId\s*=\s*(?P<customer_id>.*)\]\s*"
-            r"Cannot purchase products of type \'Subscription\'.*productId \'(?P<product_id>.*?)\'$",
+            r"^.*Cannot purchase products of type \'Subscription\'.*productId \'(?P<product_id>.*?)\'$",
             return_empty_dict=True),
         matcher=SubstringMatcher("Cannot purchase products of type"))
 
     query_metrics_event_creator = EventCreator(
         Metadata(
-            [StringField("query_metrics"),
-             StringField("request_id"),
-             StringField("customer_id")]),
+            [StringField("query_metrics")]),
         RegexpParser(
-            r"^.*?(?:\s*|(?:\[RequestId\s*=\s*(?P<request_id>.*?)\])?|(?:\[CustomerId\s*=\s*("
-            r"?P<customer_id>.*?)\]))*QueryMetrics:(?P<query_metrics>.*)",
+            r"^.*QueryMetrics:(?P<query_metrics>.*)",
             return_empty_dict=True),
         matcher=SubstringMatcher("QueryMetrics"))
 
@@ -92,10 +108,16 @@ def create_event_creators(configuration):
                                                      KeyValueParser(",", "="),
                                                      field_to_parse="query_metrics")
 
+    id_event_creator = CompositeEventCreator() \
+        .add_source_parser(event_creator) \
+        .add_intermediate_result_parser(ip_event_creator) \
+        .add_intermediate_result_parser(request_id_event_creator) \
+        .add_intermediate_result_parser(obo_customer_id_event_creator) \
+        .add_intermediate_result_parser(x_request_id_event_creator)
+
     return MatchField("source", {
         "TraxisService.log": SourceConfiguration(
-            CompositeEventCreator()
-            .add_source_parser(event_creator)
+            id_event_creator
             .add_intermediate_result_parser(query_metrics_event_creator)
             .add_intermediate_result_parser(key_value_event_creator, final=True)
             .add_intermediate_result_parser(method_duration_event_creator, final=True)
@@ -104,15 +126,15 @@ def create_event_creators(configuration):
             Utils.get_output_topic(configuration, "general")
         ),
         "TraxisServiceError.log": SourceConfiguration(
-            event_creator,
+            id_event_creator,
             Utils.get_output_topic(configuration, "error")
         ),
         "TraxisServiceDistributedScheduler.log": SourceConfiguration(
-            event_creator,
+            id_event_creator,
             Utils.get_output_topic(configuration, "scheduler")
         ),
         "TraxisServiceLogManagement.log": SourceConfiguration(
-            event_creator,
+            id_event_creator,
             Utils.get_output_topic(configuration, "management")
         )
     })
