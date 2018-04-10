@@ -51,21 +51,21 @@ def create_event_creators(configuration):
         Metadata(
             [StringField("request_id", "request-id")]),
         RegexpParser(
-            r".*\[RequestId = (?P<request_id>.*?)\].*",
+            r"^.*\[RequestId = (?P<request_id>.*?)\].*",
             return_empty_dict=True))
 
     obo_customer_id_event_creator = EventCreator(
         Metadata(
             [StringField("obo_customer_id", "obo-customer-id")]),
         RegexpParser(
-            r".*\[CustomerId = (?P<obo_customer_id>.*?)\].*",
+            r"^.*\[CustomerId = (?P<obo_customer_id>.*?)\].*",
             return_empty_dict=True))
 
     x_request_id_event_creator = EventCreator(
         Metadata(
             [StringField("x_request_id", "x-request-id")]),
         RegexpParser(
-            r".*x-request-id: (?P<x_request_id>[a-z0-9- ]*).*",
+            r"(\n|.)*x-request-id:\s(?P<x_request_id>[a-z0-9- ]*).*",
             return_empty_dict=True))
 
     method_duration_event_creator = EventCreator(
