@@ -39,17 +39,17 @@ def create_event_creators(configuration=None):
                      return_empty_dict=True),
         field_to_parse="message")
 
+    composite_event_creator = CompositeEventCreator() \
+        .add_source_parser(poster_server_log) \
+        .add_intermediate_result_parser(crid_creator)
+
     return MatchField("source", {
         "PosterServer.Error.log": SourceConfiguration(
-            CompositeEventCreator()
-                .add_source_parser(poster_server_log)
-                .add_intermediate_result_parser(crid_creator),
+            composite_event_creator,
             Utils.get_output_topic(configuration, "poster_server_error_log")
         ),
         "PosterServer.log": SourceConfiguration(
-            CompositeEventCreator()
-                .add_source_parser(poster_server_log)
-                .add_intermediate_result_parser(crid_creator),
+            composite_event_creator,
             Utils.get_output_topic(configuration, "poster_server_log")
         )
     })
