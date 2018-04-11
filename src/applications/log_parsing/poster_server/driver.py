@@ -7,6 +7,7 @@ from common.log_parsing.composite_event_creator import CompositeEventCreator
 from common.log_parsing.dict_event_creator.parsers.regexp_parser import RegexpParser
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration, MatchField
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
+from common.log_parsing.matchers.matcher import SubstringMatcher
 from common.log_parsing.metadata import Metadata, StringField
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.utils import Utils
@@ -37,6 +38,7 @@ def create_event_creators(configuration=None):
         ]),
         RegexpParser(r".*(?P<crid>crid[^\\]*)",
                      return_empty_dict=True),
+        matcher=SubstringMatcher("crid"),
         field_to_parse="message")
 
     composite_event_creator = CompositeEventCreator() \
