@@ -1,6 +1,7 @@
+"""Spark driver for parsing message from Nokia_VRM component"""
 from common.log_parsing.event_creator_tree.multisource_configuration import MatchField, SourceConfiguration
 from common.log_parsing.list_event_creator.event_creator import EventCreator
-from common.log_parsing.list_event_creator.splitter_parser import SplitterParser
+from common.log_parsing.list_event_creator.parsers.splitter_parser import SplitterParser
 from common.log_parsing.metadata import Metadata, StringField
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.kafka_pipeline_helper import start_log_parsing_pipeline

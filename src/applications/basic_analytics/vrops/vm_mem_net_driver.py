@@ -24,7 +24,7 @@ class VMMemNetProcessor(BasicAnalyticsProcessor):
         :param read_stream: input stream
         """
 
-        def aggregate(aggregation_field):
+        def aggregate(aggregation_field, group):
             """
             Build aggregated stream for each metric
             :param metric_name: name of mem/net metric which needs to be averaged.
@@ -35,7 +35,7 @@ class VMMemNetProcessor(BasicAnalyticsProcessor):
             agg_stream = read_stream \
                 .select("@timestamp", "group", "res_kind", "name", "metrics.*") \
                 .select("@timestamp", "group", "res_kind", "name", aggregation_field) \
-                .filter(((col("group") == "mem") | (col("group") == "net")) & (col("res_kind") == "VirtualMachine") & (
+                .filter((col("group") == group) & (col("res_kind") == "VirtualMachine") & (
                 col(aggregation_field).isNotNull())) \
                 .withColumn("name", regexp_replace("name", r"\.", "-")) \
                 .aggregate(aggregation)
@@ -43,18 +43,21 @@ class VMMemNetProcessor(BasicAnalyticsProcessor):
             return agg_stream
 
         #MEM
-        balloonpct = aggregate("balloonpct")
-        host_contentionpct = aggregate("host_contentionpct")
-        host_demand = aggregate("host_demand")
-        latency_average = aggregate("latency_average")
+        balloonpct = aggregate("balloonpct", "mem")
+        host_contentionpct = aggregate("host_contentionpct", "mem")
+        host_demand = aggregate("host_demand", "mem")
+        latency_average = aggregate("latency_average", "mem")
+        usage_average = aggregate("usage_average", "mem")
 
         #NET
-        droppedpct = aggregate("droppedpct")
-        packetsrxpersec = aggregate("packetsrxpersec")
-        packetstxpersec = aggregate("packetstxpersec")
+        droppedpct = aggregate("droppedpct", "net")
+        packetsrxpersec = aggregate("packetsrxpersec", "net")
+        packetstxpersec = aggregate("packetstxpersec", "net")
+        transmitted_average = aggregate("transmitted_average", "net")
+        received_average = aggregate("received_average", "net")
 
-        return [balloonpct, host_contentionpct, host_demand, latency_average, droppedpct, packetsrxpersec,
-                packetstxpersec]
+        return [balloonpct, host_contentionpct, host_demand, latency_average, usage_average, droppedpct, packetsrxpersec,
+                packetstxpersec, transmitted_average, received_average]
 
     @staticmethod
     def create_schema():
@@ -67,9 +70,12 @@ class VMMemNetProcessor(BasicAnalyticsProcessor):
                 StructField("host_contentionpct", DoubleType()),
                 StructField("host_demand", DoubleType()),
                 StructField("latency_average", DoubleType()),
+                StructField("usage_average", DoubleType()),
                 StructField("droppedpct", DoubleType()),
                 StructField("packetsrxpersec", DoubleType()),
                 StructField("packetstxpersec", DoubleType()),
+                StructField("transmitted_average", DoubleType()),
+                StructField("received_average", DoubleType()),
             ])),
             StructField("group", StringType()),
             StructField("name", StringType()),

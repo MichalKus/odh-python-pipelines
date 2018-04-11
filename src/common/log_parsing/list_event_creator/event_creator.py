@@ -1,3 +1,4 @@
+"""Module for List event creator"""
 from common.log_parsing.metadata import ParsingException, AbstractEventCreator
 
 
@@ -49,5 +50,5 @@ class EventCreator(AbstractEventCreator):
         """
         return self._parser.parse(row["message"])
 
-    def get_field_to_parse(self):
-        return self.__field_to_parse
+    def contains_fields_to_parse(self, row):
+        return self.__field_to_parse in row.keys()

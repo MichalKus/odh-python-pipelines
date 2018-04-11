@@ -14,10 +14,10 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
     def _pre_process(self, stream):
         """
         Convert to appropriate timestamp type
-        :param data_stream: input stream
+        :param stream: input stream
         """
         filtered = stream \
-            .where((col("x-request-id").isNotNull()) | (col("header.x-request-id").isNotNull())) \
+            .where((col("x-request-id").isNotNull()) | (col("header_x-request-id").isNotNull())) \
             .withColumn("tenant", split(col("stack"), "-")) \
             .withColumn("tenant", col("tenant").getItem(size(col("tenant")) - 1))
 
@@ -33,10 +33,10 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
             .select("@timestamp", "tenant", "app", "dest", "calls", "requests")
 
         uservice2component_duration = filtered \
-            .where(col("http.useragent").contains("-service") & (col("http.duration") > 0)) \
-            .withColumn("dest", split(col("http.request"), "/").getItem(1)) \
-            .withColumn("app", split(col("http.useragent"), "/").getItem(0)) \
-            .withColumn("duration_ms", col("http.duration") * 1000) \
+            .where(col("http_useragent").contains("-service") & (col("http_duration") > 0)) \
+            .withColumn("dest", split(col("http_request"), "/").getItem(1)) \
+            .withColumn("app", split(col("http_useragent"), "/").getItem(0)) \
+            .withColumn("duration_ms", col("http_duration") * 1000) \
             .select("@timestamp", "tenant", "app", "dest", "duration_ms", "host")
 
         end2end = filtered \
@@ -106,19 +106,15 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
             StructField("stack", StringType()),
             StructField("app", StringType()),
             StructField("x-request-id", StringType()),
-            StructField("header", StructType([
-                StructField("x-request-id", StringType())
-            ])),
+            StructField("header_x-request-id", StringType()),
             StructField("host", StringType()),
             StructField("message", StringType()),
             StructField("request", StringType()),
             StructField("status", StringType()),
             StructField("duration_ms", DoubleType()),
-            StructField("http", StructType([
-                StructField("request", StringType()),
-                StructField("useragent", StringType()),
-                StructField("duration", DoubleType())
-            ]))
+            StructField("http_request", StringType()),
+            StructField("http_useragent", StringType()),
+            StructField("http_duration", DoubleType())
         ])
 
 

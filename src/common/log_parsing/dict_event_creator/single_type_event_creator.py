@@ -1,12 +1,13 @@
 """
-Creator for traxis_frontend:
-- KeyValueEventCreator
+Module for SingleTypeEventCreatorClass that can use key/value parser
 """
 from common.log_parsing.metadata import AbstractEventCreator
 
 
 class SingleTypeEventCreator(AbstractEventCreator):
-
+    """
+    Creates events according to parser output.
+    """
     def __init__(self, value_type, parser, matcher=None, field_to_parse="message", timezone_field="tz"):
         """
         Creates instance for dict parser
@@ -22,7 +23,7 @@ class SingleTypeEventCreator(AbstractEventCreator):
 
     def _create_with_context(self, row, context):
         """
-       Converts row to typed values according metadata.
+       Converts row to typed values according value type.
        :param row: input row
        :param context: dictionary with additional data.
        :return: map representing event where key is event field name and value is field value.
@@ -34,5 +35,5 @@ class SingleTypeEventCreator(AbstractEventCreator):
             for field, value in self._parser.parse(row[self.__field_to_parse]).items()
         } if self._matcher is None or self._matcher.match(row[self.__field_to_parse]) else {}
 
-    def get_field_to_parse(self):
-        return self.__field_to_parse
+    def contains_fields_to_parse(self, row):
+        return self.__field_to_parse in row
