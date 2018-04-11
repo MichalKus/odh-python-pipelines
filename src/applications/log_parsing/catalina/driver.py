@@ -2,7 +2,9 @@
 import sys
 
 from common.kafka_pipeline import KafkaPipeline
-from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration
+from common.log_parsing.composite_event_creator import CompositeEventCreator
+from common.log_parsing.dict_event_creator.mutate_event_creator import MutateEventCreator, FieldsMapping
+from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration, MatchField
 from common.log_parsing.list_event_creator.event_creator import EventCreator
 from common.log_parsing.list_event_creator.parsers.splitter_parser import SplitterParser
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
@@ -12,7 +14,6 @@ from util.utils import Utils
 
 
 def create_event_creators(configuration):
-
     """
     Method creates configuration for Catalina
     :param configuration
@@ -26,15 +27,32 @@ def create_event_creators(configuration):
         Metadata([
             ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
             StringField("level"),
+            StringField("event_type"),
             StringField("message")
         ]),
-        SplitterParser(" ", True, 2)
+        SplitterParser(" ", True, 3)
     )
 
-    return SourceConfiguration(
-        event_creator,
-        Utils.get_output_topic(configuration, "catalina_parsed")
+    clean_message_event_creator = MutateEventCreator(fields_mappings=[
+        FieldsMapping(["message"], "message", lambda x: x.replace("[", "").replace("]", ""))
+    ])
+
+    thread_event_creator = EventCreator(
+        Metadata([
+            StringField("thread"),
+            StringField("message")
+        ]),
+        SplitterParser(" ", True, 1)
     )
+
+    return MatchField("source", {
+        "mongo.log": SourceConfiguration(
+            CompositeEventCreator()
+            .add_source_parser(event_creator)
+            .add_intermediate_result_parser(clean_message_event_creator)
+            .add_intermediate_result_parser(thread_event_creator),
+            Utils.get_output_topic(configuration, "catalina_parsed"))
+    })
 
 
 if __name__ == "__main__":
