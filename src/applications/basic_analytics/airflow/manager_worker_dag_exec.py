@@ -12,79 +12,104 @@ class AirflowWorkerDagExec(BasicAnalyticsProcessor):
     The processor implementation to calculate metrics related to DAGs in the Airflow Worker component.
     """
 
-    def regex_filter(self, x):
+    def _manager_filter(self, stream):
         """
-        Check if message match regex expression
-        :param x: msg string
-        :return: Boolean
+        filter airflow manager logs
+        :param stream: input streams
         """
-        regexs = [r"Created.*DagRun\s(?P<tenant>\w{2,3})_(?P<dag>.*)\s@",
-                  r"Marking.*DagRun\s(?P<dag>.*)\s@.*(?P<tenant>\w{2,3})-crid.*\s(?P<type>\w+)$",
-                  r"Marking.*DagRun\s(?P<tenant>\w{2,3})_(?P<dag>.*)\s@.*\s(?P<type>\w+)$"]
 
-        if x and x.strip():
-            for r in regexs:
-                if re.search(r, x):
-                    return True
+        def regex_filter(x):
+            """
+            Check if message match regex expression
+            :param x: msg string
+            :return: Boolean
+            """
+            regexs = [r"Created.*DagRun\s(?P<tenant>\w{2,3})_(?P<dag>.*)\s@",
+                      r"Marking.*DagRun\s(?P<dag>.*)\s@.*(?P<tenant>\w{2,3})-crid.*\s(?P<type>\w+)$",
+                      r"Marking.*DagRun\s(?P<tenant>\w{2,3})_(?P<dag>.*)\s@.*\s(?P<type>\w+)$"]
 
-        return False
+            if x and x.strip():
+                for r in regexs:
+                    if re.search(r, x):
+                        return True
 
-    def regex_extract(self, x):
-        """
-        Check if message match regex expression
-        :param x: msg string
-        :return: group matched list
-        """
-        regexs = [r"Created.*DagRun\s(?P<tenant>\w{2,3})_(?P<dag>.*)\s@",
-                  r"Marking.*DagRun\s(?P<dag>.*)\s@.*(?P<tenant>\w{2,3})-crid.*\s(?P<type>\w+)$",
-                  r"Marking.*DagRun\s(?P<tenant>\w{2,3})_(?P<dag>.*)\s@.*\s(?P<type>\w+)$"]
+            return False
 
-        for r in regexs:
-            match = re.search(r, x)
-            if match:
-                groups = match.groups()
-                if len(groups[0])> 3:
-                    return [groups[1], groups[0], groups[2]]
-                elif len(groups) == 2:
-                    return list(groups) + ["initiated"]
-                else:
-                    return list(groups)
+        regex_filter_udf = udf(regex_filter, BooleanType())
 
-    def remove_tenant_prefix(self, x):
-        """
-        Remove tenant prefix from dag name
-        :param x: msg string
-        :return: string
-        """
-        regex = r"^\w{2,3}_(?P<dag>.*)"
-        match = re.search(regex, x)
-        if match:
-            return match.groups()[0]
-        else:
-            return x
-
-    def _pre_process(self, stream):
-        """
-        Convert to appropriate timestamp type
-        :param data_stream: input stream
-        """
-        tenant = self._component_name.split(".")[2]
-        regex_filter_udf = udf(self.regex_filter, BooleanType())
-        regex_extract_udf = udf(self.regex_extract, ArrayType(StringType()))
-        remove_prefix_udf = udf(self.remove_tenant_prefix, StringType())
-
-        airflow_manager = stream \
+        filtered_airflow_manager = stream \
             .where(col("topic").isNotNull()) \
-            .where(regex_filter_udf(col("message"))) \
+            .where(regex_filter_udf(col("message")))
+
+        return filtered_airflow_manager
+
+
+    def _manager_process(self, stream):
+        """
+        process airflow manager logs
+        :param stream: input streams
+        """
+
+        def regex_extract(x):
+            """
+            Check if message match regex expression
+            :param x: msg string
+            :return: group matched list
+            """
+            regexs = [r"Created.*DagRun\s(?P<tenant>\w{2,3})_(?P<dag>.*)\s@",
+                      r"Marking.*DagRun\s(?P<dag>.*)\s@.*(?P<tenant>\w{2,3})-crid.*\s(?P<type>\w+)$",
+                      r"Marking.*DagRun\s(?P<tenant>\w{2,3})_(?P<dag>.*)\s@.*\s(?P<type>\w+)$"]
+
+            for r in regexs:
+                match = re.search(r, x)
+                if match:
+                    groups = match.groups()
+                    if len(groups[0]) > 3:
+                        return [groups[1], groups[0], groups[2]]
+                    elif len(groups) == 2:
+                        return list(groups) + ["initiated"]
+                    else:
+                        return list(groups)
+
+        tenant = self._component_name.split(".")[2]
+        regex_extract_udf = udf(regex_extract, ArrayType(StringType()))
+
+        filtered = self._manager_filter(stream)
+
+        airflow_manager = filtered \
             .withColumn("message",
                         regex_extract_udf(col("message"))) \
             .withColumn('tenant', col("message").getItem(0)) \
             .withColumn('dag', col("message").getItem(1)) \
             .withColumn('type', col("message").getItem(2)) \
             .withColumn('count', lit(1)) \
-            .withColumn("tenant", when((col("tenant") == "uk") | (col("tenant") == "bbc"), "gb").otherwise(col("tenant"))) \
+            .withColumn("tenant",
+                        when((col("tenant") == "uk") | (col("tenant") == "bbc"), "gb").otherwise(col("tenant"))) \
             .where(col("tenant") == tenant) \
             .select("@timestamp", "dag", "type", "count")
+
+        return airflow_manager
+
+    def _pre_process(self, stream):
+        """
+        Process stream before output
+        :param stream: input stream
+        """
+
+        def remove_tenant_prefix(x):
+            """
+            Remove tenant prefix from dag name
+            :param x: msg string
+            :return: string
+            """
+            regex = r"^\w{2,3}_(?P<dag>.*)"
+            match = re.search(regex, x)
+            if match:
+                return match.groups()[0]
+            else:
+                return x
+
+        remove_prefix_udf = udf(remove_tenant_prefix, StringType())
 
         airflow_worker_dag = stream \
             .where(col("dag").isNotNull()) \
@@ -92,7 +117,7 @@ class AirflowWorkerDagExec(BasicAnalyticsProcessor):
             .withColumn('count', lit(1)) \
             .select("@timestamp", "dag", "hostname", "task", "count")
 
-        return [airflow_manager, airflow_worker_dag]
+        return [self._manager_process(stream), airflow_worker_dag]
 
     def _agg_airflow_manager(self, streams):
         """
