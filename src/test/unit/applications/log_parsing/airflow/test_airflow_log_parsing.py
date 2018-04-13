@@ -213,6 +213,19 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "script_name": "models.py"
             }
         )
+    def test_manager_scheduler_airflow(self):
+        self.assert_parsing(
+            {
+                "topic": "airflowmanager_scheduler_airflow",
+                "message": "[2017-10-27 09:55:24,555] {jobs.py:1195} INFO - Executor reports be_create_obo_assets_transcoding_driven_workflow.register_on_license_server execution_date=2018-04-13 09:20:53.573308 as success"
+            },
+            {
+                "@timestamp": datetime(2017, 10, 27, 9, 55, 24, 555000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "message_level": "INFO",
+                "message": "{jobs.py:1195} INFO - Executor reports be_create_obo_assets_transcoding_driven_workflow.register_on_license_server execution_date=2018-04-13 09:20:53.573308 as success",
+                "script_name": "jobs.py"
+            }
+        )
 
     def test_airflow_manager_webui_without_script(self):
         self.assert_parsing(
