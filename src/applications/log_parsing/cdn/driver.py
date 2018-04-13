@@ -60,8 +60,8 @@ def create_event_creators(configuration=None):
         StringField("x_protohash"),
         StringField("additional_headers"),
         StringField("unknown_field3"),
-        StringField("unknown_field4")]),
-        SplitterParser("\t", is_trim=True))
+        StringField("unknown_field4")]
+    ), SplitterParser("\t", is_trim=True))
 
     cdn_log_with_timestamp = MutateEventCreator(Metadata([
         ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp")]),
@@ -69,8 +69,8 @@ def create_event_creators(configuration=None):
 
     return SourceConfiguration(
         CompositeEventCreator()
-            .add_source_parser(cdn_log)
-            .add_intermediate_result_parser(cdn_log_with_timestamp),
+        .add_source_parser(cdn_log)
+        .add_intermediate_result_parser(cdn_log_with_timestamp),
         Utils.get_output_topic(configuration, "cdn_log")
     )
 
