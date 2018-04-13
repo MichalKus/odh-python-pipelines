@@ -49,7 +49,7 @@ def create_event_creators(configuration):
         ]),
         RegexpParser(
             r"^\[(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\]\s+"
-            r"(?P<message>.*\{(?P<script>[^\}]+)\}?(?:.*)\s+(?P<level>[a-zA-Z]+) - .*)"
+            r"(?P<message>.*\{(?P<script>[^\}]+)\}.*\s+(?P<level>[a-zA-Z]+) - .*)"
         )
     )
 
@@ -118,7 +118,7 @@ def create_event_creators(configuration):
 
     airflow_manager_dag_creator = EventCreator(
         Metadata([StringField("dag")]),
-        RegexpParser(r".*DAG?(?:\(s\)).*\['(?P<dag>.*)'\].*"),
+        RegexpParser(r".*DAG?\(s\).*\['(?P<dag>.*)'\].*"),
         SubstringMatcher("DAG(s)")
     )
 
