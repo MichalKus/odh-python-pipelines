@@ -141,7 +141,7 @@ def create_event_creators(configuration):
                 .add_intermediate_result_parser(crid_creator)
                 .add_intermediate_result_parser(clean_crid_creator, final=True)
                 .add_intermediate_result_parser(airflow_id_creator, final=True),
-                Utils.get_output_topic(configuration, 'airflow_manager_parsed')
+                Utils.get_output_topic(configuration, 'worker_dag_execution')
             )
         }),
         "airflowmanager_scheduler": SourceConfiguration(
@@ -150,7 +150,7 @@ def create_event_creators(configuration):
             .add_intermediate_result_parser(clean_script_name_creator)
             .add_intermediate_result_parser(airflow_manager_dag_creator)
             .add_intermediate_result_parser(message_level_rename_creator),
-            Utils.get_output_topic(configuration, 'airflow_manager_parsed')
+            Utils.get_output_topic(configuration, 'manager_scheduler')
         ),
         "airflowmanager_webui": SourceConfiguration(
             CompositeEventCreator()
@@ -159,7 +159,7 @@ def create_event_creators(configuration):
             .add_intermediate_result_parser(clean_script_name_creator)
             .add_intermediate_result_parser(airflow_manager_dag_creator)
             .add_intermediate_result_parser(message_level_rename_creator),
-            Utils.get_output_topic(configuration, 'airflow_manager_parsed')
+            Utils.get_output_topic(configuration, 'manager_webui')
         )
     })
 
