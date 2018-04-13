@@ -61,7 +61,7 @@ def create_event_creators(configuration):
         ]),
         RegexpParser(
             r"^\[(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} \+\d*)\]\s+"
-            r"(?P<message>.*(?:.*)\[(?P<message_level>[a-zA-Z]+)\]\s+.*)",
+            r"(?P<message>.*\[(?P<message_level>[a-zA-Z]+)\]\s+.*)",
             return_empty_dict=True
         )
     )
