@@ -10,6 +10,7 @@ from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.matchers.matcher import SubstringMatcher
 from common.log_parsing.metadata import Metadata, StringField
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
+from util.kafka_pipeline_helper import start_log_parsing_pipeline
 from util.utils import Utils
 
 
@@ -59,7 +60,4 @@ def create_event_creators(configuration=None):
 
 if __name__ == "__main__":
     configuration = Utils.load_config(sys.argv[:])
-    KafkaPipeline(
-        configuration,
-        LogParsingProcessor(configuration, create_event_creators(configuration))
-    ).start()
+    start_log_parsing_pipeline(create_event_creators)
