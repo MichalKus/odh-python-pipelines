@@ -1,0 +1,8 @@
+{"@timestamp":"2018-01-21T12:30:11.431Z","level":"I","event_type":"NETWORK","thread":"conn1564572","message":"connection accepted from 172.16.145.9:44642 #1551846 (1121 connections now open)"}
+{"@timestamp":"2018-01-21T12:31:11.431Z","level":"I","event_type":"NETWORK","thread":"conn1564572","message":"end connection 172.16.145.9:54914 (1141 connections now open)"}
+{"@timestamp":"2018-01-21T12:32:11.431Z","level":"I","event_type":"NETWORK","thread":"conn1564572","message":"connection accepted from 172.16.145.9:44642 #1551846 (1121 connections now open)"}
+{"@timestamp":"2018-01-21T12:33:11.431Z","level":"I","event_type":"NETWORK","thread":"conn1564572","message":"end connection 172.16.145.9:54914 (1141 connections now open)"}
+{"@timestamp":"2018-01-21T12:34:11.431Z","level":"I","event_type":"COMMON","thread":"conn1564572","message":"connection accepted from 172.16.145.9:44642 #1551846 (1121 connections now open)"}
+{"@timestamp":"2018-01-21T12:35:11.431Z","level":"I","event_type":"NETWORK","thread":"conn1564572","message":"end connection 172.16.145.9:54914 (1141 connections now open)"}
+{"@timestamp":"2018-01-21T12:36:11.431Z","level":"I","event_type":"NETWORK","thread":"conn1564572","message":"connection accepted from 172.16.145.9:44642 #1551846 (1121 connections now open)"}
+{"@timestamp":"2018-01-21T12:37:11.431Z","level":"I","event_type":"COMMON","thread":"conn1564572","message":"end connection 172.16.145.9:54914 (1141 connections now open)"}
