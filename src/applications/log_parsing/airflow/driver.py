@@ -6,7 +6,7 @@ from common.log_parsing.composite_event_creator import CompositeEventCreator
 from common.log_parsing.dict_event_creator.event_creator import EventCreator
 from common.log_parsing.dict_event_creator.parsers.regexp_parser import RegexpParser
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration, MatchField
-from common.log_parsing.dict_event_creator.mutate_event_creator import MutateEventCreator, FieldsMapping
+from common.log_parsing.dict_event_creator.mutate_event_creator import MutateEventCreator, FieldsMapping, simple_map
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.matchers.matcher import SubstringMatcher
 from common.log_parsing.metadata import Metadata, StringField
@@ -109,11 +109,11 @@ def create_event_creators(configuration):
         field_to_parse="subtask_message")
 
     clean_script_name_creator = MutateEventCreator(None, [
-        FieldsMapping(["script"], "script_name", lambda x: x.split(":")[0], True)
+        FieldsMapping(["script"], "script_name", lambda x: x.split(":")[0], remove_intermediate_fields=True)
     ])
 
     message_level_rename_creator = MutateEventCreator(None, [
-        FieldsMapping(["level"], "message_level", agg_func=lambda x: x, remove_intermediate_fields=True)
+        FieldsMapping(["level"], "message_level", simple_map, remove_intermediate_fields=True)
     ])
 
     airflow_manager_dag_creator = EventCreator(
