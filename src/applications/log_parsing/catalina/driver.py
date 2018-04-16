@@ -30,7 +30,7 @@ def create_event_creators(configuration):
             StringField("event_type"),
             StringField("message")
         ]),
-        SplitterParser(" ", True, 3)
+        SplitterParser(" ", is_trim=True, max_split=4)
     )
 
     clean_message_event_creator = MutateEventCreator(fields_mappings=[
@@ -42,7 +42,7 @@ def create_event_creators(configuration):
             StringField("thread"),
             StringField("message")
         ]),
-        SplitterParser(" ", True, 1)
+        SplitterParser(" ", is_trim=True, max_split=2)
     )
 
     return MatchField("source", {
