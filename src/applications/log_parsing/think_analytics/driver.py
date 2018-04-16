@@ -36,6 +36,15 @@ def create_event_creators(configuration):
             [ConfigurableTimestampField("timestamp", timezone_name, timezones_priority, "@timestamp", dayfirst=True)]),
         [FieldsMapping(["date", "time"], "timestamp", remove_intermediate_fields=True)])
 
+    traxis_profile_id_event_creator = MutateEventCreator(
+        fields_mappings=[FieldsMapping(["subscriberId"], "traxis-profile-id", lambda x: x, True)])
+
+    content_item_id_event_creator = MutateEventCreator(fields_mappings=[
+        FieldsMapping(["contentItemId"], "crid", lambda x: "crid{}".format(x.split('crid')[-1]), False)])
+
+    int_request_id_event_creator = MutateEventCreator(
+        fields_mappings=[FieldsMapping(["intRequestId"], "request-id", lambda x: x, True)])
+
     return MatchField("source", {
         "localhost_access_log": SourceConfiguration(
             CompositeEventCreator()
@@ -56,7 +65,10 @@ def create_event_creators(configuration):
                 )
             )
             .add_intermediate_result_parser(concat_timestamp_event_creator)
-            .add_intermediate_result_parser(EventWithUrlCreator(delete_source_field=True, keys_to_underscore=False)),
+            .add_intermediate_result_parser(EventWithUrlCreator(delete_source_field=True, keys_to_underscore=False))
+            .add_intermediate_result_parser(traxis_profile_id_event_creator)
+            .add_intermediate_result_parser(content_item_id_event_creator)
+            .add_intermediate_result_parser(int_request_id_event_creator),
             Utils.get_output_topic(configuration, "httpaccess")
         ),
         "RE_SystemOut.log": SourceConfiguration(
