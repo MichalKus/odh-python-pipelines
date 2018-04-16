@@ -309,8 +309,8 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "message": "172.31.139.17 - - [16/Apr/2018:15:18:27 +0000] \"GET /admin/airflow/task?execution_date=2018-04-13T14%3A33%3A05.290779&dag_id=de_create_obo_assets_workflow&task_id=failure_detector HTTP/1.1\" 200 36528 \"http://webserver1.airflow-prod-a.horizongo.eu/admin/taskinstance/?flt0_dag_id_contains=de_create_obo_assets_workflow&flt1_state_contains=failed&flt4_execution_date_between=2018-04-13+00%3A00%3A00+to+2018-04-13+23%3A59%3A59\" \"Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko\"",
             },
             {
-                "@timestamp": datetime(2018, 4, 16, 15, 18, 27, 555000).replace(tzinfo=timezones["Europe/Amsterdam"]),
-                "message": "GET /admin/airflow/task?execution_date=2018-04-13T14%3A33%3A05.290779&dag_id=de_create_obo_assets_workflow&task_id=failure_detector HTTP/1.1\" 200 36528 \"http://webserver1.airflow-prod-a.horizongo.eu/admin/taskinstance/?flt0_dag_id_contains=de_create_obo_assets_workflow&flt1_state_contains=failed&flt4_execution_date_between=2018-04-13+00%3A00%3A00+to+2018-04-13+23%3A59%3A59\" \"Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko\"",
+                "@timestamp": datetime(2018, 4, 16, 15, 18, 27).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "message": "GET /admin/airflow/task?execution_date=2018-04-13T14%3A33%3A05.290779&dag_id=de_create_obo_assets_workflow&task_id=failure_detector HTTP/1.1\" 200 36528 \"http://webserver1.airflow-prod-a.horizongo.eu/admin/taskinstance/?flt0_dag_id_contains=de_create_obo_assets_workflow&flt1_state_contains=failed&flt4_execution_date_between=2018-04-13+00%3A00%3A00+to+2018-04-13+23%3A59%3A59\" \"Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko",
                 "ip": "172.31.139.17"
             }
         )

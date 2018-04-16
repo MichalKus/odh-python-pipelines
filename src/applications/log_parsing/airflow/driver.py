@@ -162,13 +162,13 @@ def create_event_creators(configuration):
 
     manager_dag_creator = EventCreator(
         Metadata([StringField("dag")]),
-        RegexpParser(r".*<DAG:\s+(?P<dag>.*?)\s+"),
+        RegexpParser(r".*<DAG:\s+(?P<dag>.*?)>\s+.*"),
         SubstringMatcher("DAG:")
     )
 
     manager_dag_run_creator = EventCreator(
         Metadata([StringField("dag")]),
-        RegexpParser(r".*<DagRun\s+(?P<dag>.*?)\s+"),
+        RegexpParser(r".*<DagRun\s+(?P<dag>.*?)\s+.*"),
         SubstringMatcher("DagRun")
     )
 
