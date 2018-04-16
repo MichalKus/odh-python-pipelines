@@ -113,7 +113,7 @@ def create_event_creators(configuration):
     ])
 
     message_level_rename_creator = MutateEventCreator(None, [
-        FieldsMapping(["level"], "message_level", lambda x: x, True)
+        FieldsMapping(["level"], "message_level", agg_func=lambda x: x, remove_intermediate_fields=True)
     ])
 
     airflow_manager_dag_creator = EventCreator(
