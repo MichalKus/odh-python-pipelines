@@ -40,33 +40,79 @@ def create_event_creators(configuration):
         )
     )
 
-    general_manager_creator = EventCreator(
+    manager_scheduler_latest_event_creator = EventCreator(
         Metadata([
             ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
             StringField("script"),
+            StringField("dag_processor"),
+            StringField("line"),
+            StringField("level"),
+            StringField("message")
+        ]),
+        RegexpParser(
+            r"^\[(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\]\s+\{(?P<script>.*?):(?P<line>.*?)\}\s+"
+            r"(?P<dag_processor>.*?)\s+(?P<level>\w+?)\s+-\s+(?P<message>.*)"
+        )
+    )
+
+    manager_scheduler_airflow_event_creator = EventCreator(
+        Metadata([
+            ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+            StringField("script"),
+            StringField("line"),
             StringField("level"),
             StringField("message")
         ]),
         RegexpParser(
             r"^\[(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\]\s+"
-            r"(?P<message>.*\{(?P<script>[^\}]+)\}.*\s+(?P<level>[a-zA-Z]+) - .*)"
+            r"\{(?P<script>.*?):(?P<line>.*?)\}\s+(?P<level>\w+?)\s+-\s+(?P<message>.*)"
         )
     )
 
     webui_manager_creator = EventCreator(
         Metadata([
             ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+            StringField("thread_id"),
             StringField("message"),
-            StringField("message_level")
+            StringField("level")
         ]),
         RegexpParser(
-            r"^\[(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} \+\d*)\]\s+"
-            r"(?P<message>.*\[(?P<message_level>[a-zA-Z]+)\]\s+.*)",
+            r"^\[(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\s+.\d*)\]\s+\[(?P<thread_id>.*)\]"
+            r"\s+\[(?P<level>\w+)\]\s+(?P<message>.*)",
             return_empty_dict=True
         )
     )
 
-    dag_creator = EventCreator(
+    script_webui_manager_creator = EventCreator(
+        Metadata([
+            ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+            StringField("thread_id"),
+            StringField("script"),
+            StringField("line"),
+            StringField("message"),
+            StringField("level")
+        ]),
+        RegexpParser(
+            r"^\[(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\]\s+\[(?P<thread_id>.*?)\]\s+"
+            r"\{(?P<script>.*?):(?P<line>.*?)\}\s+(?P<level>\w+?)\s+-\s+(?P<message>.*)",
+            return_empty_dict=True
+        )
+    )
+
+    ip_webui_manager_creator = EventCreator(
+        Metadata([
+            ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+            StringField("message"),
+            StringField("ip")
+        ]),
+        RegexpParser(
+            r"^(?P<ip>.*)\s+-\s+-\s\[(?P<timestamp>\d{2}\/\w+\/\d{4}:\d{2}:\d{2}:\d{2}\s.\d{4})\]\s+\""
+            r"(?P<message>.*)\"",
+            return_empty_dict=True
+        )
+    )
+
+    dags_creator = EventCreator(
         Metadata([
             StringField("dag"),
             StringField("task")
@@ -108,18 +154,22 @@ def create_event_creators(configuration):
         matcher=SubstringMatcher("Submitting asset:"),
         field_to_parse="subtask_message")
 
-    clean_script_name_creator = MutateEventCreator(None, [
-        FieldsMapping(["script"], "script_name", lambda x: x.split(":")[0], remove_intermediate_fields=True)
-    ])
-
-    message_level_rename_creator = MutateEventCreator(None, [
-        FieldsMapping(["level"], "message_level", simple_map, remove_intermediate_fields=True)
-    ])
-
-    airflow_manager_dag_creator = EventCreator(
+    manager_dags_creator = EventCreator(
         Metadata([StringField("dag")]),
         RegexpParser(r".*DAG?\(s\).*\['(?P<dag>.*)'\].*"),
         SubstringMatcher("DAG(s)")
+    )
+
+    manager_dag_creator = EventCreator(
+        Metadata([StringField("dag")]),
+        RegexpParser(r".*<DAG:\s+(?P<dag>.*?)\s+"),
+        SubstringMatcher("DAG:")
+    )
+
+    manager_dag_run_creator = EventCreator(
+        Metadata([StringField("dag")]),
+        RegexpParser(r".*<DagRun\s+(?P<dag>.*?)\s+"),
+        SubstringMatcher("DagRun")
     )
 
     return MatchField("topic", {
@@ -136,7 +186,7 @@ def create_event_creators(configuration):
             "/usr/local/airflow/logs": SourceConfiguration(
                 CompositeEventCreator()
                 .add_source_parser(general_worker_creator)
-                .add_source_parser(dag_creator)
+                .add_source_parser(dags_creator)
                 .add_intermediate_result_parser(subtask_creator)
                 .add_intermediate_result_parser(crid_creator)
                 .add_intermediate_result_parser(clean_crid_creator, final=True)
@@ -146,27 +196,21 @@ def create_event_creators(configuration):
         }),
         "airflowmanager_scheduler_latest": SourceConfiguration(
             CompositeEventCreator()
-            .add_source_parser(general_manager_creator)
-            .add_intermediate_result_parser(clean_script_name_creator)
-            .add_intermediate_result_parser(airflow_manager_dag_creator)
-            .add_intermediate_result_parser(message_level_rename_creator),
+            .add_source_parser(manager_scheduler_latest_event_creator)
+            .add_intermediate_result_parser(manager_dags_creator, final=True)
+            .add_intermediate_result_parser(manager_dag_creator, final=True)
+            .add_intermediate_result_parser(manager_dag_run_creator, final=True),
             Utils.get_output_topic(configuration, 'manager_scheduler_latest')
         ),
         "airflowmanager_scheduler_airflow": SourceConfiguration(
-            CompositeEventCreator()
-                .add_source_parser(general_manager_creator)
-                .add_intermediate_result_parser(clean_script_name_creator)
-                .add_intermediate_result_parser(airflow_manager_dag_creator)
-                .add_intermediate_result_parser(message_level_rename_creator),
-            Utils.get_output_topic(configuration, 'manager_scheduler_latest')
+            manager_scheduler_airflow_event_creator,
+            Utils.get_output_topic(configuration, 'manager_scheduler_airflow')
         ),
         "airflowmanager_webui": SourceConfiguration(
             CompositeEventCreator()
             .add_source_parser(webui_manager_creator, final=True)
-            .add_source_parser(general_manager_creator)
-            .add_intermediate_result_parser(clean_script_name_creator)
-            .add_intermediate_result_parser(airflow_manager_dag_creator)
-            .add_intermediate_result_parser(message_level_rename_creator),
+            .add_source_parser(ip_webui_manager_creator, final=True)
+            .add_source_parser(script_webui_manager_creator, final=True),
             Utils.get_output_topic(configuration, 'manager_webui')
         )
     })
