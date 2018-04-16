@@ -26,45 +26,48 @@ def create_event_creators(configuration=None):
     timezone_name = configuration.property("timezone.name")
     timezones_property = configuration.property("timezone.priority", "dic")
 
-    cdn_log = EventCreator(Metadata([
-        StringField("s_dns"),
-        StringField("date"),
-        StringField("time"),
-        StringField("x_duration"),
-        StringField("c_ip"),
-        StringField("c_port"),
-        StringField("c_vx_zone"),
-        StringField("c_vx_gloc"),
-        StringField("unknown_field1"),
-        StringField("unknown_field2"),
-        StringField("cs_method"),
-        StringField("cs_uri"),
-        StringField("cs_version"),
-        StringField("cs_user_agent"),
-        StringField("cs_refer"),
-        StringField("cs_cookie"),
-        StringField("cs_range"),
-        StringField("cs_status"),
-        StringField("s_cache_status"),
-        StringField("sc_bytes"),
-        StringField("sc_stream_bytes"),
-        StringField("sc_dscp"),
-        StringField("s_ip"),
-        StringField("s_vx_rate"),
-        StringField("s_vx_rate_status"),
-        StringField("s_vx_serial"),
-        StringField("rs_stream_bytes"),
-        StringField("rs_bytes"),
-        StringField("cs_vx_token"),
-        StringField("sc_vx_download_rate"),
-        StringField("x_protohash"),
-        StringField("additional_headers"),
-        StringField("unknown_field3"),
-        StringField("unknown_field4")]
-    ), SplitterParser("\t", is_trim=True))
+    cdn_log = EventCreator(
+        Metadata([
+            StringField("s_dns"),
+            StringField("date"),
+            StringField("time"),
+            StringField("x_duration"),
+            StringField("c_ip"),
+            StringField("c_port"),
+            StringField("c_vx_zone"),
+            StringField("c_vx_gloc"),
+            StringField("unknown_field1"),
+            StringField("unknown_field2"),
+            StringField("cs_method"),
+            StringField("cs_uri"),
+            StringField("cs_version"),
+            StringField("cs_user_agent"),
+            StringField("cs_refer"),
+            StringField("cs_cookie"),
+            StringField("cs_range"),
+            StringField("cs_status"),
+            StringField("s_cache_status"),
+            StringField("sc_bytes"),
+            StringField("sc_stream_bytes"),
+            StringField("sc_dscp"),
+            StringField("s_ip"),
+            StringField("s_vx_rate"),
+            StringField("s_vx_rate_status"),
+            StringField("s_vx_serial"),
+            StringField("rs_stream_bytes"),
+            StringField("rs_bytes"),
+            StringField("cs_vx_token"),
+            StringField("sc_vx_download_rate"),
+            StringField("x_protohash"),
+            StringField("additional_headers"),
+            StringField("unknown_field3"),
+            StringField("unknown_field4")]
+        ),
+        SplitterParser("\t", is_trim=True))
 
     cdn_log_with_timestamp = MutateEventCreator(Metadata([
-        ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp")]),
+        ConfigurableTimestampField(
+            "timestamp", timezone_name, timezones_property, "@timestamp")]),
         [FieldsMapping(["date", "time"], "timestamp", lambda x, y: x + " " + y, True)])
 
     return SourceConfiguration(
