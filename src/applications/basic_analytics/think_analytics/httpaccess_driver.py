@@ -53,7 +53,7 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
             StructField("contentSourceId", StringType()),
             StructField("clientType", StringType()),
             StructField("method", StringType()),
-            StructField("subscriberId", StringType()),
+            StructField("traxis-profile-id", StringType()),
             StructField("hostname", StringType())
         ])
 
