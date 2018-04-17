@@ -58,13 +58,6 @@ def concat_strings(x, y):
     return x + " " + y
 
 
-def simple_map(x):
-    """
-    Simply map x to x with no changes
-    """
-    return x
-
-
 class FieldsMapping(object):
     """
     Case class that contain list of fields to aggregate,

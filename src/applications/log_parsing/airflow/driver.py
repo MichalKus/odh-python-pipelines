@@ -6,7 +6,7 @@ from common.log_parsing.composite_event_creator import CompositeEventCreator
 from common.log_parsing.dict_event_creator.event_creator import EventCreator
 from common.log_parsing.dict_event_creator.parsers.regexp_parser import RegexpParser
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration, MatchField
-from common.log_parsing.dict_event_creator.mutate_event_creator import MutateEventCreator, FieldsMapping, simple_map
+from common.log_parsing.dict_event_creator.mutate_event_creator import MutateEventCreator, FieldsMapping
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.matchers.matcher import SubstringMatcher
 from common.log_parsing.metadata import Metadata, StringField
