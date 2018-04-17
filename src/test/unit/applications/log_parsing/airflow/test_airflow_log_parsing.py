@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from dateutil.tz import tzoffset
+from dateutil.tz import tzoffset, tzutc
 
 from applications.log_parsing.airflow.driver import create_event_creators
 from test.unit.core.base_message_parsing_test_cases import BaseMultipleMessageParsingTestCase
@@ -196,7 +196,7 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "dag_processor": "DagFileProcessor72328",
                 "message": "DAG(s) ['be_create_obo_thumbnails_workflow'] retrieved from /usr/local/airflow/dags/be_create_obo_thumbnails_workflow.py",
                 "script": "jobs.py",
-                "line": "1537",
+                "script_line": "1537",
                 "dag": "be_create_obo_thumbnails_workflow"
             }
         )
@@ -215,7 +215,7 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "message": "Updating state for <DagRun be_create_obo_assets_transcoding_driven_workflow @ 2018-03-06 15:24:17.806572: be-crid~~3A~~2F~~2Ftelenet.be~~2F8ebcb1e0-8295-40b4-b5ee-fa6c0dd329a6-2018-03-06T15:20:50.800499, externally triggered: True> considering 20 task(s)",
                 "script": "models.py",
                 "dag": "be_create_obo_assets_transcoding_driven_workflow",
-                "line": "4204"
+                "script_line": "4204"
             }
         )
 
@@ -233,7 +233,7 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "message": "Skipping SLA check for <DAG: be_create_obo_assets_transcoding_driven_trigger> because no tasks in DAG have SLAs",
                 "script": "models.py",
                 "dag": "be_create_obo_assets_transcoding_driven_trigger",
-                "line": "4204"
+                "script_line": "4204"
             }
         )
 
@@ -250,7 +250,7 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "dag_processor": "DagFileProcessor72223",
                 "message": "Finding 'running' jobs without a recent heartbeat",
                 "script": "models.py",
-                "line": "4204"
+                "script_line": "4204"
             }
         )
 
@@ -265,7 +265,7 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "level": "INFO",
                 "message": "Executor reports be_create_obo_assets_transcoding_driven_workflow.register_on_license_server execution_date=2018-04-13 09:20:53.573308 as success",
                 "script": "jobs.py",
-                "line": "1195"
+                "script_line": "1195"
             }
         )
 
@@ -277,7 +277,7 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "message": "[2018-04-12 10:12:16 +0000] [16262] [INFO] Booting worker with pid: 16262"
             },
             {
-                "@timestamp": datetime(2018, 4, 12, 10, 12, 16, 0).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "@timestamp": datetime(2018, 4, 12, 10, 12, 16, 0).replace(tzinfo=tzutc()),
                 "level": "INFO",
                 "thread_id": "16262",
                 "message": "Booting worker with pid: 16262"
@@ -297,7 +297,7 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "thread_id": "16262",
                 "message": "Filling up the DagBag from /usr/local/airflow/dags",
                 "script": "models.py",
-                "line": "168"
+                "script_line": "168"
             }
         )
 
@@ -306,10 +306,10 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
             {
                 "topic": "airflowmanager_webui",
                 "source": "any.log",
-                "message": "172.31.139.17 - - [16/Apr/2018:15:18:27 +0000] \"GET /admin/airflow/task?execution_date=2018-04-13T14%3A33%3A05.290779&dag_id=de_create_obo_assets_workflow&task_id=failure_detector HTTP/1.1\" 200 36528 \"http://webserver1.airflow-prod-a.horizongo.eu/admin/taskinstance/?flt0_dag_id_contains=de_create_obo_assets_workflow&flt1_state_contains=failed&flt4_execution_date_between=2018-04-13+00%3A00%3A00+to+2018-04-13+23%3A59%3A59\" \"Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko\"",
+                "message": """172.31.139.17 - - [16/Apr/2018:15:18:27 +0000] "GET /admin/airflow/task?execution_date=2018-04-13T14%3A33%3A05.290779&dag_id=de_create_obo_assets_workflow&task_id=failure_detector HTTP/1.1" 200 36528 "http://webserver1.airflow-prod-a.horizongo.eu/admin/taskinstance/?flt0_dag_id_contains=de_create_obo_assets_workflow&flt1_state_contains=failed&flt4_execution_date_between=2018-04-13+00%3A00%3A00+to+2018-04-13+23%3A59%3A59" "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko""""",
             },
             {
-                "@timestamp": datetime(2018, 4, 16, 15, 18, 27).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "@timestamp": datetime(2018, 4, 16, 15, 18, 27).replace(tzinfo=tzutc()),
                 "message": "GET /admin/airflow/task?execution_date=2018-04-13T14%3A33%3A05.290779&dag_id=de_create_obo_assets_workflow&task_id=failure_detector HTTP/1.1\" 200 36528 \"http://webserver1.airflow-prod-a.horizongo.eu/admin/taskinstance/?flt0_dag_id_contains=de_create_obo_assets_workflow&flt1_state_contains=failed&flt4_execution_date_between=2018-04-13+00%3A00%3A00+to+2018-04-13+23%3A59%3A59\" \"Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko",
                 "ip": "172.31.139.17"
             }

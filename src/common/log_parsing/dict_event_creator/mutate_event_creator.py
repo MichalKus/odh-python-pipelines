@@ -54,7 +54,6 @@ def concat_strings(x, y):
     """
     Concat two strings
     """
-    # type: (str, str) -> str
     return x + " " + y
 
 
