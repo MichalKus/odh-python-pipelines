@@ -14,20 +14,55 @@ class ThinkAnalyticsMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
             {
                 "topic": "vagrant_in_eosdtv_lab5aobo_tst_heapp_thinkanalytics_httpaccess_log_v1",
                 "source": "localhost_access_log",
-                "message": "[19/Jun/2017:02:06:17 +0200] 172.30.189.59 http-0.0.0.0-8080-64 GET /RE/REController.do?contentSourceId=1&clientType=399&method=lgiAdaptiveSearch&subscriberId=278e3270-4d12-11e7-85f5-e5a72ae6734d_nl HTTP/1.1 200 14"
+                "message": "[04/Apr/2018:16:47:05 +0200] 10.95.96.119 http-0.0.0.0-8080-5 GET /RE/REController.do?clientType=300&actionId=3&subscriberId=5ec2ed6f-a5c4-4afe-8970-39b9c57fc39c_be#MasterProfile&contentSourceId=1&actionTime=1522853226&method=learnAction&contentItemId=crid://telenet.be/e36c8aef-2934-45bd-ae22-244c8e796d6d&contentItemInstanceId=imi:001000000020B7F0 HTTP/1.1 200 5"
             },
             {
-                "@timestamp": datetime(2017, 6, 19, 2, 6, 17).replace(tzinfo=timezones["Europe/Amsterdam"]),
-                "ip": "172.30.189.59",
-                "thread": "http-0.0.0.0-8080-64",
+                "@timestamp": datetime(2018, 4, 4, 16, 47, 5).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "ip": "10.95.96.119",
+                "thread": "http-0.0.0.0-8080-5",
                 "http_method": "GET",
                 "http_version": "HTTP/1.1",
                 "response_code": "200",
-                "response_time": "14",
+                "response_time": "5",
                 "contentSourceId": "1",
-                "clientType": "399",
-                "method": "lgiAdaptiveSearch",
-                "subscriberId": "278e3270-4d12-11e7-85f5-e5a72ae6734d_nl",
+                'contentItemInstanceId': 'imi:001000000020B7F0',
+                'contentItemId': 'crid://telenet.be/e36c8aef-2934-45bd-ae22-244c8e796d6d',
+                'crid': 'crid://telenet.be/e36c8aef-2934-45bd-ae22-244c8e796d6d',
+                "clientType": "300",
+                "method": "learnAction",
+                "traxis-profile-id": "5ec2ed6f-a5c4-4afe-8970-39b9c57fc39c_be#MasterProfile",
+                "action": "/RE/REController.do",
+                'actionId': '3',
+                'actionTime': '1522853226'
+            }
+        )
+
+    def test_httpaccess_ids(self):
+        self.assert_parsing(
+            {
+                "topic": "vagrant_in_eosdtv_lab5aobo_tst_heapp_thinkanalytics_httpaccess_log_v1",
+                "source": "localhost_access_log",
+                "message": "[28/Mar/2018:13:49:24 +0200] 127.0.0.1 http-0.0.0.0-8080-34 GET /RE/REController.do?allowPreviousRecommendations=false&term=Smurfen&intRequestId=ee3b0ec0-55be-445c-878b-4c66bac1320f_be#MasterProfile1522237764600&subscriberId=ee3b0ec0-55be-445c-878b-4c66bac1320f_be#MasterProfile&queryLanguage=nl&searchField=title&searchField=seriestitle&searchField=people&method=search&applyMarketingBias=true&contentSourceId=1&contentSourceId=2&contentSourceId=3&maxResults=10&clientType=335 HTTP/1.1 200 5"
+            },
+            {
+                "@timestamp": datetime(2018, 3, 28, 13, 49, 24).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "ip": "127.0.0.1",
+                "thread": "http-0.0.0.0-8080-34",
+                "http_method": "GET",
+                "http_version": "HTTP/1.1",
+                "response_code": "200",
+                "response_time": "5",
+                "allowPreviousRecommendations": "false",
+                "applyMarketingBias": "true",
+                "contentSourceId": "3",
+                "clientType": "335",
+                "traxis-profile-id": "ee3b0ec0-55be-445c-878b-4c66bac1320f_be#MasterProfile",
+                "request-id": "ee3b0ec0-55be-445c-878b-4c66bac1320f_be#MasterProfile1522237764600",
+                "maxResults": "10",
+                "method": "search",
+                "queryLanguage": "nl",
+                "searchField": "people",
+                "term": "Smurfen",
                 "action": "/RE/REController.do"
             }
         )

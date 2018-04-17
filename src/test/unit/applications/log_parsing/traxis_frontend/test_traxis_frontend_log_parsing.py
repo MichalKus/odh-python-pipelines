@@ -35,8 +35,9 @@ class TraxisFrontEndParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "level": "DEBUG",
                 "thread_name": "HTTP worker thread 15",
                 "component": "EntitlementManager",
-                "requestId": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
-                "customerId": "58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl",
+                "ip": "10.64.13.180:39428",
+                "request-id": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
+                "obo-customer-id": "58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl",
                 "method": "GetEntitlementForProduct",
                 "duration": "17",
                 "message": "[10.64.13.180:39428] [RequestId = f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab] [CustomerId = 58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl] Executing method 'GetEntitlementForProduct' took '17' ms"
@@ -54,8 +55,9 @@ class TraxisFrontEndParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "level": "DEBUG",
                 "thread_name": "HTTP worker thread 15",
                 "component": "EntitlementManager",
-                "requestId": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
-                "customerId": "58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl",
+                "ip": "10.64.13.180:39428",
+                "request-id": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
+                "obo-customer-id": "58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl",
                 "method": "GetOffers",
                 "identity": "Eventis.Traxis.BusinessLogicLayer.Identity",
                 "productId": "crid://eventis.nl/00000000-0000-1000-0008-000100000000",
@@ -74,8 +76,9 @@ class TraxisFrontEndParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "level": "DEBUG",
                 "thread_name": "HTTP worker thread 15",
                 "component": "EntitlementManager",
-                "request_id": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
-                "customer_id": "58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl",
+                "ip": "10.64.13.180:39428",
+                "request-id": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
+                "obo-customer-id": "58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl",
                 "response_time_in_milliseconds": 3,
                 "queue_time_in_milliseconds": 0,
                 "response_length_in_bytes": 2195,
@@ -98,8 +101,9 @@ class TraxisFrontEndParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "level": "DEBUG",
                 "thread_name": "HTTP worker thread 15",
                 "component": "EntitlementManager",
-                "request_id": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
-                "customer_id": "58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl",
+                "ip": "10.64.13.180:39428",
+                "request-id": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
+                "obo-customer-id": "58a88a40-4d12-11e7-85f5-e5a72ae6734d_nl",
                 "response_time_in_milliseconds": 3,
                 "queue_time_in_milliseconds": 0,
                 "response_length_in_bytes": 2195,
@@ -120,10 +124,9 @@ class TraxisFrontEndParsingTestCase(BaseMultipleMessageParsingTestCase):
             {
                 "@timestamp": datetime(2017, 6, 29, 16, 35, 33, 468000).replace(tzinfo=timezones["Europe/Amsterdam"]),
                 "level": "DEBUG",
-                "request_id": None,
-                "customer_id": None,
                 "thread_name": "HTTP worker thread 15",
                 "component": "EntitlementManager",
+                "ip": "10.64.13.180:39428",
                 "response_time_in_milliseconds": 3,
                 "queue_time_in_milliseconds": 0,
                 "response_length_in_bytes": 2195,
@@ -146,8 +149,8 @@ class TraxisFrontEndParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "level": "DEBUG",
                 "thread_name": "HTTP worker thread 15",
                 "component": "EntitlementManager",
-                "request_id": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
-                "customer_id": None,
+                "ip": "10.64.13.180:39428",
+                "request-id": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
                 "response_time_in_milliseconds": 3,
                 "queue_time_in_milliseconds": 0,
                 "response_length_in_bytes": 2195,
@@ -169,8 +172,8 @@ class TraxisFrontEndParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "level": "DEBUG",
                 "thread_name": "HTTP worker thread 15",
                 "component": "EntitlementManager",
-                "customer_id": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
-                "request_id": None,
+                "ip": "10.64.13.180:39428",
+                "obo-customer-id": "f14d79a5-357e-4b6f-bcb7-ed2b00fd63ab",
                 "response_time_in_milliseconds": 3,
                 "queue_time_in_milliseconds": 0,
                 "response_length_in_bytes": 2195,
@@ -192,10 +195,29 @@ class TraxisFrontEndParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "level": "DEBUG",
                 "thread_name": "HTTP worker thread 2",
                 "component": "BaseEntitlementManager",
-                "requestId": "0cc3c8cf-f3b3-4660-9a8c-54e5461106c9",
-                "customerId": "be73f580-5cc6-11e7-acce-916590705404_nl",
+                "ip": "10.64.13.180:39376",
+                "request-id": "0cc3c8cf-f3b3-4660-9a8c-54e5461106c9",
+                "obo-customer-id": "be73f580-5cc6-11e7-acce-916590705404_nl",
                 "productId": "crid://eventis.nl/00000000-0000-1000-0008-000100000001",
                 "message": "[10.64.13.180:39376] [RequestId = 0cc3c8cf-f3b3-4660-9a8c-54e5461106c9] [CustomerId = be73f580-5cc6-11e7-acce-916590705404_nl] Cannot purchase products of type 'Subscription': subscription purchase is not enabled. CustomerId 'be73f580-5cc6-11e7-acce-916590705404_nl', productId 'crid://eventis.nl/00000000-0000-1000-0008-000100000001'"
+            }
+        )
+
+    def test_traxis_service_log_x_req_id(self):
+        self.assert_parsing(
+            {
+                "source": "TraxisService.log",
+                "message": "2018-04-10 08:52:34,478 WARN  [HTTP worker thread 17] ClassificationSchemeLookupTable - [172.23.41.87, 10.95.97.62] [RequestId = aa0b54f9-8937-4329-9150-0db6343b0cbc] Genre 'urn:tva:metadata:cs:UPCEventGenreCS:2009:46' is not known\nOriginal message from 10.95.96.116:49790\nMethod = Post\nUri = http://traxis-web/traxis/web\nHeaders = \n  x-request-id: a877520b711186cad77077e328fadd82\n  x-application-name: hollow-producer\n  X-B3-TraceId: 11e192c37af66bb4\n  X-B3-SpanId: 11e192c37af66bb4\n  X-B3-Sampled: 0\n  X-Forwarded-For: 172.23.41.87, 10.95.97.62\n  Content-Length: 1391\n  Content-Type: application/xml\n  Accept-Encoding: gzip\n  Host: traxis-web\n  User-Agent: hollow-producer/1.11.01 TentacleClient/5.15.1 Jersey/2.25.1\nBody = \u003c?xml version=\"1.0\" encoding=\"utf-8\"?\u003e\n\u003cRequest xmlns=\"urn:eventis:traxisweb:1.0\"\u003e\n    \u003cParameters\u003e\n        \u003cParameter name=\"Language\"\u003enl\u003c/Parameter\u003e\n    \u003c/Parameters\u003e\n    \u003cRootRelationQuery relationName=\"Titles\"\u003e\n        \u003cOptions\u003e\n            \u003cOption type=\"Paging\"\u003e35000,5000,rc\u003c/Option\u003e\n            \u003cOption type=\"Props\"\u003e\n                Name,\n                Pictures,\n                EpisodeName,\n                SeriesCollection,\n                MinimumAge,\n                DurationInSeconds,\n                SortName,\n                ShortSynopsis,\n                LongSynopsis,\n                ContentProviderId,\n                Categories,\n                IsAdult,\n                ProductionDate,\n                Credits,\n                Genres,\n                AllGenres,\n                ActorsCharacters,\n                DirectorNames,\n                IsTstv,\n                ProductionLocations,\n                StreamingPopularityDay,\n                StreamingPopularityWeek,\n                StreamingPopularityMonth\n            \u003c/Option\u003e\n        \u003c/Options\u003e\n        \u003cSubQueries\u003e\n            \u003cSubQuery relationName=\"SeriesCollection\"\u003e\n                \u003cOptions\u003e\n                    \u003cOption type=\"props\"\u003e\n                        RelationOrdinal\n                    \u003c/Option\u003e\n                \u003c/Options\u003e\n            \u003c/SubQuery\u003e\n        \u003c/SubQueries\u003e\n    \u003c/RootRelationQuery\u003e\n\u003c/Request\u003e\n"
+            },
+            {
+                "@timestamp": datetime(2018, 4, 10, 8, 52, 34, 478000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "level": "WARN",
+                "thread_name": "HTTP worker thread 17",
+                "component": "ClassificationSchemeLookupTable",
+                "ip": "172.23.41.87, 10.95.97.62",
+                "request-id": "aa0b54f9-8937-4329-9150-0db6343b0cbc",
+                "x-request-id": "a877520b711186cad77077e328fadd82",
+                "message": "[172.23.41.87, 10.95.97.62] [RequestId = aa0b54f9-8937-4329-9150-0db6343b0cbc] Genre 'urn:tva:metadata:cs:UPCEventGenreCS:2009:46' is not known\nOriginal message from 10.95.96.116:49790\nMethod = Post\nUri = http://traxis-web/traxis/web\nHeaders = \n  x-request-id: a877520b711186cad77077e328fadd82\n  x-application-name: hollow-producer\n  X-B3-TraceId: 11e192c37af66bb4\n  X-B3-SpanId: 11e192c37af66bb4\n  X-B3-Sampled: 0\n  X-Forwarded-For: 172.23.41.87, 10.95.97.62\n  Content-Length: 1391\n  Content-Type: application/xml\n  Accept-Encoding: gzip\n  Host: traxis-web\n  User-Agent: hollow-producer/1.11.01 TentacleClient/5.15.1 Jersey/2.25.1\nBody = \u003c?xml version=\"1.0\" encoding=\"utf-8\"?\u003e\n\u003cRequest xmlns=\"urn:eventis:traxisweb:1.0\"\u003e\n    \u003cParameters\u003e\n        \u003cParameter name=\"Language\"\u003enl\u003c/Parameter\u003e\n    \u003c/Parameters\u003e\n    \u003cRootRelationQuery relationName=\"Titles\"\u003e\n        \u003cOptions\u003e\n            \u003cOption type=\"Paging\"\u003e35000,5000,rc\u003c/Option\u003e\n            \u003cOption type=\"Props\"\u003e\n                Name,\n                Pictures,\n                EpisodeName,\n                SeriesCollection,\n                MinimumAge,\n                DurationInSeconds,\n                SortName,\n                ShortSynopsis,\n                LongSynopsis,\n                ContentProviderId,\n                Categories,\n                IsAdult,\n                ProductionDate,\n                Credits,\n                Genres,\n                AllGenres,\n                ActorsCharacters,\n                DirectorNames,\n                IsTstv,\n                ProductionLocations,\n                StreamingPopularityDay,\n                StreamingPopularityWeek,\n                StreamingPopularityMonth\n            \u003c/Option\u003e\n        \u003c/Options\u003e\n        \u003cSubQueries\u003e\n            \u003cSubQuery relationName=\"SeriesCollection\"\u003e\n                \u003cOptions\u003e\n                    \u003cOption type=\"props\"\u003e\n                        RelationOrdinal\n                    \u003c/Option\u003e\n                \u003c/Options\u003e\n            \u003c/SubQuery\u003e\n        \u003c/SubQueries\u003e\n    \u003c/RootRelationQuery\u003e\n\u003c/Request\u003e\n"
             }
         )
 
@@ -242,8 +264,12 @@ class TraxisFrontEndParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "level": "VERBOSE",
                 "thread_name": "HTTP worker thread 13",
                 "component": "LogManager",
-                "message": "[81.82.50.176] [RequestId = 590b040e-a8ae-47ee-969c-58a213999c09] [CustomerId = c9bde815-d03b-46ef-abfe-0b2802116338_be] Executing method 'get_SessionLogger' took '0' ms"
-
+                "message": "[81.82.50.176] [RequestId = 590b040e-a8ae-47ee-969c-58a213999c09] [CustomerId = c9bde815-d03b-46ef-abfe-0b2802116338_be] Executing method 'get_SessionLogger' took '0' ms",
+                "duration": "0",
+                "ip": "81.82.50.176",
+                "method": "get_SessionLogger",
+                "obo-customer-id": "c9bde815-d03b-46ef-abfe-0b2802116338_be",
+                "request-id": "590b040e-a8ae-47ee-969c-58a213999c09"
             }
         )
 
