@@ -38,8 +38,9 @@ class EventWithUrlCreator(object):
             params = dict(urlparse.parse_qsl(values[self._url_query_field]))
             if self._delete_source_field:
                 del values[self._url_query_field]
-            return dict([(convert_to_underlined(x[0]), x[1]) for x in params.items()]) \
-                if self._keys_to_underscore else params
+            return dict(
+                [(convert_to_underlined(x[0]), x[1]) for x in params.items()]
+            ) if self._keys_to_underscore else params
 
         url = values[self._url_field].split("?")
         if self._delete_source_field:
