@@ -30,7 +30,7 @@ def create_event_creators(configuration):
             StringField("message")
         ]),
         RegexpParser(r"^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+.\d{4})\s+(?P<level>.*?)\s+"
-                     r"(?P<event_type>.*?)\s+\[(?P<thread>.*)\]\s(?P<message>.*)")
+                     r"(?P<event_type>.*?)\s+\[(?P<thread>.*?)\]\s(?P<message>.*)")
     )
 
     return MatchField("source", {
