@@ -101,7 +101,8 @@ class Airflow(object):
     def manager_scheduler_latest_event_creator(timezone_name, timezones_property):
         return EventCreator(
             Metadata([
-                ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+                ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                                           timezone_name, timezones_property, "@timestamp"),
                 StringField("script"),
                 StringField("dag_processor"),
                 StringField("script_line"),
@@ -118,7 +119,8 @@ class Airflow(object):
     def manager_scheduler_airflow_event_creator(timezone_name, timezones_property):
         return EventCreator(
             Metadata([
-                ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+                ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                                           timezone_name, timezones_property, "@timestamp"),
                 StringField("script"),
                 StringField("script_line"),
                 StringField("level"),
@@ -134,7 +136,9 @@ class Airflow(object):
     def webui_manager_creator(timezone_name, timezones_property):
         return EventCreator(
             Metadata([
-                ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+                ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S",
+                                           timezone_name, timezones_property, "@timestamp",
+                                           include_timezone=True),
                 StringField("thread_id"),
                 StringField("message"),
                 StringField("level")
@@ -150,7 +154,8 @@ class Airflow(object):
     def script_webui_manager_creator(timezone_name, timezones_property):
         return EventCreator(
             Metadata([
-                ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+                ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                                           timezone_name, timezones_property, "@timestamp"),
                 StringField("thread_id"),
                 StringField("script"),
                 StringField("script_line"),
@@ -168,7 +173,9 @@ class Airflow(object):
     def ip_webui_manager_creator(timezone_name, timezones_property):
         return EventCreator(
             Metadata([
-                ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+                ConfigurableTimestampField("timestamp", "%d/%b/%Y:%H:%M:%S",
+                                           timezone_name, timezones_property, "@timestamp",
+                                           include_timezone=True),
                 StringField("message"),
                 StringField("ip")
             ]),
