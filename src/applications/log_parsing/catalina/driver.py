@@ -13,13 +13,13 @@ from util.utils import Utils
 
 def create_event_creators(configuration):
     """
-    Method creates configuration for Catalina
+    Method creates configured event_creator for logs from Catalina
     :param configuration
     :return: Composite event creator for Catalina
     """
 
     timezone_name = configuration.property("timezone.name")
-    timezones_property = configuration.property("timezone.priority", "dic")
+    timezones_property = configuration.property("timezone.priority", "idc")
 
     event_creator = EventCreator(
         Metadata([
