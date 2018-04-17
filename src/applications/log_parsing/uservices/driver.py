@@ -32,7 +32,8 @@ def create_event_creators(config):
 
     timestamp_event_creator = EventCreator(
         Metadata(
-            [ConfigurableTimestampField("timestamp", timezone_name, timezones_priority, "@timestamp")]),
+            [ConfigurableTimestampField("timestamp", "%Y-%m-%dT%H:%M:%S.%fZ",
+                                        timezone_name, timezones_priority, "@timestamp")]),
         RegexpParser(r"^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z)"), field_to_parse="@timestamp"
     )
 

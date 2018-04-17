@@ -43,32 +43,36 @@ class ConfigurableTimestampTestCase(unittest.TestCase):
         self.assertTrue(len(timezones) > 0)
 
     def test_configurable_timestamp_field_dic_override_winter(self):
-        field = ConfigurableTimestampField("datetime", "Europe/Amsterdam", "dic")
+        field = ConfigurableTimestampField("datetime", "%Y-%m-%d %H:%M:%S.%f", "Europe/Amsterdam", "dic",
+                                           include_timezone=True)
         parsed_date = field.get_value(self._winter_date_string_tz)
 
         self.assertEquals(self._winter_date_utc1, parsed_date)
 
     def test_configurable_timestamp_field_dic_override_summer(self):
-        field = ConfigurableTimestampField("datetime", "Europe/Amsterdam", "dic")
+        field = ConfigurableTimestampField("datetime", "%Y-%m-%d %H:%M:%S.%f", "Europe/Amsterdam", "dic",
+                                           include_timezone=True)
         parsed_date = field.get_value(self._summer_date_string_tz)
 
         self.assertEquals(self._summer_date, parsed_date)
 
     def test_configurable_timestamp_field_dic_not_override(self):
-        field = ConfigurableTimestampField("datetime", "Europe/Amsterdam", "dic")
+        field = ConfigurableTimestampField("datetime", "%Y-%m-%d %H:%M:%S.%f", "Europe/Amsterdam", "dic")
         parsed_date = field.get_value(self._winter_date_string)
 
         self.assertEquals(self._winter_date_utc1, parsed_date)
 
     def test_configurable_timestamp_field_idc(self):
-        field = ConfigurableTimestampField("datetime", "Europe/Amsterdam", "idc")
+        field = ConfigurableTimestampField("datetime", "%Y-%m-%d %H:%M:%S.%f", "Europe/Amsterdam", "idc",
+                                           include_timezone=True)
         parsed_date = field.get_value(self._winter_date_string_tz)
 
         self.assertEquals(self._winter_date_utc2, parsed_date)
 
 
     def test_configurable_timestamp_field_cdi(self):
-        field = ConfigurableTimestampField("datetime", "UTC+1", "cdi")
+        field = ConfigurableTimestampField("datetime", "%Y-%m-%d %H:%M:%S.%f", "UTC+1", "cdi",
+                                           include_timezone=True)
         context = {CONTEXT_TIMEZONE: "Europe/Amsterdam"}
 
         parsed_date = field.get_value(self._winter_date_string_tz, context)
@@ -76,13 +80,14 @@ class ConfigurableTimestampTestCase(unittest.TestCase):
         self.assertEquals(self._winter_date_utc1, parsed_date)
 
     def test_configurable_timestamp_field_bad_timezone(self):
-        field = ConfigurableTimestampField("datetime", "Europe/Amsterdam1", "dic")
+        field = ConfigurableTimestampField("datetime", "%Y-%m-%d %H:%M:%S.%f", "Europe/Amsterdam1", "dic",
+                                           include_timezone=True)
         parsed_date = field.get_value(self._winter_date_string_tz)
 
         self.assertEquals(self._winter_date_utc2, parsed_date)
 
     def test_ambiguous_date_covertion(self):
-        field = ConfigurableTimestampField("datetime", "Europe/Amsterdam", "idc")
+        field = ConfigurableTimestampField("datetime", None, "Europe/Amsterdam", "idc", use_smart_parsing=True)
         parsed_date = field.get_value(self._ambiguous_date_string)
         ambiguous = timezones["Europe/Amsterdam"].is_ambiguous(parsed_date)
 

@@ -29,7 +29,8 @@ def create_event_creators(configuration):
 
     general_creator = EventCreator(
         Metadata([
-            ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+            ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                                       timezone_name, timezones_property, "@timestamp"),
             StringField("script"),
             StringField("level"),
             StringField("message")
@@ -50,7 +51,7 @@ def create_event_creators(configuration):
 
     subtask_creator = EventCreator(
         Metadata(
-            [ConfigurableTimestampField("subtask_timestamp", timezone_name, timezones_property),
+            [ConfigurableTimestampField("subtask_timestamp", "%Y-%m-%d %H:%M:%S,%f", timezone_name, timezones_property),
              StringField("subtask_script"),
              StringField("subtask_level"),
              StringField("subtask_message")]),

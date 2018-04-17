@@ -26,7 +26,8 @@ def create_event_creators(configuration):
 
     general_regexp_event_creator = DictEventCreator(
         Metadata([
-            ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+            ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                                       timezone_name, timezones_property, "@timestamp"),
             StringField("level"),
             StringField("thread"),
             StringField("message")
@@ -39,7 +40,8 @@ def create_event_creators(configuration):
 
     additional_services_event_event_creator = DictEventCreator(
         Metadata([
-            ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+            ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                                       timezone_name, timezones_property, "@timestamp"),
             StringField("level"),
             StringField("thread"),
             StringField("message")
@@ -51,7 +53,7 @@ def create_event_creators(configuration):
 
     prodis_ws_event_creator_5_columns = EventCreator(
         Metadata([
-            ConfigurableTimestampField("@timestamp", timezone_name, timezones_property),
+            ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f", timezone_name, timezones_property),
             StringField("level"),
             StringField("thread_name"),
             StringField("instance_name"),
@@ -64,7 +66,8 @@ def create_event_creators(configuration):
                 prodis_ws_event_creator_5_columns,
                 EventCreator(
                     Metadata([
-                        ConfigurableTimestampField("@timestamp", timezone_name, timezones_property),
+                        ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                                                   timezone_name, timezones_property),
                         StringField("level"),
                         StringField("thread_name"),
                         StringField("instance_name"),

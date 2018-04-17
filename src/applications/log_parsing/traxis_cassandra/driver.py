@@ -22,7 +22,8 @@ def create_event_creators(configuration):
                 EventCreator(
                     Metadata([
                         StringField("level"),
-                        ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                        ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                                                   timezone_name, timezones_priority),
                         StringField("message")
                     ]),
                     RegexpParser(
@@ -30,7 +31,8 @@ def create_event_creators(configuration):
                 ),
                 EventCreator(
                     Metadata([
-                        ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                        ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                                                   timezone_name, timezones_priority),
                         StringField("level"),
                         StringField("message")
                     ]),
@@ -45,7 +47,8 @@ def create_event_creators(configuration):
                 EventCreator(
                     Metadata([
                         StringField("level"),
-                        ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                        ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                                                   timezone_name, timezones_priority),
                         StringField("message")
                     ]),
                     RegexpParser(
@@ -54,7 +57,8 @@ def create_event_creators(configuration):
                 EventCreator(
                     Metadata([
                         StringField("level"),
-                        ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                        ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                                                   timezone_name, timezones_priority),
                         StringField("message")
                     ]),
                     RegexpParser(
@@ -62,7 +66,8 @@ def create_event_creators(configuration):
                 ),
                 EventCreator(
                     Metadata([
-                        ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                        ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                                                   timezone_name, timezones_priority),
                         StringField("level"),
                         StringField("message")
                     ]),

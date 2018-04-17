@@ -25,21 +25,30 @@ def create_event_creators(configuration):
     :return: Tree of event_creators
     """
     timezone_name = configuration.property("timezone.name")
-    timezones_priority = configuration.property("timezone.priority", "dic")
+    timezones_priority = configuration.property("timezone.priority", "idc")
 
     duration_event_creator = MutateEventCreator(None,
                                                 [FieldsMapping(["started_script", "finished_script", "finished_time",
                                                                 "@timestamp"], "duration", duration_update)])
 
-    concat_timestamp_event_creator = MutateEventCreator(
+    concat_httpaccess_timestamp_event_creator = MutateEventCreator(
         Metadata(
-            [ConfigurableTimestampField("timestamp", timezone_name, timezones_priority, "@timestamp", dayfirst=True)]),
+            [ConfigurableTimestampField("timestamp", "%d/%b/%Y:%H:%M:%S",
+                                        timezone_name, timezones_priority, "@timestamp",
+                                        include_timezone=True)]),
+        [FieldsMapping(["date", "time"], "timestamp", agg_func=lambda x, y: (x + " " + y)[1:-1],
+                       remove_intermediate_fields=True)])
+
+    concat_central_timestamp_event_creator = MutateEventCreator(
+        Metadata(
+            [ConfigurableTimestampField("timestamp", "%a %d/%m/%y %H:%M:%S",
+                                        timezone_name, timezones_priority, "@timestamp")]),
         [FieldsMapping(["date", "time"], "timestamp", remove_intermediate_fields=True)])
 
     return MatchField("source", {
         "localhost_access_log": SourceConfiguration(
             CompositeEventCreator()
-            .add_source_parser(
+                .add_source_parser(
                 EventCreator(
                     Metadata([
                         StringField("date"),
@@ -55,14 +64,16 @@ def create_event_creators(configuration):
                     SplitterParser(delimiter=" ", is_trim=True)
                 )
             )
-            .add_intermediate_result_parser(concat_timestamp_event_creator)
-            .add_intermediate_result_parser(EventWithUrlCreator(delete_source_field=True, keys_to_underscore=False)),
+                .add_intermediate_result_parser(concat_httpaccess_timestamp_event_creator)
+                .add_intermediate_result_parser(
+                EventWithUrlCreator(delete_source_field=True, keys_to_underscore=False)),
             Utils.get_output_topic(configuration, "httpaccess")
         ),
         "RE_SystemOut.log": SourceConfiguration(
             EventCreator(
                 Metadata([
-                    ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                    ConfigurableTimestampField("@timestamp", "%d/%m/%y %H:%M:%S.%f", timezone_name, timezones_priority,
+                                               dayfirst=True, use_smart_parsing=True),
                     StringField("level"),
                     StringField("script"),
                     StringField("message")
@@ -76,7 +87,8 @@ def create_event_creators(configuration):
         "REMON_SystemOut.log": SourceConfiguration(
             EventCreator(
                 Metadata([
-                    ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                    ConfigurableTimestampField("@timestamp", None, timezone_name, timezones_priority,
+                                               dayfirst=True, use_smart_parsing=True),
                     StringField("level"),
                     StringField("script"),
                     StringField("type"),
@@ -90,7 +102,7 @@ def create_event_creators(configuration):
         ),
         "Central.log": SourceConfiguration(
             CompositeEventCreator()
-            .add_source_parser(
+                .add_source_parser(
                 EventCreator(
                     Metadata([
                         StringField("date"),
@@ -106,13 +118,13 @@ def create_event_creators(configuration):
                     CsvParser(",", '"')
                 )
             )
-            .add_intermediate_result_parser(concat_timestamp_event_creator),
+                .add_intermediate_result_parser(concat_central_timestamp_event_creator),
             Utils.get_output_topic(configuration, "central")
         ),
         "thinkenterprise.log": SourceConfiguration(
             EventCreator(
                 Metadata([
-                    ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                    ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f", timezone_name, timezones_priority),
                     StringField("level"),
                     StringField("message")
                 ]),
@@ -125,7 +137,8 @@ def create_event_creators(configuration):
         "gcollector.log": SourceConfiguration(
             EventCreator(
                 Metadata([
-                    ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                    ConfigurableTimestampField("@timestamp", "%Y-%m-%dT%H:%M:%S.%f", timezone_name, timezones_priority,
+                                               include_timezone=True),
                     StringField("process_uptime"),
                     StringField("message")
                 ]),
@@ -138,7 +151,7 @@ def create_event_creators(configuration):
         "server.log": SourceConfiguration(
             EventCreator(
                 Metadata([
-                    ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                    ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f", timezone_name, timezones_priority),
                     StringField("level"),
                     StringField("class_name"),
                     StringField("thread"),
@@ -156,10 +169,14 @@ def create_event_creators(configuration):
                 DictEventCreator(
                     Metadata([
                         StringField("started_script"),
-                        ConfigurableTimestampField("timestamp", timezone_name, timezones_priority, "@timestamp"),
+                        ConfigurableTimestampField("timestamp", None, timezone_name,
+                                                   timezones_priority, "@timestamp",
+                                                   use_smart_parsing=True),
                         StringField("message"),
                         StringField("finished_script"),
-                        ConfigurableTimestampField("finished_time", timezone_name, timezones_priority)
+                        ConfigurableTimestampField("finished_time", None, timezone_name,
+                                                   timezones_priority,
+                                                   use_smart_parsing=True)
                     ]),
                     RegexpMatchesParser(
                         r"Started\s+?(?P<started_script>.*?\.sh)\s+?"
@@ -169,7 +186,7 @@ def create_event_creators(configuration):
                     )
                 )
             )
-                .add_intermediate_result_parser(duration_event_creator),
+            .add_intermediate_result_parser(duration_event_creator),
             Utils.get_output_topic(configuration, "reingest")
         )
     })

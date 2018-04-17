@@ -88,7 +88,7 @@ class Stagis(object):
     def ee_event_creator(timezone_name, timezones_priority):
         return EventCreator(
             Metadata([
-                ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f", timezone_name, timezones_priority),
                 StringField("level"),
                 StringField("instance_name"),
                 StringField("causality_id"),
@@ -102,7 +102,7 @@ class Stagis(object):
     def ee_corecommit_event_creator(timezone_name, timezones_priority):
         return EventCreator(
             Metadata([
-                ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f", timezone_name, timezones_priority),
                 StringField("level"),
                 StringField("instance_name"),
                 StringField("causality_id"),
@@ -116,7 +116,7 @@ class Stagis(object):
     def ee_interface_event_creator(timezone_name, timezones_priority):
         return EventCreator(
             Metadata([
-                ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f", timezone_name, timezones_priority),
                 StringField("instance_name"),
                 StringField("thread_id"),
                 StringField("class_name"),
@@ -136,7 +136,7 @@ class Stagis(object):
 
         return MultilineEventCreator(
             Metadata([
-                ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f", timezone_name, timezones_priority),
                 StringField("message")
             ]),
             SplitterParser("|", is_trim=True), [take_first, concat])

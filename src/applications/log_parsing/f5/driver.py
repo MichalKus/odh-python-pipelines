@@ -39,7 +39,8 @@ def create_event_creators(config):
     )
 
     timestamp_event_creator = EventCreator(
-        Metadata([ConfigurableTimestampField("timestamp", timezone_name, timezones_priority, "@timestamp")]),
+        Metadata([ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S",
+                                             timezone_name, timezones_priority, "@timestamp")]),
         LongTimestampParser("timestamp"), field_to_parse="eoc_timestamp"
     )
 
