@@ -50,13 +50,20 @@ class MutateEventCreator(EventCreator):
                           fields)).issubset(set(row.keys()))
 
 
+def concat_strings(x, y):
+    """
+    Concat two strings
+    """
+    return x + " " + y
+
+
 class FieldsMapping(object):
     """
     Case class that contain list of fields to aggregate,
     result field, aggregation function and boolean flag that indicates removing of intermediate fields
     """
 
-    def __init__(self, fields_to_aggregate, result_field, agg_func=lambda x, y: x + " " + y,
+    def __init__(self, fields_to_aggregate, result_field, agg_func=concat_strings,
                  remove_intermediate_fields=False):
         if (not fields_to_aggregate and not isinstance(fields_to_aggregate, list)) \
                 or (not result_field and isinstance(result_field, str)):
