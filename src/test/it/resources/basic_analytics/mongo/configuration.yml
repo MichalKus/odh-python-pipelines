@@ -1,11 +1,11 @@
 spark:
-  appName: catalina-basic-analytics-test
+  appName: mongo-basic-analytics-test
   master: local[*]
   shuffle.partitions: 1
   outputMode: update
  # consoleWriter: true
 
 analytics:
-  componentName: catalina.connection.events
+  componentName: mongo.connection.events
   watermark: '1 minutes'
   window: '10 minutes'

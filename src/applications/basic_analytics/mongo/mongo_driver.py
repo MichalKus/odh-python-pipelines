@@ -10,7 +10,7 @@ from common.spark_utils.custom_functions import custom_translate_regex
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
-class CatalinaConnectionEventsProcessor(BasicAnalyticsProcessor):
+class MongoConnectionEventsProcessor(BasicAnalyticsProcessor):
     """
     The processor implementation to calculate metrics related to Catalina component.
     """
@@ -47,7 +47,7 @@ class CatalinaConnectionEventsProcessor(BasicAnalyticsProcessor):
 
 def create_processor(configuration):
     """Method to create the instance of the processor"""
-    return CatalinaConnectionEventsProcessor(configuration, CatalinaConnectionEventsProcessor.create_schema())
+    return MongoConnectionEventsProcessor(configuration, MongoConnectionEventsProcessor.create_schema())
 
 
 if __name__ == "__main__":
