@@ -1,9 +1,14 @@
+"""Module for parsing date fields from messages"""
 from os import listdir, environ
 from os.path import isfile, join
+
+import pytz
+import re
 from dateutil.parser import parse
 from dateutil.tz import tzfile
 from metadata import AbstractField, ParsingException
 from metadata import CONTEXT_TIMEZONE
+from datetime import datetime
 
 
 def _get_available_timezones(path, region=""):
@@ -44,8 +49,9 @@ class ConfigurableTimestampField(AbstractField):
     Priorities of mentioned sources are specified as a constructor parameter.
     """
 
-    def __init__(self, name, default_timezone_name, priorities="dic", output_name=None, dayfirst=False,
-                 yearfirst=False):
+    def __init__(self, name, datetime_format, default_timezone_name, priorities="dic",
+                 output_name=None, include_timezone=False,
+                 use_smart_parsing=False, dayfirst=False, yearfirst=False):
         """
         Constructor.
         :param name: field name
@@ -54,6 +60,9 @@ class ConfigurableTimestampField(AbstractField):
         :param output_name: a name used in output events
         """
         AbstractField.__init__(self, name, output_name)
+        self._use_smart_parsing = use_smart_parsing
+        self._datetime_format = datetime_format
+        self._include_timezone = include_timezone
         self._default_timezone_name = default_timezone_name
         self.dayfirst = dayfirst
         self.yearfirst = yearfirst
@@ -101,7 +110,7 @@ class ConfigurableTimestampField(AbstractField):
         :return: array of functions applying timezones to datetime object.
         """
         priority_map = {"d": self.__set_default_timezone_date,
-                        "i":  self.__set_inherent_timezone_date,
+                        "i": self.__set_inherent_timezone_date,
                         "c": self.__set_context_timezone_date}
         return [priority_map[item] for item in priorities]
 
@@ -126,8 +135,22 @@ class ConfigurableTimestampField(AbstractField):
         :raises: ParsingException if date format is wrong or no timezone is found
         """
         try:
-            return self.__apply_timezone(
-                parse(value, fuzzy=True, dayfirst=self.dayfirst, yearfirst=self.yearfirst), context)
+            if self._use_smart_parsing:
+                date = parse(value, fuzzy=True, dayfirst=self.dayfirst, yearfirst=self.yearfirst)
+            else:
+                if self._include_timezone is False:
+                    date = datetime.strptime(value, self._datetime_format)
+                else:
+                    timezone_pattern = r"^(.*?)\s*([+-]\d{2})\D?(\d{2})$"
+                    parsed_date = re.search(timezone_pattern, value)
+                    string_date = parsed_date.group(1)
+                    timezone = parsed_date.group(2) + parsed_date.group(3)
+                    date = datetime.strptime(string_date, self._datetime_format)
+                    timezone_offset = int(timezone[-4:-2])*60 + int(timezone[-2:])
+                    if timezone[0] == '-':
+                        timezone_offset = -timezone_offset
+                    date = date.replace(tzinfo=pytz.FixedOffset(timezone_offset))
+            return self.__apply_timezone(date, context)
         except ValueError:
             raise ParsingException("wrong datetime format")
 

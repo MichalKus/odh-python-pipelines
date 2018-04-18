@@ -25,7 +25,8 @@ def create_event_creators(configuration):
     timezones_priority = configuration.property("timezone.priority", "dic")
 
     event_creator = EventCreator(Metadata([
-        ConfigurableTimestampField("timestamp", timezone_name, timezones_priority, "@timestamp"),
+        ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                                   timezone_name, timezones_priority, "@timestamp"),
         StringField("level"),
         StringField("thread_name"),
         StringField("component"),

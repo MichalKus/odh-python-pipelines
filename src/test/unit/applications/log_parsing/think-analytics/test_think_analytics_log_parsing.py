@@ -1,5 +1,3 @@
-from dateutil.tz import tzoffset
-
 from applications.log_parsing.think_analytics.driver import create_event_creators
 from common.log_parsing.timezone_metadata import timezones
 from test.unit.core.base_message_parsing_test_cases import BaseMultipleMessageParsingTestCase
@@ -92,7 +90,7 @@ class ThinkAnalyticsMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "message": "[29/09/17 01:15:00.141 CEST] WARN  - LGITopListManager.validateTopLists(113) : [NO_ENTRIES_FOR_EXPECTED_TOP_LIST] - Expected Top List MostPurchased^TVOD_Currents is missing or has no entries."
             },
             {
-                "@timestamp": datetime(2017, 9, 29, 01, 15, 00, 141000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "@timestamp": datetime(2017, 9, 29, 1, 15, 00, 141000).replace(tzinfo=timezones["Europe/Amsterdam"]),
                 "level": "WARN",
                 "script": "LGITopListManager.validateTopLists(113)",
                 "type": "NO_ENTRIES_FOR_EXPECTED_TOP_LIST",
@@ -108,7 +106,7 @@ class ThinkAnalyticsMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "message": '''"Thu 05/10/17","02:50:01","","Event Log Stopped","be-l-p-obo00336","","","","Customer"'''
             },
             {
-                "@timestamp": datetime(2017, 10, 05, 02, 50, 01).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "@timestamp": datetime(2017, 10, 5, 2, 50, 1).replace(tzinfo=timezones["Europe/Amsterdam"]),
                 "level": "",
                 "message": "Event Log Stopped",
                 "thread": "be-l-p-obo00336",
@@ -127,7 +125,7 @@ class ThinkAnalyticsMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "message": "2017-09-29 02:50:44,608: INFO - ThinkEnterprise: rmi://be-l-p-obo00335:55969"
             },
             {
-                "@timestamp": datetime(2017, 9, 29, 02, 50, 44, 608000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "@timestamp": datetime(2017, 9, 29, 2, 50, 44, 608000).replace(tzinfo=timezones["Europe/Amsterdam"]),
                 "level": "INFO",
                 "message": "ThinkEnterprise: rmi://be-l-p-obo00335:55969"
             }
@@ -141,7 +139,7 @@ class ThinkAnalyticsMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "message": "2017-09-29T07:03:38.835+0200: 908973.815: [GC [1 CMS-initial-mark: 997339K(1398144K)] 1032156K(2027264K), 0.0337620 secs] [Times: user=0.03 sys=0.00, real=0.04 secs]"
             },
             {
-                "@timestamp": datetime(2017, 9, 29, 07, 03, 38, 835000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "@timestamp": datetime(2017, 9, 29, 7, 3, 38, 835000).replace(tzinfo=timezones["Europe/Amsterdam"]),
                 "process_uptime": "908973.815",
                 "message": "[GC [1 CMS-initial-mark: 997339K(1398144K)] 1032156K(2027264K), 0.0337620 secs] [Times: user=0.03 sys=0.00, real=0.04 secs]"
             }
@@ -155,7 +153,7 @@ class ThinkAnalyticsMessageParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "message": "2017-10-05 15:07:27,281 WARN  [com.mchange.v2.resourcepool.BasicResourcePool] (C3P0PooledConnectionPoolManager[identityToken->2vlxe59qgs2ym41at6ny1|2efd4b56, dataSourceName->creRepStatus]-HelperThread-#5) com.mchange.v2.resourcepool.BasicResourcePool$ScatteredAcquireTask@90a251f -- Acquisition Attempt Failed!!! Clearing pending acquires. While trying to acquire a needed new resource, we failed to succeed more than the maximum number of allowed acquisition attempts (30). Last acquisition attempt exception: : java.sql.SQLException: ORA-01017: invalid username/password; logon denied"
             },
             {
-                "@timestamp": datetime(2017, 10, 5, 15, 07, 27, 281000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "@timestamp": datetime(2017, 10, 5, 15, 7, 27, 281000).replace(tzinfo=timezones["Europe/Amsterdam"]),
                 "level": "WARN",
                 "class_name": "com.mchange.v2.resourcepool.BasicResourcePool",
                 "thread": "C3P0PooledConnectionPoolManager[identityToken->2vlxe59qgs2ym41at6ny1|2efd4b56, dataSourceName->creRepStatus]-HelperThread-#5",

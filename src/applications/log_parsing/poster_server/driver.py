@@ -23,7 +23,8 @@ def create_event_creators(configuration=None):
     timezones_property = configuration.property("timezone.priority", "dic")
 
     poster_server_log = EventCreator(
-        Metadata([ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+        Metadata([ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                                             timezone_name, timezones_property, "@timestamp"),
                   StringField("level"),
                   StringField("module"),
                   StringField("message")]),

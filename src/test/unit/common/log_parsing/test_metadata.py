@@ -1,16 +1,14 @@
 import unittest
 
-from dateutil.tz import tzoffset
-
 from common.log_parsing.metadata import *
-from datetime import datetime
 from common.log_parsing.timezone_metadata import *
 
 class EventCreatorTestCase(unittest.TestCase):
     metadata = Metadata([
         StringField("string"),
         TimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f"),
-        ConfigurableTimestampField("configurable_time", "UTC"),
+        ConfigurableTimestampField("configurable_time", "%Y-%m-%d %H:%M:%S", "UTC", priorities="idc",
+                                   include_timezone=True),
         IntField("int"),
         FloatField("float")
     ])
@@ -38,7 +36,7 @@ class EventCreatorTestCase(unittest.TestCase):
         self.assertRaises(ParsingException, self.metadata.get_field_by_name("float").get_value, "abc")
 
     def test_ConfigurableTimestampField(self):
-        self.assertEquals(datetime(2017, 9, 28, 13, 39, 11).replace(tzinfo=tzoffset(None, 0)),
+        self.assertEquals(datetime(2017, 9, 28, 11, 39, 11).replace(tzinfo=pytz.utc),
                           self.metadata.get_field_by_name("configurable_time").get_value("2017-09-28 13:39:11 +0200"))
 
 

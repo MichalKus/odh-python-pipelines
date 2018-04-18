@@ -66,8 +66,7 @@ def create_event_creators(configuration=None):
         SplitterParser("\t", is_trim=True))
 
     cdn_log_with_timestamp = MutateEventCreator(Metadata([
-        ConfigurableTimestampField(
-            "timestamp", timezone_name, timezones_property, "@timestamp")]),
+        ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S", timezone_name, timezones_property, "@timestamp")]),
         [FieldsMapping(["date", "time"], "timestamp", lambda x, y: x + " " + y, True)])
 
     return SourceConfiguration(

@@ -23,7 +23,8 @@ def create_event_creators(configuration):
 
     event_creator = EventCreator(
         Metadata([
-            ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+            ConfigurableTimestampField("timestamp",  "%Y-%m-%dT%H:%M:%S.%f", timezone_name,
+                                       timezones_property, "@timestamp", include_timezone=True),
             StringField("level"),
             StringField("event_type"),
             StringField("thread"),
