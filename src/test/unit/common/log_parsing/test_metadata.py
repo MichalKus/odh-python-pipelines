@@ -1,9 +1,6 @@
 import unittest
 
-from dateutil.tz import tzoffset
-
 from common.log_parsing.metadata import *
-from datetime import datetime
 from common.log_parsing.timezone_metadata import *
 
 class EventCreatorTestCase(unittest.TestCase):

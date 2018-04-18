@@ -6,7 +6,6 @@ from pyspark.sql.functions import *
 
 import json
 from datetime import date, datetime
-from dateutil import tz
 import pytz
 
 
