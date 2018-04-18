@@ -68,9 +68,9 @@ def create_event_creators(configuration):
         ),
         "airflowmanager_webui": SourceConfiguration(
             CompositeEventCreator()
-                .add_source_parser(Airflow.webui_manager_creator(timezone_name, idc_timezones_property), final=True)
-                .add_source_parser(Airflow.ip_webui_manager_creator(timezone_name, idc_timezones_property), final=True)
-                .add_source_parser(Airflow.script_webui_manager_creator(timezone_name, timezones_property), final=True),
+            .add_source_parser(Airflow.webui_manager_creator(timezone_name, idc_timezones_property), final=True)
+            .add_source_parser(Airflow.ip_webui_manager_creator(timezone_name, idc_timezones_property), final=True)
+            .add_source_parser(Airflow.script_webui_manager_creator(timezone_name, timezones_property), final=True),
             Utils.get_output_topic(configuration, 'manager_webui')
         )
     })
@@ -159,7 +159,7 @@ class Airflow(object):
             RegexpParser(
                 r"^\[(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\]\s+\[(?P<thread_id>.*?)\]\s+"
                 r"\{(?P<script>.*?):(?P<script_line>.*?)\}\s+(?P<level>\w+?)\s+-\s+(?P<message>.*)",
-                return_empty_dict=True
+                return_empty_dict=False
             )
         )
 
