@@ -181,7 +181,7 @@ def create_event_creators(configuration):
                     )
                 )
             )
-                .add_intermediate_result_parser(duration_event_creator),
+            .add_intermediate_result_parser(duration_event_creator),
             Utils.get_output_topic(configuration, "reingest")
         )
     })
