@@ -1,4 +1,4 @@
-"""Spark driver for parsing message from Catalina component"""
+"""Spark driver for parsing message from Mongo"""
 import sys
 
 from common.kafka_pipeline import KafkaPipeline
@@ -13,9 +13,9 @@ from util.utils import Utils
 
 def create_event_creators(configuration):
     """
-    Method creates configured event_creator for logs from Catalina
+    Method creates configured event_creator for logs from Mongo
     :param configuration
-    :return: Composite event creator for Catalina
+    :return: Composite event creator for Mongo
     """
 
     timezone_name = configuration.property("timezone.name")
@@ -36,7 +36,7 @@ def create_event_creators(configuration):
     return MatchField("source", {
         "mongo.log": SourceConfiguration(
             event_creator,
-            Utils.get_output_topic(configuration, "catalina_parsed"))
+            Utils.get_output_topic(configuration, "mongo_parsed"))
     })
 
 
