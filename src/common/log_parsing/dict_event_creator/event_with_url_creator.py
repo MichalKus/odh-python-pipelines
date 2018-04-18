@@ -1,3 +1,4 @@
+"""Module for event creator that can parse url in message"""
 import urlparse
 
 from common.spark_utils.custom_functions import convert_to_underlined
@@ -37,8 +38,9 @@ class EventWithUrlCreator(object):
             params = dict(urlparse.parse_qsl(values[self._url_query_field]))
             if self._delete_source_field:
                 del values[self._url_query_field]
-            return dict(map(lambda x: (convert_to_underlined(x[0]), x[1]), params.items())) \
-                if self._keys_to_underscore else params
+            return dict(
+                [(convert_to_underlined(x[0]), x[1]) for x in params.items()]
+            ) if self._keys_to_underscore else params
 
         url = values[self._url_field].split("?")
         if self._delete_source_field:
@@ -47,7 +49,7 @@ class EventWithUrlCreator(object):
             all_parameters = url[1]
             params = dict(urlparse.parse_qsl(all_parameters))
             if self._keys_to_underscore:
-                params = dict(map(lambda x: (convert_to_underlined(x[0]), x[1]), params.items()))
+                params = dict([(convert_to_underlined(x[0]), x[1]) for x in params.items()])
             params.update({"action": url[0]})
             return params
         else:

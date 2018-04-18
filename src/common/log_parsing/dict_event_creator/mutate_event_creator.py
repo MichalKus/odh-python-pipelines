@@ -30,7 +30,7 @@ class MutateEventCreator(EventCreator):
     def _create_with_context(self, row, context):
         result = {}
         for fields_mapping in self.__fields_mappings:
-            values_to_agg = map(lambda x: row[x], fields_mapping.get_fields_to_aggregate())
+            values_to_agg = [row[x] for x in fields_mapping.get_fields_to_aggregate()]
             result_value = fields_mapping.agg_func(*values_to_agg)
             if fields_mapping.get_remove_intermediate_fields():
                 for field in fields_mapping.get_fields_to_aggregate():
@@ -45,9 +45,16 @@ class MutateEventCreator(EventCreator):
         return result
 
     def contains_fields_to_parse(self, row):
-        fields = map(lambda x: x.get_fields_to_aggregate(), self.__fields_mappings)
-        return set(reduce(lambda x, y: x.get_fields_to_aggregate() + y.get_fields_to_aggregate(),
+        fields = [x.get_fields_to_aggregate() for x in self.__fields_mappings]
+        return set(reduce(lambda x, y: x + y,
                           fields)).issubset(set(row.keys()))
+
+
+def concat_strings(x, y):
+    """
+    Concat two strings
+    """
+    return x + " " + y
 
 
 class FieldsMapping(object):
@@ -56,7 +63,7 @@ class FieldsMapping(object):
     result field, aggregation function and boolean flag that indicates removing of intermediate fields
     """
 
-    def __init__(self, fields_to_aggregate, result_field, agg_func=lambda x, y: x + " " + y,
+    def __init__(self, fields_to_aggregate, result_field, agg_func=concat_strings,
                  remove_intermediate_fields=False):
         if (not fields_to_aggregate and not isinstance(fields_to_aggregate, list)) \
                 or (not result_field and isinstance(result_field, str)):
