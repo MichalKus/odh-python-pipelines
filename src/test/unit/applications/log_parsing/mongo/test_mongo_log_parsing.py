@@ -2,15 +2,15 @@ from datetime import datetime
 
 import pytz
 
-from applications.log_parsing.catalina.driver import create_event_creators
+from applications.log_parsing.mongo.driver import create_event_creators
 from test.unit.core.base_message_parsing_test_cases import BaseMultipleMessageParsingTestCase
 from util.configuration import Configuration
 
 
-class CatalinaParsingTestCase(BaseMultipleMessageParsingTestCase):
+class MongoParsingTestCase(BaseMultipleMessageParsingTestCase):
     event_creators = create_event_creators(Configuration(dict={"timezone": {"name": "Europe/Amsterdam"}}))
 
-    def test_catalina(self):
+    def test_mongo(self):
         self.assert_parsing(
             {
                 "source": "/penthera/logs/mongodb/mongo.log",
