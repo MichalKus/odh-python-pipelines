@@ -180,8 +180,8 @@ class Airflow(object):
                 StringField("ip")
             ]),
             RegexpParser(
-                r"^(?P<ip>.*?)\s+-\s+-\s\[(?P<timestamp>\d{2}\/\w+\/\d{4}:\d{2}:\d{2}:\d{2}\s.\d{4})\]\s+\""
-                r"(?P<message>.*)\"",
+                r"^(?P<ip>.*?)\s+-\s+-\s\[(?P<timestamp>\d{2}\/\w+\/\d{4}:\d{2}:\d{2}:\d{2}\s.\d{4})\]\s+"
+                r"(?P<message>.*)",
                 return_empty_dict=True
             )
         )
