@@ -1,0 +1,1 @@
+{"@timestamp": "2018-01-21T12:30:00.000Z", "message_type": "total_count_of_accepted_network_connections", "event_type": "NETWORK", "value": 3, "metric_name": "mongo.connection.events.event_type.NETWORK.message_type.total_count_of_accepted_network_connections.count"}
