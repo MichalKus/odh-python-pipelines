@@ -5,6 +5,7 @@ from common.kafka_pipeline import KafkaPipeline
 from common.log_parsing.composite_event_creator import CompositeEventCreator
 from common.log_parsing.dict_event_creator.event_creator import EventCreator
 from common.log_parsing.dict_event_creator.parsers.regexp_parser import RegexpParser
+from common.log_parsing.dict_event_creator.predicate_event_creator import PredicateEventCreator
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration, MatchField
 from common.log_parsing.dict_event_creator.mutate_event_creator import MutateEventCreator, FieldsMapping
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
@@ -53,6 +54,7 @@ def create_event_creators(configuration):
         "airflowmanager_scheduler_latest": SourceConfiguration(
             CompositeEventCreator()
             .add_source_parser(Airflow.manager_scheduler_latest_event_creator(timezone_name, timezones_property))
+            .add_intermediate_result_parser(Airflow.manager_dag_status_creator())
             .add_intermediate_result_parser(Airflow.manager_dags_creator(), final=True)
             .add_intermediate_result_parser(Airflow.manager_dag_creator(), final=True)
             .add_intermediate_result_parser(Airflow.manager_dag_run_creator(), final=True),
@@ -262,6 +264,13 @@ class Airflow(object):
             RegexpParser(r".*<DagRun\s+(?P<dag>.*?)\s+.*"),
             SubstringMatcher("DagRun")
         )
+
+    @staticmethod
+    def manager_dag_status_creator():
+        return PredicateEventCreator(
+            ["message", "message", "message"],
+            [(["arking", "failed", "DagRun"], {"status": "failed"}),
+             (["arking", "success", "DagRun"], {"status": "success"})])
 
 
 if __name__ == "__main__":
