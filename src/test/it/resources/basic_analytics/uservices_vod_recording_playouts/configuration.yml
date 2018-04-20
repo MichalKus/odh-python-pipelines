@@ -6,6 +6,7 @@ spark:
   consoleWriter: false
 
 analytics:
-  componentName: logs-uservices
-  watermark: '10 seconds'
-  window: '1 minutes'
+  tenant: be
+  componentName: odhecx.eosdtv.pan.prd.uservices.tenant.be
+  watermark: '5 minutes'
+  window: '15 minutes'

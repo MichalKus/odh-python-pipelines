@@ -1,14 +1,14 @@
 from pyspark.sql.functions import col, split, size, when, concat, lit
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, TimestampType
 
-from common.basic_analytics.aggregations import Count, Max, Min, Avg, CompoundAggregation
+from common.basic_analytics.aggregations import Count, Max, Min, Avg, CompoundAggregation, DistinctCount
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
-class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
+class UserviceVodPlayoutProcessor(BasicAnalyticsProcessor):
     """
-    Collect uservice inbound & outbound requests metric which are tied with HE components
+    Collect uservice record & vod playout metric from incoming STB requests
     """
 
     def _pre_process(self, stream):
@@ -16,72 +16,59 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
         Convert to appropriate timestamp type
         :param stream: input stream
         """
+        tenant = self._BasicAnalyticsProcessor__configuration.property("analytics.tenant")
         filtered = stream \
-            .where((col("x-request-id").isNotNull()) | (col("header_x-request-id").isNotNull())) \
-            .withColumn("tenant", split(col("stack"), "-")) \
-            .withColumn("tenant", col("tenant").getItem(size(col("tenant")) - 1))
+            .where(~ col("x-request-id").startswith("jmeter")) \
+            .where(~ col("header.user-agent").startswith("Apache")) \
+            .where(col("header.user-agent") != "XAGGET") \
+            .where(col("header.x-dev").isNotNull()) \
+            .where(col("status").isNotNull()) \
 
-        uservice2component_count = filtered \
-            .where((col("message").startswith("Attempting"))
-                   | (col("message").startswith("Successfully"))
-                   | (col("message").startswith("Failed to call"))) \
-            .withColumn("calls", when(col("message").startswith("Attempting"), "attempts")
-                        .when(col("message").startswith("Successfully"), "success")
-                        .when(col("message").startswith("Failed to call"), "failures")) \
-            .withColumn("requests", lit(1)) \
-            .withColumn("dest", split(col("message"), "/").getItem(3)) \
-            .select("@timestamp", "tenant", "app", "dest", "calls", "requests")
+        recording_playouts = filtered \
+            .where(col("header.host") == "oboqbr.prod.{}.dmdsdp.com".format(tenant)) \
+            .where(col("method") == "POST") \
+            .where(col("request").contains("recording")) \
+            .withColumn("recording_playout", when((col("status") >= 0) & (col("status") <= 299), "success").when(
+            (col("status") >= 300) & (col("status") <= 1000), "fail").otherwise("")) \
+            .where(col("recording_playout") != "") \
+            .select("@timestamp", "app", "recording_playout", "status")
 
-        uservice2component_duration = filtered \
-            .where(col("http_useragent").contains("-service") & (col("http_duration") > 0)) \
-            .withColumn("dest", split(col("http_request"), "/").getItem(1)) \
-            .withColumn("app", split(col("http_useragent"), "/").getItem(0)) \
-            .withColumn("duration_ms", col("http_duration") * 1000) \
-            .select("@timestamp", "tenant", "app", "dest", "duration_ms", "host")
+        vod_purchase = filtered \
+            .where(col("stack") == "purchase-service-{}".format(tenant)) \
+            .withColumn("vod_purchase", when((col("status") >= 0) & (col("status") <= 299), "success").when(
+            (col("status") >= 300) & (col("status") <= 1000), "fail").otherwise("")) \
+            .where(col("vod_purchase") != "") \
+            .select("@timestamp", "app", "vod_purchase", "status")
 
-        end2end = filtered \
-            .where((col("duration_ms") > 0) & (col("request") != "/info")) \
-            .withColumn("status", concat(split(col("status"), "").getItem(0), lit("xx"))) \
-            .select("@timestamp", "tenant", "app", "request", "duration_ms", "status")
+        vod_play = filtered \
+            .where(col("stack") == "session-service-{}".format(tenant)) \
+            .where(col("request").contains("vod")) \
+            .withColumn("vod_play", when(col("status") == 200, "success").otherwise("fail")) \
+            .select("@timestamp", "app", "vod_play", "status")
 
-        return [uservice2component_count, uservice2component_duration, end2end]
+        return [recording_playouts, vod_purchase, vod_play]
 
-    def _agg_uservice2component_count(self, stream):
+    def _agg_count(self, stream, type):
         """
         Aggregate uservice - he component call counts
         :param stream:
         :return:
         """
-        aggregation = Count(group_fields=["tenant", "app", "dest", "calls"], aggregation_field="requests",
+        aggregation = Count(group_fields=["app", type], aggregation_field="status",
                             aggregation_name=self._component_name)
 
         return stream.aggregate(aggregation)
 
-    def _agg_uservice2component_duration(self, stream):
+    def _agg_unique_count(self, stream, type):
         """
         Aggregate uservice - he component call duration
         :param stream:
         :return:
         """
-        kwargs = {'aggregation_field': "duration_ms"}
+        aggregation = DistinctCount(group_fields=["app", type], aggregation_field="status",
+                                     aggregation_name=self._component_name)
 
-        aggregations = [Max(**kwargs), Min(**kwargs), Avg(**kwargs)]
-
-        return stream.aggregate(CompoundAggregation(aggregations=aggregations, aggregation_name=self._component_name,
-                                                    group_fields=["tenant", "app", "dest", "host"]))
-
-    def _agg_end2end(self, stream):
-        """
-        Aggregate end to end calls from STB - uservice
-        :param stream:
-        :return:
-        """
-        kwargs = {'aggregation_field': "duration_ms"}
-
-        aggregations = [Max(**kwargs), Min(**kwargs), Avg(**kwargs)]
-
-        return stream.aggregate(CompoundAggregation(aggregations=aggregations, aggregation_name=self._component_name,
-                                                    group_fields=["tenant", "app", "status"]))
+        return stream.withColumn(type, lit("all")).aggregate(aggregation)
 
     def _process_pipeline(self, read_stream):
         """
@@ -91,9 +78,11 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
 
         pre_processed_streams = self._pre_process(read_stream)
 
-        return [self._agg_uservice2component_count(pre_processed_streams[0]),
-                self._agg_uservice2component_duration(pre_processed_streams[1]),
-                self._agg_end2end(pre_processed_streams[2])]
+        return [self._agg_count(pre_processed_streams[0], "recording_playout"),
+                self._agg_count(pre_processed_streams[1], "vod_purchase"),
+                self._agg_count(pre_processed_streams[2], "vod_play"),
+                self._agg_unique_count(pre_processed_streams[0], "recording_playout"),
+                self._agg_unique_count(pre_processed_streams[2], "vod_play")]
 
     @staticmethod
     def create_schema():
@@ -104,12 +93,13 @@ class UserviceHeComponentProcessor(BasicAnalyticsProcessor):
         return StructType([
             StructField("@timestamp", TimestampType()),
             StructField("x-request-id", StringType()),
-            StructField("header", StructType(
-                StructField("x-dev"),
-                StructField("host"),
-                StructField("user-agent")
-            )),
+            StructField("header", StructType([
+                StructField("x-dev", StringType()),
+                StructField("host", StringType()),
+                StructField("user-agent", StringType())
+            ])),
             StructField("stack", StringType()),
+            StructField("app", StringType()),
             StructField("request", StringType()),
             StructField("method", StringType()),
             StructField("status", StringType())
@@ -121,7 +111,7 @@ def create_processor(configuration):
     Method to create the instance of the processor
     :param configuration: dict containing configurations
     """
-    return UserviceHeComponentProcessor(configuration, UserviceHeComponentProcessor.create_schema())
+    return UserviceVodPlayoutProcessor(configuration, UserviceVodPlayoutProcessor.create_schema())
 
 
 if __name__ == "__main__":
