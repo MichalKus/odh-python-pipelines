@@ -100,7 +100,7 @@ class TraxisBackendGeneral(BasicAnalyticsProcessor):
         return [info_or_warn_count, error_count, tva_expiry_check, tva_delta_ingest, tva_full_ingest,
                 tva_ingest_completed, started_service,
                 stopped_service, tva_ingest_error, customer_provisioning_error, undefined_warnings,
-                customer_provisioning_new, customer_provisioning_update,customer_provisioning_delete]
+                customer_provisioning_new, customer_provisioning_update, customer_provisioning_delete]
 
     @staticmethod
     def create_schema():
