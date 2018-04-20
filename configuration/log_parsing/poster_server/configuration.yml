@@ -1,0 +1,25 @@
+spark:
+  appName: poster-server-log-parsing
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints
+  shuffle.partitions: 1
+  consoleWriter: true
+
+kafka:
+  maxOffsetsPerTrigger: 10000
+  bootstrap.servers: 192.168.100.1:9094,192.168.100.2:9094,192.168.100.3:9094,192.168.100.4:9094,192.168.100.5:9094,192.168.100.6:9094,192.168.100.7:9094,192.168.100.8:9094,192.168.100.9:9094,192.168.100.10:9094,192.168.100.11:9094,192.168.100.12:9094,192.168.100.13:9094,192.168.100.14:9094,192.168.100.15:9094,192.168.100.16:9094,192.168.100.17:9094,192.168.100.18:9094
+  topics:
+    dlq: vagrant_pro_deadletterqueue
+    inputs:
+      - odhecx_in_eosdtv_gb_prd_heapp_poster_server_gen_log_v1
+      - odhecx_in_eosdtv_gb_prd_heapp_poster_server_error_log_v1
+    outputs:
+      poster_server_log: odhecx_in_eosdtv_gb_prd_heapp_poster_server_gen_log_v1
+      poster_server_error_log: odhecx_in_eosdtv_gb_prd_heapp_poster_server_error_log_v1
+  startingOffsets: earliest
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
+
+timezone:
+  name: Europe/London
+  priority: dic

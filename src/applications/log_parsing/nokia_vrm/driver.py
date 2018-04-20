@@ -1,6 +1,7 @@
+"""Spark driver for parsing message from Nokia_VRM component"""
 from common.log_parsing.event_creator_tree.multisource_configuration import MatchField, SourceConfiguration
 from common.log_parsing.list_event_creator.event_creator import EventCreator
-from common.log_parsing.list_event_creator.splitter_parser import SplitterParser
+from common.log_parsing.list_event_creator.parsers.splitter_parser import SplitterParser
 from common.log_parsing.metadata import Metadata, StringField
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
 from util.kafka_pipeline_helper import start_log_parsing_pipeline
@@ -18,7 +19,8 @@ def create_event_creators(configuration=None):
     timezones_property = configuration.property("timezone.priority", "dic")
 
     nokia_vrm_scheduler_audit_csv = EventCreator(Metadata([
-        ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+        ConfigurableTimestampField("timestamp", "%d-%b-%Y %H:%M:%S.%f",
+                                   timezone_name, timezones_property, "@timestamp"),
         StringField("level"),
         StringField("field1"),
         StringField("event_id"),
@@ -31,7 +33,8 @@ def create_event_creators(configuration=None):
         SplitterParser("|", is_trim=True))
 
     nokia_vrm_audit_csv = EventCreator(Metadata([
-        ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+        ConfigurableTimestampField("timestamp", "%d-%b-%Y %H:%M:%S.%f",
+                                   timezone_name, timezones_property, "@timestamp"),
         StringField("level"),
         StringField("event_id"),
         StringField("domain"),
@@ -43,7 +46,8 @@ def create_event_creators(configuration=None):
         SplitterParser("|", is_trim=True))
 
     nokia_vrm_ds_audit_csv = EventCreator(Metadata([
-        ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+        ConfigurableTimestampField("timestamp", "%d-%b-%Y %H:%M:%S.%f",
+                                   timezone_name, timezones_property, "@timestamp"),
         StringField("level"),
         StringField("event_id_1"),
         StringField("event_id_2"),
@@ -57,7 +61,8 @@ def create_event_creators(configuration=None):
 
     nokia_vrm_bs_lgi_lgienh_api_audit_csv = EventCreator(
         Metadata([
-            ConfigurableTimestampField("timestamp", timezone_name, timezones_property, "@timestamp"),
+            ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S.%f",
+                                       timezone_name, timezones_property, "@timestamp"),
             StringField("level"),
             StringField("endpoint"),
             StringField("request")]),

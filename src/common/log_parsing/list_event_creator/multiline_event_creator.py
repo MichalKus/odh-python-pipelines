@@ -1,7 +1,11 @@
+"""Event creator for messages that contains multiple lines"""
 from common.log_parsing.list_event_creator.event_creator import EventCreator
 
 
 class MultilineEventCreator(EventCreator):
+    """
+    Event creator that uses parser to parse every line in the message
+    """
     def __init__(self, metadata, parser, fold_functions, line_delimiter="\n"):
         if metadata.get_fields_amount() != len(fold_functions):
             raise AssertionError("count of fold functions should be equal to fields amount")

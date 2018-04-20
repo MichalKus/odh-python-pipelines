@@ -1,7 +1,7 @@
 import unittest
 from common.log_parsing.metadata import *
 from common.log_parsing.list_event_creator.event_creator import EventCreator
-from common.log_parsing.list_event_creator.splitter_parser import SplitterParser
+from common.log_parsing.list_event_creator.parsers.splitter_parser import SplitterParser
 
 
 class EventCreatorTestCase(unittest.TestCase):

@@ -5,9 +5,10 @@ Spark driver for parsing STB F5 messages
 import sys
 
 from common.kafka_pipeline import KafkaPipeline
-from common.log_parsing.dict_event_creator.event_creator import CompositeEventCreator, EventCreator
-from common.log_parsing.dict_event_creator.key_value_parser import KeyValueParser
-from common.log_parsing.dict_event_creator.long_timestamp_parser import LongTimestampParser
+from common.log_parsing.dict_event_creator.event_creator import EventCreator
+from common.log_parsing.composite_event_creator import CompositeEventCreator
+from common.log_parsing.dict_event_creator.parsers.key_value_parser import KeyValueParser
+from common.log_parsing.dict_event_creator.parsers.long_timestamp_parser import LongTimestampParser
 from common.log_parsing.dict_event_creator.single_type_event_creator import SingleTypeEventCreator
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration
 from common.log_parsing.custom_log_parsing_processor import CustomLogParsingProcessor
@@ -38,7 +39,8 @@ def create_event_creators(config):
     )
 
     timestamp_event_creator = EventCreator(
-        Metadata([ConfigurableTimestampField("timestamp", timezone_name, timezones_priority, "@timestamp")]),
+        Metadata([ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S",
+                                             timezone_name, timezones_priority, "@timestamp")]),
         LongTimestampParser("timestamp"), field_to_parse="eoc_timestamp"
     )
 

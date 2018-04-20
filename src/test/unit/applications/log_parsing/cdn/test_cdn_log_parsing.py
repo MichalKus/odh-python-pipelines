@@ -16,7 +16,6 @@ class CdnParsingTestCase(BaseMultipleMessageParsingTestCase):
             },
             {
                 "s_dns": "ac4.vt2ind1d1.cdn",
-                "date_time": "2018-03-21 04:53:39",
                 "@timestamp": datetime(2018, 3, 21, 4, 53, 39).replace(tzinfo=timezones["Europe/Amsterdam"]),
                 "x_duration": "0.001",
                 "c_ip": "52.67.236.131",

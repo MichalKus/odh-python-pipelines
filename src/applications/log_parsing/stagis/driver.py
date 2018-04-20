@@ -1,13 +1,14 @@
+"""Spark driver for parsing message from Stagis component"""
 import sys
 
-from applications.log_parsing.stagis.stagis_event_creator import StagisEventCreator
 from common.kafka_pipeline import KafkaPipeline
-from common.log_parsing.dict_event_creator.event_creator import CompositeEventCreator
+from common.log_parsing.composite_event_creator import CompositeEventCreator
 from common.log_parsing.event_creator_tree.multisource_configuration import MatchField, SourceConfiguration
 from common.log_parsing.list_event_creator.event_creator import EventCreator
 from common.log_parsing.list_event_creator.multiline_event_creator import MultilineEventCreator
-from common.log_parsing.list_event_creator.regexp_parser import RegexpParser
-from common.log_parsing.list_event_creator.splitter_parser import SplitterParser
+from common.log_parsing.dict_event_creator.mutate_event_creator import MutateEventCreator, FieldsMapping
+from common.log_parsing.list_event_creator.parsers.regexp_parser import RegexpParser
+from common.log_parsing.list_event_creator.parsers.splitter_parser import SplitterParser
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
 from common.log_parsing.matchers.matcher import SubstringMatcher
 from common.log_parsing.metadata import Metadata, StringField, IntField
@@ -33,10 +34,14 @@ def create_event_creators(configuration):
         "stagis_log_gen": SourceConfiguration(
             CompositeEventCreator()
             .add_source_parser(Stagis.ee_event_creator(timezone_name, timezones_priority))
-            .add_intermediate_result_parser(Stagis.model_state_event_creator(), final=True)
-            .add_intermediate_result_parser(Stagis.received_delta_server_notification_event_creator(), final=True)
-            .add_intermediate_result_parser(Stagis.tva_delta_server_request_event_creator(), final=True)
-            .add_intermediate_result_parser(Stagis.tva_delta_server_response_event_creator(), final=True),
+            .add_intermediate_result_parser(Stagis.model_state_event_creator())
+            .add_intermediate_result_parser(Stagis.replacer_event_creator(), final=True)
+            .add_intermediate_result_parser(Stagis.received_delta_server_notification_event_creator())
+            .add_intermediate_result_parser(Stagis.replacer_event_creator(), final=True)
+            .add_intermediate_result_parser(Stagis.tva_delta_server_request_event_creator())
+            .add_intermediate_result_parser(Stagis.replacer_event_creator(), final=True)
+            .add_intermediate_result_parser(Stagis.tva_delta_server_response_event_creator())
+            .add_intermediate_result_parser(Stagis.replacer_event_creator(), final=True),
             Utils.get_output_topic(configuration, "general")
         ),
         "stagis_log_err": SourceConfiguration(
@@ -64,10 +69,26 @@ class Stagis(object):
     """
 
     @staticmethod
+    def _replace_task_name(text):
+        dictionary = {
+            "TVA Delta Server respond": "TVA Delta Server response",
+            "TVA Delta Request Starting": "TVA Delta Server request",
+            "Received Delta Server Notification": "Notification",
+            "Model state after committing transaction": "Committing Transaction"
+        }
+        if text in dictionary.keys():
+            return dictionary[text]
+        return text
+
+    @staticmethod
+    def replacer_event_creator():
+        return MutateEventCreator(None, [FieldsMapping(["task"], "task", Stagis._replace_task_name)])
+
+    @staticmethod
     def ee_event_creator(timezone_name, timezones_priority):
         return EventCreator(
             Metadata([
-                ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f", timezone_name, timezones_priority),
                 StringField("level"),
                 StringField("instance_name"),
                 StringField("causality_id"),
@@ -81,7 +102,7 @@ class Stagis(object):
     def ee_corecommit_event_creator(timezone_name, timezones_priority):
         return EventCreator(
             Metadata([
-                ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f", timezone_name, timezones_priority),
                 StringField("level"),
                 StringField("instance_name"),
                 StringField("causality_id"),
@@ -95,7 +116,7 @@ class Stagis(object):
     def ee_interface_event_creator(timezone_name, timezones_priority):
         return EventCreator(
             Metadata([
-                ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f", timezone_name, timezones_priority),
                 StringField("instance_name"),
                 StringField("thread_id"),
                 StringField("class_name"),
@@ -115,14 +136,14 @@ class Stagis(object):
 
         return MultilineEventCreator(
             Metadata([
-                ConfigurableTimestampField("@timestamp", timezone_name, timezones_priority),
+                ConfigurableTimestampField("@timestamp", "%Y-%m-%d %H:%M:%S,%f", timezone_name, timezones_priority),
                 StringField("message")
             ]),
             SplitterParser("|", is_trim=True), [take_first, concat])
 
     @staticmethod
     def tva_delta_server_response_event_creator():
-        return StagisEventCreator(
+        return EventCreator(
             Metadata([
                 StringField("task"),
                 StringField("status"),
@@ -135,7 +156,7 @@ class Stagis(object):
 
     @staticmethod
     def tva_delta_server_request_event_creator():
-        return StagisEventCreator(
+        return EventCreator(
             Metadata([
                 StringField("task"),
                 StringField("sequence_number")
@@ -147,7 +168,7 @@ class Stagis(object):
 
     @staticmethod
     def received_delta_server_notification_event_creator():
-        return StagisEventCreator(
+        return EventCreator(
             Metadata([
                 StringField("task"),
                 StringField("sequence_number")
@@ -159,7 +180,7 @@ class Stagis(object):
 
     @staticmethod
     def model_state_event_creator():
-        return StagisEventCreator(
+        return EventCreator(
             Metadata([
                 StringField("task"),
                 StringField("sequence_number"),
