@@ -25,8 +25,7 @@ def create_event_creators(configuration):
     """
 
     timezone_name = configuration.property("timezone.name")
-    timezones_property = configuration.property("timezone.priority", "dic")
-    idc_timezones_property = configuration.property("timezone.priority", "idc")
+    timezones_property = configuration.property("timezone.priority", "idc")
 
     return MatchField("topic", {
         "airflow_worker": MatchField("source", {
@@ -68,8 +67,8 @@ def create_event_creators(configuration):
         ),
         "airflowmanager_webui": SourceConfiguration(
             CompositeEventCreator()
-            .add_source_parser(Airflow.webui_manager_creator(timezone_name, idc_timezones_property), final=True)
-            .add_source_parser(Airflow.ip_webui_manager_creator(timezone_name, idc_timezones_property), final=True)
+            .add_source_parser(Airflow.webui_manager_creator(timezone_name, timezones_property), final=True)
+            .add_source_parser(Airflow.ip_webui_manager_creator(timezone_name, timezones_property), final=True)
             .add_source_parser(Airflow.script_webui_manager_creator(timezone_name, timezones_property), final=True),
             Utils.get_output_topic(configuration, 'manager_webui')
         )
