@@ -244,24 +244,24 @@ class Airflow(object):
     @staticmethod
     def manager_dags_creator():
         return EventCreator(
-            Metadata([StringField("dag")]),
-            RegexpParser(r".*DAG?\(s\).*\['(?P<dag>.*)'\].*"),
+            Metadata([StringField("dag"), StringField("tenant")]),
+            RegexpParser(r".*DAG?\(s\).*\['(?P<dag>(?P<tenant>.*?)_.*?)'\].*"),
             SubstringMatcher("DAG(s)")
         )
 
     @staticmethod
     def manager_dag_creator():
         return EventCreator(
-            Metadata([StringField("dag")]),
-            RegexpParser(r".*<DAG:\s+(?P<dag>.*?)>\s+.*"),
+            Metadata([StringField("dag"), StringField("tenant")]),
+            RegexpParser(r".*<DAG:\s+(?P<dag>(?P<tenant>.*?)_.*?)>\s+.*"),
             SubstringMatcher("DAG:")
         )
 
     @staticmethod
     def manager_dag_run_creator():
         return EventCreator(
-            Metadata([StringField("dag")]),
-            RegexpParser(r".*<DagRun\s+(?P<dag>.*?)\s+.*"),
+            Metadata([StringField("dag"), StringField("tenant")]),
+            RegexpParser(r".*<DagRun\s+(?P<dag>(?P<tenant>.*?)_.*?)\s+.*"),
             SubstringMatcher("DagRun")
         )
 
@@ -269,8 +269,9 @@ class Airflow(object):
     def manager_dag_status_creator():
         return PredicateEventCreator(
             ["message", "message", "message"],
-            [(["arking", "failed", "DagRun"], {"status": "failed"}),
-             (["arking", "success", "DagRun"], {"status": "success"})])
+            [(["arking", "failed", "DagRun"], {"status": "FAILURE", "action": "RUN"}),
+             (["arking", "success", "DagRun"], {"status": "SUCCESS", "action": "RUN"}),
+             (["Created", "DagRun", "Dagrun"], {"action": "RUN"})])
 
 
 if __name__ == "__main__":

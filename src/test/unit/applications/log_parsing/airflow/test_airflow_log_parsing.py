@@ -196,6 +196,7 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "dag_processor": "DagFileProcessor72328",
                 "message": "DAG(s) ['be_create_obo_thumbnails_workflow'] retrieved from /usr/local/airflow/dags/be_create_obo_thumbnails_workflow.py",
                 "script": "jobs.py",
+                "tenant": "be",
                 "script_line": "1537",
                 "dag": "be_create_obo_thumbnails_workflow"
             }
@@ -214,6 +215,7 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "dag_processor": "DagFileProcessor72223",
                 "message": "Updating state for <DagRun be_create_obo_assets_transcoding_driven_workflow @ 2018-03-06 15:24:17.806572: be-crid~~3A~~2F~~2Ftelenet.be~~2F8ebcb1e0-8295-40b4-b5ee-fa6c0dd329a6-2018-03-06T15:20:50.800499, externally triggered: True> considering 20 task(s)",
                 "script": "models.py",
+                "tenant": "be",
                 "dag": "be_create_obo_assets_transcoding_driven_workflow",
                 "script_line": "4204"
             }
@@ -232,6 +234,7 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "dag_processor": "DagFileProcessor72223",
                 "message": "Skipping SLA check for <DAG: be_create_obo_assets_transcoding_driven_trigger> because no tasks in DAG have SLAs",
                 "script": "models.py",
+                "tenant": "be",
                 "dag": "be_create_obo_assets_transcoding_driven_trigger",
                 "script_line": "4204"
             }
@@ -328,8 +331,10 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "dag_processor": "DagFileProcessor7191",
                 "message": "Deadlock; marking run <DagRun be_move_obo_linear_cycle @ 2018-04-19 03:08:00: scheduled__2018-04-19T03:08:00, externally triggered: False> failed",
                 "script": "models.py",
+                "action": "RUN",
                 "dag": "be_move_obo_linear_cycle",
-                "status": "failed",
+                "status": "FAILURE",
+                "tenant": "be",
                 "script_line": "4204"
             }
         )
@@ -348,7 +353,9 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "message": "Marking run <DagRun be_create_obo_assets_transcoding_driven_trigger @ 2018-04-19 07:10:00: scheduled__2018-04-19T07:10:00, externally triggered: False> successful",
                 "script": "models.py",
                 "dag": "be_create_obo_assets_transcoding_driven_trigger",
-                "status": "success",
+                "status": "SUCCESS",
+                "action": "RUN",
+                "tenant": "be",
                 "script_line": "4204"
             }
         )
