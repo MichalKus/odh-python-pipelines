@@ -84,7 +84,7 @@ class Airflow(object):
     def general_worker_creator(timezone_name, timezones_property):
         return EventCreator(
             Metadata([
-            ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f",
                                        timezone_name, timezones_property, "@timestamp"),
                 StringField("script"),
                 StringField("level"),
@@ -200,7 +200,8 @@ class Airflow(object):
     def subtask_creator(timezone_name, timezones_property):
         return EventCreator(
             Metadata(
-            [ConfigurableTimestampField("subtask_timestamp", "%Y-%m-%d %H:%M:%S,%f", timezone_name, timezones_property),
+                [ConfigurableTimestampField("subtask_timestamp", "%Y-%m-%d %H:%M:%S,%f",
+                                            timezone_name, timezones_property),
                  StringField("subtask_script"),
                  StringField("subtask_level"),
                  StringField("subtask_message")]),

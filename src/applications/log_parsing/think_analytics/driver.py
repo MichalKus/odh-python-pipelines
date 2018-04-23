@@ -57,7 +57,7 @@ def create_event_creators(configuration):
     return MatchField("source", {
         "localhost_access_log": SourceConfiguration(
             CompositeEventCreator()
-                .add_source_parser(
+            .add_source_parser(
                 EventCreator(
                     Metadata([
                         StringField("date"),
@@ -73,7 +73,7 @@ def create_event_creators(configuration):
                     SplitterParser(delimiter=" ", is_trim=True)
                 )
             )
-                .add_intermediate_result_parser(concat_httpaccess_timestamp_event_creator)
+            .add_intermediate_result_parser(concat_httpaccess_timestamp_event_creator)
             .add_intermediate_result_parser(EventWithUrlCreator(delete_source_field=True, keys_to_underscore=False))
             .add_intermediate_result_parser(traxis_profile_id_event_creator)
             .add_intermediate_result_parser(content_item_id_event_creator)
