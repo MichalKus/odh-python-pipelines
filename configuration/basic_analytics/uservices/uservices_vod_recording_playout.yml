@@ -1,0 +1,26 @@
+spark:
+  appName: uservices-he-component
+  master: local[*]
+  checkpointLocation: file:///spark/checkpoints/uservices/vod-recording-playout/
+  shuffle.partitions: 1
+  consoleWriter: true
+  outputMode: update
+
+kafka:
+  maxOffsetsPerTrigger: 100000
+  bootstrap.servers: 192.168.100.1:9094,192.168.100.2:9094,192.168.100.3:9094,192.168.100.4:9094,192.168.100.5:9094,192.168.100.6:9094,192.168.100.7:9094,192.168.100.8:9094,192.168.100.9:9094,192.168.100.10:9094,192.168.100.11:9094,192.168.100.12:9094,192.168.100.13:9094,192.168.100.14:9094,192.168.100.15:9094,192.168.100.16:9094,192.168.100.17:9094,192.168.100.18:9094
+  startingOffsets: latest
+  topics:
+    dlq: odhecx_pro_deadletterqueue
+    inputs:
+      - obo_in_eosdtv_pan_prod_heapp_uservices_log_v1
+    output: test
+  security.protocol: SASL_PLAINTEXT
+  sasl.mechanism: PLAIN
+  failOnDataLoss: false
+
+analytics:
+  tenant: be
+  componentName: odhecx.eosdtv.pan.prd.uservices.tenant.be
+  watermark: '1 minutes'
+  window: '10 minutes'
