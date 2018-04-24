@@ -1,0 +1,10 @@
+spark:
+  appName: graphic-memory-report-basic-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+
+analytics:
+  componentName: odhecx.eosstb.be.prd.stb
+  watermark: '10 seconds'
+  window: '10 minutes'
