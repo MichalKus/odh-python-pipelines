@@ -66,10 +66,23 @@ class StbActiveReportProcessor(BasicAnalyticsProcessor):
                                      aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".active_stb_per_fw_version"))
 
+        count_distinct_active_stb_netflix = read_stream \
+            .withColumn("provider_id", col("ApplicationsReport").getItem("provider_id")) \
+            .where("provider_id = 'netflix'") \
+            .aggregate(DistinctCount(aggregation_field="viewer_id",
+                                     aggregation_name=self._component_name + ".active_stb_netflix"))
+
+        count_distinct_active_stb_youtube = read_stream \
+            .withColumn("provider_id", col("ApplicationsReport").getItem("provider_id")) \
+            .where("provider_id = 'youtube'") \
+            .aggregate(DistinctCount(aggregation_field="viewer_id",
+                                     aggregation_name=self._component_name + ".active_stb_youtube"))
+
         return [count_distinct_active_stb, count_distinct_active_stb_ethernet, count_distinct_active_stb_wifi,
                 count_distinct_active_stb_4k_enabled, count_distinct_active_stb_4k_disabled,
                 count_distinct_active_stb_per_model, count_distinct_active_stb_per_hw_version,
-                count_distinct_active_stb_per_fw_version]
+                count_distinct_active_stb_per_fw_version,
+                count_distinct_active_stb_netflix, count_distinct_active_stb_youtube]
 
     @staticmethod
     def create_schema():
@@ -93,6 +106,9 @@ class StbActiveReportProcessor(BasicAnalyticsProcessor):
             ])),
             StructField("BCMReport", StructType([
                 StructField("4Kcontent", StringType())
+            ])),
+            StructField("ApplicationsReport", StructType([
+                StructField("provider_id", StringType())
             ]))
         ])
 
