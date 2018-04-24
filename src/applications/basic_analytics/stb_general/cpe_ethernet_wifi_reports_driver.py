@@ -1,4 +1,6 @@
-"""Module for counting all general analytics metrics for EOS STB Ethernet/Wifi Report"""
+"""
+Module for counting all general analytics metrics for EOS STB Ethernet/Wifi Report
+"""
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType, ArrayType, IntegerType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
@@ -8,17 +10,38 @@ from pyspark.sql.functions import col, explode
 
 
 class EthernetWifiReportEventProcessor(BasicAnalyticsProcessor):
-    """Class that's responsible to process pipelines for Ethernet/Wifi Reports"""
+    """
+    Class that's responsible to process pipelines for Ethernet/Wifi Reports
+    """
 
     def _process_pipeline(self, read_stream):
-        report_generator = EthernetWifiReports(read_stream, self._component_name)
 
-        return [report_generator.distinct_total_wifi_network_types_count(),
-                report_generator.distinct_total_ethernet_network_types_count(),
-                report_generator.ethernet_average_upstream_kbps(), report_generator.ethernet_average_downstream_kbps(),
-                report_generator.wireless_average_upstream_kbps(), report_generator.wireless_average_downstream_kbps(),
-                report_generator.distinct_total_net_config_enabled(),
-                report_generator.total_cpe_net_config_for_wifi_ethernet_channels()]
+        # Common Wifi Report
+        self._common_wifi_pipeline = read_stream \
+            .select("@timestamp",
+                    "WiFiStats.*",
+                    col("header.viewerID").alias("viewer_id"))
+        # Common Ethernet Report
+        self._common_ethernet_pipeline = read_stream \
+            .select("@timestamp",
+                    "EthernetStats.*",
+                    col("header.viewerID").alias("viewer_id"))
+        # Common NetConfiguration pipeline
+        self._common_net_configuration_pipeline = read_stream \
+            .select("@timestamp",
+                    explode("NetConfiguration.ifaces").alias("ifaces"),
+                    col("header.viewerID").alias("viewer_id")) \
+            .select("@timestamp",
+                    col("ifaces.enabled").alias("net_config_enabled"),
+                    col("ifaces.type").alias("net_configuration_type"),
+                    col("viewer_id"))
+
+        return [self.distinct_total_wifi_network_types_count(),
+                self.distinct_total_ethernet_network_types_count(),
+                self.ethernet_average_upstream_kbps(), self.ethernet_average_downstream_kbps(),
+                self.wireless_average_upstream_kbps(), self.wireless_average_downstream_kbps(),
+                self.distinct_total_net_config_enabled(),
+                self.total_cpe_net_config_for_wifi_ethernet_channels()]
 
     @staticmethod
     def create_schema():
@@ -47,33 +70,6 @@ class EthernetWifiReportEventProcessor(BasicAnalyticsProcessor):
                 ))
             ]))
         ])
-
-
-class EthernetWifiReports(object):
-    """Class that is able to create output streams with metrics for Ethernet Wifi Reports"""
-
-    def __init__(self, read_stream, component_name):
-        self._component_name = component_name
-
-        # Common Wifi Report
-        self._common_wifi_pipeline = read_stream \
-            .select("@timestamp",
-                    "WiFiStats.*",
-                    col("header.viewerID").alias("viewer_id"))
-        # Common Ethernet Report
-        self._common_ethernet_pipeline = read_stream \
-            .select("@timestamp",
-                    "EthernetStats.*",
-                    col("header.viewerID").alias("viewer_id"))
-        # Common NetConfiguration pipeline
-        self._common_net_configuration_pipeline = read_stream \
-            .select("@timestamp",
-                    explode("NetConfiguration.ifaces").alias("ifaces"),
-                    col("header.viewerID").alias("viewer_id")) \
-            .select("@timestamp",
-                    col("ifaces.enabled").alias("net_config_enabled"),
-                    col("ifaces.type").alias("net_configuration_type"),
-                    col("viewer_id"))
 
     # STB Network Type
     def distinct_total_wifi_network_types_count(self):
