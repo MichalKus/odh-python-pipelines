@@ -25,8 +25,8 @@
 
 
 // count_distinct_active_stb_per_hw_version for 2 intervals.
-{"@timestamp": "2018-04-20T11:00:00.000Z", "hardware_version": "ARRIS-DCX960-MPA+", "value": 3, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.active_stb_per_hw_version.hardware_version.ARRIS-DCX960-MPA+.viewer_id.distinct_count"}
-{"@timestamp": "2018-04-20T14:30:00.000Z", "hardware_version": "ARRIS-DCX960-MPA+", "value": 4, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.active_stb_per_hw_version.hardware_version.ARRIS-DCX960-MPA+.viewer_id.distinct_count"}
+{"@timestamp": "2018-04-20T11:00:00.000Z", "hardware_version": "ARRIS-DCX960-MPA+", "value": 3, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.active_stb_per_hw_version.hardware_version.ARRIS-DCX960-MPA%2B.viewer_id.distinct_count"}
+{"@timestamp": "2018-04-20T14:30:00.000Z", "hardware_version": "ARRIS-DCX960-MPA+", "value": 4, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.active_stb_per_hw_version.hardware_version.ARRIS-DCX960-MPA%2B.viewer_id.distinct_count"}
 
 
 // count_distinct_active_stb_per_fw_version for 2 intervals.
