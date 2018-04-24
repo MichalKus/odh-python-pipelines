@@ -15,14 +15,16 @@ class USerserviceServiceRequest(BasicAnalyticsProcessor):
             .where(col("header").getItem("x-dev").isNotNull()) \
             .withColumn("tenant", regexp_extract(col("stack"), "-(\w+)$", 1))
 
-        count_by_app = stream.aggregate(Count(group_fields=["tenant", "app"], aggregation_name=self._component_name))
+        count_by_app = stream.aggregate(Count(group_fields=["tenant", "app"],
+                                              aggregation_name=self._component_name + ".requests"))
 
         count_by_app_status = stream \
             .withColumn("status", custom_translate_regex(
                 source_field=col("status"),
                 mapping={"^2\d\d": "successful"},
                 default_value="failure")) \
-            .aggregate(Count(group_fields=["tenant", "app", "status"], aggregation_name=self._component_name))
+            .aggregate(Count(group_fields=["tenant", "app", "status"],
+                             aggregation_name=self._component_name + ".requests"))
 
         return [count_by_app, count_by_app_status]
 
