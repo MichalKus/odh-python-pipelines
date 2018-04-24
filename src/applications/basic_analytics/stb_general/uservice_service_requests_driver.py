@@ -1,4 +1,6 @@
-"""Module for counting all general analytics metrics for EOS STB component"""
+"""
+Module for counting all general analytics metrics for EOS STB component
+"""
 from pyspark.sql.functions import col, regexp_extract
 from pyspark.sql.types import StructType, StructField, TimestampType, StringType
 
