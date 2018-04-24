@@ -33,49 +33,49 @@ class StbActiveReportProcessor(BasicAnalyticsProcessor):
     def count_distinct_active_stb(self):
         return self._read_stream \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".active_stb"))
+                                     aggregation_name=self._component_name))
 
     def count_distinct_active_stb_ethernet(self):
         return self._read_stream \
             .withColumn("kbps", col("EthernetStats").getItem("rxKbps")) \
             .where("kbps > 0") \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".active_stb_ethernet"))
+                                     aggregation_name=self._component_name + ".ethernet"))
 
     def count_distinct_active_stb_wifi(self):
         return self._read_stream \
             .withColumn("kbps", col("WiFiStats").getItem("rxKbps")) \
             .where("kbps > 0") \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".active_stb_wifi"))
+                                     aggregation_name=self._component_name + ".wifi"))
 
     def count_distinct_active_stb_4k_enabled(self):
         return self._read_stream \
             .withColumn("uhd", col("BCMReport").getItem("4Kcontent")) \
             .where("uhd = true") \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".active_stb_4k_enabled"))
+                                     aggregation_name=self._component_name + ".4k_enabled"))
 
     def count_distinct_active_stb_4k_disabled(self):
         return self._read_stream \
             .withColumn("uhd", col("BCMReport").getItem("4Kcontent")) \
             .where("uhd = false") \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".active_stb_4k_disabled"))
+                                     aggregation_name=self._component_name + ".4k_disabled"))
 
     def count_distinct_active_stb_per_model(self):
         return self._read_stream \
             .withColumn("model_name", col("header").getItem("modelName")) \
             .aggregate(DistinctCount(group_fields=["model_name"],
                                      aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".active_stb_per_model"))
+                                     aggregation_name=self._component_name))
 
     def count_distinct_active_stb_per_hw_version(self):
         return self._read_stream \
             .withColumn("hardware_version", col("header").getItem("hardwareVersion")) \
             .aggregate(DistinctCount(group_fields=["hardware_version"],
                                      aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".active_stb_per_hw_version"))
+                                     aggregation_name=self._component_name))
 
     def count_distinct_active_stb_per_fw_version(self):
         return self._read_stream \
@@ -83,21 +83,21 @@ class StbActiveReportProcessor(BasicAnalyticsProcessor):
             .withColumn("version", col("software_versions").getItem("version")) \
             .aggregate(DistinctCount(group_fields=["version"],
                                      aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".active_stb_per_fw_version"))
+                                     aggregation_name=self._component_name))
 
     def count_distinct_active_stb_netflix(self):
         return self._read_stream \
             .withColumn("provider_id", col("ApplicationsReport").getItem("provider_id")) \
             .where("provider_id = 'netflix'") \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".active_stb_netflix"))
+                                     aggregation_name=self._component_name + "netflix"))
 
     def count_distinct_active_stb_youtube(self):
         return self._read_stream \
             .withColumn("provider_id", col("ApplicationsReport").getItem("provider_id")) \
             .where("provider_id = 'youtube'") \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".active_stb_youtube"))
+                                     aggregation_name=self._component_name + ".youtube"))
 
     @staticmethod
     def create_schema():
