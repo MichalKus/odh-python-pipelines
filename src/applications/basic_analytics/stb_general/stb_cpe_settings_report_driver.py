@@ -11,28 +11,38 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
     """Class that's responsible to create pipelines for CPE Settings Reports"""
 
     def _process_pipeline(self, read_stream):
-        report_generator = SettingsReports(read_stream, self._component_name)
 
-        return [report_generator.distinct_total_cpe_settings_report_count(),
-                report_generator.distinct_total_cpe_with_hdmi_cec_active(),
-                report_generator.distinct_total_cpe_with_suspend_status(),
-                report_generator.distinct_total_cpe_with_audio_dolby_digital(),
-                report_generator.distinct_total_cpe_with_personalized_suggestions(),
-                report_generator.distinct_total_cpe_with_audio_dolby_digitalaccepted_app_user_agreement(),
-                report_generator.distinct_total_cpe_with_auto_subtitles_enabled(),
-                report_generator.distinct_total_cpe_with_auto_subtitles_disabled(),
-                report_generator.distinct_total_cpe_with_active_standby(),
-                report_generator.distinct_total_cpe_with_cold_standby(),
-                report_generator.distinct_cpe_with_lukewarm_standby(),
-                report_generator.distinct_cpe_count_with_upgrade_status(),
-                report_generator.distinct_total_cpe_count_with_cpe_country(),
-                report_generator.distinct_cpe_count_recently_used_settings_items(),
-                report_generator.distinct_cpe_with_age_restriction_enabled(),
-                report_generator.distinct_cpe_with_selected_audio_track_language(),
-                report_generator.distinct_cpe_with_selected_subtitles_track_language(),
-                report_generator.distinct_cpe_factory_reset_report(),
-                report_generator.distinct_tv_brands_paired_with_each_cpe(),
-                report_generator.distinct_audio_brands_paired_with_each_cpe()]
+        self._read_stream = read_stream
+        self._common_pipeline = read_stream \
+            .select("@timestamp",
+                    "SettingsReport.*",
+                    "header.*")
+        # Common CPESettings Report
+        self._common_settings_pipeline = self._common_pipeline \
+            .select("@timestamp",
+                    "settings.*",
+                    col("viewerID").alias("viewer_id"))
+
+        return [self.distinct_total_cpe_settings_report_count(),
+                self.distinct_total_cpe_with_hdmi_cec_active(),
+                self.distinct_total_cpe_with_suspend_status(),
+                self.distinct_total_cpe_with_audio_dolby_digital(),
+                self.distinct_total_cpe_with_personalized_suggestions(),
+                self.distinct_total_cpe_with_audio_dolby_digitalaccepted_app_user_agreement(),
+                self.distinct_total_cpe_with_auto_subtitles_enabled(),
+                self.distinct_total_cpe_with_auto_subtitles_disabled(),
+                self.distinct_total_cpe_with_active_standby(),
+                self.distinct_total_cpe_with_cold_standby(),
+                self.distinct_cpe_with_lukewarm_standby(),
+                self.distinct_cpe_count_with_upgrade_status(),
+                self.distinct_total_cpe_count_with_cpe_country(),
+                self.distinct_cpe_count_recently_used_settings_items(),
+                self.distinct_cpe_with_age_restriction_enabled(),
+                self.distinct_cpe_with_selected_audio_track_language(),
+                self.distinct_cpe_with_selected_subtitles_track_language(),
+                self.distinct_cpe_factory_reset_report(),
+                self.distinct_tv_brands_paired_with_each_cpe(),
+                self.distinct_audio_brands_paired_with_each_cpe()]
 
     @staticmethod
     def create_schema():
@@ -71,25 +81,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
             ])),
         ])
 
-
-class SettingsReports(object):
-    """Class that is able to create output streams with metrics for SettingsReports"""
-
-    def __init__(self, read_stream, component_name):
-        self._component_name = component_name
-        self._read_stream = read_stream
-        self._common_pipeline = read_stream \
-            .select("@timestamp",
-                    "SettingsReport.*",
-                    "header.*")
-        # Common CPESettings Report
-        self._common_settings_pipeline = self._common_pipeline \
-            .select("@timestamp",
-                    "settings.*",
-                    col("viewerID").alias("viewer_id"))
-
     # Total CPE Reporting Settings Data
-
     def distinct_total_cpe_settings_report_count(self):
         return self._common_pipeline \
             .select("@timestamp", "type", col("viewerID").alias("viewer_id")) \
