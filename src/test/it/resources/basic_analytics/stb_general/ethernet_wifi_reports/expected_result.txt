@@ -1,7 +1,7 @@
-{"@timestamp": "2018-04-24T08:40:00.000Z", "type": "WiFiStats", "metric_name": "stb_ethernet_wifi_report.network_type.type.WiFiStats.viewer_id.distinct_count", "value": 2}
-{"@timestamp": "2018-05-24T08:40:00.000Z", "type": "WiFiStats", "metric_name": "stb_ethernet_wifi_report.network_type.type.WiFiStats.viewer_id.distinct_count", "value": 1}
-{"@timestamp": "2018-04-24T09:20:00.000Z", "type": "EthernetStats", "metric_name": "stb_ethernet_wifi_report.network_type.type.EthernetStats.viewer_id.distinct_count", "value": 2}
-{"@timestamp": "2018-05-24T09:20:00.000Z", "type": "EthernetStats", "metric_name": "stb_ethernet_wifi_report.network_type.type.EthernetStats.viewer_id.distinct_count", "value": 1}
+{"@timestamp": "2018-04-24T08:40:00.000Z", "metric_name": "stb_ethernet_wifi_report.wifi_network.viewer_id.distinct_count", "value": 2}
+{"@timestamp": "2018-05-24T08:40:00.000Z", "metric_name": "stb_ethernet_wifi_report.wifi_network.viewer_id.distinct_count", "value": 1}
+{"@timestamp": "2018-04-24T09:20:00.000Z", "metric_name": "stb_ethernet_wifi_report.ethernet_network.viewer_id.distinct_count", "value": 2}
+{"@timestamp": "2018-05-24T09:20:00.000Z", "metric_name": "stb_ethernet_wifi_report.ethernet_network.viewer_id.distinct_count", "value": 1}
 {"@timestamp": "2018-04-24T08:40:00.000Z", "metric_name": "stb_ethernet_wifi_report.wireless.average_downstream_kbps.rxKbps.avg", "value": 33.33}
 {"@timestamp": "2018-05-24T08:40:00.000Z", "metric_name": "stb_ethernet_wifi_report.wireless.average_downstream_kbps.rxKbps.avg", "value": 33.33}
 {"@timestamp": "2018-04-24T08:40:00.000Z", "metric_name": "stb_ethernet_wifi_report.wireless.average_upstream_kbps.txKbps.avg", "value": 33.33}

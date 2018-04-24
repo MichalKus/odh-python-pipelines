@@ -75,14 +75,14 @@ class EthernetWifiReportEventProcessor(BasicAnalyticsProcessor):
     def distinct_total_wifi_network_types_count(self):
         return self._common_wifi_pipeline \
             .where((col("rxKbps") >= 1) | (col("txKbps") >= 1)) \
-            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["type"],
-                                     aggregation_name=self._component_name + ".network_type"))
+            .aggregate(DistinctCount(aggregation_field="viewer_id",
+                                     aggregation_name=self._component_name + ".wifi_network"))
 
     def distinct_total_ethernet_network_types_count(self):
         return self._common_ethernet_pipeline \
             .where((col("rxKbps") >= 1) | (col("txKbps") >= 1)) \
-            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["type"],
-                                     aggregation_name=self._component_name + ".network_type"))
+            .aggregate(DistinctCount(aggregation_field="viewer_id",
+                                     aggregation_name=self._component_name + ".ethernet_network"))
 
     def ethernet_average_upstream_kbps(self):
         return self._common_ethernet_pipeline \
