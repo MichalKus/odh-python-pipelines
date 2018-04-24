@@ -51,26 +51,31 @@ class TunerPerfReport(BasicAnalyticsProcessor):
         :param json_string: Input JSON string
         :return: Output array of values.
         """
-        obj = json.loads(json_string)
-        obj = {int(k): float(v) for k, v in obj.items()}
-        return [v for _, v in obj.items()]
+        if json_string and json_string != "":
+            obj = json.loads(json_string)
+            obj = {int(k): float(v) for k, v in obj.items()}
+            return [v for _, v in obj.items()]
+        else:
+            return [float(0.0), float(0.0), float(0.0), float(0.0), float(0.0), float(0.0), float(0.0), float(0.0)]
 
     def _prepare_timefield(self, data_stream):
         return convert_epoch_to_iso(data_stream, "timestamp", "@timestamp")
 
     def _prepare_input_data_frame(self, read_stream):
         def explode_in_columns(df, columns_with_name):
-            return (reduce(lambda memo_df, col_name: memo_df.withColumn(col_name[0], col_name[1].cast(DoubleType())),
+            return (reduce(lambda memo_df, col_name:
+                           memo_df.withColumn(col_name[0], col_name[1].cast(DoubleType())),
                 columns_with_name, df))
 
         def expand_df(df, columns):
-            return (reduce(lambda memo_df, col_name: explode_in_columns(memo_df, TunerPerfReport.get_columns(col_name, 8)),
+            return (reduce(lambda memo_df, col_name:
+                           explode_in_columns(memo_df, TunerPerfReport.get_columns(col_name, 8)),
                 columns, df))
 
         column_list = ["TunerReport_SNR", "TunerReport_signalLevel", "TunerReport_erroreds",
                        "TunerReport_unerroreds", "TunerReport_correcteds"]
 
-        json_to_array_udf = udf(TunerPerfReport.json_to_array, ArrayType(FloatType()))
+        json_to_array_udf = udf(TunerPerfReport.json_to_array, ArrayType(DoubleType()))
 
         input_df = read_stream \
             .withColumn("TunerReport_SNR", json_to_array_udf(col("TunerReport_SNR"))) \
@@ -86,12 +91,14 @@ class TunerPerfReport(BasicAnalyticsProcessor):
 
         pre_result_df = self._prepare_input_data_frame(read_stream)
 
-        aggregations_ls = []
         aggregation_fields_without_sum = TunerPerfReport.get_column_names("TunerReport_SNR")
         aggregation_fields_without_sum.extend(TunerPerfReport.get_column_names("TunerReport_signalLevel"))
+
         aggregation_fields_with_sum = TunerPerfReport.get_column_names("TunerReport_erroreds")
         aggregation_fields_with_sum.extend(TunerPerfReport.get_column_names("TunerReport_unerroreds"))
         aggregation_fields_with_sum.extend(TunerPerfReport.get_column_names("TunerReport_correcteds"))
+
+        aggregations_ls = []
         aggregations_ls.extend(aggregation_fields_without_sum)
         aggregations_ls.extend(aggregation_fields_with_sum)
 
@@ -100,7 +107,7 @@ class TunerPerfReport(BasicAnalyticsProcessor):
         for field in aggregations_ls:
             kwargs = {'aggregation_field': field}
 
-            aggregations.extend([Count(**kwargs), Max(**kwargs), Min(**kwargs), Stddev(**kwargs),
+            aggregations.extend([Count(**kwargs), Max(**kwargs), Min(**kwargs),
                                  P01(**kwargs), P05(**kwargs), P10(**kwargs), P25(**kwargs), P50(**kwargs),
                                  P75(**kwargs), P90(**kwargs), P95(**kwargs), P99(**kwargs)])
 

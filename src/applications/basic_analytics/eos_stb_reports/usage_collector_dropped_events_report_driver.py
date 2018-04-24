@@ -21,14 +21,7 @@ class UsageCollectorDroppedEvents(BasicAnalyticsProcessor):
         return convert_epoch_to_iso(data_stream, "timestamp", "@timestamp")
 
     def _process_pipeline(self, json_stream):
-        stream = json_stream \
-            .where('UsageCollectorReport_missed_events is not null') \
-            .where('UsageCollectorReport_missed_events != \'\'') \
-            .withColumn("firmwareVersion", regexp_replace("firmwareVersion", r"\.", "-")) \
-            .withColumn("hardwareVersion", regexp_replace("hardwareVersion", r"\.", "-")) \
-            .withColumn("appVersion", regexp_replace("appVersion", r"\.", "-")) \
-            .withColumn("asVersion", regexp_replace("asVersion", r"\.", "-")) \
-            .withColumn("UsageCollectorReport_missed_events",
+        stream = json_stream .withColumn("UsageCollectorReport_missed_events",
                         col("UsageCollectorReport_missed_events").cast(IntegerType()))
 
         kwargs = {"aggregation_field": "UsageCollectorReport_missed_events"}
