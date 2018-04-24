@@ -112,13 +112,13 @@ class EthernetWifiReportEventProcessor(BasicAnalyticsProcessor):
         return self._common_net_configuration_pipeline \
             .where("net_config_enabled is not NULL") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["net_config_enabled"],
-                                     aggregation_name=self._component_name))
+                                     aggregation_name=self._component_name+".stb_with"))
 
     def total_cpe_net_config_for_wifi_ethernet_channels(self):
         return self._common_net_configuration_pipeline \
             .where("net_configuration_type is not NULL") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["net_configuration_type"],
-                                     aggregation_name=self._component_name))
+                                     aggregation_name=self._component_name+".total_cpe_net_config"))
 
 
 def create_processor(configuration):
