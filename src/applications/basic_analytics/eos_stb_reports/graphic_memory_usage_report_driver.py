@@ -16,10 +16,7 @@ class GraphicMemoryStbBasicAnalytics(BasicAnalyticsProcessor):
 
     def _process_pipeline(self, json_stream):
         stream = json_stream \
-            .withColumnRenamed("GraphicsMemoryUsage.totalKb", "totalKb") \
-            .withColumnRenamed("GraphicsMemoryUsage.peakKb", "peakKb") \
-            .withColumnRenamed("GraphicsMemoryUsage.freeKb", "freeKb") \
-            .withColumnRenamed("GraphicsMemoryUsage.mapping", "mapping") \
+            .selectExpr("`@timestamp`", "GraphicsMemoryUsage.*") \
             .withColumn("mapping", when(col("mapping") == "CRR (SECURE)", "crr_secure")
                         .when(col("mapping") == "GFX", "gfx")
                         .when(col("mapping") == "MAIN", "main")
@@ -37,10 +34,12 @@ class GraphicMemoryStbBasicAnalytics(BasicAnalyticsProcessor):
     def create_schema():
         return StructType([
             StructField("@timestamp", TimestampType()),
-            StructField("GraphicsMemoryUsage.peakKb", StringType()),
-            StructField("GraphicsMemoryUsage.totalKb", StringType()),
-            StructField("GraphicsMemoryUsage.freeKb", StringType()),
-            StructField("GraphicsMemoryUsage.mapping", StringType())
+            StructField("GraphicsMemoryUsage", StructType([
+                StructField("peakKb", StringType()),
+                StructField("totalKb", StringType()),
+                StructField("freeKb", StringType()),
+                StructField("mapping", StringType())
+            ]))
         ])
 
 
