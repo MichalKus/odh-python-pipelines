@@ -15,7 +15,6 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
     """
 
     def _process_pipeline(self, read_stream):
-
         self._read_stream = read_stream
         self._common_pipeline = read_stream \
             .select("@timestamp",
@@ -32,7 +31,8 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                 self.distinct_total_cpe_with_suspend_status(),
                 self.distinct_total_cpe_with_audio_dolby_digital(),
                 self.distinct_total_cpe_with_personalized_suggestions(),
-                self.distinct_total_cpe_with_audio_dolby_digitalaccepted_app_user_agreement(),
+                self.distinct_total_cpe_with_audio_dolby_digital_accepted_app_user_agreement(),
+                self.distinct_total_cpe_with_audio_dolby_digital_not_accepted_app_user_agreement(),
                 self.distinct_total_cpe_with_auto_subtitles_enabled(),
                 self.distinct_total_cpe_with_auto_subtitles_disabled(),
                 self.distinct_total_cpe_with_active_standby(),
@@ -90,67 +90,74 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
             .select("@timestamp", "type", col("viewerID").alias("viewer_id")) \
             .filter("type == 'SettingsReport'") \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".SettingsReport"))
+                                     aggregation_name=self._component_name + ".cpeReporting_settings_data"))
 
     def distinct_total_cpe_with_hdmi_cec_active(self):
         return self._common_settings_pipeline \
             .filter(col("`cpe.enableCEC`") == 'true') \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".enable_cec"))
+                                     aggregation_name=self._component_name + ".cpe_with_hdmi_cec_active"))
 
     def distinct_total_cpe_with_suspend_status(self):
         return self._common_settings_pipeline \
             .filter(col("`customer.isSuspended`") == 'true') \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".is_suspended"))
+                                     aggregation_name=self._component_name + ".cpe_with_suspended_status"))
 
     def distinct_total_cpe_with_audio_dolby_digital(self):
         return self._common_settings_pipeline \
             .filter(col("`cpe.audioDolbyDigital`") == 'true') \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".audio_dolby_digital"))
+                                     aggregation_name=self._component_name + ".cpe_with_audio_dolby_digital"))
 
     def distinct_total_cpe_with_personalized_suggestions(self):
         return self._common_settings_pipeline \
             .filter(col("`customer.personalSuggestions`") == 'true') \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".personalized_suggestions"))
+                                     aggregation_name=self._component_name + ".cpe_with_personalized_suggestions"))
 
-    def distinct_total_cpe_with_audio_dolby_digitalaccepted_app_user_agreement(self):
+    def distinct_total_cpe_with_audio_dolby_digital_accepted_app_user_agreement(self):
         return self._common_settings_pipeline \
             .filter(col("`customer.appsOptIn`") == 'true') \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".accepted_app_user_agreement"))
+                                     aggregation_name=self._component_name + ".cpe_with_accepted_app_user_agreement"))
+
+    def distinct_total_cpe_with_audio_dolby_digital_not_accepted_app_user_agreement(self):
+        return self._common_settings_pipeline \
+            .filter(col("`customer.appsOptIn`") == 'false') \
+            .aggregate(DistinctCount(aggregation_field="viewer_id",
+                                     aggregation_name=self._component_name +
+                                                       ".cpe_with_not_accepted_app_user_agreement"))
 
     def distinct_total_cpe_with_auto_subtitles_enabled(self):
         return self._common_settings_pipeline \
             .filter(col("`profile.subControl`") == 'true') \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".subtitles_enabled"))
+                                     aggregation_name=self._component_name + ".cpe_with_subtitles_enabled"))
 
     def distinct_total_cpe_with_auto_subtitles_disabled(self):
         return self._common_settings_pipeline \
             .filter(col("`profile.subControl`") == 'false') \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".subtitles_disabled"))
+                                     aggregation_name=self._component_name + ".cpe_with_subtitles_disabled"))
 
     def distinct_total_cpe_with_active_standby(self):
         return self._common_settings_pipeline \
             .filter(col("`cpe.standByMode`") == 'ActiveStandby') \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".active_standby"))
+                                     aggregation_name=self._component_name + ".cpe_reporting_active_standby"))
 
     def distinct_total_cpe_with_cold_standby(self):
         return self._common_settings_pipeline \
             .filter(col("`cpe.standByMode`") == 'ColdStandby') \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".cold_standby"))
+                                     aggregation_name=self._component_name + ".cpe_reporting_cold_standby"))
 
     def distinct_cpe_with_lukewarm_standby(self):
         return self._common_settings_pipeline \
             .filter(col("`cpe.standByMode`") == 'LukewarmStandby') \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".lukewarm_standby"))
+                                     aggregation_name=self._component_name + ".cpe_reporting_lukewarm_standby"))
 
     def distinct_cpe_count_with_upgrade_status(self):
         return self._common_settings_pipeline \
@@ -159,7 +166,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                     col("`cpe.country`").alias("cpe_country"),
                     col("`cpe.upgradeStatus`").alias("upgrade_status")) \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["cpe_country", "upgrade_status"],
-                                     aggregation_name=self._component_name))
+                                     aggregation_name=self._component_name+".cpe_count_with_upgrade_status"))
 
     def distinct_total_cpe_count_with_cpe_country(self):
         return self._common_settings_pipeline \
@@ -167,7 +174,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                     "viewer_id",
                     col("`cpe.country`").alias("cpe_country")) \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["cpe_country"],
-                                     aggregation_name=self._component_name))
+                                     aggregation_name=self._component_name+".cpe_with_country"))
 
     def distinct_cpe_count_recently_used_settings_items(self):
         return self._common_settings_pipeline \
@@ -176,27 +183,27 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                     explode("`profile.recentlyUsedSettingsItems`").alias("settings_items")) \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      group_fields=["settings_items"],
-                                     aggregation_name=self._component_name))
+                                     aggregation_name=self._component_name+".cpe_count_recently_used_settings_items"))
 
     def distinct_cpe_with_age_restriction_enabled(self):
         return self._common_settings_pipeline \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`profile.ageLock`"],
-                                     aggregation_name=self._component_name))
+                                     aggregation_name=self._component_name+"cpe_with_age_restriction"))
 
     def distinct_cpe_with_selected_audio_track_language(self):
         return self._common_settings_pipeline \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`profile.audioLang`"],
-                                     aggregation_name=self._component_name))
+                                     aggregation_name=self._component_name+"cpe_with_selected_audio_track_language"))
 
     def distinct_cpe_with_selected_subtitles_track_language(self):
         return self._common_settings_pipeline \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`profile.subLang`"],
-                                     aggregation_name=self._component_name))
+                                     aggregation_name=self._component_name+".cpe_with_selected_subtitles"))
 
     def distinct_cpe_factory_reset_report(self):
         return self._common_settings_pipeline \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`cpe.factoryResetState`"],
-                                     aggregation_name=self._component_name))
+                                     aggregation_name=self._component_name+".cpe_factory_reset_report"))
 
     def distinct_tv_brands_paired_with_each_cpe(self):
         return self._common_settings_pipeline \
@@ -204,7 +211,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                     col("`cpe.quicksetPairedDevicesInfo`").getItem("tv").getItem("brand").alias("brand"),
                     "viewer_id") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["brand"],
-                                     aggregation_name=self._component_name))
+                                     aggregation_name=self._component_name+".audio_brands_paired_with_each_cpe"))
 
     def distinct_audio_brands_paired_with_each_cpe(self):
         return self._common_settings_pipeline \
@@ -213,7 +220,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                     col("`cpe.quicksetPairedDevicesInfo`").getItem("amp").getItem("isPaired").alias("is_paired"),
                     "viewer_id") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["is_paired", "brand"],
-                                     aggregation_name=self._component_name))
+                                     aggregation_name=self._component_name+".tv_brands_paired_with_each_cpe"))
 
 
 def create_processor(configuration):
