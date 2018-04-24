@@ -90,7 +90,7 @@ class StbActiveReportProcessor(BasicAnalyticsProcessor):
             .withColumn("provider_id", col("ApplicationsReport").getItem("provider_id")) \
             .where("provider_id = 'netflix'") \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + "netflix"))
+                                     aggregation_name=self._component_name + ".netflix"))
 
     def count_distinct_active_stb_youtube(self):
         return self._read_stream \
