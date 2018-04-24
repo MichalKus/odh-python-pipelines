@@ -1,0 +1,12 @@
+spark:
+  appName: uservices-vod-recording-playouts-basic-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+  consoleWriter: false
+
+analytics:
+  tenant: be
+  componentName: odhecx.eosdtv.pan.prd.uservices.tenant.be
+  watermark: '5 minutes'
+  window: '15 minutes'
