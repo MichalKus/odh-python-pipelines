@@ -1,12 +1,12 @@
 """
 Module for counting all general analytics metrics for EOS STB CPE SettingsReport
 """
-from pyspark.sql.types import StructField, StructType, TimestampType, StringType, ArrayType
+from pyspark.sql.types import StructField, StructType, TimestampType, StringType, ArrayType, LongType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from common.basic_analytics.aggregations import DistinctCount
-from pyspark.sql.functions import col, explode
+from pyspark.sql.functions import col, explode, from_unixtime
 
 
 class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
@@ -15,11 +15,11 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
     """
 
     def _process_pipeline(self, read_stream):
-        self._read_stream = read_stream
+
         self._common_pipeline = read_stream \
-            .select("@timestamp",
-                    "SettingsReport.*",
-                    "header.*")
+            .select("SettingsReport.*",
+                    "header.*") \
+            .withColumn("@timestamp", from_unixtime(col("ts") / 1000).cast(TimestampType()))
 
         self._common_settings_pipeline = self._common_pipeline \
             .select("@timestamp",
@@ -54,6 +54,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
             StructField("@timestamp", TimestampType()),
             StructField("SettingsReport", StructType([
                 StructField("type", StringType()),
+                StructField("ts", LongType()),
                 StructField("settings", StructType([
                     StructField("cpe.enableCEC", StringType()),
                     StructField("customer.isSuspended", StringType()),
@@ -127,7 +128,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
             .filter(col("`customer.appsOptIn`") == 'false') \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      aggregation_name=self._component_name +
-                                                       ".cpe_with_not_accepted_app_user_agreement"))
+                                                      ".cpe_with_not_accepted_app_user_agreement"))
 
     def distinct_total_cpe_with_auto_subtitles_enabled(self):
         return self._common_settings_pipeline \
@@ -166,7 +167,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                     col("`cpe.country`").alias("cpe_country"),
                     col("`cpe.upgradeStatus`").alias("upgrade_status")) \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["cpe_country", "upgrade_status"],
-                                     aggregation_name=self._component_name+".cpe_count_with_upgrade_status"))
+                                     aggregation_name=self._component_name + ".cpe_count_with_upgrade_status"))
 
     def distinct_total_cpe_count_with_cpe_country(self):
         return self._common_settings_pipeline \
@@ -174,7 +175,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                     "viewer_id",
                     col("`cpe.country`").alias("cpe_country")) \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["cpe_country"],
-                                     aggregation_name=self._component_name+".cpe_with_country"))
+                                     aggregation_name=self._component_name + ".cpe_with_country"))
 
     def distinct_cpe_count_recently_used_settings_items(self):
         return self._common_settings_pipeline \
@@ -183,27 +184,27 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                     explode("`profile.recentlyUsedSettingsItems`").alias("settings_items")) \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      group_fields=["settings_items"],
-                                     aggregation_name=self._component_name+".cpe_count_recently_used_settings_items"))
+                                     aggregation_name=self._component_name + ".cpe_count_recently_used_settings_items"))
 
     def distinct_cpe_with_age_restriction_enabled(self):
         return self._common_settings_pipeline \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`profile.ageLock`"],
-                                     aggregation_name=self._component_name+"cpe_with_age_restriction"))
+                                     aggregation_name=self._component_name + "cpe_with_age_restriction"))
 
     def distinct_cpe_with_selected_audio_track_language(self):
         return self._common_settings_pipeline \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`profile.audioLang`"],
-                                     aggregation_name=self._component_name+"cpe_with_selected_audio_track_language"))
+                                     aggregation_name=self._component_name + "cpe_with_selected_audio_track_language"))
 
     def distinct_cpe_with_selected_subtitles_track_language(self):
         return self._common_settings_pipeline \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`profile.subLang`"],
-                                     aggregation_name=self._component_name+".cpe_with_selected_subtitles"))
+                                     aggregation_name=self._component_name + ".cpe_with_selected_subtitles"))
 
     def distinct_cpe_factory_reset_report(self):
         return self._common_settings_pipeline \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`cpe.factoryResetState`"],
-                                     aggregation_name=self._component_name+".cpe_factory_reset_report"))
+                                     aggregation_name=self._component_name + ".cpe_factory_reset_report"))
 
     def distinct_tv_brands_paired_with_each_cpe(self):
         return self._common_settings_pipeline \
@@ -211,7 +212,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                     col("`cpe.quicksetPairedDevicesInfo`").getItem("tv").getItem("brand").alias("brand"),
                     "viewer_id") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["brand"],
-                                     aggregation_name=self._component_name+".audio_brands_paired_with_each_cpe"))
+                                     aggregation_name=self._component_name + ".audio_brands_paired_with_each_cpe"))
 
     def distinct_audio_brands_paired_with_each_cpe(self):
         return self._common_settings_pipeline \
@@ -220,7 +221,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                     col("`cpe.quicksetPairedDevicesInfo`").getItem("amp").getItem("isPaired").alias("is_paired"),
                     "viewer_id") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["is_paired", "brand"],
-                                     aggregation_name=self._component_name+".tv_brands_paired_with_each_cpe"))
+                                     aggregation_name=self._component_name + ".tv_brands_paired_with_each_cpe"))
 
 
 def create_processor(configuration):
