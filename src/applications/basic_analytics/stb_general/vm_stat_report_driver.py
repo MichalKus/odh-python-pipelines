@@ -1,18 +1,22 @@
 """
 Module for counting all general analytics metrics for EOS STB VMStats Report
 """
-from pyspark.sql.types import StructField, StructType, TimestampType, IntegerType, DoubleType, StringType, ArrayType
+from pyspark.sql.types import StructField, StructType, TimestampType, IntegerType, DoubleType, StringType, ArrayType, \
+    LongType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from common.basic_analytics.aggregations import Avg, DistinctCount
-from pyspark.sql.functions import col, explode
+from pyspark.sql.functions import col, explode, from_unixtime
 
 
 class VmStatReportEventProcessor(BasicAnalyticsProcessor):
     """
     Class that's responsible to process pipelines for VMStats Reports
     """
+
+    def _prepare_timefield(self, data_stream):
+        return data_stream.withColumn("@timestamp", from_unixtime(col("VMStat.ts") / 1000).cast(TimestampType()))
 
     def _process_pipeline(self, read_stream):
 
@@ -32,8 +36,8 @@ class VmStatReportEventProcessor(BasicAnalyticsProcessor):
     @staticmethod
     def create_schema():
         return StructType([
-            StructField("@timestamp", TimestampType()),
             StructField("VMStat", StructType([
+                StructField("ts", LongType()),
                 StructField("uptime", IntegerType()),
                 StructField("hwIrqPct", DoubleType()),
                 StructField("iowaitPct", DoubleType()),
