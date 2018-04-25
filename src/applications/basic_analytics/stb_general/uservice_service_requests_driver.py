@@ -18,7 +18,7 @@ class UServiceServiceRequest(BasicAnalyticsProcessor):
     def _process_pipeline(self, read_stream):
         stream = read_stream \
             .where(col("header").getItem("x-dev").isNotNull()) \
-            .withColumn("tenant", regexp_extract(col("stack"), "-(\w+)$", 1))
+            .withColumn("tenant", regexp_extract(col("stack"), r"-(\w+)$", 1))
 
         count_by_app = stream.aggregate(Count(group_fields=["tenant", "app"],
                                               aggregation_name=self._component_name + ".requests"))
@@ -26,7 +26,7 @@ class UServiceServiceRequest(BasicAnalyticsProcessor):
         count_by_app_status = stream \
             .withColumn("status", custom_translate_regex(
                 source_field=col("status"),
-                mapping={"^2\d\d": "successful"},
+                mapping={r"^2\d\d": "successful"},
                 default_value="failure")) \
             .aggregate(Count(group_fields=["tenant", "app", "status"],
                              aggregation_name=self._component_name + ".requests"))
