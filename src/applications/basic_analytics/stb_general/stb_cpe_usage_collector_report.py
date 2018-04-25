@@ -1,8 +1,8 @@
 """
 Module for counting all general analytics metrics for EOS STB component
 """
-from pyspark.sql.functions import col
-from pyspark.sql.types import StructType, StructField, TimestampType, StringType, IntegerType
+from pyspark.sql.functions import col, from_unixtime
+from pyspark.sql.types import StructType, StructField, TimestampType, StringType, IntegerType, LongType
 
 from common.basic_analytics.aggregations import DistinctCount
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
@@ -13,6 +13,10 @@ class StbUsageCollectorReportProcessor(BasicAnalyticsProcessor):
     """
     The processor implementation to calculate metrics related to STB Usage Collector Report component.
     """
+
+    def _prepare_timefield(self, data_stream):
+        return data_stream.withColumn("@timestamp", from_unixtime(col("UsageCollectorReport.ts") / 1000).cast(TimestampType()))
+
     def _process_pipeline(self, stream):
         usage_stream = stream \
             .filter(col("UsageCollectorReport.retries") >= 1) \
@@ -24,9 +28,9 @@ class StbUsageCollectorReportProcessor(BasicAnalyticsProcessor):
     @staticmethod
     def create_schema():
         return StructType([
-            StructField("@timestamp", TimestampType()),
             StructField("UsageCollectorReport", StructType([
-                StructField("retries", IntegerType())])),
+                StructField("retries", IntegerType()),
+                StructField("ts", LongType())])),
             StructField("header", StructType([
                 StructField("viewerID", StringType())])),
         ])
