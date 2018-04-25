@@ -10,7 +10,10 @@ from common.spark_utils.custom_functions import custom_translate_regex
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
-class USerserviceServiceRequest(BasicAnalyticsProcessor):
+class UServiceServiceRequest(BasicAnalyticsProcessor):
+    """
+    The processor implementation to calculate metrics related to UService component.
+    """
 
     def _process_pipeline(self, read_stream):
         stream = read_stream \
@@ -44,7 +47,7 @@ class USerserviceServiceRequest(BasicAnalyticsProcessor):
 
 
 def create_processor(configuration):
-    return USerserviceServiceRequest(configuration, USerserviceServiceRequest.create_schema())
+    return UServiceServiceRequest(configuration, UServiceServiceRequest.create_schema())
 
 
 if __name__ == "__main__":

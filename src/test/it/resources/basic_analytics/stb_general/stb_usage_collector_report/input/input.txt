@@ -1,0 +1,7 @@
+# Collection Usage
+{"@timestamp":"2018-04-20T11:35:12.426Z","UsageCollectorReport":{"retries":3},"header":{"viewerID":"000000-000000-000000000000"}}
+{"@timestamp":"2018-04-20T11:35:12.426Z","UsageCollectorReport":{"retries":0},"header":{"viewerID":"000000-000000-000000000000"}}
+{"@timestamp":"2018-04-20T11:35:12.426Z","UsageCollectorReport":{"retries":4},"header":{"viewerID":"100000-000000-000000000000"}}
+{"@timestamp":"2018-04-20T11:35:12.426Z","UsageCollectorReport":{"retries":1},"header":{"viewerID":"000000-000000-000000000000"}}
+{"@timestamp":"2018-04-20T11:50:12.426Z","UsageCollectorReport":{"retries":1},"header":{"viewerID":"100000-000000-000000000000"}}
+{"@timestamp":"2018-04-20T11:55:12.426Z","UsageCollectorReport":{"retries":1},"header":{"viewerID":"200000-000000-000000000000"}}

@@ -1,0 +1,2 @@
+{"@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "be.prd.stb.flat.v1.with_retries.viewerID.distinct_count", "value": 2}
+{"@timestamp": "2018-04-20T11:45:00.000Z", "metric_name": "be.prd.stb.flat.v1.with_retries.viewerID.distinct_count", "value": 2}
