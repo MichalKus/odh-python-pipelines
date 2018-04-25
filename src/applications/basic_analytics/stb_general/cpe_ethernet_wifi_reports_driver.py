@@ -1,12 +1,12 @@
 """
 Module for counting all general analytics metrics for EOS STB Ethernet/Wifi Report
 """
-from pyspark.sql.types import StructField, StructType, TimestampType, StringType, ArrayType, IntegerType
+from pyspark.sql.types import StructField, StructType, TimestampType, StringType, ArrayType, IntegerType, LongType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from common.basic_analytics.aggregations import DistinctCount, Avg
-from pyspark.sql.functions import col, explode
+from pyspark.sql.functions import col, explode, from_unixtime
 
 
 class EthernetWifiReportEventProcessor(BasicAnalyticsProcessor):
@@ -17,19 +17,20 @@ class EthernetWifiReportEventProcessor(BasicAnalyticsProcessor):
     def _process_pipeline(self, read_stream):
 
         self._common_wifi_pipeline = read_stream \
-            .select("@timestamp",
-                    "WiFiStats.*",
-                    col("header.viewerID").alias("viewer_id"))
+            .select("WiFiStats.*",
+                    col("header.viewerID").alias("viewer_id")) \
+            .withColumn("@timestamp", from_unixtime(col("ts") / 1000).cast(TimestampType()))
 
         self._common_ethernet_pipeline = read_stream \
-            .select("@timestamp",
-                    "EthernetStats.*",
-                    col("header.viewerID").alias("viewer_id"))
+            .select("EthernetStats.*",
+                    col("header.viewerID").alias("viewer_id")) \
+            .withColumn("@timestamp", from_unixtime(col("ts") / 1000).cast(TimestampType()))
 
         self._common_net_configuration_pipeline = read_stream \
-            .select("@timestamp",
-                    explode("NetConfiguration.ifaces").alias("ifaces"),
+            .select(explode("NetConfiguration.ifaces").alias("ifaces"),
+                    "NetConfiguration.ts",
                     col("header.viewerID").alias("viewer_id")) \
+            .withColumn("@timestamp", from_unixtime(col("ts") / 1000).cast(TimestampType())) \
             .select("@timestamp",
                     col("ifaces.enabled").alias("net_config_enabled"),
                     col("ifaces.type").alias("net_configuration_type"),
@@ -49,12 +50,14 @@ class EthernetWifiReportEventProcessor(BasicAnalyticsProcessor):
         return StructType([
             StructField("@timestamp", TimestampType()),
             StructField("WiFiStats", StructType([
+                StructField("ts", LongType()),
                 StructField("type", StringType()),
                 StructField("rxKbps", IntegerType()),
                 StructField("txKbps", IntegerType()),
                 StructField("RSSi", ArrayType(IntegerType()))
             ])),
             StructField("EthernetStats", StructType([
+                StructField("ts", LongType()),
                 StructField("type", StringType()),
                 StructField("rxKbps", IntegerType()),
                 StructField("txKbps", IntegerType())
@@ -63,6 +66,7 @@ class EthernetWifiReportEventProcessor(BasicAnalyticsProcessor):
                 StructField("viewerID", StringType())
             ])),
             StructField("NetConfiguration", StructType([
+                StructField("ts", LongType()),
                 StructField("ifaces", ArrayType(
                     StructType([
                         StructField("enabled", StringType()),
