@@ -33,6 +33,26 @@ class StbTunerReportProcessor(BasicAnalyticsProcessor):
                 self.count_max_pre_ecber_by_viewer_id(),
                 self.count_max_post_ecber_by_viewer_id()]
 
+    @staticmethod
+    def create_schema():
+        return StructType([
+            StructField("@timestamp", TimestampType()),
+            StructField("header", StructType([
+                StructField("viewerID", StringType()),
+            ])),
+            StructField("TunerReport", StructType([
+                StructField("index", StringType()),
+                StructField("signalLevel", StringType()),
+                StructField("SNR", StringType()),
+                StructField("locked", StringType()),
+                StructField("correcteds", StringType()),
+                StructField("erroreds", StringType()),
+                StructField("preECBER", StringType()),
+                StructField("postECBER", StringType()),
+                StructField("frequency", StringType()),
+            ]))
+        ])
+
     def count_avg_snr(self):
         return self._read_stream \
             .aggregate(Avg(aggregation_field="snr",
@@ -99,26 +119,6 @@ class StbTunerReportProcessor(BasicAnalyticsProcessor):
             .aggregate(Max(group_fields=["viewer_id"],
                            aggregation_field="post_ecber",
                            aggregation_name=self._component_name + ".post_ecber_not_zero"))
-
-    @staticmethod
-    def create_schema():
-        return StructType([
-            StructField("@timestamp", TimestampType()),
-            StructField("header", StructType([
-                StructField("viewerID", StringType()),
-            ])),
-            StructField("TunerReport", StructType([
-                StructField("index", StringType()),
-                StructField("signalLevel", StringType()),
-                StructField("SNR", StringType()),
-                StructField("locked", StringType()),
-                StructField("correcteds", StringType()),
-                StructField("erroreds", StringType()),
-                StructField("preECBER", StringType()),
-                StructField("postECBER", StringType()),
-                StructField("frequency", StringType()),
-            ]))
-        ])
 
 
 def create_processor(configuration):
