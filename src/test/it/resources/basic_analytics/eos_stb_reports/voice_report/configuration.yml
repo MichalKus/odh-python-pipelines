@@ -1,0 +1,10 @@
+spark:
+  appName: voice-report-stb-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+
+analytics:
+  componentName: vagrant.eosdtv.lab5aobo.tst.heapp.stb.voice_report
+  watermark: '1 minutes'
+  window: '1 minutes'
