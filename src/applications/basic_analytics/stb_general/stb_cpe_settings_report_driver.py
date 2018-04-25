@@ -14,12 +14,15 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
     Class that's responsible to create pipelines for CPE Settings Reports
     """
 
-    def _process_pipeline(self, read_stream):
+    def _prepare_timefield(self, data_stream):
+        return data_stream.withColumn("@timestamp",
+                                      from_unixtime(col("SettingsReport.ts") / 1000).cast(TimestampType()))
 
+    def _process_pipeline(self, read_stream):
         self._common_pipeline = read_stream \
-            .select("SettingsReport.*",
-                    "header.*") \
-            .withColumn("@timestamp", from_unixtime(col("ts") / 1000).cast(TimestampType()))
+            .select("@timestamp",
+                    "SettingsReport.*",
+                    "header.*")
 
         self._common_settings_pipeline = self._common_pipeline \
             .select("@timestamp",
@@ -51,7 +54,6 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
     @staticmethod
     def create_schema():
         return StructType([
-            StructField("@timestamp", TimestampType()),
             StructField("SettingsReport", StructType([
                 StructField("type", StringType()),
                 StructField("ts", LongType()),
