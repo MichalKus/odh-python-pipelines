@@ -1,67 +1,106 @@
-"""Module for counting all general analytics metrics for EOS STB Ethernet/Wifi Report"""
-from pyspark.sql.types import StructField, StructType, TimestampType, StringType, ArrayType, IntegerType
+"""
+Module for counting all general analytics metrics for EOS STB VMStats Report
+"""
+from pyspark.sql.types import StructField, StructType, TimestampType, IntegerType, DoubleType, StringType, ArrayType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
-from common.basic_analytics.aggregations import DistinctCount, Avg
+from common.basic_analytics.aggregations import Avg, DistinctCount
 from pyspark.sql.functions import col, explode
 
 
 class VmStatReportEventProcessor(BasicAnalyticsProcessor):
-    """Class that's responsible to process pipelines for Ethernet/Wifi Reports"""
+    """
+    Class that's responsible to process pipelines for VMStats Reports
+    """
 
     def _process_pipeline(self, read_stream):
-        report_generator = EthernetWifiReports(read_stream, self._component_name)
 
-        return []
+        self._common_vm_stat_pipeline = read_stream \
+            .select("@timestamp",
+                    "VMStat.*",
+                    col("header.viewerID").alias("viewer_id"),
+                    col("header.softwareVersions").alias("software_versions"))
+
+        return [self.average_uptime_across_stb(),
+                self.average_usage_hardware_interrupt(),
+                self.average_usage_low_priority_mode(),
+                self.average_user_active_mode(),
+                self.restarted_stbs_total_count(),
+                self.restarted_stbs_count_per_firmware()]
 
     @staticmethod
     def create_schema():
         return StructType([
             StructField("@timestamp", TimestampType()),
-            StructField("WiFiStats", StructType([
-                StructField("type", StringType()),
-                StructField("rxKbps", IntegerType()),
-                StructField("txKbps", IntegerType()),
-                StructField("RSSi", ArrayType(IntegerType()))
-            ])),
-            StructField("EthernetStats", StructType([
-                StructField("type", StringType()),
-                StructField("rxKbps", IntegerType()),
-                StructField("txKbps", IntegerType())
+            StructField("VMStat", StructType([
+                StructField("uptime", IntegerType()),
+                StructField("hwIrqPct", DoubleType()),
+                StructField("iowaitPct", DoubleType()),
+                StructField("systemPct", DoubleType()),
+                StructField("userPct", DoubleType()),
             ])),
             StructField("header", StructType([
-                StructField("viewerID", StringType())
-            ])),
-            StructField("NetConfiguration", StructType([
-                StructField("ifaces", ArrayType(
+                StructField("viewerID", StringType()),
+                StructField("softwareVersions", ArrayType(
                     StructType([
-                        StructField("enabled", StringType()),
-                        StructField("type", StringType())
-                    ]),
+                        StructField("version", StringType())
+                    ])
                 ))
             ]))
         ])
 
-
-class EthernetWifiReports(object):
-    """Class that is able to create output streams with metrics for Ethernet Wifi Reports"""
-
-    def __init__(self, read_stream, component_name):
-        self._component_name = component_name
-
-        # Common Wifi Report
-        self._common_vm_stat_pipeline = read_stream \
-            .select("@timestamp",
-                    "WiFiStats.*",
-                    col("header.viewerID").alias("viewer_id"))
-
-    # STB Network Type
-    def distinct_total_wifi_network_types_count(self):
+    def average_uptime_across_stb(self):
         return self._common_vm_stat_pipeline \
-            .where((col("rxKbps") >= 1) | (col("txKbps") >= 1)) \
-            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["type"],
-                                     aggregation_name=self._component_name + ".network_type"))
+            .select("@timestamp", "uptime") \
+            .aggregate(Avg(aggregation_field="uptime",
+                           aggregation_name=self._component_name + ".uptime_across_stb"))
+
+    def average_usage_hardware_interrupt(self):
+        return self._common_vm_stat_pipeline \
+            .select("@timestamp", col("hwIrqPct").alias("hardware_interrupt")) \
+            .aggregate(Avg(aggregation_field="hardware_interrupt",
+                           aggregation_name=self._component_name + ".average_usage"))
+
+    # Ask Alexey Pimenov about this metric
+    # def average_usage_system_mode(self):
+    #     return self._common_vm_stat_pipeline \
+    #         .select("@timestamp", col("iowaitPct")) \
+    #         .aggregate(Avg(aggregation_field="hardware_interrupt",
+    #                        aggregation_name=self._component_name))
+
+    def average_usage_low_priority_mode(self):
+        return self._common_vm_stat_pipeline \
+            .select("@timestamp", col("iowaitPct").alias("low_priority_mode")) \
+            .aggregate(Avg(aggregation_field="low_priority_mode",
+                           aggregation_name=self._component_name + ".average_usage"))
+
+    def average_usage_system_mode(self):
+        return self._common_vm_stat_pipeline \
+            .select("@timestamp", col("systemPct").alias("system_mode")) \
+            .aggregate(Avg(aggregation_field="system_mode",
+                           aggregation_name=self._component_name + ".average_usage"))
+
+    def average_user_active_mode(self):
+        return self._common_vm_stat_pipeline \
+            .select("@timestamp", col("userPct").alias("user_active_mode")) \
+            .aggregate(Avg(aggregation_field="user_active_mode",
+                           aggregation_name=self._component_name + ".average_usage"))
+
+    def restarted_stbs_total_count(self):
+        return self._common_vm_stat_pipeline \
+            .select("@timestamp", "uptime", "viewer_id") \
+            .where((col("uptime") >= 0) & (col("uptime") <= 3600)) \
+            .aggregate(DistinctCount(aggregation_field="viewer_id",
+                                     aggregation_name=self._component_name + ".restarted_stbs"))
+
+    def restarted_stbs_count_per_firmware(self):
+        return self._common_vm_stat_pipeline \
+            .select("@timestamp", "uptime", "viewer_id", explode("software_versions.version")
+                    .alias("software_version")) \
+            .where((col("uptime") >= 0) & (col("uptime") <= 3600)) \
+            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["software_version"],
+                                     aggregation_name=self._component_name + ".restarted_stbs_per_frimware"))
 
 
 def create_processor(configuration):

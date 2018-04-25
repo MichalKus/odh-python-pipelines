@@ -1,0 +1,15 @@
+{"@timestamp": "2018-04-25T07:40:00.000Z", "metric_name": "stb_general.vm_stat.average_usage.user_active_mode.avg", "value": 2.44}
+{"@timestamp": "2018-05-25T07:40:00.000Z", "metric_name": "stb_general.vm_stat.average_usage.user_active_mode.avg", "value": 2.44}
+{"@timestamp": "2018-04-25T07:40:00.000Z", "metric_name": "stb_general.vm_stat.uptime_across_stb.uptime.avg", "value": 3.0}
+{"@timestamp": "2018-05-25T07:40:00.000Z", "metric_name": "stb_general.vm_stat.uptime_across_stb.uptime.avg", "value": 3.0}
+{"@timestamp": "2018-04-25T07:40:00.000Z", "metric_name": "stb_general.vm_stat.average_usage.hardware_interrupt.avg", "value": 0.27}
+{"@timestamp": "2018-05-25T07:40:00.000Z", "metric_name": "stb_general.vm_stat.average_usage.hardware_interrupt.avg", "value": 0.27}
+{"@timestamp": "2018-04-25T07:40:00.000Z", "metric_name": "stb_general.vm_stat.average_usage.low_priority_mode.avg", "value": 4.67}
+{"@timestamp": "2018-05-25T07:40:00.000Z", "metric_name": "stb_general.vm_stat.average_usage.low_priority_mode.avg", "value": 4.67}
+{"@timestamp": "2018-04-25T07:40:00.000Z", "metric_name": "stb_general.vm_stat.restarted_stbs.viewer_id.distinct_count", "value": 3}
+{"@timestamp": "2018-05-25T07:40:00.000Z", "metric_name": "stb_general.vm_stat.restarted_stbs.viewer_id.distinct_count", "value": 2}
+{"@timestamp": "2018-04-25T07:40:00.000Z", "value": 3, "software_version": "4.8_16_20180328102331_master_eos_sprint39", "metric_name": "stb_general.vm_stat.restarted_stbs_per_frimware.software_version.4%2E8_16_20180328102331_master_eos_sprint39.viewer_id.distinct_count"}
+{"@timestamp": "2018-04-25T07:40:00.000Z", "value": 3, "software_version": "DCX960__-mon-prd-00.01-039-ah-AL-20180328102331-na004", "metric_name": "stb_general.vm_stat.restarted_stbs_per_frimware.software_version.DCX960__-mon-prd-00%2E01-039-ah-AL-20180328102331-na004.viewer_id.distinct_count"}
+{"@timestamp": "2018-05-25T07:40:00.000Z", "value": 2, "software_version": "4.8_16_20180328102331_master_eos_sprint39", "metric_name": "stb_general.vm_stat.restarted_stbs_per_frimware.software_version.4%2E8_16_20180328102331_master_eos_sprint39.viewer_id.distinct_count"}
+{"@timestamp": "2018-05-25T07:40:00.000Z", "value": 2, "software_version": "DCX960__-mon-prd-00.01-039-ah-AL-20180328102331-na004", "metric_name": "stb_general.vm_stat.restarted_stbs_per_frimware.software_version.DCX960__-mon-prd-00%2E01-039-ah-AL-20180328102331-na004.viewer_id.distinct_count"}
+
