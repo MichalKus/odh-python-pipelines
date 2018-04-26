@@ -14,10 +14,12 @@ class GraphicMemoryStbBasicAnalytics(BasicAnalyticsProcessor):
     Basic analytics driver for STB Graphic Memory usage report.
     """
 
+    def _prepare_timefield(self, data_stream):
+        return data_stream.selectExpr("GraphicsMemoryUsage.*") \
+            .withColumn("@timestamp", from_unixtime(col("ts") / 1000).cast(TimestampType())).drop("ts")
+
     def _process_pipeline(self, json_stream):
         stream = json_stream \
-            .selectExpr("GraphicsMemoryUsage.*") \
-            .withColumn("@timestamp", from_unixtime(col("ts") / 1000).cast(TimestampType())).drop("ts") \
             .withColumn("mapping", when(col("mapping") == "CRR (SECURE)", "crr_secure")
                         .when(col("mapping") == "GFX", "gfx")
                         .when(col("mapping") == "MAIN", "main")
@@ -34,7 +36,6 @@ class GraphicMemoryStbBasicAnalytics(BasicAnalyticsProcessor):
     @staticmethod
     def create_schema():
         return StructType([
-            StructField("@timestamp", TimestampType()),
             StructField("GraphicsMemoryUsage", StructType([
                 StructField("ts", LongType()),
                 StructField("peakKb", StringType()),
