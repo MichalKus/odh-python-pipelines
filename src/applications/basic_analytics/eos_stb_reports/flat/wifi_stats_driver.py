@@ -9,7 +9,7 @@ from common.basic_analytics.aggregations import DistinctCount, Avg
 from pyspark.sql.functions import col, from_unixtime
 
 
-class EthernetWifiReportEventProcessor(BasicAnalyticsProcessor):
+class WifiReportEventProcessor(BasicAnalyticsProcessor):
     """
     Class that's responsible to process pipelines for Wifi Reports
     """
@@ -66,7 +66,7 @@ def create_processor(configuration):
     """
     Method to create the instance of the processor
     """
-    return EthernetWifiReportEventProcessor(configuration, EthernetWifiReportEventProcessor.create_schema())
+    return WifiReportEventProcessor(configuration, WifiReportEventProcessor.create_schema())
 
 
 if __name__ == "__main__":

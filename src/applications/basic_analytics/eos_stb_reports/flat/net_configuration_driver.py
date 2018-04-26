@@ -1,15 +1,15 @@
 """
 Module for counting all general analytics metrics for EOS STB NetConfiguration Report
 """
-from pyspark.sql.types import StructField, StructType, TimestampType, StringType, ArrayType, IntegerType, LongType
+from pyspark.sql.types import StructField, StructType, TimestampType, StringType, ArrayType, LongType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
-from common.basic_analytics.aggregations import DistinctCount, Avg
+from common.basic_analytics.aggregations import DistinctCount
 from pyspark.sql.functions import col, explode, from_unixtime
 
 
-class EthernetWifiReportEventProcessor(BasicAnalyticsProcessor):
+class NetConfigurationReportEventProcessor(BasicAnalyticsProcessor):
     """
     Class that's responsible to process pipelines for NetConfiguration Reports
     """
@@ -65,7 +65,7 @@ def create_processor(configuration):
     """
     Method to create the instance of the processor
     """
-    return EthernetWifiReportEventProcessor(configuration, EthernetWifiReportEventProcessor.create_schema())
+    return NetConfigurationReportEventProcessor(configuration, NetConfigurationReportEventProcessor.create_schema())
 
 
 if __name__ == "__main__":
