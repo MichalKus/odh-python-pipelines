@@ -21,7 +21,7 @@ class GraphicMemoryStbBasicAnalytics(BasicAnalyticsProcessor):
                         .when(col("mapping") == "GFX", "gfx")
                         .when(col("mapping") == "MAIN", "main")
                         .when(col("mapping") == "PICBUF0", "picbuf0")
-                        .when(col("mapping") == "PICBUF1", "picbuf0")
+                        .when(col("mapping") == "PICBUF1", "picbuf1")
                         .when(col("mapping") == "SAGE (SECURE)", "sage_secure")
                         .otherwise("unclassified")) \
             .where("mapping != 'unclassified'")

@@ -1,9 +1,12 @@
 {"@timestamp": "2018-04-24T08:30:00.000Z", "mapping": "gfx", "value": 313340.0, "metric_name": "odhecx.eosstb.be.prd.stb.mapping.gfx.totalKb.avg"}
 {"@timestamp": "2018-04-24T08:30:00.000Z", "mapping": "gfx", "value": 164503.0, "metric_name": "odhecx.eosstb.be.prd.stb.mapping.gfx.peakKb.avg"}
 {"@timestamp": "2018-04-24T08:30:00.000Z", "mapping": "gfx", "value": 159803.0, "metric_name": "odhecx.eosstb.be.prd.stb.mapping.gfx.freeKb.avg"}
-{"@timestamp": "2018-04-24T08:30:00.000Z", "mapping": "picbuf0", "value": 50424.0, "metric_name": "odhecx.eosstb.be.prd.stb.mapping.picbuf0.totalKb.avg"}
-{"@timestamp": "2018-04-24T08:30:00.000Z", "mapping": "picbuf0", "value": 49919.0, "metric_name": "odhecx.eosstb.be.prd.stb.mapping.picbuf0.peakKb.avg"}
-{"@timestamp": "2018-04-24T08:30:00.000Z", "mapping": "picbuf0", "value": 504.0, "metric_name": "odhecx.eosstb.be.prd.stb.mapping.picbuf0.freeKb.avg"}
+{"@timestamp": "2018-04-24T08:30:00.000Z", "mapping": "picbuf0", "value": 87640.0, "metric_name": "odhecx.eosstb.be.prd.stb.mapping.picbuf0.totalKb.avg"}
+{"@timestamp": "2018-04-24T08:30:00.000Z", "mapping": "picbuf0", "value": 86763.0, "metric_name": "odhecx.eosstb.be.prd.stb.mapping.picbuf0.peakKb.avg"}
+{"@timestamp": "2018-04-24T08:30:00.000Z", "mapping": "picbuf0", "value": 876.0, "metric_name": "odhecx.eosstb.be.prd.stb.mapping.picbuf0.freeKb.avg"}
+{"@timestamp": "2018-04-24T08:30:00.000Z", "mapping": "picbuf1", "value": 13208.0, "metric_name": "odhecx.eosstb.be.prd.stb.mapping.picbuf1.totalKb.avg"}
+{"@timestamp": "2018-04-24T08:30:00.000Z", "mapping": "picbuf1", "value": 13075.0, "metric_name": "odhecx.eosstb.be.prd.stb.mapping.picbuf1.peakKb.avg"}
+{"@timestamp": "2018-04-24T08:30:00.000Z", "mapping": "picbuf1", "value": 132.0, "metric_name": "odhecx.eosstb.be.prd.stb.mapping.picbuf1.freeKb.avg"}
 {"@timestamp": "2018-04-24T08:30:00.000Z", "mapping": "sage_secure", "value": 32768.0, "metric_name": "odhecx.eosstb.be.prd.stb.mapping.sage_secure.totalKb.avg"}
 {"@timestamp": "2018-04-24T08:30:00.000Z", "mapping": "sage_secure", "value": 32768.0, "metric_name": "odhecx.eosstb.be.prd.stb.mapping.sage_secure.peakKb.avg"}
 {"@timestamp": "2018-04-24T08:30:00.000Z", "mapping": "sage_secure", "value": 0.0, "metric_name": "odhecx.eosstb.be.prd.stb.mapping.sage_secure.freeKb.avg"}
