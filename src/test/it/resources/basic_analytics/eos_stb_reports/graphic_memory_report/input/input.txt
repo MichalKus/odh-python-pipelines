@@ -1,0 +1,8 @@
+{"GraphicsMemoryUsage":{"mapping":"GFX","totalKb":313340,"freeKb":90868,"type":"GraphicsMemoryUsage","peakKb":244405,"ts":1524558510837},"@timestamp":"2018-04-24T08:33:12.397Z"}
+{"GraphicsMemoryUsage":{"mapping":"PICBUF0","totalKb":87640,"freeKb":876,"type":"GraphicsMemoryUsage","peakKb":86763,"ts":1524558510853},"@timestamp":"2018-04-24T08:33:12.397Z"}
+{"GraphicsMemoryUsage":{"mapping":"PICBUF1","totalKb":13208,"freeKb":132,"type":"GraphicsMemoryUsage","peakKb":13075,"ts":1524558510869},"@timestamp":"2018-04-24T08:33:12.397Z"}
+{"GraphicsMemoryUsage":{"mapping":"SAGE (SECURE)","totalKb":32768,"freeKb":0,"type":"GraphicsMemoryUsage","peakKb":32768,"ts":1524558510885},"@timestamp":"2018-04-24T08:33:12.397Z"}
+{"GraphicsMemoryUsage":{"mapping":"CRR (SECURE)","totalKb":114688,"freeKb":37847,"type":"GraphicsMemoryUsage","peakKb":83722,"ts":1524558510819},"@timestamp":"2018-04-24T08:33:12.396Z"}
+{"GraphicsMemoryUsage":{"mapping":"MAIN","totalKb":245756,"freeKb":167114,"type":"GraphicsMemoryUsage","peakKb":184317,"ts":1524558510803},"@timestamp":"2018-04-24T08:33:12.395Z"}
+{"GraphicsMemoryUsage":{"mapping":"GFX","totalKb":313340,"freeKb":228738,"type":"GraphicsMemoryUsage","peakKb":84601,"ts":1524558596604},"@timestamp":"2018-04-24T08:33:12.191Z"}
+{"GraphicsMemoryUsage":{"mapping":"CRR (SECURE)","totalKb":114688,"freeKb":37847,"type":"GraphicsMemoryUsage","peakKb":76840,"ts":1524558596584},"@timestamp":"2018-04-24T08:33:12.190Z"}
