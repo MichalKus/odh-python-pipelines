@@ -1,0 +1,10 @@
+spark:
+  appName: stb-usage-collector-report-basic-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+
+analytics:
+  componentName: be.prd.stb.flat.v1
+  watermark: '1 minutes'
+  window: '15 minutes'
