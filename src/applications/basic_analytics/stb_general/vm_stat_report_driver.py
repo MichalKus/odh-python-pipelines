@@ -31,7 +31,8 @@ class VmStatReportEventProcessor(BasicAnalyticsProcessor):
                 self.average_usage_low_priority_mode(),
                 self.average_user_active_mode(),
                 self.restarted_stbs_total_count(),
-                self.restarted_stbs_count_per_firmware()]
+                self.restarted_stbs_count_per_firmware(),
+                self.average_usage_cpu_in_wait()]
 
     @staticmethod
     def create_schema():
@@ -43,6 +44,7 @@ class VmStatReportEventProcessor(BasicAnalyticsProcessor):
                 StructField("iowaitPct", DoubleType()),
                 StructField("systemPct", DoubleType()),
                 StructField("userPct", DoubleType()),
+                StructField("nicePct", DoubleType())
             ])),
             StructField("header", StructType([
                 StructField("viewerID", StringType()),
@@ -66,16 +68,15 @@ class VmStatReportEventProcessor(BasicAnalyticsProcessor):
             .aggregate(Avg(aggregation_field="hardware_interrupt",
                            aggregation_name=self._component_name + ".average_usage"))
 
-    # Ask Alexey Pimenov about this metric
-    # def average_usage_system_mode(self):
-    #     return self._common_vm_stat_pipeline \
-    #         .select("@timestamp", col("iowaitPct")) \
-    #         .aggregate(Avg(aggregation_field="hardware_interrupt",
-    #                        aggregation_name=self._component_name))
+    def average_usage_cpu_in_wait(self):
+        return self._common_vm_stat_pipeline \
+            .select("@timestamp", col("iowaitPct").alias("hardware_in_wait")) \
+            .aggregate(Avg(aggregation_field="hardware_in_wait",
+                           aggregation_name=self._component_name + ".average_usage"))
 
     def average_usage_low_priority_mode(self):
         return self._common_vm_stat_pipeline \
-            .select("@timestamp", col("iowaitPct").alias("low_priority_mode")) \
+            .select("@timestamp", col("nicePct").alias("low_priority_mode")) \
             .aggregate(Avg(aggregation_field="low_priority_mode",
                            aggregation_name=self._component_name + ".average_usage"))
 
