@@ -376,3 +376,23 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "script_line": "4204"
             }
         )
+
+    def test_airflow_manager_scheduler_latest_with_with_action_created(self):
+        self.assert_parsing(
+            {
+                "topic": "airflowmanager_scheduler_latest",
+                "source": "any.log",
+                "message": "[2017-10-27 09:55:24,555] {models.py:4204} DagFileProcessor7191 INFO - Created <DagRun be_move_obo_linear_cycle @ 2018-04-26 13:04:00: scheduled__2018-04-26T13:04:00, externally triggered: False>"
+            },
+            {
+                "@timestamp": datetime(2017, 10, 27, 9, 55, 24, 555000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "level": "INFO",
+                "dag": "be_move_obo_linear_cycle",
+                "dag_processor": "DagFileProcessor7191",
+                "message": "Created <DagRun be_move_obo_linear_cycle @ 2018-04-26 13:04:00: scheduled__2018-04-26T13:04:00, externally triggered: False>",
+                "script": "models.py",
+                "action": "CREATE",
+                "script_line": "4204",
+                "tenant": "be"
+            }
+        )

@@ -271,7 +271,7 @@ class Airflow(object):
             ["message", "message", "message"],
             [(["arking", "failed", "DagRun"], {"status": "FAILURE", "action": "RUN"}),
              (["arking", "success", "DagRun"], {"status": "SUCCESS", "action": "RUN"}),
-             (["Created", "DagRun", "Dagrun"], {"action": "RUN"})])
+             (["Created", "DagRun", "DagRun"], {"action": "CREATE"})])
 
 
 if __name__ == "__main__":
