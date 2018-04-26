@@ -1,0 +1,8 @@
+# Collection Usage
+{"UsageCollectorReport":{"retries":3, "ts": 1514775780000},"header":{"viewerID":"000000-000000-000000000000"}}
+{"UsageCollectorReport":{"retries":0, "ts": 1514775780000},"header":{"viewerID":"000000-000000-000000000000"}}
+{"UsageCollectorReport":{"retries":4, "ts": 1514775780000},"header":{"viewerID":"100000-000000-000000000000"}}
+{"UsageCollectorReport":{"retries":1, "ts": 1514775780000},"header":{"viewerID":"000000-000000-000000000000"}}
+{"UsageCollectorReport":{"retries":1, "ts": 1514776740000},"header":{"viewerID":"100000-000000-000000000000"}}
+{"UsageCollectorReport":{"retries":1, "ts": 1514776740000},"header":{"viewerID":"200000-000000-000000000000"}}
+{"UsageCollectorReport":{"retries":1, "ts": 1514776740000},"header":{"viewerID":"300000-000000-000000000000"}}

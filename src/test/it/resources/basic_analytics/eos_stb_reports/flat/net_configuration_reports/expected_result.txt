@@ -1,0 +1,4 @@
+{"@timestamp": "2018-04-24T11:00:00.000Z", "metric_name": "stb_net_config_report.total_cpe_net_config.net_configuration_type.Ethernet.viewer_id.distinct_count", "value": 2, "net_configuration_type": "Ethernet"}
+{"@timestamp": "2018-04-24T11:00:00.000Z", "metric_name": "stb_net_config_report.total_cpe_net_config.net_configuration_type.WiFi.viewer_id.distinct_count", "value": 3, "net_configuration_type": "WiFi"}
+{"@timestamp": "2018-04-24T11:00:00.000Z", "value": 2, "net_config_enabled": "1", "metric_name": "stb_net_config_report.stb_with.net_config_enabled.1.viewer_id.distinct_count"}
+{"@timestamp": "2018-04-24T11:00:00.000Z", "value": 3, "net_config_enabled": "0", "metric_name": "stb_net_config_report.stb_with.net_config_enabled.0.viewer_id.distinct_count"}

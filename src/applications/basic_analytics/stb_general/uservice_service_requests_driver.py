@@ -10,12 +10,15 @@ from common.spark_utils.custom_functions import custom_translate_regex
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
-class USerserviceServiceRequest(BasicAnalyticsProcessor):
+class UServiceServiceRequest(BasicAnalyticsProcessor):
+    """
+    The processor implementation to calculate metrics related to UService component.
+    """
 
     def _process_pipeline(self, read_stream):
         stream = read_stream \
             .where(col("header").getItem("x-dev").isNotNull()) \
-            .withColumn("tenant", regexp_extract(col("stack"), "-(\w+)$", 1))
+            .withColumn("tenant", regexp_extract(col("stack"), r"-(\w+)$", 1))
 
         count_by_app = stream.aggregate(Count(group_fields=["tenant", "app"],
                                               aggregation_name=self._component_name + ".requests"))
@@ -23,7 +26,7 @@ class USerserviceServiceRequest(BasicAnalyticsProcessor):
         count_by_app_status = stream \
             .withColumn("status", custom_translate_regex(
                 source_field=col("status"),
-                mapping={"^2\d\d": "successful"},
+                mapping={r"^2\d\d": "successful"},
                 default_value="failure")) \
             .aggregate(Count(group_fields=["tenant", "app", "status"],
                              aggregation_name=self._component_name + ".requests"))
@@ -44,7 +47,7 @@ class USerserviceServiceRequest(BasicAnalyticsProcessor):
 
 
 def create_processor(configuration):
-    return USerserviceServiceRequest(configuration, USerserviceServiceRequest.create_schema())
+    return UServiceServiceRequest(configuration, UServiceServiceRequest.create_schema())
 
 
 if __name__ == "__main__":

@@ -6,6 +6,6 @@ spark:
 #  consoleWriter: true
 
 analytics:
-  componentName: stb_ethernet_wifi_report
+  componentName: stb_wifi_report
   watermark: '1 minutes'
   window: '10 minutes'
