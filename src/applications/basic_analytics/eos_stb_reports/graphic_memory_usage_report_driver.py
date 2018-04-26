@@ -1,12 +1,12 @@
 """
 Basic analytics driver for STB Graphic Memory usage report.
 """
-from pyspark.sql.types import StructType, StructField, StringType, TimestampType
+from pyspark.sql.types import StructType, StructField, StringType, TimestampType, LongType
 
 from common.basic_analytics.aggregations import Avg
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
-from pyspark.sql.functions import col, lower, lit, when
+from pyspark.sql.functions import col, lower, lit, when, from_unixtime
 
 
 class GraphicMemoryStbBasicAnalytics(BasicAnalyticsProcessor):
@@ -16,7 +16,8 @@ class GraphicMemoryStbBasicAnalytics(BasicAnalyticsProcessor):
 
     def _process_pipeline(self, json_stream):
         stream = json_stream \
-            .selectExpr("`@timestamp`", "GraphicsMemoryUsage.*") \
+            .selectExpr("GraphicsMemoryUsage.*") \
+            .withColumn("@timestamp", from_unixtime(col("ts") / 1000).cast(TimestampType())).drop("ts") \
             .withColumn("mapping", when(col("mapping") == "CRR (SECURE)", "crr_secure")
                         .when(col("mapping") == "GFX", "gfx")
                         .when(col("mapping") == "MAIN", "main")
@@ -35,6 +36,7 @@ class GraphicMemoryStbBasicAnalytics(BasicAnalyticsProcessor):
         return StructType([
             StructField("@timestamp", TimestampType()),
             StructField("GraphicsMemoryUsage", StructType([
+                StructField("ts", LongType()),
                 StructField("peakKb", StringType()),
                 StructField("totalKb", StringType()),
                 StructField("freeKb", StringType()),
