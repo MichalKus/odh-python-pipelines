@@ -1,6 +1,7 @@
 // count_distinct_active_stb for 2 intervals. corresponds to
 {"@timestamp": "2018-04-20T11:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.viewer_id.distinct_count", "value": 3}
-{"@timestamp": "2018-04-20T14:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.viewer_id.distinct_count", "value": 4}
+{"@timestamp": "2018-04-20T14:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.viewer_id.distinct_count", "value": 2}
+{"@timestamp": "2018-04-25T11:15:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.viewer_id.distinct_count", "value": 2}
 
 
 // count_distinct_active_stb_ethernet.
@@ -12,21 +13,23 @@
 
 
 // count_distinct_active_stb_4k_enabled.
-{"@timestamp": "2018-04-20T14:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.4k_enabled.viewer_id.distinct_count", "value": 1}
+{"@timestamp": "2018-04-25T11:15:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.4k_enabled.viewer_id.distinct_count", "value": 1}
 
 
 // count_distinct_active_stb_4k_disabled.
-{"@timestamp": "2018-04-20T14:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.4k_disabled.viewer_id.distinct_count", "value": 1}
+{"@timestamp": "2018-04-25T11:15:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.4k_disabled.viewer_id.distinct_count", "value": 1}
 
 
 // count_distinct_active_stb_per_model for 2 intervals.
 {"@timestamp": "2018-04-20T11:00:00.000Z", "model_name": "DCX960", "value": 3, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.model_name.DCX960.viewer_id.distinct_count"}
-{"@timestamp": "2018-04-20T14:30:00.000Z", "model_name": "DCX960", "value": 4, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.model_name.DCX960.viewer_id.distinct_count"}
+{"@timestamp": "2018-04-20T14:30:00.000Z", "model_name": "DCX960", "value": 2, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.model_name.DCX960.viewer_id.distinct_count"}
+{"@timestamp": "2018-04-25T11:15:00.000Z", "model_name": "DCX960", "value": 2, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.model_name.DCX960.viewer_id.distinct_count"}
 
 
 // count_distinct_active_stb_per_hw_version for 2 intervals.
 {"@timestamp": "2018-04-20T11:00:00.000Z", "hardware_version": "ARRIS-DCX960-MPA+", "value": 3, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.hardware_version.ARRIS-DCX960-MPA%2B.viewer_id.distinct_count"}
-{"@timestamp": "2018-04-20T14:30:00.000Z", "hardware_version": "ARRIS-DCX960-MPA+", "value": 4, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.hardware_version.ARRIS-DCX960-MPA%2B.viewer_id.distinct_count"}
+{"@timestamp": "2018-04-20T14:30:00.000Z", "hardware_version": "ARRIS-DCX960-MPA+", "value": 2, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.hardware_version.ARRIS-DCX960-MPA%2B.viewer_id.distinct_count"}
+{"@timestamp": "2018-04-25T11:15:00.000Z", "hardware_version": "ARRIS-DCX960-MPA+", "value": 2, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.hardware_version.ARRIS-DCX960-MPA%2B.viewer_id.distinct_count"}
 
 
 // count_distinct_active_stb_per_fw_version for 2 intervals.
@@ -34,10 +37,12 @@
 {"@timestamp": "2018-04-20T11:00:00.000Z", "version": "DCX960__-mon-prd-00.01-039-ah-AL-20180328102331-na004", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.version.DCX960__-mon-prd-00%2E01-039-ah-AL-20180328102331-na004.viewer_id.distinct_count", "value": 3}
 {"@timestamp": "2018-04-20T14:30:00.000Z", "version": "4.8_16_20180328102331_master_eos_sprint39", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.version.4%2E8_16_20180328102331_master_eos_sprint39.viewer_id.distinct_count", "value": 1}
 {"@timestamp": "2018-04-20T14:30:00.000Z", "version": "DCX960__-mon-prd-00.01-039-ah-AL-20180328102331-na004", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.version.DCX960__-mon-prd-00%2E01-039-ah-AL-20180328102331-na004.viewer_id.distinct_count", "value": 1}
-{"@timestamp": "2018-04-20T14:30:00.000Z", "version": "273_20180215092656_master_eos_sprint36", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.version.273_20180215092656_master_eos_sprint36.viewer_id.distinct_count", "value": 3}
-{"@timestamp": "2018-04-20T14:30:00.000Z", "version": "DCX960__-mon-prd-00.01-036-af-AL-20180215092656-na004", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.version.DCX960__-mon-prd-00%2E01-036-af-AL-20180215092656-na004.viewer_id.distinct_count", "value": 3}
+{"@timestamp": "2018-04-20T14:30:00.000Z", "version": "273_20180215092656_master_eos_sprint36", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.version.273_20180215092656_master_eos_sprint36.viewer_id.distinct_count", "value": 1}
+{"@timestamp": "2018-04-20T14:30:00.000Z", "version": "DCX960__-mon-prd-00.01-036-af-AL-20180215092656-na004", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.version.DCX960__-mon-prd-00%2E01-036-af-AL-20180215092656-na004.viewer_id.distinct_count", "value": 1}
+{"@timestamp": "2018-04-25T11:15:00.000Z", "version": "4.8_16_20180328102331_master_eos_sprint39", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.version.4%2E8_16_20180328102331_master_eos_sprint39.viewer_id.distinct_count", "value": 2}
+{"@timestamp": "2018-04-25T11:15:00.000Z", "version": "DCX960__-mon-prd-00.01-039-ah-AL-20180328102331-na004", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.version.DCX960__-mon-prd-00%2E01-039-ah-AL-20180328102331-na004.viewer_id.distinct_count", "value": 2}
 
 
 // count_distinct_active_stb_netflix and acount_distinct_ctive_stb_youtube providers.
-{"@timestamp": "2018-04-20T14:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.youtube.viewer_id.distinct_count", "value": 3}
 {"@timestamp": "2018-04-20T14:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.netflix.viewer_id.distinct_count", "value": 1}
+{"@timestamp": "2018-04-20T14:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.youtube.viewer_id.distinct_count", "value": 1}
