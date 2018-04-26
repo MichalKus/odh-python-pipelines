@@ -1,9 +1,9 @@
 """Module for counting live viewing report analytics metrics for EOS STB component"""
-from pyspark.sql.types import StructField, StructType, TimestampType, StringType
+from pyspark.sql.types import StructField, StructType, TimestampType, StringType, LongType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.basic_analytics.aggregations import DistinctCount, Count
-from pyspark.sql.functions import col
+from pyspark.sql.functions import col, from_unixtime
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
@@ -16,11 +16,13 @@ class StbLiveViewingReportProcessor(BasicAnalyticsProcessor):
     def _process_pipeline(self, read_stream):
 
         """
-        Extract viewerID, id, event_type from handled record ->
-        frequently used in metrics, save as protected field to ease method calls.
+        Extract viewerID from handled record header -> frequently used in metrics.
         """
-        self._read_stream = read_stream \
+        read_stream = read_stream \
             .withColumn("viewer_id", col("header").getItem("viewerID")) \
+
+        self._tuner_report_stream = read_stream \
+            .withColumn("@timestamp", from_unixtime(col("AMSLiveViewingReport.ts") / 1000).cast(TimestampType())) \
             .withColumn("id", col("AMSLiveViewingReport").getItem("id")) \
             .withColumn("event_type", col("AMSLiveViewingReport").getItem("event_type"))
 
@@ -36,26 +38,27 @@ class StbLiveViewingReportProcessor(BasicAnalyticsProcessor):
                 StructField("viewerID", StringType()),
             ])),
             StructField("AMSLiveViewingReport", StructType([
+                StructField("ts", LongType()),
                 StructField("id", StringType()),
                 StructField("event_type", StringType())
             ]))
         ])
 
     def count_distinct_event_type_by_id(self):
-        return self._read_stream \
+        return self._tuner_report_stream \
             .where("event_type = 'TUNE_IN'") \
             .aggregate(DistinctCount(group_fields=["id"],
                                      aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".tune_in"))
 
     def count_event_type_by_id(self):
-        return self._read_stream \
+        return self._tuner_report_stream \
             .where("event_type = 'TUNE_IN'") \
             .aggregate(Count(group_fields=["id"],
                              aggregation_name=self._component_name + ".tune_in"))
 
     def count_popular_channels_by_id(self):
-        return self._read_stream \
+        return self._tuner_report_stream \
             .aggregate(Count(group_fields=["id"],
                              aggregation_name=self._component_name + ".popular_channels"))
 
