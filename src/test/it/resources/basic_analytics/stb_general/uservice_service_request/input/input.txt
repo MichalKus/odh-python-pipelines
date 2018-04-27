@@ -1,5 +1,0 @@
-{"@timestamp":"2018-04-21T04:53:08.648Z","app":"recording-service","stack":"recording-service-be","header":{"x-dev":"000000-AAAAA-0000001"},"status":503}
-{"@timestamp":"2018-04-21T04:53:09.648Z","app":"recording-service","stack":"recording-service-be","status":200}
-{"@timestamp":"2018-04-21T04:53:09.648Z","app":"recording-service","stack":"recording-service-be","header":{"x-dev":"000000-AAAAA-0000001"},"status":500}
-{"@timestamp":"2018-04-21T04:53:11.648Z","app":"recording-service","stack":"recording-service-cl","header":{"x-dev":"000000-AAAAA-0000001"},"status":200}
-{"@timestamp":"2018-04-21T04:53:10.648Z","app":"recording-service","stack":"recording-service-be","header":{"x-dev":"000000-AAAAA-0000001"},"status":201}

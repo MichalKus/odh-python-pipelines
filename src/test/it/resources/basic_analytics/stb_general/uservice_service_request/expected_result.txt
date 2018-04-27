@@ -1,5 +1,0 @@
-{"@timestamp": "2018-04-21T04:53:00.000Z", "metric_name": "obo.in.eosdtv.heapp.uservices.log.v1.requests.tenant.be.app.recording-service.status.failure.count", "value": 2, "tenant": "be", "app": "recording-service", "status": "failure"}
-{"@timestamp": "2018-04-21T04:53:00.000Z", "metric_name": "obo.in.eosdtv.heapp.uservices.log.v1.requests.tenant.cl.app.recording-service.status.successful.count", "value": 1, "tenant": "cl", "app": "recording-service", "status": "successful"}
-{"@timestamp": "2018-04-21T04:53:00.000Z", "metric_name": "obo.in.eosdtv.heapp.uservices.log.v1.requests.tenant.be.app.recording-service.status.successful.count", "value": 1, "tenant": "be", "app": "recording-service", "status": "successful"}
-{"@timestamp": "2018-04-21T04:53:00.000Z", "metric_name": "obo.in.eosdtv.heapp.uservices.log.v1.requests.tenant.be.app.recording-service.count", "value": 3, "tenant": "be", "app": "recording-service"}
-{"@timestamp": "2018-04-21T04:53:00.000Z", "metric_name": "obo.in.eosdtv.heapp.uservices.log.v1.requests.tenant.cl.app.recording-service.count", "value": 1, "tenant": "cl", "app": "recording-service"}

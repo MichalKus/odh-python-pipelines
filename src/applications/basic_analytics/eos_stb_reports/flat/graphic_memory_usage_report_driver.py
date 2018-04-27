@@ -6,7 +6,7 @@ from pyspark.sql.types import StructType, StructField, StringType, TimestampType
 from common.basic_analytics.aggregations import Avg
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
-from pyspark.sql.functions import col, lower, lit, when, from_unixtime
+from pyspark.sql.functions import col, when, from_unixtime
 
 
 class GraphicMemoryStbBasicAnalytics(BasicAnalyticsProcessor):

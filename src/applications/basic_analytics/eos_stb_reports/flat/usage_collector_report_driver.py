@@ -1,5 +1,5 @@
 """
-Module for counting all general analytics metrics for EOS STB component
+Basic analytics driver for STB Usage Collector Report
 """
 from pyspark.sql.functions import col, from_unixtime
 from pyspark.sql.types import StructType, StructField, TimestampType, StringType, IntegerType, LongType
@@ -15,7 +15,8 @@ class StbUsageCollectorReportProcessor(BasicAnalyticsProcessor):
     """
 
     def _prepare_timefield(self, data_stream):
-        return data_stream.withColumn("@timestamp", from_unixtime(col("UsageCollectorReport.ts") / 1000).cast(TimestampType()))
+        return data_stream.withColumn("@timestamp",
+                                      from_unixtime(col("UsageCollectorReport.ts") / 1000).cast(TimestampType()))
 
     def _process_pipeline(self, stream):
         usage_stream = stream \
@@ -37,6 +38,9 @@ class StbUsageCollectorReportProcessor(BasicAnalyticsProcessor):
 
 
 def create_processor(configuration):
+    """
+    Method to create the instance of the processor
+    """
     return StbUsageCollectorReportProcessor(configuration, StbUsageCollectorReportProcessor.create_schema())
 
 
