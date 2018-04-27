@@ -32,7 +32,8 @@ class VmStatReportEventProcessor(BasicAnalyticsProcessor):
                 self.average_user_active_mode(),
                 self.restarted_stbs_total_count(),
                 self.restarted_stbs_count_per_firmware(),
-                self.average_usage_cpu_in_wait()]
+                self.average_usage_cpu_in_wait(),
+                self.average_usage_system_mode()]
 
     @staticmethod
     def create_schema():
@@ -66,31 +67,31 @@ class VmStatReportEventProcessor(BasicAnalyticsProcessor):
         return self._common_vm_stat_pipeline \
             .select("@timestamp", col("hwIrqPct").alias("hardware_interrupt")) \
             .aggregate(Avg(aggregation_field="hardware_interrupt",
-                           aggregation_name=self._component_name + ".average_usage"))
+                           aggregation_name=self._component_name + ".time_in_percents"))
 
     def average_usage_cpu_in_wait(self):
         return self._common_vm_stat_pipeline \
             .select("@timestamp", col("iowaitPct").alias("hardware_in_wait")) \
             .aggregate(Avg(aggregation_field="hardware_in_wait",
-                           aggregation_name=self._component_name + ".average_usage"))
+                           aggregation_name=self._component_name + ".time_in_percents"))
 
     def average_usage_low_priority_mode(self):
         return self._common_vm_stat_pipeline \
             .select("@timestamp", col("nicePct").alias("low_priority_mode")) \
             .aggregate(Avg(aggregation_field="low_priority_mode",
-                           aggregation_name=self._component_name + ".average_usage"))
+                           aggregation_name=self._component_name + ".time_in_percents"))
 
     def average_usage_system_mode(self):
         return self._common_vm_stat_pipeline \
             .select("@timestamp", col("systemPct").alias("system_mode")) \
             .aggregate(Avg(aggregation_field="system_mode",
-                           aggregation_name=self._component_name + ".average_usage"))
+                           aggregation_name=self._component_name + ".time_in_percents"))
 
     def average_user_active_mode(self):
         return self._common_vm_stat_pipeline \
             .select("@timestamp", col("userPct").alias("user_active_mode")) \
             .aggregate(Avg(aggregation_field="user_active_mode",
-                           aggregation_name=self._component_name + ".average_usage"))
+                           aggregation_name=self._component_name + ".time_in_percents"))
 
     def restarted_stbs_total_count(self):
         return self._common_vm_stat_pipeline \
