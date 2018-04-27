@@ -1,4 +1,4 @@
-from applications.basic_analytics.stb_general.stb_live_viewing_report_driver import create_processor
+from applications.basic_analytics.eos_stb_reports.flat.ams_live_viewing_report_driver import create_processor
 from test.it.core.base_spark_test_case import BaseSparkProcessorTestCase
 
 
