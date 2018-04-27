@@ -2,7 +2,7 @@ from applications.basic_analytics.eos_stb_reports.flat.applications_report_drive
 from test.it.core.base_spark_test_case import BaseSparkProcessorTestCase
 
 
-class StbApplicationsReportReportsBasicAnalyticsTestCase(BaseSparkProcessorTestCase):
+class StbApplicationsReportBasicAnalyticsTestCase(BaseSparkProcessorTestCase):
     def test_events(self):
         self._test_pipeline(
             configuration_path="test/it/resources/basic_analytics/eos_stb_reports/flat/" +

@@ -4,9 +4,10 @@ Module for counting all general analytics metrics for EOS STB BCMReport Report
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType, BooleanType, LongType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from common.basic_analytics.aggregations import DistinctCount
-from pyspark.sql.functions import col, from_unixtime
+from pyspark.sql.functions import col
 
 
 class BCMReportEventProcessor(BasicAnalyticsProcessor):
@@ -14,14 +15,12 @@ class BCMReportEventProcessor(BasicAnalyticsProcessor):
     Class that's responsible to process pipelines for BCMReport Reports
     """
     def _prepare_timefield(self, data_stream):
-        return data_stream.withColumn("@timestamp", from_unixtime(col("BCMReport.ts") / 1000).cast(TimestampType()))
+        return convert_epoch_to_iso(data_stream, "BCMReport.ts", "@timestamp")
 
     def _process_pipeline(self, read_stream):
 
         self._bcm_report_stream = read_stream \
-            .select("@timestamp",
-                    "BCMReport.*",
-                    col("header.viewerID").alias("viewer_id"))
+            .select("@timestamp", "BCMReport.*", col("header.viewerID").alias("viewer_id"))
 
         return [self.distinct_active_stb_4k_enabled(),
                 self.distinct_active_stb_4k_disabled()]
