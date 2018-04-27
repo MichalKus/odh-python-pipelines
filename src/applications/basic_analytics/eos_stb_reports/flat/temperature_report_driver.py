@@ -1,13 +1,14 @@
 """
-Module for counting all general analytics metrics for EOS STB Temperature Report
+Module for counting all general basic analytics metrics for EOS STB Temperature Report
 """
-from pyspark.sql.types import StructField, StructType, TimestampType, StringType, LongType, \
+from pyspark.sql.types import StructField, StructType, StringType, LongType, \
     FloatType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from common.basic_analytics.aggregations import Avg
-from pyspark.sql.functions import col, from_unixtime
+from pyspark.sql.functions import col
 
 
 class TemperatureReportEventProcessor(BasicAnalyticsProcessor):
@@ -16,13 +17,11 @@ class TemperatureReportEventProcessor(BasicAnalyticsProcessor):
     """
 
     def _prepare_timefield(self, data_stream):
-        return data_stream.withColumn("@timestamp",
-                                      from_unixtime(col("TemperatureReport.ts") / 1000).cast(TimestampType()))
+        return convert_epoch_to_iso(data_stream, "TemperatureReport.ts", "@timestamp")
 
     def _process_pipeline(self, read_stream):
-        self._common_wifi_pipeline = read_stream \
-            .select("@timestamp",
-                    "TemperatureReport.*")
+        self._common_temperature_pipeline = read_stream \
+            .select("@timestamp", "TemperatureReport.*")
 
         return [self.average_temperature()]
 
@@ -37,15 +36,15 @@ class TemperatureReportEventProcessor(BasicAnalyticsProcessor):
         ])
 
     def average_temperature(self):
-        return self._common_wifi_pipeline \
+        return self._common_temperature_pipeline \
             .where(col("value") >= 0) \
             .aggregate(Avg(aggregation_field="value", group_fields=["name"],
-                           aggregation_name=self._component_name + ".degrees"))
+                           aggregation_name=self._component_name + ".temperature"))
 
 
 def create_processor(configuration):
     """
-    Method to create the instance of the processor
+    Method to create the instance of the Temperature report processor
     """
     return TemperatureReportEventProcessor(configuration, TemperatureReportEventProcessor.create_schema())
 
