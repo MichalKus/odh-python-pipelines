@@ -1,7 +1,7 @@
 """
 Module for counting all general analytics metrics for EOS STB Ethernet Report
 """
-from pyspark.sql.types import StructField, StructType, TimestampType, StringType, ArrayType, IntegerType, LongType
+from pyspark.sql.types import StructField, StructType, TimestampType, StringType, IntegerType, LongType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
