@@ -1,0 +1,3 @@
+{"@timestamp": "2018-04-27T09:30:00.000Z", "name": "TUNER", "value": 20.0, "metric_name": "stb_temperature_report.degrees.name.TUNER.value.avg"}
+{"@timestamp": "2018-04-27T09:30:00.000Z", "name": "CPU", "value": 40.0, "metric_name": "stb_temperature_report.degrees.name.CPU.value.avg"}
+{"@timestamp": "2018-04-27T09:30:00.000Z", "name": "WIFI", "value": 30.0, "metric_name": "stb_temperature_report.degrees.name.WIFI.value.avg"}
