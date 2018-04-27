@@ -2,7 +2,7 @@ from applications.basic_analytics.eos_stb_reports.flat.ethernet_stats_driver imp
 from test.it.core.base_spark_test_case import BaseSparkProcessorTestCase
 
 
-class StbEthernetReportsAnalyticsTestCase(BaseSparkProcessorTestCase):
+class StbEthernetReportBasicAnalyticsTestCase(BaseSparkProcessorTestCase):
     def test_events(self):
         self._test_pipeline(
             configuration_path="test/it/resources/basic_analytics/eos_stb_reports/flat/" +
