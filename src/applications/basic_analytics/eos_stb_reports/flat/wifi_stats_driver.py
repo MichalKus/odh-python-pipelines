@@ -26,7 +26,8 @@ class WifiReportEventProcessor(BasicAnalyticsProcessor):
 
         return [self.distinct_total_wifi_network_types_count(),
                 self.wireless_average_upstream_kbps(),
-                self.wireless_average_downstream_kbps()]
+                self.wireless_average_downstream_kbps(),
+                self.count_distinct_active_stb_wifi()]
 
     @staticmethod
     def create_schema():
@@ -47,7 +48,7 @@ class WifiReportEventProcessor(BasicAnalyticsProcessor):
         return self._common_wifi_pipeline \
             .where((col("rxKbps") >= 1) | (col("txKbps") >= 1)) \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".wifi_network"))
+                                     aggregation_name=self._component_name + ".wifi_network_total"))
 
     def wireless_average_upstream_kbps(self):
         return self._common_wifi_pipeline \
@@ -60,6 +61,12 @@ class WifiReportEventProcessor(BasicAnalyticsProcessor):
             .where("rxKbps is not NULL") \
             .aggregate(Avg(aggregation_field="rxKbps",
                            aggregation_name=self._component_name + ".wireless.average_downstream_kbps"))
+
+    def count_distinct_active_stb_wifi(self):
+        return self._common_wifi_pipeline \
+            .where("rxKbps > 0") \
+            .aggregate(DistinctCount(aggregation_field="viewer_id",
+                                     aggregation_name=self._component_name + ".active_stb_wifi"))
 
 
 def create_processor(configuration):

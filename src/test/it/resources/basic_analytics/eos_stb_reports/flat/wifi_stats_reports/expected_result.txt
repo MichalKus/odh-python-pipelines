@@ -1,3 +1,4 @@
 {"@timestamp": "2018-04-24T08:30:00.000Z", "metric_name": "stb_wifi_report.wireless.average_downstream_kbps.rxKbps.avg", "value": 33.33}
 {"@timestamp": "2018-04-24T08:30:00.000Z", "metric_name": "stb_wifi_report.wireless.average_upstream_kbps.txKbps.avg", "value": 33.33}
-{"@timestamp": "2018-04-24T08:30:00.000Z", "metric_name": "stb_wifi_report.wifi_network.viewer_id.distinct_count", "value": 2}
+{"@timestamp": "2018-04-24T08:30:00.000Z", "metric_name": "stb_wifi_report.wifi_network_total.viewer_id.distinct_count", "value": 2}
+{"@timestamp": "2018-04-24T08:30:00.000Z", "metric_name": "stb_wifi_report.active_stb_wifi.viewer_id.distinct_count", "value": 1}
