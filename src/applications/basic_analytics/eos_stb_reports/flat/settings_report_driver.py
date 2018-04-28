@@ -1,12 +1,13 @@
 """
 Module for counting all general analytics metrics for EOS STB CPE SettingsReport
 """
-from pyspark.sql.types import StructField, StructType, TimestampType, StringType, ArrayType, LongType
+from pyspark.sql.types import StructField, StructType, StringType, ArrayType, LongType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from common.basic_analytics.aggregations import DistinctCount
-from pyspark.sql.functions import col, explode, from_unixtime
+from pyspark.sql.functions import col, explode
 
 
 class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
@@ -15,8 +16,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
     """
 
     def _prepare_timefield(self, data_stream):
-        return data_stream.withColumn("@timestamp",
-                                      from_unixtime(col("SettingsReport.ts") / 1000).cast(TimestampType()))
+        return convert_epoch_to_iso(data_stream, "SettingsReport.ts", "@timestamp")
 
     def _process_pipeline(self, read_stream):
         self._common_pipeline = read_stream \
@@ -228,7 +228,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
 
 def create_processor(configuration):
     """
-    Method to create the instance of the processor
+    Method to create the instance of the Settings report processor
     """
     return CpeSettingsReportEventProcessor(configuration, CpeSettingsReportEventProcessor.create_schema())
 
