@@ -27,3 +27,14 @@
 {"api_method":"cpes","@timestamp":"2018-02-14T14:19:20.000Z","host":"test1","app":"session-service","app_version":"1.1.37-PATCH3", "requested_url":"POST /session/cpes/3C36E4-EOSSTB-003475712000/vod/contents/crid:~~2F~~2Fog.libertyglobal.com~~2FCIES.tv~~2FCIeS1200000000205510,imi:e49ff4e74b043ef8ce59e79234b38ef7_824f3ae813d57028684e27af775cfc3e HTTP/1.1","duration_ms": 10,"header_x-original-uri":"/session-service/session/cpes/3C36E4-EOSSTB-003475712000/vod/contents/crid:~~2F~~2Fog.libertyglobal.com~~2FCIES.tv~~2FCIeS1200000000205510,imi:e49ff4e74b043ef8ce59e79234b38ef7_824f3ae813d57028684e27af775cfc3e","status":200}
 {"api_method":"cpes","@timestamp":"2018-02-14T14:19:30.000Z","host":"test1","app":"session-service","app_version":"1.1.37-PATCH3", "requested_url":"POST /session/cpes/3C36E4-EOSSTB-003475712000/vod/contents/crid:~~2F~~2Fog.libertyglobal.com~~2FCIES.tv~~2FCIeS1200000000205510,imi:e49ff4e74b043ef8ce59e79234b38ef7_824f3ae813d57028684e27af775cfc3e HTTP/1.1","duration_ms": 15,"header_x-original-uri":"/session-service/session/cpes/3C36E4-EOSSTB-003475712000/vod/contents/crid:~~2F~~2Fog.libertyglobal.com~~2FCIES.tv~~2FCIeS1200000000205510,imi:e49ff4e74b043ef8ce59e79234b38ef7_824f3ae813d57028684e27af775cfc3e","status":200}
 
+//service-requests
+{"@timestamp":"2018-04-21T04:53:09.648Z","app":"recording-service","stack":"recording-service-be","status":200}
+{"@timestamp":"2018-04-21T04:53:08.648Z","app":"recording-service","stack":"recording-service-be","header_x-dev":"000000-AAAAA-0000001"}
+{"@timestamp":"2018-04-21T04:53:09.648Z","app":"recording-service","stack":"recording-service-be","header_x-dev":"000000-AAAAA-0000001"}
+{"@timestamp":"2018-04-21T04:53:09.648Z","app":"discovery-service","stack":"recording-service-cl","header_x-dev":"000000-AAAAA-0000001"}
+
+//service-requests-status
+{"@timestamp":"2018-04-21T04:53:11.648Z","app":"recording-service","stack":"recording-service-cl","header_x-dev":"000000-AAAAA-0000001","status":200}
+{"@timestamp":"2018-04-21T04:53:11.648Z","app":"recording-service","stack":"recording-service-cl","header_x-dev":"000000-AAAAA-0000001","status":203}
+{"@timestamp":"2018-04-21T04:53:10.648Z","app":"recording-service","stack":"recording-service-be","header_x-dev":"000000-AAAAA-0000001","status":501}
+
