@@ -1,32 +1,28 @@
-"""Module for counting live viewing report analytics metrics for EOS STB component"""
+"""
+Module for counting all general analytics metrics for EOS STB AMSLiveViewingReport Report
+"""
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType, LongType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.basic_analytics.aggregations import DistinctCount, Count
-from pyspark.sql.functions import col, from_unixtime
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
+from common.basic_analytics.aggregations import Count, DistinctCount
+from pyspark.sql.functions import col
 
 
-class StbLiveViewingReportProcessor(BasicAnalyticsProcessor):
+class AMSLiveViewingReportEventProcessor(BasicAnalyticsProcessor):
     """
-    The processor implementation to calculate live viewing report graphite-friendly metrics.
-    (aggregations, filtering and other performance-heavy operations performed by spark)
+    Class that's responsible to process pipelines for AMSLiveViewingReport Reports
     """
+    def _prepare_timefield(self, data_stream):
+        return convert_epoch_to_iso(data_stream, "AMSLiveViewingReport.ts", "@timestamp")
 
     def _process_pipeline(self, read_stream):
 
-        """
-        Extract viewerID from handled record header -> frequently used in metrics.
-        """
-        read_stream = read_stream \
-            .withColumn("viewer_id", col("header").getItem("viewerID")) \
-
         self._tuner_report_stream = read_stream \
-            .withColumn("@timestamp", from_unixtime(col("AMSLiveViewingReport.ts") / 1000).cast(TimestampType())) \
-            .withColumn("id", col("AMSLiveViewingReport").getItem("id")) \
-            .withColumn("event_type", col("AMSLiveViewingReport").getItem("event_type"))
+            .select("@timestamp", "AMSLiveViewingReport.*", col("header.viewerID").alias("viewer_id"))
 
-        return [self.count_distinct_event_type_by_id(),
+        return [self.distinct_event_type_by_id(),
                 self.count_event_type_by_id(),
                 self.count_popular_channels_by_id()]
 
@@ -35,7 +31,7 @@ class StbLiveViewingReportProcessor(BasicAnalyticsProcessor):
         return StructType([
             StructField("@timestamp", TimestampType()),
             StructField("header", StructType([
-                StructField("viewerID", StringType()),
+                StructField("viewerID", StringType())
             ])),
             StructField("AMSLiveViewingReport", StructType([
                 StructField("ts", LongType()),
@@ -44,7 +40,7 @@ class StbLiveViewingReportProcessor(BasicAnalyticsProcessor):
             ]))
         ])
 
-    def count_distinct_event_type_by_id(self):
+    def distinct_event_type_by_id(self):
         return self._tuner_report_stream \
             .where("event_type = 'TUNE_IN'") \
             .aggregate(DistinctCount(group_fields=["id"],
@@ -65,7 +61,7 @@ class StbLiveViewingReportProcessor(BasicAnalyticsProcessor):
 
 def create_processor(configuration):
     """Method to create the instance of the processor"""
-    return StbLiveViewingReportProcessor(configuration, StbLiveViewingReportProcessor.create_schema())
+    return AMSLiveViewingReportEventProcessor(configuration, AMSLiveViewingReportEventProcessor.create_schema())
 
 
 if __name__ == "__main__":

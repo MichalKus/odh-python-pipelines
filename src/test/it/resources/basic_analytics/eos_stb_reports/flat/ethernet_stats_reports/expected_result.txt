@@ -1,3 +1,14 @@
+// distinct_active_stb_ethernet
+{"@timestamp": "2018-04-24T09:20:00.000Z", "metric_name": "stb_ethernet_report.ethernet_active.viewer_id.distinct_count", "value": 1}
+
+
+// distinct_total_ethernet_network_types_count
 {"@timestamp": "2018-04-24T09:20:00.000Z", "metric_name": "stb_ethernet_report.ethernet_network.viewer_id.distinct_count", "value": 2}
-{"@timestamp": "2018-04-24T09:20:00.000Z", "metric_name": "stb_ethernet_report.ethernet.average_downstream_kbps.rxKbps.avg", "value": 33.33}
+
+
+// ethernet_average_upstream_kbps
 {"@timestamp": "2018-04-24T09:20:00.000Z", "metric_name": "stb_ethernet_report.ethernet.average_upstream_kbps.txKbps.avg", "value": 33.33}
+
+
+// ethernet_average_downstream_kbps
+{"@timestamp": "2018-04-24T09:20:00.000Z", "metric_name": "stb_ethernet_report.ethernet.average_downstream_kbps.rxKbps.avg", "value": 33.33}

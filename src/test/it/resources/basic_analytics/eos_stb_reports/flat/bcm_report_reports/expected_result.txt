@@ -1,0 +1,6 @@
+// count_distinct_active_stb_4k_enabled.
+{"@timestamp": "2018-04-25T11:20:00.000Z", "metric_name": "stb_bcm_report.4k_enabled.viewer_id.distinct_count", "value": 1}
+
+
+// count_distinct_active_stb_4k_disabled.
+{"@timestamp": "2018-04-25T11:20:00.000Z", "metric_name": "stb_bcm_report.4k_disabled.viewer_id.distinct_count", "value": 1}
