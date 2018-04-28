@@ -1,0 +1,11 @@
+spark:
+  appName: stb_temperature_report-basic-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+#  consoleWriter: true
+
+analytics:
+  componentName: stb_temperature_report
+  watermark: '1 minutes'
+  window: '10 minutes'
