@@ -5,6 +5,7 @@ from common.kafka_pipeline import KafkaPipeline
 from common.log_parsing.composite_event_creator import CompositeEventCreator
 from common.log_parsing.dict_event_creator.event_creator import EventCreator
 from common.log_parsing.dict_event_creator.parsers.regexp_parser import RegexpParser
+from common.log_parsing.dict_event_creator.predicate_event_creator import PredicateEventCreator
 from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration, MatchField
 from common.log_parsing.dict_event_creator.mutate_event_creator import MutateEventCreator, FieldsMapping
 from common.log_parsing.log_parsing_processor import LogParsingProcessor
@@ -52,6 +53,7 @@ def create_event_creators(configuration):
         "airflowmanager_scheduler_latest": SourceConfiguration(
             CompositeEventCreator()
             .add_source_parser(Airflow.manager_scheduler_latest_event_creator(timezone_name, timezones_property))
+            .add_intermediate_result_parser(Airflow.manager_dag_status_creator())
             .add_intermediate_result_parser(Airflow.manager_dags_creator(), final=True)
             .add_intermediate_result_parser(Airflow.manager_dag_creator(), final=True)
             .add_intermediate_result_parser(Airflow.manager_dag_run_creator(), final=True),
@@ -242,26 +244,34 @@ class Airflow(object):
     @staticmethod
     def manager_dags_creator():
         return EventCreator(
-            Metadata([StringField("dag")]),
-            RegexpParser(r".*DAG?\(s\).*\['(?P<dag>.*)'\].*"),
+            Metadata([StringField("dag"), StringField("tenant")]),
+            RegexpParser(r".*DAG?\(s\).*\['(?P<dag>(?P<tenant>.*?)_.*?)'\].*"),
             SubstringMatcher("DAG(s)")
         )
 
     @staticmethod
     def manager_dag_creator():
         return EventCreator(
-            Metadata([StringField("dag")]),
-            RegexpParser(r".*<DAG:\s+(?P<dag>.*?)>\s+.*"),
+            Metadata([StringField("dag"), StringField("tenant")]),
+            RegexpParser(r".*<DAG:\s+(?P<dag>(?P<tenant>.*?)_.*?)>\s+.*"),
             SubstringMatcher("DAG:")
         )
 
     @staticmethod
     def manager_dag_run_creator():
         return EventCreator(
-            Metadata([StringField("dag")]),
-            RegexpParser(r".*<DagRun\s+(?P<dag>.*?)\s+.*"),
+            Metadata([StringField("dag"), StringField("tenant")]),
+            RegexpParser(r".*<DagRun\s+(?P<dag>(?P<tenant>.*?)_.*?)\s+.*"),
             SubstringMatcher("DagRun")
         )
+
+    @staticmethod
+    def manager_dag_status_creator():
+        return PredicateEventCreator(
+            ["message", "message", "message"],
+            [(["arking", "failed", "DagRun"], {"status": "FAILURE", "action": "RUN"}),
+             (["arking", "success", "DagRun"], {"status": "SUCCESS", "action": "RUN"}),
+             (["Created", "DagRun", "DagRun"], {"action": "CREATE"})])
 
 
 if __name__ == "__main__":

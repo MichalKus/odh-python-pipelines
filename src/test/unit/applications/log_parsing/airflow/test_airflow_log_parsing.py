@@ -196,6 +196,7 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "dag_processor": "DagFileProcessor72328",
                 "message": "DAG(s) ['be_create_obo_thumbnails_workflow'] retrieved from /usr/local/airflow/dags/be_create_obo_thumbnails_workflow.py",
                 "script": "jobs.py",
+                "tenant": "be",
                 "script_line": "1537",
                 "dag": "be_create_obo_thumbnails_workflow"
             }
@@ -214,6 +215,7 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "dag_processor": "DagFileProcessor72223",
                 "message": "Updating state for <DagRun be_create_obo_assets_transcoding_driven_workflow @ 2018-03-06 15:24:17.806572: be-crid~~3A~~2F~~2Ftelenet.be~~2F8ebcb1e0-8295-40b4-b5ee-fa6c0dd329a6-2018-03-06T15:20:50.800499, externally triggered: True> considering 20 task(s)",
                 "script": "models.py",
+                "tenant": "be",
                 "dag": "be_create_obo_assets_transcoding_driven_workflow",
                 "script_line": "4204"
             }
@@ -232,6 +234,7 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "dag_processor": "DagFileProcessor72223",
                 "message": "Skipping SLA check for <DAG: be_create_obo_assets_transcoding_driven_trigger> because no tasks in DAG have SLAs",
                 "script": "models.py",
+                "tenant": "be",
                 "dag": "be_create_obo_assets_transcoding_driven_trigger",
                 "script_line": "4204"
             }
@@ -312,5 +315,84 @@ class AirflowLogParsingTestCase(BaseMultipleMessageParsingTestCase):
                 "@timestamp": datetime(2018, 4, 16, 15, 18, 27).replace(tzinfo=pytz.utc),
                 "message": '''"GET /admin/airflow/task?execution_date=2018-04-13T14%3A33%3A05.290779&dag_id=de_create_obo_assets_workflow&task_id=failure_detector HTTP/1.1" 200 36528 "http://webserver1.airflow-prod-a.horizongo.eu/admin/taskinstance/?flt0_dag_id_contains=de_create_obo_assets_workflow&flt1_state_contains=failed&flt4_execution_date_between=2018-04-13+00%3A00%3A00+to+2018-04-13+23%3A59%3A59" "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko"''',
                 "ip": "172.31.139.17"
+            }
+        )
+
+    def test_airflow_manager_scheduler_latest_dag_status_failed(self):
+        self.assert_parsing(
+            {
+                "topic": "airflowmanager_scheduler_latest",
+                "source": "any.log",
+                "message": "[2017-10-27 09:55:24,555] {models.py:4204} DagFileProcessor7191 INFO - Deadlock; marking run <DagRun be_move_obo_linear_cycle @ 2018-04-19 03:08:00: scheduled__2018-04-19T03:08:00, externally triggered: False> failed"
+            },
+            {
+                "@timestamp": datetime(2017, 10, 27, 9, 55, 24, 555000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "level": "INFO",
+                "dag_processor": "DagFileProcessor7191",
+                "message": "Deadlock; marking run <DagRun be_move_obo_linear_cycle @ 2018-04-19 03:08:00: scheduled__2018-04-19T03:08:00, externally triggered: False> failed",
+                "script": "models.py",
+                "action": "RUN",
+                "dag": "be_move_obo_linear_cycle",
+                "status": "FAILURE",
+                "tenant": "be",
+                "script_line": "4204"
+            }
+        )
+
+    def test_airflow_manager_scheduler_latest_dag_status_success(self):
+        self.assert_parsing(
+            {
+                "topic": "airflowmanager_scheduler_latest",
+                "source": "any.log",
+                "message": "[2017-10-27 09:55:24,555] {models.py:4204} DagFileProcessor7191 INFO - Marking run <DagRun be_create_obo_assets_transcoding_driven_trigger @ 2018-04-19 07:10:00: scheduled__2018-04-19T07:10:00, externally triggered: False> successful"
+            },
+            {
+                "@timestamp": datetime(2017, 10, 27, 9, 55, 24, 555000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "level": "INFO",
+                "dag_processor": "DagFileProcessor7191",
+                "message": "Marking run <DagRun be_create_obo_assets_transcoding_driven_trigger @ 2018-04-19 07:10:00: scheduled__2018-04-19T07:10:00, externally triggered: False> successful",
+                "script": "models.py",
+                "dag": "be_create_obo_assets_transcoding_driven_trigger",
+                "status": "SUCCESS",
+                "action": "RUN",
+                "tenant": "be",
+                "script_line": "4204"
+            }
+        )
+
+    def test_airflow_manager_scheduler_latest_with_no_dag_no_status(self):
+        self.assert_parsing(
+            {
+                "topic": "airflowmanager_scheduler_latest",
+                "source": "any.log",
+                "message": "[2017-10-27 09:55:24,555] {models.py:4204} DagFileProcessor7191 INFO - Marking run <NOT_RUN_DUG be_create_obo_assets_transcoding_driven_trigger @ 2018-04-19 07:10:00: scheduled__2018-04-19T07:10:00, externally triggered: False> successful"
+            },
+            {
+                "@timestamp": datetime(2017, 10, 27, 9, 55, 24, 555000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "level": "INFO",
+                "dag_processor": "DagFileProcessor7191",
+                "message": "Marking run <NOT_RUN_DUG be_create_obo_assets_transcoding_driven_trigger @ 2018-04-19 07:10:00: scheduled__2018-04-19T07:10:00, externally triggered: False> successful",
+                "script": "models.py",
+                "script_line": "4204"
+            }
+        )
+
+    def test_airflow_manager_scheduler_latest_with_with_action_created(self):
+        self.assert_parsing(
+            {
+                "topic": "airflowmanager_scheduler_latest",
+                "source": "any.log",
+                "message": "[2017-10-27 09:55:24,555] {models.py:4204} DagFileProcessor7191 INFO - Created <DagRun be_move_obo_linear_cycle @ 2018-04-26 13:04:00: scheduled__2018-04-26T13:04:00, externally triggered: False>"
+            },
+            {
+                "@timestamp": datetime(2017, 10, 27, 9, 55, 24, 555000).replace(tzinfo=timezones["Europe/Amsterdam"]),
+                "level": "INFO",
+                "dag": "be_move_obo_linear_cycle",
+                "dag_processor": "DagFileProcessor7191",
+                "message": "Created <DagRun be_move_obo_linear_cycle @ 2018-04-26 13:04:00: scheduled__2018-04-26T13:04:00, externally triggered: False>",
+                "script": "models.py",
+                "action": "CREATE",
+                "script_line": "4204",
+                "tenant": "be"
             }
         )
