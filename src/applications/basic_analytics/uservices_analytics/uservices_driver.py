@@ -42,7 +42,7 @@ class UServicesBasycAnalytics(BasicAnalyticsProcessor):
                   aggregation_name=self._component_name))
 
         request_stream = read_stream \
-            .where(col("header").getItem("x-dev").isNotNull()) \
+            .where(col("header_x-dev").isNotNull()) \
             .withColumn("country",
                         when(col("stack").isNotNull(),
                              regexp_extract("stack", r".*-(\w+)$", 1))
@@ -75,9 +75,7 @@ class UServicesBasycAnalytics(BasicAnalyticsProcessor):
             StructField("requested_url", StringType()),
             StructField("duration_ms", StringType()),
             StructField("status", StringType()),
-            StructField("header", StructType([
-                StructField("x-dev", StringType()),
-            ]))
+            StructField("header_x-dev", StringType()),
         ])
 
 

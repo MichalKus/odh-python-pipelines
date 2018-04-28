@@ -1,11 +1,12 @@
 """
 Basic analytics driver for STB Usage Collector Report
 """
-from pyspark.sql.functions import col, from_unixtime
-from pyspark.sql.types import StructType, StructField, TimestampType, StringType, IntegerType, LongType
+from pyspark.sql.functions import col
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, LongType
 
 from common.basic_analytics.aggregations import DistinctCount
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
@@ -15,14 +16,13 @@ class StbUsageCollectorReportProcessor(BasicAnalyticsProcessor):
     """
 
     def _prepare_timefield(self, data_stream):
-        return data_stream.withColumn("@timestamp",
-                                      from_unixtime(col("UsageCollectorReport.ts") / 1000).cast(TimestampType()))
+        return convert_epoch_to_iso(data_stream, "UsageCollectorReport.ts", "@timestamp")
 
     def _process_pipeline(self, stream):
         usage_stream = stream \
+            .select("@timestamp", "UsageCollectorReport.*", col("header.viewerID").alias("viewer_id")) \
             .filter(col("UsageCollectorReport.retries") >= 1) \
-            .withColumn("viewerID", col("header").getItem("viewerID")) \
-            .aggregate(DistinctCount(aggregation_field="viewerID",
+            .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".with_retries"))
         return usage_stream
 

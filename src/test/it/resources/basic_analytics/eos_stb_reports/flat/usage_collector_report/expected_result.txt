@@ -1,2 +1,2 @@
-{"@timestamp": "2018-01-01T03:00:00.000Z", "metric_name": "be.prd.stb.flat.v1.with_retries.viewerID.distinct_count", "value": 2}
-{"@timestamp": "2018-01-01T03:15:00.000Z", "metric_name": "be.prd.stb.flat.v1.with_retries.viewerID.distinct_count", "value": 3}
+{"@timestamp": "2018-01-01T03:00:00.000Z", "metric_name": "be.prd.stb.flat.v1.with_retries.viewer_id.distinct_count", "value": 2}
+{"@timestamp": "2018-01-01T03:15:00.000Z", "metric_name": "be.prd.stb.flat.v1.with_retries.viewer_id.distinct_count", "value": 3}
