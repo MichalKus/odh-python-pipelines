@@ -1,0 +1,3 @@
+// distinct_active_stb_netflix and distinct_ctive_stb_youtube providers
+{"@timestamp": "2018-04-20T14:30:00.000Z", "metric_name": "stb_applications_report.youtube.viewer_id.distinct_count", "value": 1}
+{"@timestamp": "2018-04-20T14:30:00.000Z", "metric_name": "stb_applications_report.netflix.viewer_id.distinct_count", "value": 1}
