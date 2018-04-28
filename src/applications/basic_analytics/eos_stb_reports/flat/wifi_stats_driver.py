@@ -1,12 +1,13 @@
 """
 Module for counting all general analytics metrics for EOS STB Wifi Report
 """
-from pyspark.sql.types import StructField, StructType, TimestampType, StringType, ArrayType, IntegerType, LongType
+from pyspark.sql.types import StructField, StructType, StringType, ArrayType, IntegerType, LongType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from common.basic_analytics.aggregations import DistinctCount, Avg
-from pyspark.sql.functions import col, from_unixtime
+from pyspark.sql.functions import col
 
 
 class WifiReportEventProcessor(BasicAnalyticsProcessor):
@@ -15,7 +16,7 @@ class WifiReportEventProcessor(BasicAnalyticsProcessor):
     """
 
     def _prepare_timefield(self, data_stream):
-        return data_stream .withColumn("@timestamp", from_unixtime(col("WiFiStats.ts") / 1000).cast(TimestampType()))
+        return convert_epoch_to_iso(data_stream, "WiFiStats.ts", "@timestamp")
 
     def _process_pipeline(self, read_stream):
 
@@ -71,7 +72,7 @@ class WifiReportEventProcessor(BasicAnalyticsProcessor):
 
 def create_processor(configuration):
     """
-    Method to create the instance of the processor
+    Method to create the instance of the WiFi report processor
     """
     return WifiReportEventProcessor(configuration, WifiReportEventProcessor.create_schema())
 
