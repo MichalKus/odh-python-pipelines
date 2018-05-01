@@ -1,62 +1,61 @@
-"""Spark driver for parsing message from Poster Server component"""
+"""Spark driver for parsing message from Traxis Frontend component"""
 import sys
+from datetime import datetime
 
+from common.log_parsing.dict_event_creator.event_with_url_creator import EventWithUrlCreator
+from common.log_parsing.dict_event_creator.parsers.json_parser import JsonParser
+from common.log_parsing.dict_event_creator.predicate_event_creator import PredicateEventCreator
+from common.log_parsing.dict_event_creator.parsers.regexp_parser import RegexpParser
+from common.log_parsing.dict_event_creator.single_type_event_creator import SingleTypeEventCreator
+from common.kafka_pipeline import KafkaPipeline
+from common.log_parsing.dict_event_creator.mutate_event_creator import MutateEventCreator, FieldsMapping
+from common.log_parsing.custom_log_parsing_processor import CustomLogParsingProcessor
 from common.log_parsing.dict_event_creator.event_creator import EventCreator
 from common.log_parsing.composite_event_creator import CompositeEventCreator
-from common.log_parsing.dict_event_creator.parsers.regexp_parser import RegexpParser
-from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration, MatchField
-from common.log_parsing.matchers.matcher import SubstringMatcher
-from common.log_parsing.metadata import Metadata, StringField
+from common.log_parsing.event_creator_tree.multisource_configuration import SourceConfiguration
+from common.log_parsing.metadata import StringField, Metadata
 from common.log_parsing.timezone_metadata import ConfigurableTimestampField
-from util.kafka_pipeline_helper import start_log_parsing_pipeline
 from util.utils import Utils
 
-
-def create_event_creators(configuration=None):
+def calculate_timestamp(x, y):
     """
-    Tree of different parsers for all types of logs for poster server
-    :param configuration: YML config
-    :return: Tree of event_creators
+    Calculate present timestamp by adding startTime & elapsedTime
+    Convert epoch timestamp (ms) to datetime
+    """
+    return datetime.utcfromtimestamp(float(x + y)/1000)
+
+def create_event_creators(config):
+    """
+    Method creates configuration for UServices Component
+    :param config, configuration
+    :return: Composite event creator for UServices
     """
 
-    timezone_name = configuration.property("timezone.name")
-    timezones_property = configuration.property("timezone.priority", "dic")
+    json_event_creator = SingleTypeEventCreator(StringField(None),
+                                                JsonParser(keys_mapper=None, values_mapper=None, flatten=True,
+                                                           delimiter='_', fields_to_flat=["state", "licensing"]))
 
-    poster_server_log = EventCreator(
-        Metadata([ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f",
-                                             timezone_name, timezones_property, "@timestamp"),
-                  StringField("level"),
-                  StringField("module"),
-                  StringField("message")]),
-        RegexpParser(
-            r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\,\d{3})"
-            r"\s+(?P<level>\w+?)\s+(?P<module>\w+)\s+(?P<message>.*)"))
+    timestamp_event_creator = MutateEventCreator(None, [FieldsMapping(["startTime", "elapsedTime"], "@timestamp", calculate_timestamp)])
 
-    crid_creator = EventCreator(
-        Metadata([
-            StringField("crid")
-        ]),
-        RegexpParser(r".*(?P<crid>crid[^\\]*)",
+    tenant_crid_creator = EventCreator(Metadata([
+        StringField("country"),
+        StringField("crid")]),
+        RegexpParser(r"^.*Countries/(?P<country>[^/]*).*(?P<crid>crid[^/]*)",
                      return_empty_dict=True),
-        matcher=SubstringMatcher("crid"),
-        field_to_parse="message")
+        field_to_parse="inputs/0/url")
 
-    composite_event_creator = CompositeEventCreator() \
-        .add_source_parser(poster_server_log) \
-        .add_intermediate_result_parser(crid_creator)
-
-    return MatchField("source", {
-        "PosterServer.Error.log": SourceConfiguration(
-            composite_event_creator,
-            Utils.get_output_topic(configuration, "poster_server_error_log")
-        ),
-        "PosterServer.log": SourceConfiguration(
-            composite_event_creator,
-            Utils.get_output_topic(configuration, "poster_server_log")
-        )
-    })
+    return SourceConfiguration(
+        CompositeEventCreator()
+        .add_source_parser(json_event_creator)
+        .add_intermediate_result_parser(timestamp_event_creator)
+        .add_intermediate_result_parser(tenant_crid_creator, final=True),
+        Utils.get_output_topic(config, "transcoder_job")
+    )
 
 
 if __name__ == "__main__":
     configuration = Utils.load_config(sys.argv[:])
-    start_log_parsing_pipeline(create_event_creators)
+    KafkaPipeline(
+        configuration,
+        CustomLogParsingProcessor(configuration, create_event_creators(configuration))
+    ).start()
