@@ -1,16 +1,16 @@
 // count_distinct_event_type_by_id.
-{"@timestamp": "2018-04-25T08:45:00.000Z", "id": "natgeohd", "value": 1, "metric_name": "stb_live_viewing_report.tune_in.id.natgeohd.count"}
-{"@timestamp": "2018-04-25T08:45:00.000Z", "id": "vtmhd", "value": 1, "metric_name": "stb_live_viewing_report.tune_in.id.vtmhd.count"}
-{"@timestamp": "2018-04-25T08:45:00.000Z", "id": "mnmhits", "value": 1, "metric_name": "stb_live_viewing_report.tune_in.id.mnmhits.count"}
+{"@timestamp": "2018-04-25T08:45:00.000Z", "channel": "natgeohd", "value": 1, "metric_name": "stb_live_viewing_report.tune_in.channel.natgeohd.count"}
+{"@timestamp": "2018-04-25T08:45:00.000Z", "channel": "vtmhd", "value": 1, "metric_name": "stb_live_viewing_report.tune_in.channel.vtmhd.count"}
+{"@timestamp": "2018-04-25T08:45:00.000Z", "channel": "mnmhits", "value": 1, "metric_name": "stb_live_viewing_report.tune_in.channel.mnmhits.count"}
 
 
 // count_event_type_by_id.
-{"@timestamp": "2018-04-25T08:45:00.000Z", "id": "natgeohd", "value": 1, "metric_name": "stb_live_viewing_report.tune_in.id.natgeohd.viewer_id.distinct_count"}
-{"@timestamp": "2018-04-25T08:45:00.000Z", "id": "vtmhd", "value": 1, "metric_name": "stb_live_viewing_report.tune_in.id.vtmhd.viewer_id.distinct_count"}
-{"@timestamp": "2018-04-25T08:45:00.000Z", "id": "mnmhits", "value": 1, "metric_name": "stb_live_viewing_report.tune_in.id.mnmhits.viewer_id.distinct_count"}
+{"@timestamp": "2018-04-25T08:45:00.000Z", "channel": "natgeohd", "value": 1, "metric_name": "stb_live_viewing_report.tune_in.channel.natgeohd.viewer_id.distinct_count"}
+{"@timestamp": "2018-04-25T08:45:00.000Z", "channel": "vtmhd", "value": 1, "metric_name": "stb_live_viewing_report.tune_in.channel.vtmhd.viewer_id.distinct_count"}
+{"@timestamp": "2018-04-25T08:45:00.000Z", "channel": "mnmhits", "value": 1, "metric_name": "stb_live_viewing_report.tune_in.channel.mnmhits.viewer_id.distinct_count"}
 
 
 // count_popular_channels_by_id.
-{"@timestamp": "2018-04-25T08:45:00.000Z", "id": "natgeohd", "value": 1, "metric_name": "stb_live_viewing_report.popular_channels.id.natgeohd.count"}
-{"@timestamp": "2018-04-25T08:45:00.000Z", "id": "vtmhd", "value": 1, "metric_name": "stb_live_viewing_report.popular_channels.id.vtmhd.count"}
-{"@timestamp": "2018-04-25T08:45:00.000Z", "id": "mnmhits", "value": 1, "metric_name": "stb_live_viewing_report.popular_channels.id.mnmhits.count"}
+{"@timestamp": "2018-04-25T08:45:00.000Z", "channel": "natgeohd", "value": 1, "metric_name": "stb_live_viewing_report.popular_channels.channel.natgeohd.count"}
+{"@timestamp": "2018-04-25T08:45:00.000Z", "channel": "vtmhd", "value": 1, "metric_name": "stb_live_viewing_report.popular_channels.channel.vtmhd.count"}
+{"@timestamp": "2018-04-25T08:45:00.000Z", "channel": "mnmhits", "value": 1, "metric_name": "stb_live_viewing_report.popular_channels.channel.mnmhits.count"}
