@@ -8,6 +8,7 @@ from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
 from common.basic_analytics.aggregations import Count, Avg
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
+from common.spark_utils.custom_functions import custom_translate_regex
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 UServiceInfo = namedtuple("uService", "app api_method")
@@ -40,20 +41,41 @@ class UServicesBasycAnalytics(BasicAnalyticsProcessor):
             Count(group_fields=["country", "host", "app", "app_version", "api_method", "status"],
                   aggregation_name=self._component_name))
 
-        return [average_duration, count_by_status]
+        request_stream = read_stream \
+            .where(col("header_x-dev").isNotNull()) \
+            .withColumn("country",
+                        when(col("stack").isNotNull(),
+                             regexp_extract("stack", r".*-(\w+)$", 1))
+                        .otherwise("undefined"))
+
+        count_by_app = request_stream.aggregate(
+            Count(group_fields=["country", "app"],
+                  aggregation_name=self._component_name + ".requests"))
+
+        count_by_app_with_status = request_stream \
+            .where(col("status").isNotNull()) \
+            .withColumn("status", custom_translate_regex(
+                source_field=col("status"),
+                mapping={r"^2\d\d": "successful"},
+                default_value="failure")) \
+            .aggregate(Count(group_fields=["country", "app", "status"],
+                             aggregation_name=self._component_name + ".requests"))
+
+        return [average_duration, count_by_status, count_by_app, count_by_app_with_status]
 
     @staticmethod
     def create_schema():
         return StructType([
             StructField("@timestamp", TimestampType()),
             StructField("host", StringType()),
-            StructField("api_method",StringType()),
+            StructField("api_method", StringType()),
             StructField("stack", StringType()),
             StructField("app", StringType()),
             StructField("app_version", StringType()),
             StructField("requested_url", StringType()),
             StructField("duration_ms", StringType()),
-            StructField("status", StringType())
+            StructField("status", StringType()),
+            StructField("header_x-dev", StringType()),
         ])
 
 

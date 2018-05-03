@@ -5,8 +5,9 @@ from pyspark.sql.types import StructType, StructField, StringType, TimestampType
 
 from common.basic_analytics.aggregations import Avg
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
-from pyspark.sql.functions import col, lower, lit, when, from_unixtime
+from pyspark.sql.functions import col, when, from_unixtime
 
 
 class GraphicMemoryStbBasicAnalytics(BasicAnalyticsProcessor):
@@ -15,11 +16,11 @@ class GraphicMemoryStbBasicAnalytics(BasicAnalyticsProcessor):
     """
 
     def _prepare_timefield(self, data_stream):
-        return data_stream.selectExpr("GraphicsMemoryUsage.*") \
-            .withColumn("@timestamp", from_unixtime(col("ts") / 1000).cast(TimestampType())).drop("ts")
+        return convert_epoch_to_iso(data_stream, "GraphicsMemoryUsage.ts", "@timestamp")
 
     def _process_pipeline(self, json_stream):
         stream = json_stream \
+            .selectExpr("GraphicsMemoryUsage.*", "`@timestamp`") \
             .withColumn("mapping", when(col("mapping") == "CRR (SECURE)", "crr_secure")
                         .when(col("mapping") == "GFX", "gfx")
                         .when(col("mapping") == "MAIN", "main")

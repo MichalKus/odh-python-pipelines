@@ -1,12 +1,13 @@
 """
 Module for counting all general analytics metrics for EOS STB CPE SettingsReport
 """
-from pyspark.sql.types import StructField, StructType, TimestampType, StringType, ArrayType, LongType
+from pyspark.sql.types import StructField, StructType, StringType, ArrayType, LongType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
+from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from common.basic_analytics.aggregations import DistinctCount
-from pyspark.sql.functions import col, explode, from_unixtime
+from pyspark.sql.functions import col, explode
 
 
 class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
@@ -15,8 +16,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
     """
 
     def _prepare_timefield(self, data_stream):
-        return data_stream.withColumn("@timestamp",
-                                      from_unixtime(col("SettingsReport.ts") / 1000).cast(TimestampType()))
+        return convert_epoch_to_iso(data_stream, "SettingsReport.ts", "@timestamp")
 
     def _process_pipeline(self, read_stream):
         self._common_pipeline = read_stream \
@@ -130,7 +130,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
             .filter(col("`customer.appsOptIn`") == 'false') \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      aggregation_name=self._component_name +
-                                                      ".cpe_with_not_accepted_app_user_agreement"))
+                                     ".cpe_with_not_accepted_app_user_agreement"))
 
     def distinct_total_cpe_with_auto_subtitles_enabled(self):
         return self._common_settings_pipeline \
@@ -191,12 +191,12 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
     def distinct_cpe_with_age_restriction_enabled(self):
         return self._common_settings_pipeline \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`profile.ageLock`"],
-                                     aggregation_name=self._component_name + "cpe_with_age_restriction"))
+                                     aggregation_name=self._component_name + ".cpe_with_age_restriction"))
 
     def distinct_cpe_with_selected_audio_track_language(self):
         return self._common_settings_pipeline \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`profile.audioLang`"],
-                                     aggregation_name=self._component_name + "cpe_with_selected_audio_track_language"))
+                                     aggregation_name=self._component_name + ".cpe_with_selected_audio_track_language"))
 
     def distinct_cpe_with_selected_subtitles_track_language(self):
         return self._common_settings_pipeline \
@@ -228,7 +228,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
 
 def create_processor(configuration):
     """
-    Method to create the instance of the processor
+    Method to create the instance of the Settings report processor
     """
     return CpeSettingsReportEventProcessor(configuration, CpeSettingsReportEventProcessor.create_schema())
 
