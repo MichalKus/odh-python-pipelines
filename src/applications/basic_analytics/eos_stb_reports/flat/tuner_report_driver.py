@@ -46,11 +46,13 @@ class TunerReportEventProcessor(BasicAnalyticsProcessor):
 
     def avg_snr(self):
         return self._tuner_report_stream \
+            .where("SNR is not NULL") \
             .aggregate(Avg(aggregation_field="SNR",
                            aggregation_name=self._component_name))
 
     def avg_signal_level_dbm(self):
         return self._tuner_report_stream \
+            .where("signalLevel is not NULL") \
             .aggregate(Avg(aggregation_field="signalLevel",
                            aggregation_name=self._component_name + ".dbm"))
 
@@ -64,6 +66,7 @@ class TunerReportEventProcessor(BasicAnalyticsProcessor):
     def avg_frequency_stb_by_report_index(self):
         return self._tuner_report_stream \
             .where("locked = true") \
+            .where("frequency is not NULL") \
             .aggregate(Avg(group_fields=["index"],
                            aggregation_field="frequency",
                            aggregation_name=self._component_name + ".locked"))

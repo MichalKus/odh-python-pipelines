@@ -25,10 +25,10 @@ class WifiReportEventProcessor(BasicAnalyticsProcessor):
                     "WiFiStats.*",
                     col("header.viewerID").alias("viewer_id"))
 
-        return [self.distinct_total_wifi_network_types_count(),
+        return [self.count_distinct_active_stb_wifi(),
+                self.distinct_total_wifi_network_types_count(),
                 self.wireless_average_upstream_kbps(),
-                self.wireless_average_downstream_kbps(),
-                self.count_distinct_active_stb_wifi()]
+                self.wireless_average_downstream_kbps()]
 
     @staticmethod
     def create_schema():
@@ -45,29 +45,29 @@ class WifiReportEventProcessor(BasicAnalyticsProcessor):
             ]))
         ])
 
+    def count_distinct_active_stb_wifi(self):
+        return self._common_wifi_pipeline \
+            .where("rxKbps > 0") \
+            .aggregate(DistinctCount(aggregation_field="viewer_id",
+                                     aggregation_name=self._component_name + ".active"))
+
     def distinct_total_wifi_network_types_count(self):
         return self._common_wifi_pipeline \
             .where((col("rxKbps") > 0) | (col("txKbps") > 0)) \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".stb_with_wifi"))
+                                     aggregation_name=self._component_name + ".network"))
 
     def wireless_average_upstream_kbps(self):
         return self._common_wifi_pipeline \
             .where("txKbps is not NULL") \
             .aggregate(Avg(aggregation_field="txKbps",
-                           aggregation_name=self._component_name + ".average_upstream_kbps"))
+                           aggregation_name=self._component_name + ".upstream_kbps"))
 
     def wireless_average_downstream_kbps(self):
         return self._common_wifi_pipeline \
             .where("rxKbps is not NULL") \
             .aggregate(Avg(aggregation_field="rxKbps",
-                           aggregation_name=self._component_name + ".average_downstream_kbps"))
-
-    def count_distinct_active_stb_wifi(self):
-        return self._common_wifi_pipeline \
-            .where("rxKbps > 0") \
-            .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".active_stb_with_wifi"))
+                           aggregation_name=self._component_name + ".downstream_kbps"))
 
 
 def create_processor(configuration):
