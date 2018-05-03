@@ -22,6 +22,11 @@ class HeaderStbBasicAnalytics(BasicAnalyticsProcessor):
 
         stream = read_stream.withColumn("viewer_id", col("header").getItem("viewerID"))
 
+
+        distinct_count_viewer_id = stream \
+            .aggregate(DistinctCount(aggregation_field="viewer_id",
+                                     aggregation_name=self._component_name))
+
         distinct_count_per_software_version_stream = stream \
             .withColumn("model_name", col("header").getItem("modelName")) \
             .aggregate(DistinctCount(group_fields=["model_name"],
@@ -43,7 +48,8 @@ class HeaderStbBasicAnalytics(BasicAnalyticsProcessor):
 
         return [distinct_count_per_software_version_stream,
                 distinct_count_per_hardware_version_stream,
-                distinct_count_per_model_stream]
+                distinct_count_per_model_stream,
+                distinct_count_viewer_id]
 
     @staticmethod
     def create_schema():
