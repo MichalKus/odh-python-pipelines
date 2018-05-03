@@ -130,7 +130,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
             .filter(col("`customer.appsOptIn`") == 'false') \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      aggregation_name=self._component_name +
-                                                      ".cpe_with_not_accepted_app_user_agreement"))
+                                     ".cpe_with_not_accepted_app_user_agreement"))
 
     def distinct_total_cpe_with_auto_subtitles_enabled(self):
         return self._common_settings_pipeline \
@@ -191,12 +191,12 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
     def distinct_cpe_with_age_restriction_enabled(self):
         return self._common_settings_pipeline \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`profile.ageLock`"],
-                                     aggregation_name=self._component_name + "cpe_with_age_restriction"))
+                                     aggregation_name=self._component_name + ".cpe_with_age_restriction"))
 
     def distinct_cpe_with_selected_audio_track_language(self):
         return self._common_settings_pipeline \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`profile.audioLang`"],
-                                     aggregation_name=self._component_name + "cpe_with_selected_audio_track_language"))
+                                     aggregation_name=self._component_name + ".cpe_with_selected_audio_track_language"))
 
     def distinct_cpe_with_selected_subtitles_track_language(self):
         return self._common_settings_pipeline \
