@@ -1,4 +1,4 @@
-from pyspark.sql.functions import col, lit, when, udf
+from pyspark.sql.functions import col, lit, when, udf, regexp_extract
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType, BooleanType, ArrayType
 import re
 
@@ -71,7 +71,6 @@ class AirflowWorkerDagExec(BasicAnalyticsProcessor):
                     else:
                         return list(groups)
 
-        tenant = self._component_name.split(".")[2]
         regex_extract_udf = udf(regex_extract, ArrayType(StringType()))
 
         filtered = self._manager_filter(stream)
@@ -85,7 +84,7 @@ class AirflowWorkerDagExec(BasicAnalyticsProcessor):
             .withColumn('count', lit(1)) \
             .withColumn("tenant",
                         when((col("tenant") == "uk") | (col("tenant") == "bbc"), "gb").otherwise(col("tenant"))) \
-            .where(col("tenant") == tenant) \
+            .where(col("tenant") == self.tenant) \
             .select("@timestamp", "dag", "type", "count")
 
         return airflow_manager
@@ -95,6 +94,7 @@ class AirflowWorkerDagExec(BasicAnalyticsProcessor):
         Process stream before output
         :param stream: input stream
         """
+        self.tenant = self._component_name.split(".")[2]
 
         def remove_tenant_prefix(x):
             """
@@ -113,11 +113,21 @@ class AirflowWorkerDagExec(BasicAnalyticsProcessor):
 
         airflow_worker_dag = stream \
             .where(col("dag").isNotNull()) \
-            .withColumn("dag", remove_prefix_udf(col("dag"))) \
+            .withColumn("dag", remove_prefix_udf(col("dag")))
+
+        dag_execution = airflow_worker_dag \
             .withColumn('count', lit(1)) \
             .select("@timestamp", "dag", "hostname", "task", "count")
 
-        return [self._manager_process(stream), airflow_worker_dag]
+        ingested_vod_assets = airflow_worker_dag \
+            .where(col("dag") == "create_obo_assets_transcoding_driven_workflow") \
+            .where(col("task") == "transcode_assets") \
+            .where(~ col("message").startswith("Task%20exited%20with")) \
+            .withColumn("exit_code", regexp_extract("message", r"Task exited with return code (.*)", 1)) \
+            .withColumn('tasks', lit(1)) \
+            .select("@timestamp", "dag", "hostname", "task", "exit_code")
+
+        return [self._manager_process(stream), dag_execution, ingested_vod_assets]
 
     def _agg_airflow_manager(self, streams):
         """
@@ -131,10 +141,14 @@ class AirflowWorkerDagExec(BasicAnalyticsProcessor):
         agg_worker = Count(group_fields=["dag", "hostname", "task"], aggregation_field="count",
                             aggregation_name=self._component_name + ".worker")
 
+        agg_asset_ingest = Count(group_fields=["dag", "hostname", "task", "exit_code"], aggregation_field="tasks",
+                           aggregation_name=self._component_name + ".worker")
+
         manager = streams[0].aggregate(agg_manager)
         worker = streams[1].aggregate(agg_worker)
+        asset_ingest = streams[2].aggregate(agg_asset_ingest)
 
-        return [manager, worker]
+        return [manager, worker, asset_ingest]
 
     def _process_pipeline(self, read_stream):
         """
