@@ -201,22 +201,28 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
 
     def distinct_cpe_with_selected_audio_track_language(self):
         return self._common_settings_pipeline \
-            .where("`profile.audioLang` is not NULL") \
-            .withColumn("profile_audio_lang", col("`profile.audioLang`")) \
+            .select("@timestamp",
+                    col("`profile.audioLang`").alias("profile_audio_lang"),
+                    "viewer_id") \
+            .where("profile_audio_lang is not NULL") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["profile_audio_lang"],
                                      aggregation_name=self._component_name + ".cpe_with_selected_audio_track_language"))
 
     def distinct_cpe_with_selected_subtitles_track_language(self):
         return self._common_settings_pipeline \
-            .where("`profile.subLang` is not NULL") \
-            .withColumn("profile_sub_lang", col("`profile.subLang`")) \
+            .select("@timestamp",
+                    col("`profile.subLang`").alias("profile_sub_lang"),
+                    "viewer_id") \
+            .where("profile_sub_lang is not NULL") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["profile_sub_lang"],
                                      aggregation_name=self._component_name + ".cpe_with_selected_subtitles"))
 
     def distinct_cpe_factory_reset_report(self):
         return self._common_settings_pipeline \
-            .where("`cpe.factoryResetState` is not NULL") \
-            .withColumn("cpe_factory_reset_state", col("`cpe.factoryResetState`")) \
+            .select("@timestamp",
+                    col("`cpe.factoryResetState`").alias("cpe_factory_reset_state"),
+                    "viewer_id") \
+            .where("cpe_factory_reset_state is not NULL") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["cpe_factory_reset_state"],
                                      aggregation_name=self._component_name + ".cpe_factory_reset_report"))
 
