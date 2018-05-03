@@ -46,25 +46,25 @@ class EthernetReportEventProcessor(BasicAnalyticsProcessor):
         return self._ethernet_stream \
             .where(col("rxKbps") > 0) \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".ethernet_active"))
+                                     aggregation_name=self._component_name + ".active"))
 
     def distinct_total_ethernet_network_types_count(self):
         return self._ethernet_stream \
             .where((col("rxKbps") >= 1) | (col("txKbps") >= 1)) \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".ethernet_network"))
+                                     aggregation_name=self._component_name + ".network"))
 
     def ethernet_average_upstream_kbps(self):
         return self._ethernet_stream \
             .where("txKbps is not NULL") \
             .aggregate(Avg(aggregation_field="txKbps",
-                           aggregation_name=self._component_name + ".ethernet.average_upstream_kbps"))
+                           aggregation_name=self._component_name + "upstream_kbps"))
 
     def ethernet_average_downstream_kbps(self):
         return self._ethernet_stream \
             .where("rxKbps is not NULL") \
             .aggregate(Avg(aggregation_field="rxKbps",
-                           aggregation_name=self._component_name + ".ethernet.average_downstream_kbps"))
+                           aggregation_name=self._component_name + ".downstream_kbps"))
 
 
 def create_processor(configuration):
