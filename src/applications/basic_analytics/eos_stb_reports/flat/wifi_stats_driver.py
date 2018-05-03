@@ -47,7 +47,7 @@ class WifiReportEventProcessor(BasicAnalyticsProcessor):
 
     def distinct_total_wifi_network_types_count(self):
         return self._common_wifi_pipeline \
-            .where((col("rxKbps") >= 1) | (col("txKbps") >= 1)) \
+            .where((col("rxKbps") > 0) | (col("txKbps") > 0)) \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".stb_with_wifi"))
 
