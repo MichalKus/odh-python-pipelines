@@ -52,7 +52,7 @@ class NetConfigurationReportEventProcessor(BasicAnalyticsProcessor):
         return self._common_net_configuration_pipeline \
             .where("net_config_enabled is not NULL") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["net_config_enabled"],
-                                     aggregation_name=self._component_name+".stb_with"))
+                                     aggregation_name=self._component_name))
 
     def total_cpe_net_config_for_wifi_ethernet_channels(self):
         return self._common_net_configuration_pipeline \
