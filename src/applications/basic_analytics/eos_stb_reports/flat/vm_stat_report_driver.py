@@ -36,7 +36,8 @@ class VmStatReportEventProcessor(BasicAnalyticsProcessor):
                 self.restarted_stbs_total_count(),
                 self.restarted_stbs_count_per_firmware(),
                 self.average_usage_cpu_in_wait(),
-                self.average_usage_system_mode()]
+                self.average_usage_system_mode(),
+                self.average_software_interrupt()]
 
     @staticmethod
     def create_schema():
@@ -46,6 +47,7 @@ class VmStatReportEventProcessor(BasicAnalyticsProcessor):
                 StructField("uptime", IntegerType()),
                 StructField("hwIrqPct", DoubleType()),
                 StructField("iowaitPct", DoubleType()),
+                StructField("swIrqPct", DoubleType()),
                 StructField("systemPct", DoubleType()),
                 StructField("userPct", DoubleType()),
                 StructField("nicePct", DoubleType())
@@ -62,9 +64,9 @@ class VmStatReportEventProcessor(BasicAnalyticsProcessor):
 
     def average_uptime_across_stb(self):
         return self._common_vm_stat_pipeline \
-            .select("@timestamp", "uptime") \
-            .aggregate(Avg(aggregation_field="uptime",
-                           aggregation_name=self._component_name + ".uptime_across_stb"))
+            .select("@timestamp", col("uptime").alias("uptime_sec")) \
+            .aggregate(Avg(aggregation_field="uptime_sec",
+                           aggregation_name=self._component_name))
 
     def average_usage_hardware_interrupt(self):
         return self._common_vm_stat_pipeline \
@@ -94,6 +96,12 @@ class VmStatReportEventProcessor(BasicAnalyticsProcessor):
         return self._common_vm_stat_pipeline \
             .select("@timestamp", col("userPct").alias("user_active_mode")) \
             .aggregate(Avg(aggregation_field="user_active_mode",
+                           aggregation_name=self._component_name + self._time_in_percents))
+
+    def average_software_interrupt(self):
+        return self._common_vm_stat_pipeline \
+            .select("@timestamp", col("swIrqPct").alias("software_interrupt")) \
+            .aggregate(Avg(aggregation_field="software_interrupt",
                            aggregation_name=self._component_name + self._time_in_percents))
 
     def restarted_stbs_total_count(self):

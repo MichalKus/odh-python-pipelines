@@ -1,4 +1,4 @@
-{"@timestamp": "2018-04-25T07:30:00.000Z", "metric_name": "stb_general.vm_stat.uptime_across_stb.uptime.avg", "value": 3.0}
+{"@timestamp": "2018-04-25T07:30:00.000Z", "metric_name": "stb_general.vm_stat.uptime_sec.avg", "value": 3.0}
 {"@timestamp": "2018-04-25T07:30:00.000Z", "metric_name": "stb_general.vm_stat.restarted_stbs.viewer_id.distinct_count", "value": 3}
 {"@timestamp": "2018-04-25T07:30:00.000Z", "metric_name": "stb_general.vm_stat.time_in_percents.low_priority_mode.avg", "value": 0.27}
 {"@timestamp": "2018-04-25T07:30:00.000Z", "value": 3, "software_version": "4.8_16_20180328102331_master_eos_sprint39", "metric_name": "stb_general.vm_stat.restarted_stbs_per_frimware.software_version.4%2E8_16_20180328102331_master_eos_sprint39.viewer_id.distinct_count"}
@@ -7,3 +7,4 @@
 {"@timestamp": "2018-04-25T07:30:00.000Z", "metric_name": "stb_general.vm_stat.time_in_percents.hardware_interrupt.avg", "value": 0.27}
 {"@timestamp": "2018-04-25T07:30:00.000Z", "metric_name": "stb_general.vm_stat.time_in_percents.hardware_in_wait.avg", "value": 4.67}
 {"@timestamp": "2018-04-25T07:30:00.000Z", "metric_name": "stb_general.vm_stat.time_in_percents.system_mode.avg", "value": 4.44}
+{"@timestamp": "2018-04-25T07:30:00.000Z", "metric_name": "stb_general.vm_stat.time_in_percents.software_interrupt.avg", "value": 0.65}
