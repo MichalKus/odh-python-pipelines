@@ -58,7 +58,7 @@ class EthernetReportEventProcessor(BasicAnalyticsProcessor):
         return self._ethernet_stream \
             .where("txKbps is not NULL") \
             .aggregate(Avg(aggregation_field="txKbps",
-                           aggregation_name=self._component_name + "upstream_kbps"))
+                           aggregation_name=self._component_name + ".upstream_kbps"))
 
     def ethernet_average_downstream_kbps(self):
         return self._ethernet_stream \
