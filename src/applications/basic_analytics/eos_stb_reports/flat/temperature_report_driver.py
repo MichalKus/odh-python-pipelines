@@ -21,7 +21,9 @@ class TemperatureReportEventProcessor(BasicAnalyticsProcessor):
 
     def _process_pipeline(self, read_stream):
         self._common_temperature_pipeline = read_stream \
-            .select("@timestamp", "TemperatureReport.*")
+            .select("@timestamp",
+                    col("TemperatureReport.name").alias("name"),
+                    col("TemperatureReport.value").alias("temperature"))
 
         return [self.average_temperature()]
 
@@ -37,9 +39,9 @@ class TemperatureReportEventProcessor(BasicAnalyticsProcessor):
 
     def average_temperature(self):
         return self._common_temperature_pipeline \
-            .where(col("value") >= 0) \
-            .aggregate(Avg(aggregation_field="value", group_fields=["name"],
-                           aggregation_name=self._component_name + ".temperature"))
+            .where(col("temperature") >= 0) \
+            .aggregate(Avg(aggregation_field="temperature", group_fields=["name"],
+                           aggregation_name=self._component_name))
 
 
 def create_processor(configuration):
