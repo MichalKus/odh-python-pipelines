@@ -50,7 +50,7 @@ class EthernetReportEventProcessor(BasicAnalyticsProcessor):
 
     def distinct_total_ethernet_network_types_count(self):
         return self._ethernet_stream \
-            .where((col("rxKbps") >= 1) | (col("txKbps") >= 1)) \
+            .where((col("rxKbps") > 0) | (col("txKbps") > 0)) \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".ethernet_network"))
 
