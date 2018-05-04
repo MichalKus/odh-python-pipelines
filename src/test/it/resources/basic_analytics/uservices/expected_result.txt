@@ -34,3 +34,8 @@
 {"@timestamp": "2018-04-21T04:53:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.uservices.requests.country.be.app.recording-service.count", "value": 3, "country": "be", "app": "recording-service"}
 {"@timestamp": "2018-04-21T04:53:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.uservices.requests.country.cl.app.recording-service.count", "value": 2, "country": "cl", "app": "recording-service"}
 {"@timestamp": "2018-04-21T04:53:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.uservices.requests.country.cl.app.discovery-service.count", "value": 1, "country": "cl", "app": "discovery-service"}
+
+{"@timestamp": "2018-04-21T04:53:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.uservices.requests.country.be.header_x-dev.000000-AAAAA-0000001.count", "value": 3, "header_x-dev": "000000-AAAAA-0000001", "country": "be"}
+{"@timestamp": "2018-04-21T04:53:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.uservices.requests.country.cl.header_x-dev.000000-AAAAA-0000005.count", "value": 1, "header_x-dev": "000000-AAAAA-0000005", "country": "cl"}
+{"@timestamp": "2018-04-21T04:53:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.uservices.requests.country.cl.header_x-dev.000000-AAAAA-0000003.count", "value": 1, "header_x-dev": "000000-AAAAA-0000003", "country": "cl"}
+{"@timestamp": "2018-04-21T04:53:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.uservices.requests.country.cl.header_x-dev.000000-AAAAA-0000001.count", "value": 1, "header_x-dev": "000000-AAAAA-0000001", "country": "cl"}
