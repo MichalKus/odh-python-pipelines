@@ -61,7 +61,11 @@ class UServicesBasycAnalytics(BasicAnalyticsProcessor):
             .aggregate(Count(group_fields=["country", "app", "status"],
                              aggregation_name=self._component_name + ".requests"))
 
-        return [average_duration, count_by_status, count_by_app, count_by_app_with_status]
+        count_stb_requests = request_stream \
+            .aggregate(Count(group_fields=["country", "header_x-dev"],
+                             aggregation_name=self._component_name + ".requests"))
+
+        return [average_duration, count_by_status, count_stb_requests, count_by_app, count_by_app_with_status]
 
     @staticmethod
     def create_schema():

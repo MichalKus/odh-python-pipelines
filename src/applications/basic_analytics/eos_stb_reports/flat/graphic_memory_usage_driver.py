@@ -1,13 +1,13 @@
 """
 Basic analytics driver for STB Graphic Memory usage report.
 """
-from pyspark.sql.types import StructType, StructField, StringType, TimestampType, LongType
+from pyspark.sql.functions import col, when
+from pyspark.sql.types import StructType, StructField, StringType, LongType
 
 from common.basic_analytics.aggregations import Avg
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
-from pyspark.sql.functions import col, when, from_unixtime
 
 
 class GraphicMemoryStbBasicAnalytics(BasicAnalyticsProcessor):
