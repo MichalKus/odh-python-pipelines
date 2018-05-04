@@ -41,8 +41,8 @@ class HeaderStbBasicAnalytics(BasicAnalyticsProcessor):
 
         distinct_count_per_model_stream = stream \
             .withColumn("software_versions", explode(col("header").getItem("softwareVersions"))) \
-            .withColumn("version", col("software_versions").getItem("version")) \
-            .aggregate(DistinctCount(group_fields=["version"],
+            .withColumn("software_version", col("software_versions").getItem("version")) \
+            .aggregate(DistinctCount(group_fields=["software_version"],
                                      aggregation_field="viewer_id",
                                      aggregation_name=self._component_name))
 
