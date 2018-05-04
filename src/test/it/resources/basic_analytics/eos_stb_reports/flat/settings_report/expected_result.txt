@@ -3,35 +3,14 @@
 {"@timestamp": "2018-04-20T11:30:00.000Z", "value": 1, "profile_audio_lang": "German", "metric_name": "stb_cpe_settings_report.cpe_with_selected_audio_track_language.profile_audio_lang.German.viewer_id.distinct_count"}
 {"@timestamp": "2018-04-20T11:30:00.000Z", "value": 2, "profile_audio_lang": "", "metric_name": "stb_cpe_settings_report.cpe_with_selected_audio_track_language.profile_audio_lang.EMPTY.viewer_id.distinct_count"}
 {"@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_reporting_active_standby.viewer_id.distinct_count", "value": 2}
-{"settings_items": "about", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_count_recently_used_settings_items.settings_items.about.viewer_id.distinct_count", "value": 2}
-{"settings_items": "hdmiResolution", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_count_recently_used_settings_items.settings_items.hdmiResolution.viewer_id.distinct_count", "value": 2}
-{"settings_items": "changeConnectionType", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_count_recently_used_settings_items.settings_items.changeConnectionType.viewer_id.distinct_count", "value": 2}
-{"settings_items": "diagnostics", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_count_recently_used_settings_items.settings_items.diagnostics.viewer_id.distinct_count", "value": 2}
-{"settings_items": "audioDescription", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_count_recently_used_settings_items.settings_items.audioDescription.viewer_id.distinct_count", "value": 2}
-{"settings_items": "subtitleLanguage", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_count_recently_used_settings_items.settings_items.subtitleLanguage.viewer_id.distinct_count", "value": 2}
-{"settings_items": "subtitleOptions", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_count_recently_used_settings_items.settings_items.subtitleOptions.viewer_id.distinct_count", "value": 2}
-{"settings_items": "ageLock", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_count_recently_used_settings_items.settings_items.ageLock.viewer_id.distinct_count", "value": 2}
-{"settings_items": "changePin", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_count_recently_used_settings_items.settings_items.changePin.viewer_id.distinct_count", "value": 2}
-{"settings_items": "audioLanguage", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_count_recently_used_settings_items.settings_items.audioLanguage.viewer_id.distinct_count", "value": 2}
-{"settings_items": "standByMode", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_count_recently_used_settings_items.settings_items.standByMode.viewer_id.distinct_count", "value": 2}
-{"settings_items": "lockChannels", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_count_recently_used_settings_items.settings_items.lockChannels.viewer_id.distinct_count", "value": 2}
 {"@timestamp": "2018-04-20T11:30:00.000Z", "profile_age_lock": "16", "metric_name": "stb_cpe_settings_report.cpe_with_age_restriction.profile_age_lock.16.viewer_id.distinct_count", "value": 1}
 {"@timestamp": "2018-04-20T11:30:00.000Z", "profile_age_lock": "-1", "metric_name": "stb_cpe_settings_report.cpe_with_age_restriction.profile_age_lock.-1.viewer_id.distinct_count", "value": 2}
 {"@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_with_subtitles_disabled.viewer_id.distinct_count", "value": 1}
 {"@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpeReporting_settings_data.viewer_id.distinct_count", "value": 2}
 {"@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_with_personalized_suggestions.viewer_id.distinct_count", "value": 2}
-{"metric_name": "stb_cpe_settings_report.cpe_count_with_upgrade_status.cpe_country.be.upgrade_status.upToDate.viewer_id.distinct_count", "@timestamp": "2018-04-20T11:30:00.000Z", "value": 2, "cpe_country": "be", "upgrade_status": "upToDate"}
-{"metric_name": "stb_cpe_settings_report.cpe_count_with_upgrade_status.cpe_country.nl.upgrade_status.upToDate.viewer_id.distinct_count", "@timestamp": "2018-04-20T11:30:00.000Z", "value": 2, "cpe_country": "nl", "upgrade_status": "upToDate"}
-{"metric_name": "stb_cpe_settings_report.cpe_count_with_upgrade_status.cpe_country.be.upgrade_status.applied.viewer_id.distinct_count", "@timestamp": "2018-04-20T11:30:00.000Z", "value": 1, "cpe_country": "be", "upgrade_status": "applied"}
-{"@timestamp": "2018-04-20T11:30:00.000Z", "profile_sub_lang": "German", "metric_name": "stb_cpe_settings_report.cpe_with_selected_subtitles.profile_sub_lang.German.viewer_id.distinct_count", "value": 1}
-{"@timestamp": "2018-04-20T11:30:00.000Z", "profile_sub_lang": "nl", "metric_name": "stb_cpe_settings_report.cpe_with_selected_subtitles.profile_sub_lang.nl.viewer_id.distinct_count", "value": 2}
-{"@timestamp": "2018-04-20T11:30:00.000Z", "value": 2, "cpe_country": "be", "metric_name": "stb_cpe_settings_report.cpe_with_country.cpe_country.be.viewer_id.distinct_count"}
-{"@timestamp": "2018-04-20T11:30:00.000Z", "value": 2, "cpe_country": "nl", "metric_name": "stb_cpe_settings_report.cpe_with_country.cpe_country.nl.viewer_id.distinct_count"}
 {"@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_with_subtitles_enabled.viewer_id.distinct_count", "value": 2}
 {"@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_with_audio_dolby_digital.viewer_id.distinct_count", "value": 2}
 {"@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_with_not_accepted_app_user_agreement.viewer_id.distinct_count", "value": 1}
-{"@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_factory_reset_report.cpe_factory_reset_state.started.viewer_id.distinct_count", "value": 1, "cpe_factory_reset_state": "started"}
-{"@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_factory_reset_report.cpe_factory_reset_state.initial.viewer_id.distinct_count", "value": 2, "cpe_factory_reset_state": "initial"}
 {"@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_with_hdmi_cec_active.viewer_id.distinct_count", "value": 2}
 {"@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_reporting_cold_standby.viewer_id.distinct_count", "value": 1}
 {"@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.cpe_reporting_lukewarm_standby.viewer_id.distinct_count", "value": 2}
@@ -40,4 +19,23 @@
 {"@timestamp": "2018-04-20T11:30:00.000Z", "is_paired": "true", "brand": "LG", "metric_name": "stb_cpe_settings_report.audio_brands_paired_with_each_cpe.is_paired.true.brand.LG.viewer_id.distinct_count", "value": 1}
 {"@timestamp": "2018-04-20T11:30:00.000Z", "is_paired": "false", "brand": "LG", "metric_name": "stb_cpe_settings_report.audio_brands_paired_with_each_cpe.is_paired.false.brand.LG.viewer_id.distinct_count", "value": 2}
 {"@timestamp": "2018-04-20T11:30:00.000Z", "is_paired": "false", "brand": "unknown_brands", "metric_name": "stb_cpe_settings_report.audio_brands_paired_with_each_cpe.is_paired.false.brand.unknown_brands.viewer_id.distinct_count", "value": 1}
+{"metric_name": "stb_cpe_settings_report.cpe_count_with_upgrade_status.cpe_country.be.upgrade_status.upToDate.viewer_id.distinct_count", "@timestamp": "2018-04-20T11:30:00.000Z", "value": 2, "cpe_country": "be", "upgrade_status": "upToDate"}
+{"metric_name": "stb_cpe_settings_report.cpe_count_with_upgrade_status.cpe_country.nl.upgrade_status.upToDate.viewer_id.distinct_count", "@timestamp": "2018-04-20T11:30:00.000Z", "value": 2, "cpe_country": "nl", "upgrade_status": "upToDate"}
+{"metric_name": "stb_cpe_settings_report.cpe_count_with_upgrade_status.cpe_country.be.upgrade_status.applied.viewer_id.distinct_count", "@timestamp": "2018-04-20T11:30:00.000Z", "value": 1, "cpe_country": "be", "upgrade_status": "applied"}
+{"@timestamp": "2018-04-20T11:30:00.000Z", "profile_sub_lang": "German", "metric_name": "stb_cpe_settings_report.cpe_with_selected_subtitles_language.profile_sub_lang.German.viewer_id.distinct_count", "value": 1}
+{"@timestamp": "2018-04-20T11:30:00.000Z", "profile_sub_lang": "nl", "metric_name": "stb_cpe_settings_report.cpe_with_selected_subtitles_language.profile_sub_lang.nl.viewer_id.distinct_count", "value": 2}
+{"settings_items": "about", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.recently_used.settings_items.about.viewer_id.distinct_count", "value": 2}
+{"settings_items": "hdmiResolution", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.recently_used.settings_items.hdmiResolution.viewer_id.distinct_count", "value": 2}
+{"settings_items": "changeConnectionType", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.recently_used.settings_items.changeConnectionType.viewer_id.distinct_count", "value": 2}
+{"settings_items": "diagnostics", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.recently_used.settings_items.diagnostics.viewer_id.distinct_count", "value": 2}
+{"settings_items": "audioDescription", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.recently_used.settings_items.audioDescription.viewer_id.distinct_count", "value": 2}
+{"settings_items": "subtitleLanguage", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.recently_used.settings_items.subtitleLanguage.viewer_id.distinct_count", "value": 2}
+{"settings_items": "subtitleOptions", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.recently_used.settings_items.subtitleOptions.viewer_id.distinct_count", "value": 2}
+{"settings_items": "ageLock", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.recently_used.settings_items.ageLock.viewer_id.distinct_count", "value": 2}
+{"settings_items": "changePin", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.recently_used.settings_items.changePin.viewer_id.distinct_count", "value": 2}
+{"settings_items": "audioLanguage", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.recently_used.settings_items.audioLanguage.viewer_id.distinct_count", "value": 2}
+{"settings_items": "standByMode", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.recently_used.settings_items.standByMode.viewer_id.distinct_count", "value": 2}
+{"settings_items": "lockChannels", "@timestamp": "2018-04-20T11:30:00.000Z", "metric_name": "stb_cpe_settings_report.recently_used.settings_items.lockChannels.viewer_id.distinct_count", "value": 2}
+{"@timestamp": "2018-04-20T11:30:00.000Z", "cpe_factory_reset_state": "started", "metric_name": "stb_cpe_settings_report.cpe_factory_reset_state.started.viewer_id.distinct_count", "value": 1}
+{"@timestamp": "2018-04-20T11:30:00.000Z", "cpe_factory_reset_state": "initial", "metric_name": "stb_cpe_settings_report.cpe_factory_reset_state.initial.viewer_id.distinct_count", "value": 2}
 
