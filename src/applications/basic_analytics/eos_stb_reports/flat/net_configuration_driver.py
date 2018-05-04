@@ -24,8 +24,8 @@ class NetConfigurationReportEventProcessor(BasicAnalyticsProcessor):
                     explode("NetConfiguration.ifaces").alias("ifaces"),
                     col("header.viewerID").alias("viewer_id")) \
             .select("@timestamp",
-                    col("ifaces.enabled").alias("net_config_enabled"),
-                    col("ifaces.type").alias("net_configuration_type"),
+                    col("ifaces.enabled").alias("enabled"),
+                    col("ifaces.type").alias("type"),
                     col("viewer_id"))
 
         return [self.distinct_total_net_config_enabled(),
@@ -50,15 +50,15 @@ class NetConfigurationReportEventProcessor(BasicAnalyticsProcessor):
 
     def distinct_total_net_config_enabled(self):
         return self._common_net_configuration_pipeline \
-            .where("net_config_enabled is not NULL") \
-            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["net_config_enabled"],
+            .where("enabled is not NULL") \
+            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["enabled"],
                                      aggregation_name=self._component_name))
 
     def total_cpe_net_config_for_wifi_ethernet_channels(self):
         return self._common_net_configuration_pipeline \
-            .where("net_configuration_type is not NULL") \
-            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["net_configuration_type"],
-                                     aggregation_name=self._component_name+".total_cpe_net_config"))
+            .where("type is not NULL") \
+            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["type"],
+                                     aggregation_name=self._component_name))
 
 
 def create_processor(configuration):
