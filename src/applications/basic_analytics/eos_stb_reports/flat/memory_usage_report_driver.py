@@ -25,8 +25,7 @@ class MemoryUsageReportEventProcessor(BasicAnalyticsProcessor):
 
         return [self.avg_memory_used_kb(),
                 self.avg_memory_cached_kb(),
-                self.avg_memory_free_kb(),
-                self.avg_memory_used_kb_by_viewer_id()]
+                self.avg_memory_free_kb()]
 
     @staticmethod
     def create_schema():
@@ -59,13 +58,6 @@ class MemoryUsageReportEventProcessor(BasicAnalyticsProcessor):
         return self._memory_usage_report_stream \
             .where("freeKb is not NULL") \
             .aggregate(Avg(aggregation_field="freeKb",
-                           aggregation_name=self._component_name))
-
-    def avg_memory_used_kb_by_viewer_id(self):
-        return self._memory_usage_report_stream \
-            .where("usedKb is not NULL") \
-            .aggregate(Avg(group_fields=["viewer_id"],
-                           aggregation_field="usedKb",
                            aggregation_name=self._component_name))
 
 
