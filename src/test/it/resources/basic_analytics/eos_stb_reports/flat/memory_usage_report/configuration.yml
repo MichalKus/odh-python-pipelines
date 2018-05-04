@@ -1,0 +1,10 @@
+spark:
+  appName: memory_usage_report-basic-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+
+analytics:
+  componentName: memory_usage_report
+  watermark: '15 minutes'
+  window: '15 minutes'

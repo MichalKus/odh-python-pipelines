@@ -24,7 +24,7 @@ class ApplicationsReportEventProcessor(BasicAnalyticsProcessor):
 
         return [self.distinct_active_stb_netflix(),
                 self.distinct_active_stb_youtube(),
-                self.distinct_active_stb_all()]
+                self.distinct_active_stb_app_started()]
 
     @staticmethod
     def create_schema():
@@ -52,12 +52,12 @@ class ApplicationsReportEventProcessor(BasicAnalyticsProcessor):
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".youtube"))
 
-    def distinct_active_stb_all(self):
+    def distinct_active_stb_app_started(self):
         return self._applications_report_stream \
             .where("event_type = 'app_started'") \
             .aggregate(DistinctCount(group_fields=["provider_id"],
                                      aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".all"))
+                                     aggregation_name=self._component_name + ".app_started"))
 
 
 def create_processor(configuration):
