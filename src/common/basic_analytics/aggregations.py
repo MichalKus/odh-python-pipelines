@@ -127,7 +127,7 @@ class Avg(Aggregation):
     Computes average values for each numeric columns for each group.
     """
     def get_aggregation(self):
-        return avg(self._aggregation_field).cast(DecimalType(scale=2))
+        return avg(self._aggregation_field).cast(DecimalType(precision=22, scale=2))
 
 
 class Min(Aggregation):
