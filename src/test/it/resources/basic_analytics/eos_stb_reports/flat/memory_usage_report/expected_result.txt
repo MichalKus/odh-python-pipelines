@@ -1,0 +1,15 @@
+// avg_memory_used_kb.
+{"@timestamp": "2018-05-04T10:00:00.000Z", "metric_name": "memory_usage_report.usedKb.avg", "value": 1643988.0}
+
+
+// avg_memory_cached_kb.
+{"@timestamp": "2018-05-04T10:00:00.000Z", "metric_name": "memory_usage_report.cachedKb.avg", "value": 847024.0}
+
+
+// avg_memory_free_kb.
+{"@timestamp": "2018-05-04T10:00:00.000Z", "metric_name": "memory_usage_report.freeKb.avg", "value": 148944.0}
+
+
+// avg_memory_used_kb_by_viewer_id.
+{"@timestamp": "2018-05-04T10:00:00.000Z", "metric_name": "memory_usage_report.viewer_id.3C36E4-EOSSTB-003478558608.usedKb.avg", "value": 1755600.0, "viewer_id": "3C36E4-EOSSTB-003478558608"}
+{"@timestamp": "2018-05-04T10:00:00.000Z", "metric_name": "memory_usage_report.viewer_id.3C36E4-EOSSTB-003482546904.usedKb.avg", "value": 1532376.0, "viewer_id": "3C36E4-EOSSTB-003482546904"}
