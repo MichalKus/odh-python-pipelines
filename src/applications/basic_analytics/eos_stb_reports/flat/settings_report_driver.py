@@ -7,7 +7,7 @@ from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProce
 from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from common.basic_analytics.aggregations import DistinctCount
-from pyspark.sql.functions import col, explode
+from pyspark.sql.functions import col, explode, when
 
 
 class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
@@ -78,6 +78,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                             StructField("brand", StringType())
                         ])),
                         StructField("tv", StructType([
+                            StructField("isPaired", StringType()),
                             StructField("brand", StringType())
                         ]))
                     ]))
@@ -168,6 +169,8 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                     "viewer_id",
                     col("`cpe.country`").alias("cpe_country"),
                     col("`cpe.upgradeStatus`").alias("upgrade_status")) \
+            .where("cpe_country is not NULL") \
+            .where("upgrade_status is not NULL") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["cpe_country", "upgrade_status"],
                                      aggregation_name=self._component_name + ".cpe_count_with_upgrade_status"))
 
@@ -176,6 +179,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
             .select("@timestamp",
                     "viewer_id",
                     col("`cpe.country`").alias("cpe_country")) \
+            .where("cpe_country is not NULL") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["cpe_country"],
                                      aggregation_name=self._component_name + ".cpe_with_country"))
 
@@ -190,31 +194,48 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
 
     def distinct_cpe_with_age_restriction_enabled(self):
         return self._common_settings_pipeline \
-            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`profile.ageLock`"],
+            .where("`profile.ageLock` is not NULL") \
+            .withColumn("profile_age_lock", col("`profile.ageLock`"), ) \
+            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["profile_age_lock"],
                                      aggregation_name=self._component_name + ".cpe_with_age_restriction"))
 
     def distinct_cpe_with_selected_audio_track_language(self):
         return self._common_settings_pipeline \
-            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`profile.audioLang`"],
+            .select("@timestamp",
+                    col("`profile.audioLang`").alias("profile_audio_lang"),
+                    "viewer_id") \
+            .where("profile_audio_lang is not NULL") \
+            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["profile_audio_lang"],
                                      aggregation_name=self._component_name + ".cpe_with_selected_audio_track_language"))
 
     def distinct_cpe_with_selected_subtitles_track_language(self):
         return self._common_settings_pipeline \
-            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`profile.subLang`"],
+            .select("@timestamp",
+                    col("`profile.subLang`").alias("profile_sub_lang"),
+                    "viewer_id") \
+            .where("profile_sub_lang is not NULL") \
+            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["profile_sub_lang"],
                                      aggregation_name=self._component_name + ".cpe_with_selected_subtitles"))
 
     def distinct_cpe_factory_reset_report(self):
         return self._common_settings_pipeline \
-            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["`cpe.factoryResetState`"],
+            .select("@timestamp",
+                    col("`cpe.factoryResetState`").alias("cpe_factory_reset_state"),
+                    "viewer_id") \
+            .where("cpe_factory_reset_state is not NULL") \
+            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["cpe_factory_reset_state"],
                                      aggregation_name=self._component_name + ".cpe_factory_reset_report"))
 
     def distinct_tv_brands_paired_with_each_cpe(self):
         return self._common_settings_pipeline \
             .select("@timestamp",
                     col("`cpe.quicksetPairedDevicesInfo`").getItem("tv").getItem("brand").alias("brand"),
+                    col("`cpe.quicksetPairedDevicesInfo`").getItem("tv").getItem("isPaired").alias("is_paired"),
                     "viewer_id") \
-            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["brand"],
-                                     aggregation_name=self._component_name + ".audio_brands_paired_with_each_cpe"))
+            .where("brand is not NULL") \
+            .withColumn("brand", when(col("brand") == "", "unknown_brands").otherwise(col("brand"))) \
+            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["is_paired", "brand"],
+                                     aggregation_name=self._component_name + ".tv_brands_paired_with_each_cpe"))
 
     def distinct_audio_brands_paired_with_each_cpe(self):
         return self._common_settings_pipeline \
@@ -222,8 +243,10 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                     col("`cpe.quicksetPairedDevicesInfo`").getItem("amp").getItem("brand").alias("brand"),
                     col("`cpe.quicksetPairedDevicesInfo`").getItem("amp").getItem("isPaired").alias("is_paired"),
                     "viewer_id") \
+            .where("brand is not NULL") \
+            .withColumn("brand", when(col("brand") == "", "unknown_brands").otherwise(col("brand"))) \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["is_paired", "brand"],
-                                     aggregation_name=self._component_name + ".tv_brands_paired_with_each_cpe"))
+                                     aggregation_name=self._component_name + ".audio_brands_paired_with_each_cpe"))
 
 
 def create_processor(configuration):
