@@ -14,10 +14,9 @@ class AirflowManagerScheduler(BasicAnalyticsProcessor):
     """
 
     def _process_pipeline(self, read_stream):
-        self._common_pipeline = read_stream
 
-        return [self.processed_dags_count(),
-                self.dag_total_initiated_executions()]
+        return [self.processed_dags_count(read_stream),
+                self.dag_total_initiated_executions(read_stream)]
 
     @staticmethod
     def create_schema():
@@ -28,14 +27,14 @@ class AirflowManagerScheduler(BasicAnalyticsProcessor):
             StructField("dag", StringType())
         ])
 
-    def processed_dags_count(self):
-        return self._common_pipeline \
+    def processed_dags_count(self, read_stream):
+        return read_stream \
             .filter("action = 'RUN'") \
             .aggregate(Count(group_fields=["status"],
                              aggregation_name=self._component_name))
 
-    def dag_total_initiated_executions(self):
-        return self._common_pipeline \
+    def dag_total_initiated_executions(self, read_stream):
+        return read_stream \
             .filter("action = 'CREATE'") \
             .aggregate(Count(aggregation_name=self._component_name + ".initiated_executions"))
 
