@@ -1,0 +1,10 @@
+spark:
+  appName: stb-active-report-basic-analytics-test
+  master: local[*]
+  shuffle.partitions: 1
+  outputMode: update
+
+analytics:
+  componentName: top_processes
+  watermark: '15 minutes'
+  window: '15 minutes'
