@@ -14,18 +14,18 @@ class TunerReportEventProcessor(BasicAnalyticsProcessor):
     """
     Class that's responsible to process pipelines for TunerReport Reports
     """
-    def _prepare_timefield(self, data_stream):
-        return convert_epoch_to_iso(data_stream, "TunerReport.ts", "@timestamp")
+    def _prepare_timefield(self, read_stream):
+        return convert_epoch_to_iso(read_stream, "TunerReport.ts", "@timestamp")
 
     def _process_pipeline(self, read_stream):
 
-        self._tuner_report_stream = read_stream \
+        tuner_report_stream = read_stream \
             .select("@timestamp", "TunerReport.*", col("header.viewerID").alias("viewer_id"))
 
-        return [self.avg_snr(),
-                self.avg_signal_level_dbm(),
-                self.distinct_stb_by_report_index(),
-                self.avg_frequency_stb_by_report_index()]
+        return [self.avg_snr(tuner_report_stream),
+                self.avg_signal_level_dbm(tuner_report_stream),
+                self.distinct_stb_by_report_index(tuner_report_stream),
+                self.avg_frequency_stb_by_report_index(tuner_report_stream)]
 
     @staticmethod
     def create_schema():
@@ -44,27 +44,27 @@ class TunerReportEventProcessor(BasicAnalyticsProcessor):
             ]))
         ])
 
-    def avg_snr(self):
-        return self._tuner_report_stream \
+    def avg_snr(self, read_stream):
+        return read_stream \
             .where("SNR is not NULL") \
             .aggregate(Avg(aggregation_field="SNR",
                            aggregation_name=self._component_name))
 
-    def avg_signal_level_dbm(self):
-        return self._tuner_report_stream \
+    def avg_signal_level_dbm(self, read_stream):
+        return read_stream \
             .where("signalLevel is not NULL") \
             .aggregate(Avg(aggregation_field="signalLevel",
                            aggregation_name=self._component_name + ".dbm"))
 
-    def distinct_stb_by_report_index(self):
-        return self._tuner_report_stream \
+    def distinct_stb_by_report_index(self, read_stream):
+        return read_stream \
             .where("locked = true") \
             .aggregate(DistinctCount(group_fields=["index"],
                                      aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".locked"))
 
-    def avg_frequency_stb_by_report_index(self):
-        return self._tuner_report_stream \
+    def avg_frequency_stb_by_report_index(self, read_stream):
+        return read_stream \
             .where("locked = true") \
             .where("frequency is not NULL") \
             .aggregate(Avg(group_fields=["index"],

@@ -45,7 +45,7 @@ class Aggregation(object):
         if isinstance(column, basestring):
             if self.__get_use_udf():
                 column = self.__quote_chars_udf(column)
-            return regexp_replace(regexp_replace(regexp_replace(column, r"\.",  "%2E"), r"\s+", "%20"), r"\+", "%2B")
+            return regexp_replace(regexp_replace(regexp_replace(column, r"\.", "%2E"), r"\s+", "%20"), r"\+", "%2B")
         else:
             return regexp_replace(column, r"\s+", "%20")
 
