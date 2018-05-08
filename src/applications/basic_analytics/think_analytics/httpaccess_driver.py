@@ -4,7 +4,7 @@ The module for the driver to calculate metrics related to Think Analytics HTTP a
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.basic_analytics.aggregations import Count, Avg
+from common.basic_analytics.aggregations import Count, Avg, DistinctCount
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
@@ -16,10 +16,10 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
     def _process_pipeline(self, read_stream):
 
         return [self.__avg_response_time_by_method_stream(read_stream),
-                self.__count_by_method_stream(read_stream),
                 self.__avg_response_time_stream(read_stream),
                 self.__count_responses_stream(read_stream),
-                self.__count_by_code_stream(read_stream)]
+                self.__count_by_code_stream(read_stream),
+                self.__count_by_method_stream(read_stream)]
 
     @staticmethod
     def create_schema():
@@ -46,12 +46,6 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
                            aggregation_field="response_time",
                            aggregation_name=self._component_name))
 
-    def __count_by_method_stream(self, read_stream):
-        return read_stream \
-            .where("method is not null") \
-            .withColumn("response_time", read_stream["response_time"].cast("Int")) \
-            .aggregate(Count(group_fields=["hostname", "method"], aggregation_name=self._component_name))
-
     def __avg_response_time_stream(self, read_stream):
         return read_stream \
             .withColumn("response_time", read_stream["response_time"].cast("Int")) \
@@ -69,6 +63,12 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
             .where("response_code is not null") \
             .aggregate(Count(group_fields=["hostname", "response_code"],
                              aggregation_name=self._component_name))
+
+    def __count_by_method_stream(self, read_stream):
+        return read_stream \
+            .where("method is not null") \
+            .withColumn("response_time", read_stream["response_time"].cast("Int")) \
+            .aggregate(Count(group_fields=["hostname", "method"], aggregation_name=self._component_name))
 
 
 def create_processor(configuration):
