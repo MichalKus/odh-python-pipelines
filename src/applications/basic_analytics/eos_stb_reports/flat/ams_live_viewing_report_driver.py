@@ -23,9 +23,9 @@ class AMSLiveViewingReportEventProcessor(BasicAnalyticsProcessor):
             .select("@timestamp", "AMSLiveViewingReport.*", col("header.viewerID").alias("viewer_id")) \
             .withColumn("channel", col("id"))
 
-        return [self.distinct_event_type_by_channel(ams_live_viewing_report_stream),
-                self.count_event_type_by_channel(ams_live_viewing_report_stream),
-                self.count_popular_channels_by_channel(ams_live_viewing_report_stream)]
+        return [self.__distinct_event_type_by_channel(ams_live_viewing_report_stream),
+                self.__count_event_type_by_channel(ams_live_viewing_report_stream),
+                self.__count_popular_channels_by_channel(ams_live_viewing_report_stream)]
 
     @staticmethod
     def create_schema():
@@ -41,20 +41,20 @@ class AMSLiveViewingReportEventProcessor(BasicAnalyticsProcessor):
             ]))
         ])
 
-    def distinct_event_type_by_channel(self, read_stream):
+    def __distinct_event_type_by_channel(self, read_stream):
         return read_stream \
             .where("event_type = 'TUNE_IN'") \
             .aggregate(DistinctCount(group_fields=["channel"],
                                      aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".tune_in"))
 
-    def count_event_type_by_channel(self, read_stream):
+    def __count_event_type_by_channel(self, read_stream):
         return read_stream \
             .where("event_type = 'TUNE_IN'") \
             .aggregate(Count(group_fields=["channel"],
                              aggregation_name=self._component_name + ".tune_in"))
 
-    def count_popular_channels_by_channel(self, read_stream):
+    def __count_popular_channels_by_channel(self, read_stream):
         return read_stream \
             .aggregate(Count(group_fields=["channel"],
                              aggregation_name=self._component_name + ".popular_channels"))

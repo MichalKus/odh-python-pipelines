@@ -22,8 +22,8 @@ class BCMReportEventProcessor(BasicAnalyticsProcessor):
         bcm_report_stream = read_stream \
             .select("@timestamp", "BCMReport.*", col("header.viewerID").alias("viewer_id"))
 
-        return [self.distinct_active_stb_4k_enabled(bcm_report_stream),
-                self.distinct_active_stb_4k_disabled(bcm_report_stream)]
+        return [self.__distinct_active_stb_4k_enabled(bcm_report_stream),
+                self.__distinct_active_stb_4k_disabled(bcm_report_stream)]
 
     @staticmethod
     def create_schema():
@@ -38,13 +38,13 @@ class BCMReportEventProcessor(BasicAnalyticsProcessor):
             ]))
         ])
 
-    def distinct_active_stb_4k_enabled(self, read_stream):
+    def __distinct_active_stb_4k_enabled(self, read_stream):
         return read_stream \
             .where("4Kcontent = true") \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".4k_enabled"))
 
-    def distinct_active_stb_4k_disabled(self, read_stream):
+    def __distinct_active_stb_4k_disabled(self, read_stream):
         return read_stream \
             .where("4Kcontent = false") \
             .aggregate(DistinctCount(aggregation_field="viewer_id",

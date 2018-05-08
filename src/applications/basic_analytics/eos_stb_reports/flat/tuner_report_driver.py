@@ -22,10 +22,10 @@ class TunerReportEventProcessor(BasicAnalyticsProcessor):
         tuner_report_stream = read_stream \
             .select("@timestamp", "TunerReport.*", col("header.viewerID").alias("viewer_id"))
 
-        return [self.avg_snr(tuner_report_stream),
-                self.avg_signal_level_dbm(tuner_report_stream),
-                self.distinct_stb_by_report_index(tuner_report_stream),
-                self.avg_frequency_stb_by_report_index(tuner_report_stream)]
+        return [self.__avg_snr(tuner_report_stream),
+                self.__avg_signal_level_dbm(tuner_report_stream),
+                self.__distinct_stb_by_report_index(tuner_report_stream),
+                self.__avg_frequency_stb_by_report_index(tuner_report_stream)]
 
     @staticmethod
     def create_schema():
@@ -44,26 +44,26 @@ class TunerReportEventProcessor(BasicAnalyticsProcessor):
             ]))
         ])
 
-    def avg_snr(self, read_stream):
+    def __avg_snr(self, read_stream):
         return read_stream \
             .where("SNR is not NULL") \
             .aggregate(Avg(aggregation_field="SNR",
                            aggregation_name=self._component_name))
 
-    def avg_signal_level_dbm(self, read_stream):
+    def __avg_signal_level_dbm(self, read_stream):
         return read_stream \
             .where("signalLevel is not NULL") \
             .aggregate(Avg(aggregation_field="signalLevel",
                            aggregation_name=self._component_name + ".dbm"))
 
-    def distinct_stb_by_report_index(self, read_stream):
+    def __distinct_stb_by_report_index(self, read_stream):
         return read_stream \
             .where("locked = true") \
             .aggregate(DistinctCount(group_fields=["index"],
                                      aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".locked"))
 
-    def avg_frequency_stb_by_report_index(self, read_stream):
+    def __avg_frequency_stb_by_report_index(self, read_stream):
         return read_stream \
             .where("locked = true") \
             .where("frequency is not NULL") \

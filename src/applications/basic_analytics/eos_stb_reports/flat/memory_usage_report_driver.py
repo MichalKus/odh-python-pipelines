@@ -22,9 +22,9 @@ class MemoryUsageReportEventProcessor(BasicAnalyticsProcessor):
         memory_usage_report_stream = read_stream \
             .select("@timestamp", "MemoryUsage.*")
 
-        return [self.avg_memory_used_kb(memory_usage_report_stream),
-                self.avg_memory_cached_kb(memory_usage_report_stream),
-                self.avg_memory_free_kb(memory_usage_report_stream)]
+        return [self.__avg_memory_used_kb(memory_usage_report_stream),
+                self.__avg_memory_cached_kb(memory_usage_report_stream),
+                self.__avg_memory_free_kb(memory_usage_report_stream)]
 
     @staticmethod
     def create_schema():
@@ -38,19 +38,19 @@ class MemoryUsageReportEventProcessor(BasicAnalyticsProcessor):
             ]))
         ])
 
-    def avg_memory_used_kb(self, read_stream):
+    def __avg_memory_used_kb(self, read_stream):
         return read_stream \
             .where("usedKb is not NULL") \
             .aggregate(Avg(aggregation_field="usedKb",
                            aggregation_name=self._component_name))
 
-    def avg_memory_cached_kb(self, read_stream):
+    def __avg_memory_cached_kb(self, read_stream):
         return read_stream \
             .where("cachedKb is not NULL") \
             .aggregate(Avg(aggregation_field="cachedKb",
                            aggregation_name=self._component_name))
 
-    def avg_memory_free_kb(self, read_stream):
+    def __avg_memory_free_kb(self, read_stream):
         return read_stream \
             .where("freeKb is not NULL") \
             .aggregate(Avg(aggregation_field="freeKb",

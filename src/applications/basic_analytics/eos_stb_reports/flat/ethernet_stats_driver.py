@@ -22,10 +22,10 @@ class EthernetReportEventProcessor(BasicAnalyticsProcessor):
         ethernet_stream = read_stream \
             .select("@timestamp", "EthernetStats.*", col("header.viewerID").alias("viewer_id"))
 
-        return [self.distinct_active_stb_ethernet(ethernet_stream),
-                self.distinct_total_ethernet_network_types_count(ethernet_stream),
-                self.ethernet_average_upstream_kbps(ethernet_stream),
-                self.ethernet_average_downstream_kbps(ethernet_stream)]
+        return [self.__distinct_active_stb_ethernet(ethernet_stream),
+                self.__distinct_total_ethernet_network_types_count(ethernet_stream),
+                self.__ethernet_average_upstream_kbps(ethernet_stream),
+                self.__ethernet_average_downstream_kbps(ethernet_stream)]
 
     @staticmethod
     def create_schema():
@@ -42,25 +42,25 @@ class EthernetReportEventProcessor(BasicAnalyticsProcessor):
             ]))
         ])
 
-    def distinct_active_stb_ethernet(self, read_stream):
+    def __distinct_active_stb_ethernet(self, read_stream):
         return read_stream \
             .where(col("rxKbps") > 0) \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".active"))
 
-    def distinct_total_ethernet_network_types_count(self, read_stream):
+    def __distinct_total_ethernet_network_types_count(self, read_stream):
         return read_stream \
             .where((col("rxKbps") > 0) | (col("txKbps") > 0)) \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".network"))
 
-    def ethernet_average_upstream_kbps(self, read_stream):
+    def __ethernet_average_upstream_kbps(self, read_stream):
         return read_stream \
             .where("txKbps is not NULL") \
             .aggregate(Avg(aggregation_field="txKbps",
                            aggregation_name=self._component_name + ".upstream_kbps"))
 
-    def ethernet_average_downstream_kbps(self, read_stream):
+    def __ethernet_average_downstream_kbps(self, read_stream):
         return read_stream \
             .where("rxKbps is not NULL") \
             .aggregate(Avg(aggregation_field="rxKbps",
