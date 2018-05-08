@@ -4,7 +4,7 @@ spark:
   checkpointLocation: file:///spark/checkpoints
   shuffle.partitions: 1
   consoleWriter: true
-  outputMode: update
+#  outputMode: update
 
 kafka:
   maxOffsetsPerTrigger: 100000
