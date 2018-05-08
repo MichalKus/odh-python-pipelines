@@ -14,16 +14,16 @@ class BCMReportEventProcessor(BasicAnalyticsProcessor):
     """
     Class that's responsible to process pipelines for BCMReport Reports
     """
-    def _prepare_timefield(self, data_stream):
-        return convert_epoch_to_iso(data_stream, "BCMReport.ts", "@timestamp")
+    def _prepare_timefield(self, read_stream):
+        return convert_epoch_to_iso(read_stream, "BCMReport.ts", "@timestamp")
 
     def _process_pipeline(self, read_stream):
 
-        self._bcm_report_stream = read_stream \
+        bcm_report_stream = read_stream \
             .select("@timestamp", "BCMReport.*", col("header.viewerID").alias("viewer_id"))
 
-        return [self.distinct_active_stb_4k_enabled(),
-                self.distinct_active_stb_4k_disabled()]
+        return [self.__distinct_active_stb_4k_enabled(bcm_report_stream),
+                self.__distinct_active_stb_4k_disabled(bcm_report_stream)]
 
     @staticmethod
     def create_schema():
@@ -38,14 +38,14 @@ class BCMReportEventProcessor(BasicAnalyticsProcessor):
             ]))
         ])
 
-    def distinct_active_stb_4k_enabled(self):
-        return self._bcm_report_stream \
+    def __distinct_active_stb_4k_enabled(self, read_stream):
+        return read_stream \
             .where("4Kcontent = true") \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".4k_enabled"))
 
-    def distinct_active_stb_4k_disabled(self):
-        return self._bcm_report_stream \
+    def __distinct_active_stb_4k_disabled(self, read_stream):
+        return read_stream \
             .where("4Kcontent = false") \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".4k_disabled"))

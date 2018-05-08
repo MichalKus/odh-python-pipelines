@@ -1,10 +1,22 @@
 // avg_memory_used_kb.
-{"@timestamp": "2018-05-04T10:00:00.000Z", "metric_name": "memory_usage_report.usedKb.avg", "value": 1643988.0}
+{"@timestamp": "2018-05-04T10:00:00.000Z", "metric_name": "memory_usage_report.usedKb.avg", "value": 1140117.33}
 
 
 // avg_memory_cached_kb.
-{"@timestamp": "2018-05-04T10:00:00.000Z", "metric_name": "memory_usage_report.cachedKb.avg", "value": 847024.0}
+{"@timestamp": "2018-05-04T10:00:00.000Z", "metric_name": "memory_usage_report.cachedKb.avg", "value": 860766.67}
 
 
 // avg_memory_free_kb.
-{"@timestamp": "2018-05-04T10:00:00.000Z", "metric_name": "memory_usage_report.freeKb.avg", "value": 148944.0}
+{"@timestamp": "2018-05-04T10:00:00.000Z", "metric_name": "memory_usage_report.freeKb.avg", "value": 108148.0}
+
+
+// distinct_stb_low_memory_usage.
+{"@timestamp": "2018-05-04T10:00:00.000Z", "metric_name": "memory_usage_report.low.viewer_id.distinct_count", "value": 1}
+
+
+// distinct_stb_med_memory_usage.
+{"@timestamp": "2018-05-04T10:00:00.000Z", "metric_name": "memory_usage_report.med.viewer_id.distinct_count", "value": 1}
+
+
+// distinct_stb_high_memory_usage.
+{"@timestamp": "2018-05-04T10:00:00.000Z", "metric_name": "memory_usage_report.high.viewer_id.distinct_count", "value": 1}

@@ -14,17 +14,17 @@ class ApplicationsReportEventProcessor(BasicAnalyticsProcessor):
     """
     Class that's responsible to process pipelines for ApplicationsReport Reports
     """
-    def _prepare_timefield(self, data_stream):
-        return convert_epoch_to_iso(data_stream, "ApplicationsReport.ts", "@timestamp")
+    def _prepare_timefield(self, read_stream):
+        return convert_epoch_to_iso(read_stream, "ApplicationsReport.ts", "@timestamp")
 
     def _process_pipeline(self, read_stream):
 
-        self._applications_report_stream = read_stream \
+        applications_report_stream = read_stream \
             .select("@timestamp", "ApplicationsReport.*", col("header.viewerID").alias("viewer_id"))
 
-        return [self.distinct_active_stb_netflix(),
-                self.distinct_active_stb_youtube(),
-                self.distinct_active_stb_app_started()]
+        return [self.__distinct_active_stb_netflix(applications_report_stream),
+                self.__distinct_active_stb_youtube(applications_report_stream),
+                self.__distinct_active_stb_app_started(applications_report_stream)]
 
     @staticmethod
     def create_schema():
@@ -40,20 +40,20 @@ class ApplicationsReportEventProcessor(BasicAnalyticsProcessor):
             ]))
         ])
 
-    def distinct_active_stb_netflix(self):
-        return self._applications_report_stream \
+    def __distinct_active_stb_netflix(self, read_stream):
+        return read_stream \
             .where("provider_id = 'netflix'") \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".netflix"))
 
-    def distinct_active_stb_youtube(self):
-        return self._applications_report_stream \
+    def __distinct_active_stb_youtube(self, read_stream):
+        return read_stream \
             .where("provider_id = 'youtube'") \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".youtube"))
 
-    def distinct_active_stb_app_started(self):
-        return self._applications_report_stream \
+    def __distinct_active_stb_app_started(self, read_stream):
+        return read_stream \
             .where("event_type = 'app_started'") \
             .aggregate(DistinctCount(group_fields=["provider_id"],
                                      aggregation_field="viewer_id",
