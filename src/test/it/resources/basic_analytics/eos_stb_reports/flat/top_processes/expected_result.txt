@@ -1,0 +1,8 @@
+{"@timestamp": "2018-05-08T08:30:00.000Z", "name": "systemd", "value": 3902.0, "metric_name": "top_processes.name.systemd.vsz.avg"}
+{"@timestamp": "2018-05-08T08:30:00.000Z", "name": "weston", "value": 657116.0, "metric_name": "top_processes.name.weston.vsz.avg"}
+{"@timestamp": "2018-05-08T08:30:00.000Z", "name": "systemd", "value": 53.0, "metric_name": "top_processes.name.systemd.fds.avg"}
+{"@timestamp": "2018-05-08T08:30:00.000Z", "name": "weston", "value": 48.0, "metric_name": "top_processes.name.weston.fds.avg"}
+{"@timestamp": "2018-05-08T08:30:00.000Z", "name": "systemd", "value": 1.5, "metric_name": "top_processes.name.systemd.threads.avg"}
+{"@timestamp": "2018-05-08T08:30:00.000Z", "name": "weston", "value": 19.0, "metric_name": "top_processes.name.weston.threads.avg"}
+{"@timestamp": "2018-05-08T08:30:00.000Z", "name": "systemd", "value": 4008.0, "metric_name": "top_processes.name.systemd.rss.avg"}
+{"@timestamp": "2018-05-08T08:30:00.000Z", "name": "weston", "value": 9400.0, "metric_name": "top_processes.name.weston.rss.avg"}
