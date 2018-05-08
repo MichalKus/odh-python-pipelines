@@ -31,7 +31,7 @@ class AirflowManagerScheduler(BasicAnalyticsProcessor):
         return read_stream \
             .filter("action = 'RUN'") \
             .aggregate(Count(group_fields=["status"],
-                             aggregation_name=self._component_name))
+                             aggregation_name=self._component_name + ".runned"))
 
     def __dag_total_initiated_executions(self, read_stream):
         return read_stream \
