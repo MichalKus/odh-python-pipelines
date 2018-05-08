@@ -42,7 +42,6 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                 self.distinct_total_cpe_with_cold_standby(),
                 self.distinct_cpe_with_lukewarm_standby(),
                 self.distinct_cpe_count_with_upgrade_status(),
-                self.distinct_total_cpe_count_with_cpe_country(),
                 self.distinct_cpe_count_recently_used_settings_items(),
                 self.distinct_cpe_with_age_restriction_enabled(),
                 self.distinct_cpe_with_selected_audio_track_language(),
@@ -174,15 +173,6 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["cpe_country", "upgrade_status"],
                                      aggregation_name=self._component_name + ".cpe_count_with_upgrade_status"))
 
-    def distinct_total_cpe_count_with_cpe_country(self):
-        return self._common_settings_pipeline \
-            .select("@timestamp",
-                    "viewer_id",
-                    col("`cpe.country`").alias("cpe_country")) \
-            .where("cpe_country is not NULL") \
-            .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["cpe_country"],
-                                     aggregation_name=self._component_name + ".cpe_with_country"))
-
     def distinct_cpe_count_recently_used_settings_items(self):
         return self._common_settings_pipeline \
             .select("@timestamp",
@@ -190,7 +180,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                     explode("`profile.recentlyUsedSettingsItems`").alias("settings_items")) \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
                                      group_fields=["settings_items"],
-                                     aggregation_name=self._component_name + ".cpe_count_recently_used_settings_items"))
+                                     aggregation_name=self._component_name + ".recently_used"))
 
     def distinct_cpe_with_age_restriction_enabled(self):
         return self._common_settings_pipeline \
@@ -215,7 +205,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                     "viewer_id") \
             .where("profile_sub_lang is not NULL") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["profile_sub_lang"],
-                                     aggregation_name=self._component_name + ".cpe_with_selected_subtitles"))
+                                     aggregation_name=self._component_name + ".cpe_with_selected_subtitles_language"))
 
     def distinct_cpe_factory_reset_report(self):
         return self._common_settings_pipeline \
@@ -224,7 +214,7 @@ class CpeSettingsReportEventProcessor(BasicAnalyticsProcessor):
                     "viewer_id") \
             .where("cpe_factory_reset_state is not NULL") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["cpe_factory_reset_state"],
-                                     aggregation_name=self._component_name + ".cpe_factory_reset_report"))
+                                     aggregation_name=self._component_name))
 
     def distinct_tv_brands_paired_with_each_cpe(self):
         return self._common_settings_pipeline \
