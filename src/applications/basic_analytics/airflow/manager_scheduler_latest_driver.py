@@ -14,11 +14,8 @@ class AirflowManagerScheduler(BasicAnalyticsProcessor):
     """
 
     def _process_pipeline(self, read_stream):
-        self._common_pipeline = read_stream \
-            .select("@timestamp",
-                    "action",
-                    "status",
-                    "dag")
+        self._common_pipeline = read_stream
+
         return [self.processed_dags_count(),
                 self.dag_total_initiated_executions()]
 
@@ -26,10 +23,6 @@ class AirflowManagerScheduler(BasicAnalyticsProcessor):
     def create_schema():
         return StructType([
             StructField("@timestamp", TimestampType()),
-            StructField("script", StringType()),
-            StructField("level", StringType()),
-            StructField("message", StringType()),
-            StructField("hostname", StringType()),
             StructField("status", StringType()),
             StructField("action", StringType()),
             StructField("dag", StringType())
