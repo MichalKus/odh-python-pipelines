@@ -14,31 +14,12 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
     """
 
     def _process_pipeline(self, read_stream):
-        avg_response_time_by_method_stream = read_stream \
-            .where("method is not null") \
-            .withColumn("response_time", read_stream["response_time"].cast("Int")) \
-            .aggregate(Avg(group_fields=["hostname", "method"], aggregation_field="response_time",
-                           aggregation_name=self._component_name))
 
-        count_by_method_stream = read_stream \
-            .where("method is not null") \
-            .withColumn("response_time", read_stream["response_time"].cast("Int")) \
-            .aggregate(Count(group_fields=["hostname", "method"], aggregation_name=self._component_name))
-
-        avg_response_time_stream = read_stream \
-            .withColumn("response_time", read_stream["response_time"].cast("Int")) \
-            .aggregate(
-                Avg(group_fields=["hostname"], aggregation_field="response_time", aggregation_name=self._component_name))
-
-        count_responses_stream = read_stream \
-            .aggregate(Count(group_fields=["hostname"], aggregation_name=self._component_name + ".responses"))
-
-        count_by_code_stream = read_stream \
-            .where("response_code is not null") \
-            .aggregate(Count(group_fields=["hostname", "response_code"], aggregation_name=self._component_name))
-
-        return [avg_response_time_by_method_stream, count_by_method_stream, avg_response_time_stream,
-                count_responses_stream, count_by_code_stream]
+        return [self.__avg_response_time_by_method_stream(read_stream),
+                self.__count_by_method_stream(read_stream),
+                self.__avg_response_time_stream(read_stream),
+                self.__count_responses_stream(read_stream),
+                self.__count_by_code_stream(read_stream)]
 
     @staticmethod
     def create_schema():
@@ -56,6 +37,38 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
             StructField("traxis-profile-id", StringType()),
             StructField("hostname", StringType())
         ])
+
+    def __avg_response_time_by_method_stream(self, read_stream):
+        return read_stream \
+            .where("method is not null") \
+            .withColumn("response_time", read_stream["response_time"].cast("Int")) \
+            .aggregate(Avg(group_fields=["hostname", "method"],
+                           aggregation_field="response_time",
+                           aggregation_name=self._component_name))
+
+    def __count_by_method_stream(self, read_stream):
+        return read_stream \
+            .where("method is not null") \
+            .withColumn("response_time", read_stream["response_time"].cast("Int")) \
+            .aggregate(Count(group_fields=["hostname", "method"], aggregation_name=self._component_name))
+
+    def __avg_response_time_stream(self, read_stream):
+        return read_stream \
+            .withColumn("response_time", read_stream["response_time"].cast("Int")) \
+            .aggregate(Avg(group_fields=["hostname"],
+                           aggregation_field="response_time",
+                           aggregation_name=self._component_name))
+
+    def __count_responses_stream(self, read_stream):
+        return read_stream \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".responses"))
+
+    def __count_by_code_stream(self, read_stream):
+        return read_stream \
+            .where("response_code is not null") \
+            .aggregate(Count(group_fields=["hostname", "response_code"],
+                             aggregation_name=self._component_name))
 
 
 def create_processor(configuration):
