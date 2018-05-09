@@ -1,0 +1,8 @@
+{"value":1,"metric_name":"stb_error_report.replay_errors.viewer_id.distinct_count","@timestamp":"2018-05-02T09:00:00.000Z"}
+{"value":1,"metric_name":"stb_error_report.rev_buffer_playouts.viewer_id.distinct_count","@timestamp":"2018-05-02T09:00:00.000Z"}
+{"value":1,"metric_name":"stb_error_report.ltv_playout_errors.viewer_id.distinct_count","@timestamp":"2018-05-02T09:00:00.000Z"}
+{"value":1,"metric_name":"stb_error_report.rec_playout_errors.viewer_id.distinct_count","@timestamp":"2018-05-02T09:00:00.000Z"}
+{"code":"2217","value":1,"metric_name":"stb_error_report.code.2217.viewer_id.count","@timestamp":"2018-05-02T09:30:00.000Z"}
+{"code":"2505","value":1,"metric_name":"stb_error_report.code.2505.viewer_id.count","@timestamp":"2018-05-02T09:30:00.000Z"}
+{"code":"2002","value":1,"metric_name":"stb_error_report.code.2002.viewer_id.count","@timestamp":"2018-05-02T09:30:00.000Z"}
+{"code":"2199","value":1,"metric_name":"stb_error_report.code.2199.viewer_id.count","@timestamp":"2018-05-02T09:30:00.000Z"}

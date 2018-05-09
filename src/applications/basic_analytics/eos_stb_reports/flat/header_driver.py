@@ -22,10 +22,10 @@ class HeaderStbBasicAnalytics(BasicAnalyticsProcessor):
 
         stream = read_stream.withColumn("viewer_id", col("header").getItem("viewerID"))
 
-
         distinct_count_viewer_id = stream \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name))
+                                     aggregation_name=self._component_name,
+                                     aggregation_window=self._get_interval_duration("uniqCountWindow")))
 
         distinct_count_per_software_version_stream = stream \
             .withColumn("model_name", col("header").getItem("modelName")) \

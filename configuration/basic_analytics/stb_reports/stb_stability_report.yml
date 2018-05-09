@@ -1,7 +1,7 @@
 spark:
-  appName: uservices-he-component
+  appName: stb-stability-report-basic-analytics
   master: local[*]
-  checkpointLocation: file:///spark/checkpoints/uservices/vod-recording-playout/
+  checkpointLocation: file:///spark/checkpoints
   shuffle.partitions: 1
   consoleWriter: true
 
@@ -10,16 +10,14 @@ kafka:
   bootstrap.servers: 192.168.100.1:9094,192.168.100.2:9094,192.168.100.3:9094,192.168.100.4:9094,192.168.100.5:9094,192.168.100.6:9094,192.168.100.7:9094,192.168.100.8:9094,192.168.100.9:9094,192.168.100.10:9094,192.168.100.11:9094,192.168.100.12:9094,192.168.100.13:9094,192.168.100.14:9094,192.168.100.15:9094,192.168.100.16:9094,192.168.100.17:9094,192.168.100.18:9094
   startingOffsets: latest
   topics:
-    dlq: odhecx_pro_deadletterqueue
     inputs:
-      - obo_in_eosdtv_pan_prod_heapp_uservices_log_v1
-    output: test
+      - odhecx_pr_eosdtv_be_prd_stb_flat_v1
+    output: odhecx_pr_eosdtv_be_prd_stb_stability_report_v1
   security.protocol: SASL_PLAINTEXT
   sasl.mechanism: PLAIN
   failOnDataLoss: false
 
 analytics:
-  tenant: be
-  componentName: odhecx.eosdtv.pan.prd.uservices.tenant.be
+  componentName: odhecx.eosdtv.be.prd.eos_stb.stability
   watermark: '1 minutes'
   window: '10 minutes'

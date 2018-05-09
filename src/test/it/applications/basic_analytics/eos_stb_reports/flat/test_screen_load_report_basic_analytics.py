@@ -10,4 +10,3 @@ class StbCpeScreenLoadReportTestCase(BaseSparkProcessorTestCase):
             input_dir="test/it/resources/basic_analytics/eos_stb_reports/flat/screen_load_report/input/",
             expected_result_file="test/it/resources/basic_analytics/eos_stb_reports/flat/screen_load_report/expected_result.txt"
         )
-
