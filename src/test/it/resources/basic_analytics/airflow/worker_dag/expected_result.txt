@@ -103,6 +103,6 @@
 {"dag": "bbc_lookup_programmes_workflow1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.details.dag.bbc_lookup_programmes_workflow1.hostname.vm-l-p-obo00017.task.generate_itv_files.count", "@timestamp": "2018-02-27T11:09:00.000Z", "hostname": "vm-l-p-obo00017", "value": 2, "task": "generate_itv_files"}
 
 // "bbc*" dags with "ITV generated*" subtasks count
-{"@timestamp": "2018-02-27T11:09:00.000Z", "dag": "bbc_lookup_programmes_workflow", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.highres.itv.gen.dag.bbc_lookup_programmes_workflow.task.generate_itv_files.count", "value": 1, "task": "generate_itv_files"}
-{"@timestamp": "2018-02-27T11:09:00.000Z", "dag": "bbc_lookup_programmes_workflow1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.highres.itv.gen.dag.bbc_lookup_programmes_workflow1.task.generate_itv_files.count", "value": 2, "task": "generate_itv_files"}
+{"@timestamp": "2018-02-27T11:09:00.000Z", "dag": "bbc_lookup_programmes_workflow", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.highres.itv_gen.dag.bbc_lookup_programmes_workflow.task.generate_itv_files.count", "value": 1, "task": "generate_itv_files"}
+{"@timestamp": "2018-02-27T11:09:00.000Z", "dag": "bbc_lookup_programmes_workflow1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.highres.itv_gen.dag.bbc_lookup_programmes_workflow1.task.generate_itv_files.count", "value": 2, "task": "generate_itv_files"}
 {"@timestamp": "2018-02-27T11:09:00.000Z", "hostname": "vm-l-p-obo00017", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.airflow.worker_dag.hostname.vm-l-p-obo00017.dag.distinct_count", "value": 2}

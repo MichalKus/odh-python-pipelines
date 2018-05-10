@@ -181,7 +181,7 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
             .filter("task is not NULL") \
             .where("dag like '%bbc%' and subtask_message like '%ITV generated%'") \
             .aggregate(Count(group_fields=["dag", "task"],
-                             aggregation_name=self._component_name + ".highres.itv.gen"))
+                             aggregation_name=self._component_name + ".highres.itv_gen"))
 
         return [number_of_unique_tasks_in_the_dags,
                 dag_host_task_count,
