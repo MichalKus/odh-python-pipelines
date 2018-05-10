@@ -3,6 +3,7 @@ The module for the driver to calculate metrics related to DAGs in the Airflow Wo
 See:
   ODH-1439: Success/failure extension of Airflow-Worker basics analytics job
   ODH-1442: Airflow. Running DAGs per hosts
+  ODH-2316: AirFlow Basic Analytics
 """
 
 from pyspark.sql.functions import col, lit, when, regexp_extract
@@ -26,7 +27,8 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
         :return: list of all aggregated metrics
         """
         return self.__process_common_events(read_stream) + self.__process_tva_events(read_stream) + \
-               self.__process_hi_res_events(read_stream) + self.__process_hi_res_on_mpx_events(read_stream)
+               self.__process_hi_res_events(read_stream) + self.__process_hi_res_on_mpx_events(read_stream) + \
+               self.__dag_details(read_stream)
 
     def __process_common_events(self, read_stream):
         """
@@ -152,6 +154,38 @@ class AirflowWorkerDag(BasicAnalyticsProcessor):
                              aggregation_name=self._component_name + ".hi_res_images_created_on_mpx"))
 
         return [upload_high_res_images_created_on_mpx_count]
+
+    def __dag_details(self, read_stream):
+        """
+        :param read_stream: input stream with events from dag kafka topic
+        :return: list of aggregated metrics
+        """
+        details = ".details"
+
+        number_of_unique_tasks_in_the_dags = read_stream \
+            .filter("dag is not NULL") \
+            .filter("task is not NULL") \
+            .aggregate(DistinctCount(group_fields=["dag"],
+                                     aggregation_field="task",
+                                     aggregation_name=self._component_name + details))
+
+        dag_host_task_count = read_stream \
+            .filter("dag is not NULL") \
+            .filter("hostname is not NULL") \
+            .filter("task is not NULL") \
+            .aggregate(Count(group_fields=["dag", "hostname", "task"],
+                             aggregation_name=self._component_name + details))
+
+        bbc_dag_subtask_message_itv_generated_with_task_count = read_stream \
+            .filter("dag is not NULL") \
+            .filter("task is not NULL") \
+            .where("dag like '%bbc%' and subtask_message like '%ITV generated%'") \
+            .aggregate(Count(group_fields=["dag", "task"],
+                             aggregation_name=self._component_name + ".highres.itv.gen"))
+
+        return [number_of_unique_tasks_in_the_dags,
+                dag_host_task_count,
+                bbc_dag_subtask_message_itv_generated_with_task_count]
 
     @staticmethod
     def create_schema():
