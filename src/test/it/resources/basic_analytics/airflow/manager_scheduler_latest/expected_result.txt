@@ -1,0 +1,3 @@
+{"status": "SUCCESS", "@timestamp": "2018-03-22T16:05:00.000Z", "metric_name": "odhecx.eosdtv.be.prd.airflow.manager.scheduler.latest.runned.status.SUCCESS.count", "value": 2}
+{"status": "FAILURE", "@timestamp": "2018-03-22T16:05:00.000Z", "metric_name": "odhecx.eosdtv.be.prd.airflow.manager.scheduler.latest.runned.status.FAILURE.count", "value": 2}
+{"@timestamp": "2018-03-22T16:05:00.000Z", "metric_name": "odhecx.eosdtv.be.prd.airflow.manager.scheduler.latest.initiated_executions.count", "value": 3}

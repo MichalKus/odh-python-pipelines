@@ -1,7 +1,24 @@
-// distinct_active_stb_netflix and distinct_ctive_stb_youtube providers
-{"@timestamp": "2018-04-20T14:30:00.000Z", "metric_name": "stb_applications_report.youtube.viewer_id.distinct_count", "value": 1}
-{"@timestamp": "2018-04-20T14:30:00.000Z", "metric_name": "stb_applications_report.netflix.viewer_id.distinct_count", "value": 1}
+// distinct_active_stb
+{"provider_id":"netflix","event_type":"app_started","value":1,"metric_name":"stb_applications_report.provider_id.netflix.event_type.app_started.viewer_id.distinct_count","@timestamp":"2018-04-20T14:00:00.000Z"}
+{"provider_id":"youtube","event_type":"app_stopped","value":1,"metric_name":"stb_applications_report.provider_id.youtube.event_type.app_stopped.viewer_id.distinct_count","@timestamp":"2018-04-20T14:00:00.000Z"}
+{"provider_id":"youtube","event_type":"app_started","value":2,"metric_name":"stb_applications_report.provider_id.youtube.event_type.app_started.viewer_id.distinct_count","@timestamp":"2018-05-02T08:00:00.000Z"}
+{"provider_id":"youtube","event_type":"app_stopped","value":2,"metric_name":"stb_applications_report.provider_id.youtube.event_type.app_stopped.viewer_id.distinct_count","@timestamp":"2018-05-02T08:00:00.000Z"}
 
+// total_app_events
+{"provider_id":"netflix","event_type":"app_started","value":1,"metric_name":"stb_applications_report.provider_id.netflix.event_type.app_started.viewer_id.count","@timestamp":"2018-04-20T14:30:00.000Z"}
+{"provider_id":"youtube","event_type":"app_stopped","value":1,"metric_name":"stb_applications_report.provider_id.youtube.event_type.app_stopped.viewer_id.count","@timestamp":"2018-04-20T14:30:00.000Z"}
+{"provider_id":"youtube","event_type":"app_started","value":3,"metric_name":"stb_applications_report.provider_id.youtube.event_type.app_started.viewer_id.count","@timestamp":"2018-05-02T08:30:00.000Z"}
+{"provider_id":"youtube","event_type":"app_stopped","value":1,"metric_name":"stb_applications_report.provider_id.youtube.event_type.app_stopped.viewer_id.count","@timestamp":"2018-05-02T08:30:00.000Z"}
+{"provider_id":"youtube","event_type":"app_stopped","value":1,"metric_name":"stb_applications_report.provider_id.youtube.event_type.app_stopped.viewer_id.count","@timestamp":"2018-05-02T08:40:00.000Z"}
 
-// distinct_active_stb_all viewers grouped by active providers.
-{"@timestamp": "2018-04-20T14:30:00.000Z", "provider_id": "netflix", "metric_name": "stb_applications_report.app_started.provider_id.netflix.viewer_id.distinct_count", "value": 1}
+// distinct_active_stb_app_started
+{"provider_id":"netflix","value":1,"metric_name":"stb_applications_report.app_started.provider_id.netflix.viewer_id.distinct_count","@timestamp":"2018-04-20T14:30:00.000Z"}
+{"provider_id":"youtube","value":2,"metric_name":"stb_applications_report.app_started.provider_id.youtube.viewer_id.distinct_count","@timestamp":"2018-05-02T08:30:00.000Z"}
+
+// distinct_active_stb_netflix
+{"value":1,"metric_name":"stb_applications_report.netflix.viewer_id.distinct_count","@timestamp":"2018-04-20T14:30:00.000Z"}
+
+// distinct_active_stb_youtube
+{"value":1,"metric_name":"stb_applications_report.youtube.viewer_id.distinct_count","@timestamp":"2018-04-20T14:30:00.000Z"}
+{"value":2,"metric_name":"stb_applications_report.youtube.viewer_id.distinct_count","@timestamp":"2018-05-02T08:30:00.000Z"}
+{"value":1,"metric_name":"stb_applications_report.youtube.viewer_id.distinct_count","@timestamp":"2018-05-02T08:40:00.000Z"}

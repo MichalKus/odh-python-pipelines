@@ -6,7 +6,7 @@ from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from common.spark_utils.custom_functions import convert_epoch_to_iso
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
-from common.basic_analytics.aggregations import DistinctCount
+from common.basic_analytics.aggregations import DistinctCount, Count
 from pyspark.sql.functions import col
 
 
@@ -22,9 +22,11 @@ class ApplicationsReportEventProcessor(BasicAnalyticsProcessor):
         applications_report_stream = read_stream \
             .select("@timestamp", "ApplicationsReport.*", col("header.viewerID").alias("viewer_id"))
 
-        return [self.__distinct_active_stb_netflix(applications_report_stream),
+        return [self.__distinct_active_stb(applications_report_stream),
+                self.__distinct_active_stb_netflix(applications_report_stream),
                 self.__distinct_active_stb_youtube(applications_report_stream),
-                self.__distinct_active_stb_app_started(applications_report_stream)]
+                self.__distinct_active_stb_app_started(applications_report_stream),
+                self.__total_app_events(applications_report_stream)]
 
     @staticmethod
     def create_schema():
@@ -39,6 +41,12 @@ class ApplicationsReportEventProcessor(BasicAnalyticsProcessor):
                 StructField("event_type", StringType())
             ]))
         ])
+
+    def __distinct_active_stb(self, applications_report_stream):
+        return applications_report_stream \
+            .aggregate(DistinctCount(group_fields=["provider_id", "event_type"], aggregation_field="viewer_id",
+                                     aggregation_name=self._component_name,
+                                     aggregation_window=self._get_interval_duration("uniqCountWindow")))
 
     def __distinct_active_stb_netflix(self, read_stream):
         return read_stream \
@@ -59,6 +67,10 @@ class ApplicationsReportEventProcessor(BasicAnalyticsProcessor):
                                      aggregation_field="viewer_id",
                                      aggregation_name=self._component_name + ".app_started"))
 
+    def __total_app_events(self, applications_report_stream):
+        return applications_report_stream \
+            .aggregate(Count(group_fields=["provider_id", "event_type"], aggregation_field="viewer_id",
+                                     aggregation_name=self._component_name))
 
 def create_processor(configuration):
     """

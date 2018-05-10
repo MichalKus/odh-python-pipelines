@@ -23,21 +23,21 @@ class VmStatReportEventProcessor(BasicAnalyticsProcessor):
 
         self._time_in_percents = ".time_in_percents"
 
-        self._common_vm_stat_pipeline = read_stream \
+        common_vm_stat_pipeline = read_stream \
             .select("@timestamp",
                     "VMStat.*",
                     col("header.viewerID").alias("viewer_id"),
                     col("header.softwareVersions").alias("software_versions"))
 
-        return [self.average_uptime_across_stb(),
-                self.average_usage_hardware_interrupt(),
-                self.average_usage_low_priority_mode(),
-                self.average_user_active_mode(),
-                self.restarted_stbs_total_count(),
-                self.restarted_stbs_count_per_firmware(),
-                self.average_usage_cpu_in_wait(),
-                self.average_usage_system_mode(),
-                self.average_software_interrupt()]
+        return [self.__average_uptime_across_stb(common_vm_stat_pipeline),
+                self.__average_usage_hardware_interrupt(common_vm_stat_pipeline),
+                self.__average_usage_low_priority_mode(common_vm_stat_pipeline),
+                self.__average_user_active_mode(common_vm_stat_pipeline),
+                self.__restarted_stbs_total_count(common_vm_stat_pipeline),
+                self.__restarted_stbs_count_per_firmware(common_vm_stat_pipeline),
+                self.__average_usage_cpu_in_wait(common_vm_stat_pipeline),
+                self.__average_usage_system_mode(common_vm_stat_pipeline),
+                self.__average_software_interrupt(common_vm_stat_pipeline)]
 
     @staticmethod
     def create_schema():
@@ -62,62 +62,64 @@ class VmStatReportEventProcessor(BasicAnalyticsProcessor):
             ]))
         ])
 
-    def average_uptime_across_stb(self):
-        return self._common_vm_stat_pipeline \
+    def __average_uptime_across_stb(self, common_vm_stat_pipeline):
+        return common_vm_stat_pipeline \
             .select("@timestamp", col("uptime").alias("uptime_sec")) \
             .aggregate(Avg(aggregation_field="uptime_sec",
                            aggregation_name=self._component_name))
 
-    def average_usage_hardware_interrupt(self):
-        return self._common_vm_stat_pipeline \
+    def __average_usage_hardware_interrupt(self, common_vm_stat_pipeline):
+        return common_vm_stat_pipeline \
             .select("@timestamp", col("hwIrqPct")) \
             .aggregate(Avg(aggregation_field="hwIrqPct",
                            aggregation_name=self._component_name + self._time_in_percents))
 
-    def average_usage_cpu_in_wait(self):
-        return self._common_vm_stat_pipeline \
+    def __average_usage_cpu_in_wait(self, common_vm_stat_pipeline):
+        return common_vm_stat_pipeline \
             .select("@timestamp", col("iowaitPct")) \
             .aggregate(Avg(aggregation_field="iowaitPct",
                            aggregation_name=self._component_name + self._time_in_percents))
 
-    def average_usage_low_priority_mode(self):
-        return self._common_vm_stat_pipeline \
+    def __average_usage_low_priority_mode(self, common_vm_stat_pipeline):
+        return common_vm_stat_pipeline \
             .select("@timestamp", col("nicePct")) \
             .aggregate(Avg(aggregation_field="nicePct",
                            aggregation_name=self._component_name + self._time_in_percents))
 
-    def average_usage_system_mode(self):
-        return self._common_vm_stat_pipeline \
+    def __average_usage_system_mode(self, common_vm_stat_pipeline):
+        return common_vm_stat_pipeline \
             .select("@timestamp", col("systemPct")) \
             .aggregate(Avg(aggregation_field="systemPct",
                            aggregation_name=self._component_name + self._time_in_percents))
 
-    def average_user_active_mode(self):
-        return self._common_vm_stat_pipeline \
+    def __average_user_active_mode(self, common_vm_stat_pipeline):
+        return common_vm_stat_pipeline \
             .select("@timestamp", col("userPct")) \
             .aggregate(Avg(aggregation_field="userPct",
                            aggregation_name=self._component_name + self._time_in_percents))
 
-    def average_software_interrupt(self):
-        return self._common_vm_stat_pipeline \
+    def __average_software_interrupt(self, common_vm_stat_pipeline):
+        return common_vm_stat_pipeline \
             .select("@timestamp", col("swIrqPct")) \
             .aggregate(Avg(aggregation_field="swIrqPct",
                            aggregation_name=self._component_name + self._time_in_percents))
 
-    def restarted_stbs_total_count(self):
-        return self._common_vm_stat_pipeline \
+    def __restarted_stbs_total_count(self, common_vm_stat_pipeline):
+        return common_vm_stat_pipeline \
             .select("@timestamp", "uptime", "viewer_id") \
-            .where((col("uptime") >= 0) & (col("uptime") <= 3600)) \
+            .where((col("uptime") >= 0) & (col("uptime") <= 100)) \
             .aggregate(DistinctCount(aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".restarted_stbs"))
+                                     aggregation_name=self._component_name + ".restarted_stbs",
+                                     aggregation_window=self._get_interval_duration("uniqCountWindow")))
 
-    def restarted_stbs_count_per_firmware(self):
-        return self._common_vm_stat_pipeline \
+    def __restarted_stbs_count_per_firmware(self, common_vm_stat_pipeline):
+        return common_vm_stat_pipeline \
             .select("@timestamp", "uptime", "viewer_id", explode("software_versions.version")
                     .alias("software_version")) \
-            .where((col("uptime") >= 0) & (col("uptime") <= 3600)) \
+            .where((col("uptime") >= 0) & (col("uptime") <= 100)) \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["software_version"],
-                                     aggregation_name=self._component_name + ".restarted_stbs_per_frimware"))
+                                     aggregation_name=self._component_name + ".restarted_stbs_per_frimware",
+                                     aggregation_window=self._get_interval_duration("uniqCountWindow")))
 
 
 def create_processor(configuration):
