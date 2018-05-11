@@ -21,7 +21,6 @@
 {"@timestamp": "2018-04-25T11:15:00.000Z", "model_name": "DCX960", "value": 2, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.model_name.DCX960.viewer_id.distinct_count"}
 
 // count_distinct_active_stb for 2 intervals. corresponds to
-{"@timestamp": "2018-04-20T11:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.viewer_id.distinct_count", "value": 3}
-{"@timestamp": "2018-04-20T14:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.viewer_id.distinct_count", "value": 2}
-{"@timestamp": "2018-04-25T11:15:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.viewer_id.distinct_count", "value": 2}
-
+{"value":3,"metric_name":"vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.viewer_id.distinct_count","@timestamp":"2018-04-20T11:00:00.000Z"}
+{"value":2,"metric_name":"vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.viewer_id.distinct_count","@timestamp":"2018-04-20T14:00:00.000Z"}
+{"value":2,"metric_name":"vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report.viewer_id.distinct_count","@timestamp":"2018-04-25T11:00:00.000Z"}

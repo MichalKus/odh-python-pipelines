@@ -46,7 +46,9 @@ class AMSLiveViewingReportEventProcessor(BasicAnalyticsProcessor):
             .where("event_type = 'TUNE_IN'") \
             .aggregate(DistinctCount(group_fields=["channel"],
                                      aggregation_field="viewer_id",
-                                     aggregation_name=self._component_name + ".tune_in"))
+                                     aggregation_name=self._component_name + ".tune_in",
+                                     aggregation_window=self._get_interval_duration("uniqCountWindow")))
+
 
     def __count_event_type_by_channel(self, read_stream):
         return read_stream \

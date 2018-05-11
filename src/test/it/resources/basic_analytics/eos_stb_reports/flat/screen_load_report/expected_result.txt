@@ -1,2 +1,5 @@
-{"loading_screen": "FullScreen.View", "@timestamp": "2018-05-03T10:50:00.000Z", "metric_name": "stb_screen_load_report.loading_screen.FullScreen%2EView.viewer_id.distinct_count", "value": 3}
-{"loading_screen": "YoutubeView.View", "@timestamp": "2018-05-03T10:50:00.000Z", "metric_name": "stb_screen_load_report.loading_screen.YoutubeView%2EView.viewer_id.distinct_count", "value": 1}
+{"loading_screen":"FullScreen.View","value":4,"metric_name":"stb_screen_load_report.loading_screen.FullScreen%2EView.viewer_id.count","@timestamp":"2018-05-03T10:50:00.000Z"}
+{"loading_screen":"YoutubeView.View","value":1,"metric_name":"stb_screen_load_report.loading_screen.YoutubeView%2EView.viewer_id.count","@timestamp":"2018-05-03T10:50:00.000Z"}
+
+{"loading_screen":"FullScreen.View","value":3,"metric_name":"stb_screen_load_report.loading_screen.FullScreen%2EView.viewer_id.distinct_count","@timestamp":"2018-05-03T10:50:00.000Z"}
+{"loading_screen":"YoutubeView.View","value":1,"metric_name":"stb_screen_load_report.loading_screen.YoutubeView%2EView.viewer_id.distinct_count","@timestamp":"2018-05-03T10:50:00.000Z"}

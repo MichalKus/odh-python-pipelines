@@ -3,10 +3,8 @@ spark:
   master: local[*]
   shuffle.partitions: 1
   outputMode: update
-#  consoleWriter: true
 
 analytics:
-  componentName: vagrant.eosdtv.lab5aobo.tst.heapp.stb_active_report
+  componentName: top_processes
   watermark: '15 minutes'
   window: '15 minutes'
-  uniqCountWindow: '60 minutes'

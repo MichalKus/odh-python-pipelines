@@ -3,8 +3,10 @@ spark:
   master: local[*]
   shuffle.partitions: 1
   outputMode: update
+#  consoleWriter: true
 
 analytics:
   componentName: stb_live_viewing_report
   watermark: '15 minutes'
   window: '15 minutes'
+  uniqCountWindow: '60 minutes'
