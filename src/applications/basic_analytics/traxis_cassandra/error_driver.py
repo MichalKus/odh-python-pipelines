@@ -25,8 +25,9 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
                 self.__ring_status_node_warnings(warn_events),
                 self.__undefined_warnings(warn_events),
                 self.__ring_status_node_errors(error_events),
-                # self.__success_logs(read_stream)]
-                self.__failure_logs(read_stream)]
+                self.__success_logs(read_stream),
+                self.__failure_logs(read_stream),
+                self.__memory_flushing(read_stream)]
 
     def __info_or_warn_count(self, read_stream):
         return read_stream \
