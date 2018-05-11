@@ -5,7 +5,7 @@ The module for the driver to calculate metrics related to Traxis Backend error c
 from pyspark.sql.functions import regexp_extract
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
-from common.basic_analytics.aggregations import Count, DistinctCount
+from common.basic_analytics.aggregations import Count
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
@@ -25,7 +25,7 @@ class TraxisBackendError(BasicAnalyticsProcessor):
 
     def __error_count(self, error_events):
         return error_events \
-            .aggregate(Count(aggregation_name=self._component_name))
+            .aggregate(Count(aggregation_name=self._component_name + ".error"))
 
     def __cassandra_errors(self, error_events):
         return error_events \
@@ -45,7 +45,7 @@ class TraxisBackendError(BasicAnalyticsProcessor):
     def __error_count_per_host_names(self, error_events):
         return error_events \
             .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".error_event"))
+                             aggregation_name=self._component_name))
 
     @staticmethod
     def create_schema():
