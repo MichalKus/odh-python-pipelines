@@ -21,78 +21,82 @@ class TraxisCassandraGeneral(BasicAnalyticsProcessor):
         warn_events = read_stream.where("level == 'WARN'")
         error_events = read_stream.where("level == 'ERROR'")
 
-        return [self.count(info_events.union(warn_events), "info_or_warn"),
-                self.count(error_events, "error"),
-                self.daily_starts(info_events),
-                self.daily_ends(info_events),
-                self.weekly_starts(info_events),
-                self.weekly_ends(info_events),
-                self.repairs(info_events),
-                self.compactings(info_events),
-                self.node_ups(info_events),
-                self.node_downs(info_events),
-                self.ring_status_node_warnings(warn_events),
-                self.undefined_warnings(warn_events),
-                self.successful_repairs(read_stream),
-                self.unreachable_nodes(error_events),
-                self.reachable_nodes(read_stream),
-                self.memtable_flush(read_stream)]
+        return [self.__count(info_events.union(warn_events), "info_or_warn"),
+                self.__count(error_events, "error"),
+                self.__daily_starts(info_events),
+                self.__daily_ends(info_events),
+                self.__weekly_starts(info_events),
+                self.__weekly_ends(info_events),
+                self.__repairs(info_events),
+                self.__compactings(info_events),
+                self.__node_ups(info_events),
+                self.__node_downs(info_events),
+                self.__ring_status_node_warnings(warn_events),
+                self.__undefined_warnings(warn_events),
+                self.__successful_repairs(read_stream),
+                self.__unreachable_nodes(error_events),
+                self.__reachable_nodes(read_stream),
+                self.__memtable_flush(read_stream),
+                self.__total_available_hosts(read_stream),
+                self.__success_logs(read_stream),
+                self.__failure_logs(read_stream),
+                self.__memory_flushing(read_stream)]
 
-    def count(self, events, metric_name):
+    def __count(self, events, metric_name):
         return events \
             .aggregate(Count(aggregation_name="{0}.{1}".format(self._component_name, metric_name)))
 
-    def daily_starts(self, events):
+    def __daily_starts(self, events):
         return events \
             .where("message like '%Starting daily Cassandra maintenance%'") \
             .aggregate(Count(group_fields=["hostname"],
                              aggregation_name=self._component_name + ".daily_starts"))
 
-    def daily_ends(self, events):
+    def __daily_ends(self, events):
         return events \
             .where("message like '%Daily Cassandra maintenance took%'") \
             .aggregate(Count(group_fields=["hostname"],
                              aggregation_name=self._component_name + ".daily_ends"))
 
-    def weekly_starts(self, events):
+    def __weekly_starts(self, events):
         return events \
             .where("message like '%Starting weekly Cassandra maintenance%'") \
             .aggregate(Count(group_fields=["hostname"],
                              aggregation_name=self._component_name + ".weekly_starts"))
 
-    def weekly_ends(self, events):
+    def __weekly_ends(self, events):
         return events \
             .where("message like '%Weekly Cassandra maintenance took%'") \
             .aggregate(Count(group_fields=["hostname"],
                              aggregation_name=self._component_name + ".weekly_ends"))
 
-    def repairs(self, events):
+    def __repairs(self, events):
         return events \
             .where("message like '%repair%'") \
             .aggregate(Count(group_fields=["hostname"],
                              aggregation_name=self._component_name + ".repairs"))
 
-    def compactings(self, events):
+    def __compactings(self, events):
         return events \
             .where("message like '%Compacting%'") \
             .aggregate(Count(group_fields=["hostname"],
                              aggregation_name=self._component_name + ".compactings"))
 
-    def node_ups(self, events):
+    def __node_ups(self, events):
         return events \
             .where("message like '%InetAddress /% is now UP%'") \
             .withColumn("host", regexp_extract("message", r".*InetAddress\s+/(\S+)\s+is\s+now\s+UP.*", 1)) \
             .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".node_ups"))
 
-    def node_downs(self, events):
+    def __node_downs(self, events):
         return events \
             .where("message like '%InetAddress /% is now DOWN%'") \
             .withColumn("host", regexp_extract("message", r".*InetAddress\s+/(\S+)\s+is\s+now\s+DOWN.*", 1)) \
             .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".node_downs"))
 
-    def ring_status_node_warnings(self, events):
+    def __ring_status_node_warnings(self, events):
         return events \
             .where("message like '%Unable to determine external address "
                    "of node with internal address %'") \
@@ -101,14 +105,14 @@ class TraxisCassandraGeneral(BasicAnalyticsProcessor):
             .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".ring_status_node_warnings"))
 
-    def undefined_warnings(self, events):
+    def __undefined_warnings(self, events):
         return events \
             .where("message not like '%Unable to determine external address "
                    "of node with internal address %'") \
             .aggregate(Count(group_fields=["hostname"],
                              aggregation_name=self._component_name + ".undefined_warnings"))
 
-    def successful_repairs(self, events):
+    def __successful_repairs(self, events):
         successful_repairs_message_types = [
             "PreOrderProducts",
             "PromotionRuleEvaluations",
@@ -138,22 +142,52 @@ class TraxisCassandraGeneral(BasicAnalyticsProcessor):
                                                        default_value="unclassified")).where("type != 'unclassified'") \
             .aggregate(Count(group_fields=["type"], aggregation_name=self._component_name))
 
-    def unreachable_nodes(self, events):
+    def __unreachable_nodes(self, events):
         return events \
             .where("message like '%Node % is unreachable%'") \
             .aggregate(DistinctCount(group_fields=["hostname"], aggregation_field="hostname",
                                      aggregation_name=self._component_name + ".unreachable_nodes"))
 
-    def reachable_nodes(self, events):
+    def __reachable_nodes(self, events):
         return events \
             .where("not(message like '%Node % is unreachable%')") \
             .aggregate(DistinctCount(group_fields=["hostname"], aggregation_field="hostname",
                                      aggregation_name=self._component_name + ".reachable_nodes"))
 
-    def memtable_flush(self, events):
+    def __memtable_flush(self, events):
         return events \
             .where("message like '%Heap is%'") \
             .aggregate(Count(aggregation_name=self._component_name + ".memtable_flush"))
+
+    def __total_available_hosts(self, events):
+        return events \
+            .aggregate(DistinctCount(aggregation_field="hostname",
+                                     aggregation_name=self._component_name))
+
+    def __success_logs(self, events):
+        return events \
+            .where("level == 'INFO' or level =='WARN'") \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".success_logs"))
+
+    def __failure_logs(self, events):
+        return events \
+            .where("level == 'ERROR'") \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + "failure_logs"))
+
+    def __memory_flushing(self, events):
+        return events \
+            .where("message like '%Flushing%'") \
+            .withColumn("column_family", custom_translate_regex(
+                source_field=col("message"),
+                mapping={r".*Channels.*": "channels",
+                         r".*Titles.*": "titles",
+                         r".*Groups.*": "groups"},
+                default_value="unclassified")) \
+            .where("column_family != 'unclassified'")\
+            .aggregate(Count(group_fields=["column_family"],
+                             aggregation_name=self._component_name + ".memory_flushing"))
 
     @staticmethod
     def create_schema():
