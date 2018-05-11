@@ -79,11 +79,11 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
         return events \
             .where("message like '%Flushing%'") \
             .withColumn("column_family", custom_translate_regex(
-            source_field=col("message"),
-            mapping={r".*Channels.*": "channels",
-                     r".*Titles.*": "titles",
-                     r".*Groups.*": "groups"},
-            default_value="unclassified")) \
+                source_field=col("message"),
+                mapping={r".*Channels.*": "channels",
+                         r".*Titles.*": "titles",
+                         r".*Groups.*": "groups"},
+                default_value="unclassified")) \
             .where("column_family != 'unclassified'") \
             .aggregate(Count(group_fields=["column_family"],
                              aggregation_name=self._component_name + ".memory_flushing"))
