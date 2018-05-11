@@ -2,12 +2,12 @@
 The module for the driver to calculate metrics related to Traxis Cassandra error component.
 """
 
-from pyspark.sql.functions import regexp_extract, col
+from pyspark.sql.functions import regexp_extract
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
+from applications.basic_analytics.traxis_cassandra.cassandra_utils import CassandraUtils
 from common.basic_analytics.aggregations import Count
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.spark_utils.custom_functions import custom_translate_regex
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
@@ -26,8 +26,8 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
                 self.__undefined_warnings(warn_events),
                 self.__ring_status_node_errors(error_events),
                 self.__success_logs(read_stream),
-                self.__failure_logs(read_stream),
-                self.__memory_flushing(read_stream)]
+                self.__error_logs(read_stream),
+                CassandraUtils.memory_flushing(read_stream, self._component_name)]
 
     def __info_or_warn_count(self, read_stream):
         return read_stream \
@@ -67,26 +67,13 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
         return events \
             .where("level == 'INFO' or level =='WARN'") \
             .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".success_logs"))
+                             aggregation_name=self._component_name + ".info_or_warn"))
 
-    def __failure_logs(self, events):
+    def __error_logs(self, events):
         return events \
             .where("level == 'ERROR'") \
             .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + "failure_logs"))
-
-    def __memory_flushing(self, events):
-        return events \
-            .where("message like '%Flushing%'") \
-            .withColumn("column_family", custom_translate_regex(
-                source_field=col("message"),
-                mapping={r".*Channels.*": "channels",
-                         r".*Titles.*": "titles",
-                         r".*Groups.*": "groups"},
-                default_value="unclassified")) \
-            .where("column_family != 'unclassified'") \
-            .aggregate(Count(group_fields=["column_family"],
-                             aggregation_name=self._component_name + ".memory_flushing"))
+                             aggregation_name=self._component_name + ".error"))
 
     @staticmethod
     def create_schema():
