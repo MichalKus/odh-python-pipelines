@@ -16,47 +16,16 @@ class TraxisBackendError(BasicAnalyticsProcessor):
     """
 
     def _process_pipeline(self, read_stream):
-        warn_events = read_stream.where("level == 'WARN'")
         error_events = read_stream.where("level == 'ERROR'")
 
-        return [self.__info_or_warn_count(read_stream),
-                self.__error_count(error_events),
-                self.__tva_ingest_error(warn_events),
-                self.__customer_provisioning_error(warn_events),
-                self.__undefined_warnings(warn_events),
+        return [self.__error_count(error_events),
                 self.__cassandra_errors(error_events),
                 self.__undefined_errors(error_events),
-                self.__total_available_hosts(read_stream),
-                self.__info_or_warn_count_per_host_names(read_stream),
                 self.__error_count_per_host_names(error_events)]
-
-    def __info_or_warn_count(self, read_stream):
-        return read_stream \
-            .where("level == 'WARN' or level = 'INFO'")\
-            .aggregate(Count(aggregation_name=self._component_name + ".info_or_warn"))
 
     def __error_count(self, error_events):
         return error_events \
-            .aggregate(Count(aggregation_name=self._component_name + ".error"))
-
-    def __tva_ingest_error(self, warn_events):
-        return warn_events \
-            .where("message like '%One or more validation errors detected during tva ingest%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".tva_ingest_error"))
-
-    def __customer_provisioning_error(self, warn_events):
-        return warn_events \
-            .where("message like '%Unable to use alias%because alias is already used by%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".customer_provisioning_error"))
-
-    def __undefined_warnings(self, warn_events):
-        return warn_events.where(
-            "message not like '%Unable to use alias%because alias is already used by%' and "
-            "message not like '%One or more validation errors detected during tva ingest%'"
-        ).aggregate(Count(group_fields=["hostname"],
-                          aggregation_name=self._component_name + ".undefined_warnings"))
+            .aggregate(Count(aggregation_name=self._component_name))
 
     def __cassandra_errors(self, error_events):
         return error_events \
@@ -72,17 +41,6 @@ class TraxisBackendError(BasicAnalyticsProcessor):
             .where("message not like '%Exception with cassandra node%'") \
             .aggregate(Count(group_fields=["hostname"],
                              aggregation_name=self._component_name + ".undefined_errors"))
-
-    def __total_available_hosts(self, read_stream):
-        return read_stream \
-            .aggregate(DistinctCount(aggregation_field="hostname",
-                                     aggregation_name=self._component_name))
-
-    def __info_or_warn_count_per_host_names(self, read_stream):
-        return read_stream \
-            .where("level == 'WARN' or level = 'INFO'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".info_or_warn_event"))
 
     def __error_count_per_host_names(self, error_events):
         return error_events \
