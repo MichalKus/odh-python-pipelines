@@ -4,7 +4,7 @@ The module for the driver to calculate metrics related to Traxis Backend general
 from pyspark.sql.functions import col, regexp_replace, regexp_extract, explode, split, lower
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
-from common.basic_analytics.aggregations import Count
+from common.basic_analytics.aggregations import Count, DistinctCount
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
@@ -25,6 +25,12 @@ class TraxisBackendGeneral(BasicAnalyticsProcessor):
 
         error_count = error_events \
             .aggregate(Count(aggregation_name=self._component_name + ".error"))
+
+        hostname_unique_count = read_stream. \
+            aggregate(DistinctCount(aggregation_field="hostname", aggregation_name=self._component_name))
+
+        hostname_level_count = read_stream \
+            .aggregate(Count(group_fields=["hostname", "level"], aggregation_name=self._component_name))
 
         tva_full_ingest = read_stream \
             .where("message like '%Starting full ingest%'") \
@@ -100,7 +106,8 @@ class TraxisBackendGeneral(BasicAnalyticsProcessor):
         return [info_or_warn_count, error_count, tva_expiry_check, tva_delta_ingest, tva_full_ingest,
                 tva_ingest_completed, started_service,
                 stopped_service, tva_ingest_error, customer_provisioning_error, undefined_warnings,
-                customer_provisioning_new, customer_provisioning_update, customer_provisioning_delete]
+                customer_provisioning_new, customer_provisioning_update, customer_provisioning_delete,
+                hostname_unique_count, hostname_level_count]
 
     @staticmethod
     def create_schema():
