@@ -16,11 +16,10 @@ class TraxisBackendError(BasicAnalyticsProcessor):
     """
 
     def _process_pipeline(self, read_stream):
-        info_events = read_stream.where("level == 'INFO'")
         warn_events = read_stream.where("level == 'WARN'")
         error_events = read_stream.where("level == 'ERROR'")
 
-        return [self.__info_or_warn_count(info_events, warn_events),
+        return [self.__info_or_warn_count(read_stream),
                 self.__error_count(error_events),
                 self.__tva_ingest_error(warn_events),
                 self.__customer_provisioning_error(warn_events),
@@ -28,11 +27,12 @@ class TraxisBackendError(BasicAnalyticsProcessor):
                 self.__cassandra_errors(error_events),
                 self.__undefined_errors(error_events),
                 self.__total_available_hosts(read_stream),
-                self.__info_or_warn_count_per_host_names(info_events, warn_events),
+                self.__info_or_warn_count_per_host_names(read_stream),
                 self.__error_count_per_host_names(error_events)]
 
-    def __info_or_warn_count(self, info_events, warn_events):
-        return info_events.union(warn_events) \
+    def __info_or_warn_count(self, read_stream):
+        return read_stream \
+            .where("level == 'WARN' or level = 'INFO'")\
             .aggregate(Count(aggregation_name=self._component_name + ".info_or_warn"))
 
     def __error_count(self, error_events):
@@ -78,8 +78,9 @@ class TraxisBackendError(BasicAnalyticsProcessor):
             .aggregate(DistinctCount(aggregation_field="hostname",
                                      aggregation_name=self._component_name))
 
-    def __info_or_warn_count_per_host_names(self, info_events, warn_events):
-        return info_events.union(warn_events) \
+    def __info_or_warn_count_per_host_names(self, read_stream):
+        return read_stream \
+            .where("level == 'WARN' or level = 'INFO'") \
             .aggregate(Count(group_fields=["hostname"],
                              aggregation_name=self._component_name + ".info_or_warn_event"))
 
