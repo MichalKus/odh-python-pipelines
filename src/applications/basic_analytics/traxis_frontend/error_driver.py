@@ -21,15 +21,20 @@ class TraxisFrontendError(BasicAnalyticsProcessor):
         warn_events = read_stream.where("level == 'WARN'")
         error_events = read_stream.where("level == 'ERROR'")
 
-        return [self.count(info_events.union(warn_events), "info_or_warn"),
-                self.count(error_events, "error"),
-                self.error_metrics(read_stream)]
+        return [self.__count(info_events.union(warn_events), "info_or_warn"),
+                self.__count(error_events, "error"),
+                self.__counts_by_level_and_hostname(read_stream),
+                self.__error_metrics(read_stream)]
 
-    def count(self, events, metric_name):
+    def __count(self, events, metric_name):
         return events \
             .aggregate(Count(aggregation_name="{0}.{1}".format(self._component_name, metric_name)))
 
-    def error_metrics(self, events):
+    def __counts_by_level_and_hostname(self, events):
+        return events \
+            .aggregate(Count(group_fields=["level", "hostname"], aggregation_name=self._component_name))
+
+    def __error_metrics(self, events):
         error_stream = events.where("level = 'ERROR'") \
             .withColumn("counter",
                         custom_translate_like(
