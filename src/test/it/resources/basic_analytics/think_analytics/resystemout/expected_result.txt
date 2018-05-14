@@ -1,2 +1,18 @@
+// __avg_duration.
 {"hostname":"test1", "@timestamp": "2017-09-29T13:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.resystemout.hostname.test1.duration.avg", "value": 16.0}
 {"hostname":"test1", "@timestamp": "2017-09-29T09:02:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.resystemout.hostname.test1.duration.avg", "value": 12.0}
+
+
+// __count_by_level.
+{"@timestamp": "2017-09-29T13:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.resystemout.level.INFO.count", "value": 2, "level": "INFO"}
+{"@timestamp": "2017-09-29T09:02:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.resystemout.level.INFO.count", "value": 1, "level": "INFO"}
+{"@timestamp": "2017-09-29T12:50:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.resystemout.level.WARN.count", "value": 1, "level": "WARN"}
+{"@timestamp": "2017-09-29T13:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.resystemout.level.WARN.count", "value": 1, "level": "WARN"}
+{"@timestamp": "2017-09-29T11:31:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.resystemout.level.ERROR.count", "value": 1, "level": "ERROR"}
+{"@timestamp": "2017-09-29T13:00:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.resystemout.level.ERROR.count", "value": 1, "level": "ERROR"}
+{"@timestamp": "2017-09-29T09:02:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.resystemout.level.WARN.count", "value": 1, "level": "WARN"}
+
+
+// __count_by_message.
+{"@timestamp": "2017-09-29T11:31:00.000Z", "message": "[DAWN_0107] - Failed to get customer data from Traxis for profile Id: Jef_be_be#MasterProfile: [DAWN_0107] - Failed to get customer data from Traxis for profile Id: Jef_be_be~~23MasterProfile: [DAWN_0103] - Error calling Traxis.Web  for Jef_be_be~~23MasterProfile: HTTP Code: 400, HTTP Message: Bad Request, Traxis Message: Invalid parameter 'ProfileId', value 'Jef_be_be#MasterProfile'", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.resystemout.message.[DAWN_0107]%20-%20Failed%20to%20get%20customer%20data%20from%20Traxis%20for%20profile%20Id:%20Jef_be_be#MasterProfile:%20[DAWN_0107]%20-%20Failed%20to%20get%20customer%20data%20from%20Traxis%20for%20profile%20Id:%20Jef_be_be~~23MasterProfile:%20[DAWN_0103]%20-%20Error%20calling%20Traxis%2EWeb%20for%20Jef_be_be~~23MasterProfile:%20HTTP%20Code:%20400,%20HTTP%20Message:%20Bad%20Request,%20Traxis%20Message:%20Invalid%20parameter%20'ProfileId',%20value%20'Jef_be_be#MasterProfile'.count", "value": 1}
+{"@timestamp": "2017-09-29T13:00:00.000Z", "message": "[DAWN_0107] - Failed to get customer data from Traxis for profile Id: Jef_be_be#MasterProfile: [DAWN_0107] - Failed to get customer data from Traxis for profile Id: Jef_be_be~~23MasterProfile: [DAWN_0103] - Error calling Traxis.Web  for Jef_be_be~~23MasterProfile: HTTP Code: 400, HTTP Message: Bad Request, Traxis Message: Invalid parameter 'ProfileId', value 'Jef_be_be#MasterProfile'", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.resystemout.message.[DAWN_0107]%20-%20Failed%20to%20get%20customer%20data%20from%20Traxis%20for%20profile%20Id:%20Jef_be_be#MasterProfile:%20[DAWN_0107]%20-%20Failed%20to%20get%20customer%20data%20from%20Traxis%20for%20profile%20Id:%20Jef_be_be~~23MasterProfile:%20[DAWN_0103]%20-%20Error%20calling%20Traxis%2EWeb%20for%20Jef_be_be~~23MasterProfile:%20HTTP%20Code:%20400,%20HTTP%20Message:%20Bad%20Request,%20Traxis%20Message:%20Invalid%20parameter%20'ProfileId',%20value%20'Jef_be_be#MasterProfile'.count", "value": 1}

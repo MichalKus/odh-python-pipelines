@@ -44,25 +44,6 @@
 {"@timestamp": "2017-06-19T06:20:00.000Z", "client_type": "399", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.client_type.399.count", "value": 1}
 
 
-// __count_by_level.
-{"@timestamp": "2017-06-19T00:40:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.level.WARN.count", "value": 1, "level": "WARN"}
-{"@timestamp": "2017-06-19T00:40:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.level.INFO.count", "value": 1, "level": "INFO"}
-{"@timestamp": "2017-06-19T00:40:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.level.count", "value": 2}
-{"@timestamp": "2017-06-20T03:20:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.level.WARN.count", "value": 1, "level": "WARN"}
-{"@timestamp": "2017-06-20T03:20:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.level.ERROR.count", "value": 1, "level": "ERROR"}
-{"@timestamp": "2018-05-08T10:10:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.level.INFO.count", "value": 1, "level": "INFO"}
-{"@timestamp": "2018-05-08T04:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.level.ERROR.count", "value": 2, "level": "ERROR"}
-{"@timestamp": "2018-05-08T00:40:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.level.ERROR.count", "value": 1, "level": "ERROR"}
-{"@timestamp": "2017-06-20T03:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.level.count", "value": 1}
-{"@timestamp": "2017-06-19T06:20:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.level.count", "value": 2}
-
-
-// __count_by_message.
-{"@timestamp": "2017-06-20T03:20:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.message.count", "value": 1}
-{"@timestamp": "2018-05-08T04:30:00.000Z", "message": "[DAWN_0200] - Failed to get recordings from LGI Recording Service for profile Id: DTV1170063_be#MasterProfile: [DAWN_0200] - Failed to get recordings from LGI Recording Service for profile Id: DTV1170063_be#MasterProfile: 404 : <html>", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.message.[DAWN_0200]%20-%20Failed%20to%20get%20recordings%20from%20LGI%20Recording%20Service%20for%20profile%20Id:%20DTV1170063_be#MasterProfile:%20[DAWN_0200]%20-%20Failed%20to%20get%20recordings%20from%20LGI%20Recording%20Service%20for%20profile%20Id:%20DTV1170063_be#MasterProfile:%20404%20:%20<html>.count", "value": 2}
-{"@timestamp": "2018-05-08T00:40:00.000Z", "message": "[DAWN_0200] - Failed to get recordings from LGI Recording Service for profile Id: subscriber_000995_be#MasterProfile: [DAWN_0200] - Failed to get recordings from LGI Recording Service for profile Id: subscriber_000995_be#MasterProfile: 404 : <html>", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.message.[DAWN_0200]%20-%20Failed%20to%20get%20recordings%20from%20LGI%20Recording%20Service%20for%20profile%20Id:%20subscriber_000995_be#MasterProfile:%20[DAWN_0200]%20-%20Failed%20to%20get%20recordings%20from%20LGI%20Recording%20Service%20for%20profile%20Id:%20subscriber_000995_be#MasterProfile:%20404%20:%20<html>.count", "value": 1}
-
-
 // __count_by_content_source_id_and_methods.
 {"@timestamp": "2017-06-19T00:40:00.000Z", "content_source_id": "2", "method": "lgiAdaptiveSearch", "value": 2, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.content_source_id.2.method.lgiAdaptiveSearch.count"}
 {"@timestamp": "2017-06-19T00:40:00.000Z", "content_source_id": "1", "method": "lgiAdaptiveSearch", "value": 1, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.content_source_id.1.method.lgiAdaptiveSearch.count"}

@@ -9,7 +9,7 @@ from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 from pyspark.sql.functions import col
 
 
-class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
+class ThinkAnalyticsHttpAccessEventProcessor(BasicAnalyticsProcessor):
     """
     The processor implementation to calculate metrics related to Think Analytics HTTP access component.
     """
@@ -17,7 +17,7 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
     def _process_pipeline(self, read_stream):
 
         http_access_stream = read_stream \
-            .select("@timestamp", "*",
+            .select("*",
                     col("contentSourceId").alias("content_source_id"),
                     col("clientType").alias("client_type"),
                     col("queryLanguage").alias("query_language"),
@@ -27,7 +27,7 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
             .withColumn("response_code", col("response_code").cast("Int"))
 
         response_time_stream = http_access_stream \
-            .withColumn("response_code", col("response_time").cast("Int"))
+            .withColumn("response_time", col("response_time").cast("Int"))
 
         return [self.__avg_response_time_by_method(response_time_stream),
                 self.__avg_response_time(response_time_stream),
@@ -35,8 +35,6 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
                 self.__count_by_code(http_access_stream),
                 self.__count_by_method(http_access_stream),
                 self.__count_by_client_type(http_access_stream),
-                self.__count_by_level(http_access_stream),
-                self.__count_by_message(http_access_stream),
                 self.__count_by_content_source_id_and_methods(http_access_stream),
                 self.__count_by_marketing_bias_and_methods(http_access_stream),
                 self.__count_responses(http_access_stream),
@@ -60,8 +58,6 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
             StructField("clientType", StringType()),
             StructField("method", StringType()),
             StructField("queryLanguage", StringType()),
-            StructField("level", StringType()),
-            StructField("message", StringType()),
             StructField("term", StringType()),
             StructField("applyMarketingBias", StringType()),
             StructField("hostname", StringType())
@@ -101,17 +97,6 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
         return read_stream \
             .where("client_type is not null") \
             .aggregate(Count(group_fields=["client_type"],
-                             aggregation_name=self._component_name))
-
-    def __count_by_level(self, read_stream):
-        return read_stream \
-            .aggregate(Count(group_fields=["level"],
-                             aggregation_name=self._component_name))
-
-    def __count_by_message(self, read_stream):
-        return read_stream \
-            .where("level == 'ERROR'") \
-            .aggregate(Count(group_fields=["message"],
                              aggregation_name=self._component_name))
 
     def __count_by_content_source_id_and_methods(self, read_stream):
@@ -193,7 +178,7 @@ class ThinkAnalyticsHttpAccess(BasicAnalyticsProcessor):
 
 def create_processor(configuration):
     """Method to create the instance of the processor"""
-    return ThinkAnalyticsHttpAccess(configuration, ThinkAnalyticsHttpAccess.create_schema())
+    return ThinkAnalyticsHttpAccessEventProcessor(configuration, ThinkAnalyticsHttpAccessEventProcessor.create_schema())
 
 
 if __name__ == "__main__":
