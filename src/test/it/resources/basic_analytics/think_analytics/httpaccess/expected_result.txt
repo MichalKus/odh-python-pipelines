@@ -9,17 +9,11 @@
 {"@timestamp": "2017-06-20T03:20:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.test1.response_time.avg", "value": 0.5}
 {"@timestamp": "2017-06-20T03:30:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.test1.response_time.avg", "value": 0.0}
 {"@timestamp": "2017-06-19T06:20:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.test1.response_time.avg", "value": 4.0}
-{"@timestamp": "2018-05-08T10:10:00.000Z", "hostname": "be-l-p-obo00336", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.be-l-p-obo00336.response_time.avg"}
-{"@timestamp": "2018-05-08T04:30:00.000Z", "hostname": "be-l-p-obo00335", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.be-l-p-obo00335.response_time.avg"}
-{"@timestamp": "2018-05-08T00:40:00.000Z", "hostname": "be-l-p-obo00336", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.be-l-p-obo00336.response_time.avg"}
 
 
 // __distinct_active_hosts.
 {"@timestamp": "2017-06-19T00:40:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.distinct_count", "value": 1}
 {"@timestamp": "2017-06-20T03:20:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.distinct_count", "value": 1}
-{"@timestamp": "2018-05-08T10:10:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.distinct_count", "value": 1}
-{"@timestamp": "2018-05-08T04:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.distinct_count", "value": 1}
-{"@timestamp": "2018-05-08T00:40:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.distinct_count", "value": 1}
 {"@timestamp": "2017-06-20T03:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.distinct_count", "value": 1}
 {"@timestamp": "2017-06-19T06:20:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.distinct_count", "value": 1}
 
@@ -62,9 +56,6 @@
 {"@timestamp": "2017-06-19T00:40:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.responses.hostname.test1.count", "value": 4}
 {"@timestamp": "2017-06-20T03:20:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.responses.hostname.test1.count", "value": 2}
 {"@timestamp": "2017-06-20T03:30:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.responses.hostname.test1.count", "value": 1}
-{"@timestamp": "2018-05-08T10:10:00.000Z", "hostname": "be-l-p-obo00336", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.responses.hostname.be-l-p-obo00336.count", "value": 1}
-{"@timestamp": "2018-05-08T04:30:00.000Z", "hostname": "be-l-p-obo00335", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.responses.hostname.be-l-p-obo00335.count", "value": 2}
-{"@timestamp": "2018-05-08T00:40:00.000Z", "hostname": "be-l-p-obo00336", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.responses.hostname.be-l-p-obo00336.count", "value": 1}
 
 
 // __count_default_language.
@@ -81,31 +72,22 @@
 {"@timestamp": "2017-06-20T03:20:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.query_language.nl.count", "value": 1}
 
 
-// __count_successful_requests_by_hosts.
-{"@timestamp": "2017-06-19T00:40:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.successful.hostname.test1.count", "value": 3}
-{"@timestamp": "2017-06-20T03:20:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.successful.hostname.test1.count", "value": 2}
-{"@timestamp": "2017-06-20T03:30:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.successful.hostname.test1.count", "value": 1}
-{"@timestamp": "2017-06-19T06:20:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.successful.hostname.test1.count", "value": 2}
+// __count_requests_by_hosts_and_status.
+{"response_successful": "true", "@timestamp": "2017-06-19T00:40:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.test1.response_successful.true.count", "value": 3}
+{"response_successful": "true", "@timestamp": "2017-06-20T03:20:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.test1.response_successful.true.count", "value": 2}
+{"response_successful": "true", "@timestamp": "2017-06-20T03:30:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.test1.response_successful.true.count", "value": 1}
+{"response_successful": "false", "@timestamp": "2017-06-19T00:40:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.test1.response_successful.false.count", "value": 1}
+{"response_successful": "true", "@timestamp": "2017-06-19T06:20:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.hostname.test1.response_successful.true.count", "value": 2}
 
 
-// __count_failed_requests_by_hosts.
-{"@timestamp": "2017-06-19T00:40:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.failed.hostname.test1.count", "value": 1}
+// __count_requests_by_content_source_id_and_methods_and_status.
+{"content_source_id": "2", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.content_source_id.2.method.lgiAdaptiveSearch.response_successful.true.count", "@timestamp": "2017-06-19T00:40:00.000Z", "value": 2, "response_successful": "true", "method": "lgiAdaptiveSearch"}
+{"content_source_id": "1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.content_source_id.1.method.lgiAdaptiveSearch.response_successful.true.count", "@timestamp": "2017-06-19T00:40:00.000Z", "value": 1, "response_successful": "true", "method": "lgiAdaptiveSearch"}
+{"content_source_id": "1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.content_source_id.1.method.learnAction.response_successful.false.count", "@timestamp": "2017-06-19T00:40:00.000Z", "value": 1, "response_successful": "false", "method": "learnAction"}
+{"content_source_id": "1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.content_source_id.1.method.lgiAdaptiveSearch.response_successful.true.count", "@timestamp": "2017-06-19T06:20:00.000Z", "value": 1, "response_successful": "true", "method": "lgiAdaptiveSearch"}
 
 
-// __count_successful_requests_by_content_source_id_and_methods.
-{"@timestamp": "2017-06-19T00:40:00.000Z", "content_source_id": "2", "method": "lgiAdaptiveSearch", "value": 2, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.successful.content_source_id.2.method.lgiAdaptiveSearch.count"}
-{"@timestamp": "2017-06-19T00:40:00.000Z", "content_source_id": "1", "method": "lgiAdaptiveSearch", "value": 1, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.successful.content_source_id.1.method.lgiAdaptiveSearch.count"}
-{"@timestamp": "2017-06-19T06:20:00.000Z", "content_source_id": "1", "method": "lgiAdaptiveSearch", "value": 1, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.successful.content_source_id.1.method.lgiAdaptiveSearch.count"}
-
-
-// __count_failed_requests_by_content_source_id_and_methods.
-{"@timestamp": "2017-06-19T00:40:00.000Z", "content_source_id": "1", "method": "learnAction", "value": 1, "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.failed.content_source_id.1.method.learnAction.count"}
-
-
-// __count_successful_requests_by_client_type.
-{"@timestamp": "2017-06-19T00:40:00.000Z", "client_type": "399", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.successful.client_type.399.count", "value": 3}
-{"@timestamp": "2017-06-19T06:20:00.000Z", "client_type": "399", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.successful.client_type.399.count", "value": 1}
-
-
-// __count_failed_requests_by_client_type.
-{"@timestamp": "2017-06-19T00:40:00.000Z", "client_type": "300", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.failed.client_type.300.count", "value": 1}
+// __count_requests_by_client_type_and_status.
+{"response_successful": "true", "@timestamp": "2017-06-19T00:40:00.000Z", "client_type": "399", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.client_type.399.response_successful.true.count", "value": 3}
+{"response_successful": "false", "@timestamp": "2017-06-19T00:40:00.000Z", "client_type": "300", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.client_type.300.response_successful.false.count", "value": 1}
+{"response_successful": "true", "@timestamp": "2017-06-19T06:20:00.000Z", "client_type": "399", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.client_type.399.response_successful.true.count", "value": 1}

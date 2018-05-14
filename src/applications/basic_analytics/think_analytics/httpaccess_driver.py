@@ -41,12 +41,9 @@ class ThinkAnalyticsHttpAccessEventProcessor(BasicAnalyticsProcessor):
                 self.__count_default_language(http_access_stream),
                 self.__count_en_language(http_access_stream),
                 self.__count_nl_language(http_access_stream),
-                self.__count_successful_requests_by_hosts(response_code_stream),
-                self.__count_failed_requests_by_hosts(response_code_stream),
-                self.__count_successful_requests_by_content_source_id_and_methods(response_code_stream),
-                self.__count_failed_requests_by_content_source_id_and_methods(response_code_stream),
-                self.__count_successful_requests_by_client_type(response_code_stream),
-                self.__count_failed_requests_by_client_type(response_code_stream)]
+                self.__count_requests_by_hosts_and_status(response_code_stream),
+                self.__count_requests_by_content_source_id_and_methods_and_status(response_code_stream),
+                self.__count_requests_by_client_type_and_status(response_code_stream)]
 
     @staticmethod
     def create_schema():
@@ -133,47 +130,26 @@ class ThinkAnalyticsHttpAccessEventProcessor(BasicAnalyticsProcessor):
             .where("query_language == 'nl'") \
             .aggregate(Count(aggregation_name=self._component_name + '.query_language.nl'))
 
-    def __count_successful_requests_by_hosts(self, read_stream):
+    def __count_requests_by_hosts_and_status(self, read_stream):
         return read_stream \
             .where("hostname is not null") \
-            .where("response_code between 200 and 299") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + '.successful'))
+            .withColumn("response_successful", col("response_code").between(200, 299).cast("string")) \
+            .aggregate(Count(group_fields=["hostname", "response_successful"],
+                             aggregation_name=self._component_name))
 
-    def __count_failed_requests_by_hosts(self, read_stream):
-        return read_stream \
-            .where("hostname is not null") \
-            .where("response_code not between 200 and 299") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + '.failed'))
-
-    def __count_successful_requests_by_content_source_id_and_methods(self, read_stream):
+    def __count_requests_by_content_source_id_and_methods_and_status(self, read_stream):
         return read_stream \
             .where("method is not null") \
-            .where("response_code between 200 and 299") \
-            .aggregate(Count(group_fields=["content_source_id", "method"],
-                             aggregation_name=self._component_name + '.successful'))
+            .withColumn("response_successful", col("response_code").between(200, 299).cast("string")) \
+            .aggregate(Count(group_fields=["content_source_id", "method", "response_successful"],
+                             aggregation_name=self._component_name))
 
-    def __count_failed_requests_by_content_source_id_and_methods(self, read_stream):
-        return read_stream \
-            .where("method is not null") \
-            .where("response_code not between 200 and 299") \
-            .aggregate(Count(group_fields=["content_source_id", "method"],
-                             aggregation_name=self._component_name + '.failed'))
-
-    def __count_successful_requests_by_client_type(self, read_stream):
+    def __count_requests_by_client_type_and_status(self, read_stream):
         return read_stream \
             .where("client_type is not null") \
-            .where("response_code between 200 and 299") \
-            .aggregate(Count(group_fields=["client_type"],
-                             aggregation_name=self._component_name + '.successful'))
-
-    def __count_failed_requests_by_client_type(self, read_stream):
-        return read_stream \
-            .where("client_type is not null") \
-            .where("response_code between 300 and 499") \
-            .aggregate(Count(group_fields=["client_type"],
-                             aggregation_name=self._component_name + '.failed'))
+            .withColumn("response_successful", col("response_code").between(200, 299).cast("string")) \
+            .aggregate(Count(group_fields=["client_type", "response_successful"],
+                             aggregation_name=self._component_name))
 
 
 def create_processor(configuration):
