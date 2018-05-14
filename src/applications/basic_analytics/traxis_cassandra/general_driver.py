@@ -5,10 +5,9 @@ The module for the driver to calculate metrics related to Traxis Cassandra gener
 from pyspark.sql.functions import regexp_extract, col
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
-from applications.basic_analytics.traxis_cassandra.cassandra_utils import CassandraUtils
 from common.basic_analytics.aggregations import Count, DistinctCount
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
-from common.spark_utils.custom_functions import convert_to_underlined, custom_translate_regex
+from common.spark_utils.custom_functions import convert_to_underlined, custom_translate_regex, custom_translate_like
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
 
@@ -39,8 +38,8 @@ class TraxisCassandraGeneral(BasicAnalyticsProcessor):
                 self.__reachable_nodes(read_stream),
                 self.__memtable_flush(read_stream),
                 self.__total_available_hosts(read_stream),
-                self.__success_logs(read_stream),
-                CassandraUtils.memory_flushing(read_stream, self._component_name)]
+                self.__log_levels(read_stream),
+                self.__memory_flushing(read_stream)]
 
     def __count(self, events, metric_name):
         return events \
@@ -164,11 +163,23 @@ class TraxisCassandraGeneral(BasicAnalyticsProcessor):
             .aggregate(DistinctCount(aggregation_field="hostname",
                                      aggregation_name=self._component_name))
 
-    def __success_logs(self, events):
+    def __log_levels(self, events):
         return events \
-            .where("level == 'INFO' or level =='WARN'") \
-            .aggregate(Count(group_fields=["hostname"],
+            .aggregate(Count(group_fields=["level", "hostname"],
                              aggregation_name=self._component_name + ".info_warn"))
+
+    def __memory_flushing(self, events):
+        return events \
+            .where("message like '%Flushing%'") \
+            .withColumn("column_family", custom_translate_like(
+                source_field=col("message"),
+                mappings_pair=[(["Channels"], "channels"),
+                               (["Titles"], "titles"),
+                               (["Groups"], "groups")],
+                default_value="unclassified")) \
+            .where("column_family != 'unclassified'") \
+            .aggregate(Count(group_fields=["column_family"],
+                             aggregation_name=self._component_name + ".memory_flushing"))
 
     @staticmethod
     def create_schema():

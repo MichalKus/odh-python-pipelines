@@ -5,7 +5,6 @@ The module for the driver to calculate metrics related to Traxis Cassandra error
 from pyspark.sql.functions import regexp_extract
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
-from applications.basic_analytics.traxis_cassandra.cassandra_utils import CassandraUtils
 from common.basic_analytics.aggregations import Count
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
@@ -25,9 +24,7 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
                 self.__ring_status_node_warnings(warn_events),
                 self.__undefined_warnings(warn_events),
                 self.__ring_status_node_errors(error_events),
-                self.__success_logs(read_stream),
-                self.__error_logs(read_stream),
-                CassandraUtils.memory_flushing(read_stream, self._component_name)]
+                self.__log_levels(read_stream)]
 
     def __info_or_warn_count(self, read_stream):
         return read_stream \
@@ -63,17 +60,10 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
             .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".ring_status_node_errors"))
 
-    def __success_logs(self, events):
+    def __log_levels(self, events):
         return events \
-            .where("level == 'INFO' or level =='WARN'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".info_or_warn"))
-
-    def __error_logs(self, events):
-        return events \
-            .where("level == 'ERROR'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".error"))
+            .aggregate(Count(group_fields=["level", "hostname"],
+                             aggregation_name=self._component_name))
 
     @staticmethod
     def create_schema():
