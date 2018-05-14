@@ -58,18 +58,10 @@
 {"@timestamp": "2017-06-20T03:30:00.000Z", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.responses.hostname.test1.count", "value": 1}
 
 
-// __count_default_language.
-{"@timestamp": "2017-06-19T00:40:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.query_language.default.count", "value": 2}
-{"@timestamp": "2017-06-19T06:20:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.query_language.default.count", "value": 1}
-
-
-// __count_en_language.
-{"@timestamp": "2017-06-20T03:20:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.query_language.en.count", "value": 1}
-
-
-// __count_nl_language.
-{"@timestamp": "2017-06-19T00:40:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.query_language.nl.count", "value": 1}
-{"@timestamp": "2017-06-20T03:20:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.query_language.nl.count", "value": 1}
+// __count_query_language.
+{"@timestamp": "2017-06-19T00:40:00.000Z", "query_language": "nl", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.query_language.nl.count", "value": 1}
+{"@timestamp": "2017-06-19T00:40:00.000Z", "query_language": "de", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.query_language.de.count", "value": 1}
+{"@timestamp": "2017-06-19T00:40:00.000Z", "query_language": "en", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.thinkanalytics.httpaccess.query_language.en.count", "value": 1}
 
 
 // __count_requests_by_hosts_and_status.
