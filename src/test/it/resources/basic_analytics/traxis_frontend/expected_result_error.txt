@@ -3,3 +3,7 @@
 {"@timestamp": "2017-06-29T16:35:00.000Z", "hostname": "test1", "counter": "unclassifed_errors", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.error.hostname.test1.counter.unclassifed_errors.count", "value": 3}
 {"@timestamp": "2017-06-29T16:35:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.error.error.count", "value": 3}
 {"@timestamp": "2017-06-29T16:35:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.error.info_or_warn.count", "value": 1}
+{"@timestamp": "2017-06-29T16:35:00.000Z", "level": "WARN", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.error.level.WARN.hostname.test1.count", "value": 1}
+{"@timestamp": "2017-06-29T16:35:00.000Z", "level": "FATAL", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.error.level.FATAL.hostname.test1.count", "value": 1}
+{"@timestamp": "2017-06-29T16:35:00.000Z", "level": "ERROR", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.error.level.ERROR.hostname.test1.count", "value": 3}
+
