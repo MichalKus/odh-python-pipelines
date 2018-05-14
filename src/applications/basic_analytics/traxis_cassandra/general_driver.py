@@ -166,7 +166,7 @@ class TraxisCassandraGeneral(BasicAnalyticsProcessor):
     def __log_levels(self, events):
         return events \
             .aggregate(Count(group_fields=["level", "hostname"],
-                             aggregation_name=self._component_name + ".info_warn"))
+                             aggregation_name=self._component_name))
 
     def __memory_flushing(self, events):
         return events \
