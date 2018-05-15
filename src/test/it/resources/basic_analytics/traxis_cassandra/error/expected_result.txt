@@ -2,5 +2,14 @@
 {"@timestamp": "2017-10-07T16:30:00.000Z", "hostname": "odhdev02", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.undefined_warnings.hostname.odhdev02.count", "value": 2}
 {"@timestamp": "2017-10-07T16:30:00.000Z", "hostname": "odhdev03", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.undefined_warnings.hostname.odhdev03.count", "value": 1}
 {"@timestamp": "2017-10-30T11:33:00.000Z", "hostname": "odhdev03", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.undefined_warnings.hostname.odhdev03.count", "value": 1}
+{"@timestamp": "2018-05-11T04:40:00.000Z", "hostname": "be-w-p-obo00164", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.undefined_warnings.hostname.be-w-p-obo00164.count", "value": 1}
+{"@timestamp": "2017-10-07T16:30:00.000Z", "hostname": "odhdev01", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.level.WARN.hostname.odhdev01.count", "value": 2, "level": "WARN"}
+{"@timestamp": "2017-10-07T16:30:00.000Z", "hostname": "odhdev02", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.level.WARN.hostname.odhdev02.count", "value": 2, "level": "WARN"}
+{"@timestamp": "2017-10-07T16:30:00.000Z", "hostname": "odhdev03", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.level.WARN.hostname.odhdev03.count", "value": 1, "level": "WARN"}
+{"@timestamp": "2017-10-30T11:33:00.000Z", "hostname": "odhdev03", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.level.WARN.hostname.odhdev03.count", "value": 1, "level": "WARN"}
+{"@timestamp": "2018-05-08T05:13:00.000Z", "hostname": "be-w-p-obo00166", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.level.ERROR.hostname.be-w-p-obo00166.count", "value": 1, "level": "ERROR"}
+{"@timestamp": "2018-05-11T04:40:00.000Z", "hostname": "be-w-p-obo00164", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.level.WARN.hostname.be-w-p-obo00164.count", "value": 1, "level": "WARN"}
 {"@timestamp": "2017-10-07T16:30:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.info_or_warn.count", "value": 5}
 {"@timestamp": "2017-10-30T11:33:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.info_or_warn.count", "value": 1}
+{"@timestamp": "2018-05-11T04:40:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.info_or_warn.count", "value": 1}
+{"@timestamp": "2018-05-08T05:13:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_cassandra.error.error.count", "value": 1}

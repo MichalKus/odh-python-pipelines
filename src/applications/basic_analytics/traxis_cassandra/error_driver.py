@@ -16,17 +16,27 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
     """
 
     def _process_pipeline(self, read_stream):
-        info_events = read_stream.where("level == 'INFO'")
         warn_events = read_stream.where("level == 'WARN'")
         error_events = read_stream.where("level == 'ERROR'")
 
-        info_or_warn_count = info_events.union(warn_events) \
+        return [self.__info_or_warn_count(read_stream),
+                self.__error_count(error_events),
+                self.__ring_status_node_warnings(warn_events),
+                self.__undefined_warnings(warn_events),
+                self.__ring_status_node_errors(error_events),
+                self.__log_levels(read_stream)]
+
+    def __info_or_warn_count(self, read_stream):
+        return read_stream \
+            .where("level == 'INFO' or level == 'WARN'") \
             .aggregate(Count(aggregation_name=self._component_name + ".info_or_warn"))
 
-        error_count = error_events \
+    def __error_count(self, error_events):
+        return error_events \
             .aggregate(Count(aggregation_name=self._component_name + ".error"))
 
-        ring_status_node_warnings = warn_events \
+    def __ring_status_node_warnings(self, warn_events):
+        return warn_events \
             .where("message like '%Unable to determine external address "
                    "of node with internal address %'") \
             .withColumn("host", regexp_extract("message", r".*Unable\s+to\s+determine\s+external\s+address\s+of\s+"
@@ -34,13 +44,15 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
             .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".ring_status_node_warnings"))
 
-        undefined_warnings = warn_events \
+    def __undefined_warnings(self, warn_events):
+        return warn_events \
             .where("message not like '%Unable to determine external address "
                    "of node with internal address %'") \
             .aggregate(Count(group_fields=["hostname"],
                              aggregation_name=self._component_name + ".undefined_warnings"))
 
-        ring_status_node_errors = error_events \
+    def __ring_status_node_errors(self, error_events):
+        return error_events \
             .where("message like '%Eventis.Cassandra.Service."
                    "CassandraServiceException+HostRingException%'") \
             .withColumn("host", regexp_extract("message", r".*Eventis\.Cassandra\.Service\.CassandraServiceException\+"
@@ -48,7 +60,10 @@ class TraxisCassandraError(BasicAnalyticsProcessor):
             .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".ring_status_node_errors"))
 
-        return [info_or_warn_count, error_count, ring_status_node_warnings, undefined_warnings, ring_status_node_errors]
+    def __log_levels(self, events):
+        return events \
+            .aggregate(Count(group_fields=["level", "hostname"],
+                             aggregation_name=self._component_name))
 
     @staticmethod
     def create_schema():
