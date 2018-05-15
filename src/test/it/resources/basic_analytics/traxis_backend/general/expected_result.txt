@@ -54,6 +54,14 @@
 {"@timestamp": "2017-10-30T00:08:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_backend.general.hostname.distinct_count", "value": 1}
 {"@timestamp": "2017-10-30T00:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_backend.general.hostname.distinct_count", "value": 2}
 {"@timestamp": "2017-10-30T00:10:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_backend.general.hostname.distinct_count", "value": 1}
+// tva delta ingest
+{"@timestamp": "2017-10-30T00:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_backend.general.tva_delta_ingest.message.count", "value": 1}
+// tva delta ingest backup taken
+{"@timestamp": "2017-10-30T00:10:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_backend.general.tva_delta_ingest_backup_taken.message.count", "value": 1}
+// tva backup deleted
+{"@timestamp": "2017-10-30T00:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_backend.general.tva_backup_deleted.message.count", "value": 1}
+//  new backup taken
+{"@timestamp": "2017-10-30T00:09:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_backend.general.tva_new_backup_taken.message.count", "value": 1}
 // hostname and level count
 {"@timestamp": "2017-10-30T01:23:00.000Z", "hostname": "odhdev02", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_backend.general.level.DEBUG.hostname.odhdev02.count", "value": 3, "level": "DEBUG"}
 {"@timestamp": "2017-10-30T01:23:00.000Z", "hostname": "odhdev02", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_backend.general.level.VERBOSE.hostname.odhdev02.count", "value": 2, "level": "VERBOSE"}

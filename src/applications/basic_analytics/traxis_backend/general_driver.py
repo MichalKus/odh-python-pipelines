@@ -32,7 +32,9 @@ class TraxisBackendGeneral(BasicAnalyticsProcessor):
 
         return [self.__info_or_warn_count(info_events, warn_events), self.__error_count(error_events),
                 self.__hostname_unique_count(read_stream), self.__hostname_level_count(read_stream),
-                self.__tva_full_ingest(read_stream), self.__tva_delta_ingest(read_stream),
+                self.__tva_delta_ingest(read_stream), self.__tva_new_backup_taken(read_stream),
+                self.__tva_backup_deleted(read_stream), self.__tva_delta_ingest_backup_taken(read_stream),
+                self.__tva_full_ingest(read_stream), self.__tva_starting_delta_ingest(read_stream),
                 self.__tva_expiry_check(read_stream), self.__tva_ingest_completed(read_stream),
                 self.__started_service(info_events), self.__stopped_service(info_events),
                 self.__tva_ingest_error(warn_events), self.__customer_provisioning_error(warn_events),
@@ -54,6 +56,35 @@ class TraxisBackendGeneral(BasicAnalyticsProcessor):
     def __hostname_level_count(self, read_stream):
         return read_stream \
             .aggregate(Count(group_fields=["level", "hostname"], aggregation_name=self._component_name))
+
+    def __tva_delta_ingest(self, read_stream):
+        return read_stream \
+            .where("message like '%delta ingest%'") \
+            .aggregate(Count(aggregation_field="message",
+                             aggregation_name=self._component_name + ".tva_delta_ingest"))
+
+    def __tva_new_backup_taken(self, read_stream):
+        return read_stream.where(
+            "message like '%TvaManagementFullOnlineIngest%' and "
+            "message like '%TvaBackupHelper%' and "
+            "message like '%TVA backup%'") \
+            .aggregate(Count(aggregation_field="message",
+                             aggregation_name=self._component_name + ".tva_new_backup_taken"))
+
+    def __tva_backup_deleted(self, read_stream):
+        return read_stream.where(
+            "message like '%TvaManagementFullOnlineIngest%' and "
+            "message like '%TvaBackupHelper%' and "
+            "message like '%Deleted%'") \
+            .aggregate(Count(aggregation_field="message",
+                             aggregation_name=self._component_name + ".tva_backup_deleted"))
+
+    def __tva_delta_ingest_backup_taken(self, read_stream):
+        return read_stream.where(
+            "message not like '%TvaManagementFullOnlineIngest%' and "
+            "message like '%TVA backup took%'") \
+            .aggregate(Count(aggregation_field="message",
+                             aggregation_name=self._component_name + ".tva_delta_ingest_backup_taken"))
 
     def __customer_provisioning_delete(self, uris):
         return uris \
@@ -116,7 +147,7 @@ class TraxisBackendGeneral(BasicAnalyticsProcessor):
             .aggregate(Count(group_fields=["hostname"],
                              aggregation_name=self._component_name + ".tva_expiry_check"))
 
-    def __tva_delta_ingest(self, read_stream):
+    def __tva_starting_delta_ingest(self, read_stream):
         return read_stream \
             .where("message like '%Starting delta ingest%'") \
             .aggregate(Count(group_fields=["hostname"],
