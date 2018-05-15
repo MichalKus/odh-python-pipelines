@@ -16,33 +16,19 @@ class TraxisBackendError(BasicAnalyticsProcessor):
     """
 
     def _process_pipeline(self, read_stream):
-        info_events = read_stream.where("level == 'INFO'")
-        warn_events = read_stream.where("level == 'WARN'")
         error_events = read_stream.where("level == 'ERROR'")
 
-        info_or_warn_count = info_events.union(warn_events) \
-            .aggregate(Count(aggregation_name=self._component_name + ".info_or_warn"))
+        return [self.__error_count(error_events),
+                self.__cassandra_errors(error_events),
+                self.__undefined_errors(error_events),
+                self.__error_count_per_host_names(error_events)]
 
-        error_count = error_events \
+    def __error_count(self, error_events):
+        return error_events \
             .aggregate(Count(aggregation_name=self._component_name + ".error"))
 
-        tva_ingest_error = warn_events \
-            .where("message like '%One or more validation errors detected during tva ingest%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".tva_ingest_error"))
-
-        customer_provisioning_error = warn_events \
-            .where("message like '%Unable to use alias%because alias is already used by%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".customer_provisioning_error"))
-
-        undefined_warnings = warn_events.where(
-            "message not like '%Unable to use alias%because alias is already used by%' and "
-            "message not like '%One or more validation errors detected during tva ingest%'"
-        ).aggregate(Count(group_fields=["hostname"],
-                          aggregation_name=self._component_name + ".undefined_warnings"))
-
-        cassandra_errors = error_events \
+    def __cassandra_errors(self, error_events):
+        return error_events \
             .where("message like '%Exception with cassandra node%'") \
             .withColumn("host", regexp_extract("message",
                                                r".*Exception\s+with\s+cassandra\s+node\s+\'([\d\.]+).*", 1)
@@ -50,13 +36,16 @@ class TraxisBackendError(BasicAnalyticsProcessor):
             .aggregate(Count(group_fields=["hostname", "host"],
                              aggregation_name=self._component_name + ".cassandra_errors"))
 
-        undefined_errors = error_events \
+    def __undefined_errors(self, error_events):
+        return error_events \
             .where("message not like '%Exception with cassandra node%'") \
             .aggregate(Count(group_fields=["hostname"],
                              aggregation_name=self._component_name + ".undefined_errors"))
 
-        return [info_or_warn_count, error_count, tva_ingest_error, customer_provisioning_error, undefined_warnings,
-                cassandra_errors, undefined_errors]
+    def __error_count_per_host_names(self, error_events):
+        return error_events \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name))
 
     @staticmethod
     def create_schema():

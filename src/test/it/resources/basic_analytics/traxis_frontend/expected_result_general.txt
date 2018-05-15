@@ -11,6 +11,18 @@
 {"@timestamp": "2017-06-29T16:35:00.000Z", "hostname": "test1", "counter": "session_service_success", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.hostname.test1.counter.session_service_success.count", "value": 1}
 {"@timestamp": "2017-06-29T16:35:00.000Z", "hostname": "test1", "counter": "metadata_success", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.hostname.test1.counter.metadata_success.count", "value": 1}
 {"@timestamp": "2017-06-29T16:35:00.000Z", "hostname": "test1", "counter": "metadata_warning", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.hostname.test1.counter.metadata_warning.count", "value": 1}
+{"@timestamp": "2017-06-29T16:35:00.000Z", "hostname": "test2", "counter": "metadata_warning", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.hostname.test2.counter.metadata_warning.count", "value": 1}
+{"@timestamp": "2017-06-29T16:35:00.000Z", "hostname": "test3", "counter": "metadata_warning", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.hostname.test3.counter.metadata_warning.count", "value": 1}
 {"@timestamp": "2017-06-29T16:35:00.000Z", "hostname": "test1", "counter": "invalid_parameter_warning", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.hostname.test1.counter.invalid_parameter_warning.count", "value": 1}
 {"@timestamp": "2017-06-29T16:35:00.000Z", "hostname": "test1", "counter": "unclassified_successful", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.hostname.test1.counter.unclassified_successful.count", "value": 2}
-{"@timestamp": "2017-06-29T16:35:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.info_or_warn.count", "value": 4}
+{"@timestamp": "2017-06-29T16:35:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.info_or_warn.count", "value": 6}
+{"@timestamp": "2017-06-29T16:35:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.error.count", "value": 1}
+{"@timestamp": "2017-06-29T16:35:00.000Z", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.hostname.distinct_count", "value": 3}
+{"@timestamp": "2017-06-29T16:35:00.000Z", "level": "TRACE", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.level.TRACE.hostname.test1.count", "value": 13}
+{"@timestamp": "2017-06-29T16:35:00.000Z", "level": "WARN", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.level.WARN.hostname.test1.count", "value": 3}
+{"@timestamp": "2017-06-29T16:35:00.000Z", "level": "WARN", "hostname": "test2", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.level.WARN.hostname.test2.count", "value": 1}
+{"@timestamp": "2017-06-29T16:35:00.000Z", "level": "WARN", "hostname": "test3", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.level.WARN.hostname.test3.count", "value": 1}
+{"@timestamp": "2017-06-29T16:35:00.000Z", "level": "INFO", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.level.INFO.hostname.test1.count", "value": 1}
+{"@timestamp": "2017-06-29T16:35:00.000Z", "level": "ERROR", "hostname": "test1", "metric_name": "vagrant.eosdtv.lab5aobo.tst.heapp.traxis_frontend.general.level.ERROR.hostname.test1.count", "value": 1}
+
+
