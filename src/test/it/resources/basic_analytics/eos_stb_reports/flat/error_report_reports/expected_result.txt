@@ -1,8 +1,97 @@
-{"value":1,"metric_name":"stb_error_report.replay_errors.viewer_id.distinct_count","@timestamp":"2018-05-02T09:00:00.000Z"}
-{"value":1,"metric_name":"stb_error_report.rev_buffer_playouts.viewer_id.distinct_count","@timestamp":"2018-05-02T09:00:00.000Z"}
-{"value":1,"metric_name":"stb_error_report.ltv_playout_errors.viewer_id.distinct_count","@timestamp":"2018-05-02T09:00:00.000Z"}
-{"value":1,"metric_name":"stb_error_report.rec_playout_errors.viewer_id.distinct_count","@timestamp":"2018-05-02T09:00:00.000Z"}
-{"code":"2217","value":1,"metric_name":"stb_error_report.code.2217.viewer_id.count","@timestamp":"2018-05-02T09:30:00.000Z"}
-{"code":"2505","value":1,"metric_name":"stb_error_report.code.2505.viewer_id.count","@timestamp":"2018-05-02T09:30:00.000Z"}
-{"code":"2002","value":1,"metric_name":"stb_error_report.code.2002.viewer_id.count","@timestamp":"2018-05-02T09:30:00.000Z"}
-{"code":"2199","value":1,"metric_name":"stb_error_report.code.2199.viewer_id.count","@timestamp":"2018-05-02T09:30:00.000Z"}
+// __replay_errors.
+{"@timestamp": "2018-05-02T09:00:00.000Z", "metric_name": "stb_error_report.replay_errors.viewer_id.distinct_count", "value": 1}
+
+
+// __rec_playout_errors.
+{"@timestamp": "2018-05-02T09:00:00.000Z", "metric_name": "stb_error_report.rec_playout_errors.viewer_id.distinct_count", "value": 1}
+
+
+// __ltv_playout_errors.
+{"@timestamp": "2018-05-02T09:00:00.000Z", "metric_name": "stb_error_report.ltv_playout_errors.viewer_id.distinct_count", "value": 1}
+
+
+// __rev_buffer_playouts.
+{"@timestamp": "2018-05-02T09:00:00.000Z", "metric_name": "stb_error_report.rev_buffer_playouts.viewer_id.distinct_count", "value": 1}
+
+
+// __search_failures.
+{"@timestamp": "2018-05-02T09:00:00.000Z", "metric_name": "stb_error_report.search_failures.viewer_id.distinct_count", "value": 1}
+
+
+// __error_all_code.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "2217", "metric_name": "stb_error_report.code.2217.viewer_id.count", "value": 1}
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "2505", "metric_name": "stb_error_report.code.2505.viewer_id.count", "value": 1}
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "2002", "metric_name": "stb_error_report.code.2002.viewer_id.count", "value": 1}
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "2199", "metric_name": "stb_error_report.code.2199.viewer_id.count", "value": 1}
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "2111", "metric_name": "stb_error_report.code.2111.viewer_id.count", "value": 1}
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "2305", "metric_name": "stb_error_report.code.2305.viewer_id.count", "value": 1}
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "2400", "metric_name": "stb_error_report.code.2400.viewer_id.count", "value": 1}
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "4219", "metric_name": "stb_error_report.code.4219.viewer_id.count", "value": 1}
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "5089", "metric_name": "stb_error_report.code.5089.viewer_id.count", "value": 1}
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "8400", "metric_name": "stb_error_report.code.8400.viewer_id.count", "value": 1}
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "6100", "metric_name": "stb_error_report.code.6100.viewer_id.count", "value": 1}
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "3300", "metric_name": "stb_error_report.code.3300.viewer_id.count", "value": 1}
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "9994", "metric_name": "stb_error_report.code.9994.viewer_id.count", "value": 1}
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "5612", "metric_name": "stb_error_report.code.5612.viewer_id.count", "value": 1}
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "6030", "metric_name": "stb_error_report.code.6030.viewer_id.count", "value": 1}
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "7507", "metric_name": "stb_error_report.code.7507.viewer_id.count", "value": 1}
+
+
+// __count_player_live_tv_errors.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "2002", "metric_name": "stb_error_report.player_live_tv_errors.code.2002.count", "value": 1}
+
+
+// __count_player_review_buffer_errors.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "2111", "metric_name": "stb_error_report.player_review_buffer_errors.code.2111.count", "value": 1}
+
+
+// __count_player_vod_playback_errors.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "2305", "metric_name": "stb_error_report.player_vod_playback_errors.code.2305.count", "value": 1}
+
+
+// __count_ott_playback_errors.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "2400", "metric_name": "stb_error_report.ott_playback_errors.code.2400.count", "value": 1}
+
+
+// __count_content_on_demand_purchase_errors.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "4219", "metric_name": "stb_error_report.content_on_demand_purchase_errors.code.4219.count", "value": 1}
+
+
+// __count_pvr_errors.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "5089", "metric_name": "stb_error_report.pvr_errors.code.5089.count", "value": 1}
+
+
+// __count_search_errors.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "8400", "metric_name": "stb_error_report.search_errors.code.8400.count", "value": 1}
+
+
+// __count_profile_errors.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "6100", "metric_name": "stb_error_report.profile_errors.code.6100.count", "value": 1}
+
+
+// __count_player_recording_errors.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "2217", "metric_name": "stb_error_report.player_recording_errors.code.2217.count", "value": 1}
+
+
+// __count_replay_playback_errors.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "2505", "metric_name": "stb_error_report.replay_playback_errors.code.2505.count", "value": 1}
+
+
+// __count_content_on_demand_errors.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "3300", "metric_name": "stb_error_report.content_on_demand_errors.code.3300.count", "value": 1}
+
+
+// __count_network_errors.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "9994", "metric_name": "stb_error_report.network_errors.code.9994.count", "value": 1}
+
+
+// __count_npvr_errors.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "5612", "metric_name": "stb_error_report.npvr_errors.code.5612.count", "value": 1}
+
+
+// __count_local_hard_disc_errors.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "6030", "metric_name": "stb_error_report.local_hard_disc_errors.code.6030.count", "value": 1}
+
+
+// __count_software_errors.
+{"@timestamp": "2018-05-02T09:30:00.000Z", "code": "7507", "metric_name": "stb_error_report.software_errors.code.7507.count", "value": 1}
