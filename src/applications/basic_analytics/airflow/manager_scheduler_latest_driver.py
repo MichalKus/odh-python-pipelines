@@ -30,13 +30,14 @@ class AirflowManagerScheduler(BasicAnalyticsProcessor):
     def __processed_dags_count(self, read_stream):
         return read_stream \
             .filter("action = 'RUN'") \
-            .aggregate(Count(group_fields=["status"],
+            .aggregate(Count(group_fields=["dag", "status"],
                              aggregation_name=self._component_name + ".runned"))
 
     def __dag_total_initiated_executions(self, read_stream):
         return read_stream \
             .filter("action = 'CREATE'") \
-            .aggregate(Count(aggregation_name=self._component_name + ".initiated_executions"))
+            .aggregate(Count(group_fields=["dag"],
+                             aggregation_name=self._component_name + ".initiated_executions"))
 
 
 def create_processor(configuration):
