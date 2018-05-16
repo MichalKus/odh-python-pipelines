@@ -19,7 +19,7 @@ class NetConfigurationReportEventProcessor(BasicAnalyticsProcessor):
         return convert_epoch_to_iso(data_stream, "NetConfiguration.ts", "@timestamp")
 
     def _process_pipeline(self, read_stream):
-        self._common_net_configuration_pipeline = read_stream \
+        common_net_configuration_pipeline = read_stream \
             .select("@timestamp",
                     explode("NetConfiguration.ifaces").alias("ifaces"),
                     col("header.viewerID").alias("viewer_id")) \
@@ -28,8 +28,8 @@ class NetConfigurationReportEventProcessor(BasicAnalyticsProcessor):
                     col("ifaces.type").alias("type"),
                     col("viewer_id"))
 
-        return [self.distinct_total_net_config_enabled(),
-                self.total_cpe_net_config_for_wifi_ethernet_channels()]
+        return [self.distinct_total_net_config_enabled(common_net_configuration_pipeline),
+                self.total_cpe_net_config_for_wifi_ethernet_channels(common_net_configuration_pipeline)]
 
     @staticmethod
     def create_schema():
@@ -48,14 +48,14 @@ class NetConfigurationReportEventProcessor(BasicAnalyticsProcessor):
             ]))
         ])
 
-    def distinct_total_net_config_enabled(self):
-        return self._common_net_configuration_pipeline \
+    def distinct_total_net_config_enabled(self, common_net_configuration_pipeline):
+        return common_net_configuration_pipeline \
             .where("enabled is not NULL") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["enabled"],
                                      aggregation_name=self._component_name))
 
-    def total_cpe_net_config_for_wifi_ethernet_channels(self):
-        return self._common_net_configuration_pipeline \
+    def total_cpe_net_config_for_wifi_ethernet_channels(self, common_net_configuration_pipeline):
+        return common_net_configuration_pipeline \
             .where("type is not NULL") \
             .aggregate(DistinctCount(aggregation_field="viewer_id", group_fields=["type"],
                                      aggregation_name=self._component_name))

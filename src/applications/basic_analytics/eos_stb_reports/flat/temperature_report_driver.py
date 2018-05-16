@@ -20,12 +20,12 @@ class TemperatureReportEventProcessor(BasicAnalyticsProcessor):
         return convert_epoch_to_iso(data_stream, "TemperatureReport.ts", "@timestamp")
 
     def _process_pipeline(self, read_stream):
-        self._common_temperature_pipeline = read_stream \
+        common_temperature_pipeline = read_stream \
             .select("@timestamp",
                     col("TemperatureReport.name").alias("name"),
                     col("TemperatureReport.value").alias("temperature"))
 
-        return [self.average_temperature()]
+        return [self.average_temperature(common_temperature_pipeline)]
 
     @staticmethod
     def create_schema():
@@ -37,8 +37,8 @@ class TemperatureReportEventProcessor(BasicAnalyticsProcessor):
             ]))
         ])
 
-    def average_temperature(self):
-        return self._common_temperature_pipeline \
+    def average_temperature(self, common_temperature_pipeline):
+        return common_temperature_pipeline \
             .where(col("temperature") >= 0) \
             .aggregate(Avg(aggregation_field="temperature", group_fields=["name"],
                            aggregation_name=self._component_name))

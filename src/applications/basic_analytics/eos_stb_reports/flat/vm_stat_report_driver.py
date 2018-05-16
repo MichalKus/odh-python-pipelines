@@ -21,7 +21,7 @@ class VmStatReportEventProcessor(BasicAnalyticsProcessor):
 
     def _process_pipeline(self, read_stream):
 
-        self._time_in_percents = ".time_in_percents"
+        time_in_percents = ".time_in_percents"
 
         common_vm_stat_pipeline = read_stream \
             .select("@timestamp",
@@ -30,14 +30,14 @@ class VmStatReportEventProcessor(BasicAnalyticsProcessor):
                     col("header.softwareVersions").alias("software_versions"))
 
         return [self.__average_uptime_across_stb(common_vm_stat_pipeline),
-                self.__average_usage_hardware_interrupt(common_vm_stat_pipeline),
-                self.__average_usage_low_priority_mode(common_vm_stat_pipeline),
-                self.__average_user_active_mode(common_vm_stat_pipeline),
+                self.__average_usage_hardware_interrupt(common_vm_stat_pipeline, time_in_percents),
+                self.__average_usage_low_priority_mode(common_vm_stat_pipeline, time_in_percents),
+                self.__average_user_active_mode(common_vm_stat_pipeline, time_in_percents),
                 self.__restarted_stbs_total_count(common_vm_stat_pipeline),
                 self.__restarted_stbs_count_per_firmware(common_vm_stat_pipeline),
-                self.__average_usage_cpu_in_wait(common_vm_stat_pipeline),
-                self.__average_usage_system_mode(common_vm_stat_pipeline),
-                self.__average_software_interrupt(common_vm_stat_pipeline)]
+                self.__average_usage_cpu_in_wait(common_vm_stat_pipeline, time_in_percents),
+                self.__average_usage_system_mode(common_vm_stat_pipeline, time_in_percents),
+                self.__average_software_interrupt(common_vm_stat_pipeline, time_in_percents)]
 
     @staticmethod
     def create_schema():
@@ -68,41 +68,41 @@ class VmStatReportEventProcessor(BasicAnalyticsProcessor):
             .aggregate(Avg(aggregation_field="uptime_sec",
                            aggregation_name=self._component_name))
 
-    def __average_usage_hardware_interrupt(self, common_vm_stat_pipeline):
+    def __average_usage_hardware_interrupt(self, common_vm_stat_pipeline, time_in_percents):
         return common_vm_stat_pipeline \
             .select("@timestamp", col("hwIrqPct")) \
             .aggregate(Avg(aggregation_field="hwIrqPct",
-                           aggregation_name=self._component_name + self._time_in_percents))
+                           aggregation_name=self._component_name + time_in_percents))
 
-    def __average_usage_cpu_in_wait(self, common_vm_stat_pipeline):
+    def __average_usage_cpu_in_wait(self, common_vm_stat_pipeline, time_in_percents):
         return common_vm_stat_pipeline \
             .select("@timestamp", col("iowaitPct")) \
             .aggregate(Avg(aggregation_field="iowaitPct",
-                           aggregation_name=self._component_name + self._time_in_percents))
+                           aggregation_name=self._component_name + time_in_percents))
 
-    def __average_usage_low_priority_mode(self, common_vm_stat_pipeline):
+    def __average_usage_low_priority_mode(self, common_vm_stat_pipeline, time_in_percents):
         return common_vm_stat_pipeline \
             .select("@timestamp", col("nicePct")) \
             .aggregate(Avg(aggregation_field="nicePct",
-                           aggregation_name=self._component_name + self._time_in_percents))
+                           aggregation_name=self._component_name + time_in_percents))
 
-    def __average_usage_system_mode(self, common_vm_stat_pipeline):
+    def __average_usage_system_mode(self, common_vm_stat_pipeline, time_in_percents):
         return common_vm_stat_pipeline \
             .select("@timestamp", col("systemPct")) \
             .aggregate(Avg(aggregation_field="systemPct",
-                           aggregation_name=self._component_name + self._time_in_percents))
+                           aggregation_name=self._component_name + time_in_percents))
 
-    def __average_user_active_mode(self, common_vm_stat_pipeline):
+    def __average_user_active_mode(self, common_vm_stat_pipeline, time_in_percents):
         return common_vm_stat_pipeline \
             .select("@timestamp", col("userPct")) \
             .aggregate(Avg(aggregation_field="userPct",
-                           aggregation_name=self._component_name + self._time_in_percents))
+                           aggregation_name=self._component_name + time_in_percents))
 
-    def __average_software_interrupt(self, common_vm_stat_pipeline):
+    def __average_software_interrupt(self, common_vm_stat_pipeline, time_in_percents):
         return common_vm_stat_pipeline \
             .select("@timestamp", col("swIrqPct")) \
             .aggregate(Avg(aggregation_field="swIrqPct",
-                           aggregation_name=self._component_name + self._time_in_percents))
+                           aggregation_name=self._component_name + time_in_percents))
 
     def __restarted_stbs_total_count(self, common_vm_stat_pipeline):
         return common_vm_stat_pipeline \
