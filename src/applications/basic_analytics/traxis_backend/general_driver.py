@@ -4,7 +4,7 @@ The module for the driver to calculate metrics related to Traxis Backend general
 from pyspark.sql.functions import col, regexp_replace, regexp_extract, explode, split, lower
 from pyspark.sql.types import StructField, StructType, TimestampType, StringType
 
-from common.basic_analytics.aggregations import Count
+from common.basic_analytics.aggregations import Count, DistinctCount
 from common.basic_analytics.basic_analytics_processor import BasicAnalyticsProcessor
 from util.kafka_pipeline_helper import start_basic_analytics_pipeline
 
@@ -20,58 +20,6 @@ class TraxisBackendGeneral(BasicAnalyticsProcessor):
         trace_events = read_stream.where("level == 'TRACE'")
         error_events = read_stream.where("level == 'ERROR'")
 
-        info_or_warn_count = info_events.union(warn_events) \
-            .aggregate(Count(aggregation_name=self._component_name + ".info_or_warn"))
-
-        error_count = error_events \
-            .aggregate(Count(aggregation_name=self._component_name + ".error"))
-
-        tva_full_ingest = read_stream \
-            .where("message like '%Starting full ingest%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".tva_full_ingest_initiated"))
-
-        tva_delta_ingest = read_stream \
-            .where("message like '%Starting delta ingest%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".tva_delta_ingest_initiated"))
-
-        tva_expiry_check = read_stream \
-            .where("message like '%Expired items detected%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".tva_expiry_check"))
-
-        tva_ingest_completed = read_stream \
-            .where("message like '%Tva ingest completed%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".tva_ingest_completed"))
-
-        started_service = info_events \
-            .where("message like '%Service - Traxis Service Started%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".started_service"))
-
-        stopped_service = info_events \
-            .where("message like '%Service - Traxis Service Stopped%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".stopped_service"))
-
-        tva_ingest_error = warn_events \
-            .where("message like '%One or more validation errors detected during tva ingest%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".tva_ingest_error"))
-
-        customer_provisioning_error = warn_events \
-            .where("message like '%Unable to use alias%because alias is already used by%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".customer_provisioning_error"))
-
-        undefined_warnings = warn_events.where(
-            "message not like '%Unable to use alias%because alias is already used by%' and "
-            "message not like '%One or more validation errors detected during tva ingest%'"
-        ).aggregate(Count(group_fields=["hostname"],
-                          aggregation_name=self._component_name + ".undefined_warnings"))
-
         uris = trace_events \
             .where("message like '%HTTP request received from%'") \
             .withColumn("message", regexp_replace("message", r"(>\n\s<)", "><")) \
@@ -82,25 +30,134 @@ class TraxisBackendGeneral(BasicAnalyticsProcessor):
             .select(col("hostname"), col("@timestamp"), col("level"), col("message"),
                     regexp_extract("header", ".*?=(.*)", 1).alias("uri"))
 
-        customer_provisioning_new = uris \
-            .where("uri like '%/traxis/householdupdate?action=new%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".customer_provisioning_new"))
+        return [self.__info_or_warn_count(info_events, warn_events), self.__error_count(error_events),
+                self.__hostname_unique_count(read_stream), self.__hostname_level_count(read_stream),
+                self.__tva_delta_ingest(read_stream), self.__tva_new_backup_taken(read_stream),
+                self.__tva_backup_deleted(read_stream), self.__tva_delta_ingest_backup_taken(read_stream),
+                self.__tva_full_ingest(read_stream), self.__tva_starting_delta_ingest(read_stream),
+                self.__tva_expiry_check(read_stream), self.__tva_ingest_completed(read_stream),
+                self.__started_service(info_events), self.__stopped_service(info_events),
+                self.__tva_ingest_error(warn_events), self.__customer_provisioning_error(warn_events),
+                self.__undefined_warnings(warn_events), self.__customer_provisioning_new(uris),
+                self.__customer_provisioning_update(uris), self.__customer_provisioning_delete(uris)]
 
-        customer_provisioning_update = uris \
-            .where("uri like '%/traxis/householdupdate?action=update%'") \
-            .aggregate(Count(group_fields=["hostname"],
-                             aggregation_name=self._component_name + ".customer_provisioning_update"))
+    def __info_or_warn_count(self, info_events, warn_events):
+        return info_events.union(warn_events) \
+            .aggregate(Count(aggregation_name=self._component_name + ".info_or_warn"))
 
-        customer_provisioning_delete = uris \
+    def __error_count(self, error_events):
+        return error_events \
+            .aggregate(Count(aggregation_name=self._component_name + ".error"))
+
+    def __hostname_unique_count(self, read_stream):
+        return read_stream. \
+            aggregate(DistinctCount(aggregation_field="hostname", aggregation_name=self._component_name))
+
+    def __hostname_level_count(self, read_stream):
+        return read_stream \
+            .aggregate(Count(group_fields=["level", "hostname"], aggregation_name=self._component_name))
+
+    def __tva_delta_ingest(self, read_stream):
+        return read_stream \
+            .where("message like '%delta ingest%'") \
+            .aggregate(Count(aggregation_field="message",
+                             aggregation_name=self._component_name + ".tva_delta_ingest"))
+
+    def __tva_new_backup_taken(self, read_stream):
+        return read_stream.where(
+            "message like '%TvaManagementFullOnlineIngest%' and "
+            "message like '%TvaBackupHelper%' and "
+            "message like '%TVA backup%'") \
+            .aggregate(Count(aggregation_field="message",
+                             aggregation_name=self._component_name + ".tva_new_backup_taken"))
+
+    def __tva_backup_deleted(self, read_stream):
+        return read_stream.where(
+            "message like '%TvaManagementFullOnlineIngest%' and "
+            "message like '%TvaBackupHelper%' and "
+            "message like '%Deleted%'") \
+            .aggregate(Count(aggregation_field="message",
+                             aggregation_name=self._component_name + ".tva_backup_deleted"))
+
+    def __tva_delta_ingest_backup_taken(self, read_stream):
+        return read_stream.where(
+            "message not like '%TvaManagementFullOnlineIngest%' and "
+            "message like '%TVA backup took%'") \
+            .aggregate(Count(aggregation_field="message",
+                             aggregation_name=self._component_name + ".tva_delta_ingest_backup_taken"))
+
+    def __customer_provisioning_delete(self, uris):
+        return uris \
             .where("uri like '%/traxis/householdupdatenotification.traxis?action=delete%'") \
             .aggregate(Count(group_fields=["hostname"],
                              aggregation_name=self._component_name + ".customer_provisioning_delete"))
 
-        return [info_or_warn_count, error_count, tva_expiry_check, tva_delta_ingest, tva_full_ingest,
-                tva_ingest_completed, started_service,
-                stopped_service, tva_ingest_error, customer_provisioning_error, undefined_warnings,
-                customer_provisioning_new, customer_provisioning_update, customer_provisioning_delete]
+    def __customer_provisioning_update(self, uris):
+        return uris \
+            .where("uri like '%/traxis/householdupdate?action=update%'") \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".customer_provisioning_update"))
+
+    def __customer_provisioning_new(self, uris):
+        return uris \
+            .where("uri like '%/traxis/householdupdate?action=new%'") \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".customer_provisioning_new"))
+
+    def __undefined_warnings(self, warn_events):
+        return warn_events.where(
+            "message not like '%Unable to use alias%because alias is already used by%' and "
+            "message not like '%One or more validation errors detected during tva ingest%'"
+        ).aggregate(Count(group_fields=["hostname"],
+                          aggregation_name=self._component_name + ".undefined_warnings"))
+
+    def __customer_provisioning_error(self, warn_events):
+        return warn_events \
+            .where("message like '%Unable to use alias%because alias is already used by%'") \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".customer_provisioning_error"))
+
+    def __tva_ingest_error(self, warn_events):
+        return warn_events \
+            .where("message like '%One or more validation errors detected during tva ingest%'") \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".tva_ingest_error"))
+
+    def __stopped_service(self, info_events):
+        return info_events \
+            .where("message like '%Service - Traxis Service Stopped%'") \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".stopped_service"))
+
+    def __started_service(self, info_events):
+        return info_events \
+            .where("message like '%Service - Traxis Service Started%'") \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".started_service"))
+
+    def __tva_ingest_completed(self, read_stream):
+        return read_stream \
+            .where("message like '%Tva ingest completed%'") \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".tva_ingest_completed"))
+
+    def __tva_expiry_check(self, read_stream):
+        return read_stream \
+            .where("message like '%Expired items detected%'") \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".tva_expiry_check"))
+
+    def __tva_starting_delta_ingest(self, read_stream):
+        return read_stream \
+            .where("message like '%Starting delta ingest%'") \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".tva_delta_ingest_initiated"))
+
+    def __tva_full_ingest(self, read_stream):
+        return read_stream \
+            .where("message like '%Starting full ingest%'") \
+            .aggregate(Count(group_fields=["hostname"],
+                             aggregation_name=self._component_name + ".tva_full_ingest_initiated"))
 
     @staticmethod
     def create_schema():

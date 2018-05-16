@@ -3,7 +3,7 @@ from test.it.core.base_spark_test_case import BaseSparkProcessorTestCase
 
 
 class ThinkAnalyticsHttpAccessBasicAnalyticsTestCase(BaseSparkProcessorTestCase):
-    def test_300_events_success(self):
+    def test_events_success(self):
         self._test_pipeline(
             configuration_path="test/it/resources/basic_analytics/think_analytics/httpaccess/configuration.yml",
             processor_creator=create_processor,
