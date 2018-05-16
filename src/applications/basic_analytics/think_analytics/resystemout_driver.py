@@ -23,8 +23,7 @@ class ThinkAnalyticsReSystemOutEventProcessor(BasicAnalyticsProcessor):
             .withColumn("duration", regexp_extract("message", r"^.*?(\d+)ms.$", 1).cast("Int").alias("duration"))
 
         return [self.__avg_duration(duration_stream),
-                self.__count_by_level(re_system_out_stream),
-                self.__count_by_message(re_system_out_stream)]
+                self.__count_by_level(re_system_out_stream)]
 
     @staticmethod
     def create_schema():
