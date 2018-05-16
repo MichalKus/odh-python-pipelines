@@ -25,7 +25,7 @@ class TopProcessesEventProcessor(BasicAnalyticsProcessor):
             .selectExpr("process.*", "`@timestamp`")
 
         return [stream.aggregate(Avg(group_fields="name", aggregation_field=field,
-                                              aggregation_name=self._component_name))
+                                     aggregation_name=self._component_name))
                 for field in ["rss", "fds", "threads", "vsz"]]
 
     @staticmethod
