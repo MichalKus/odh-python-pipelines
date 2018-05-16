@@ -21,7 +21,7 @@ class TraxisBackendError(BasicAnalyticsProcessor):
         return [self.__error_count(error_events),
                 self.__cassandra_errors(error_events),
                 self.__undefined_errors(error_events),
-                self.__error_count_per_host_names(error_events)]
+                self.__error_count_per_host_names(read_stream)]
 
     def __error_count(self, error_events):
         return error_events \
@@ -44,7 +44,7 @@ class TraxisBackendError(BasicAnalyticsProcessor):
 
     def __error_count_per_host_names(self, error_events):
         return error_events \
-            .aggregate(Count(group_fields=["hostname"],
+            .aggregate(Count(group_fields=["level", "hostname"],
                              aggregation_name=self._component_name))
 
     @staticmethod
