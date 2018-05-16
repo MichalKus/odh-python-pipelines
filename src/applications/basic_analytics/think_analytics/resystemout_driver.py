@@ -47,12 +47,6 @@ class ThinkAnalyticsReSystemOutEventProcessor(BasicAnalyticsProcessor):
                 .aggregate(Count(group_fields=["level"],
                                  aggregation_name=self._component_name))
 
-    def __count_by_message(self, read_stream):
-        return read_stream \
-            .where("level == 'ERROR'") \
-            .aggregate(Count(group_fields=["message"],
-                             aggregation_name=self._component_name))
-
 
 def create_processor(configuration):
     """Method to create the instance of the processor"""
