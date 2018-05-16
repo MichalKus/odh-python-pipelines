@@ -87,7 +87,7 @@ class Airflow(object):
         return EventCreator(
             Metadata([
                 ConfigurableTimestampField("timestamp", "%Y-%m-%d %H:%M:%S,%f",
-                                       timezone_name, timezones_property, "@timestamp"),
+                                           timezone_name, timezones_property, "@timestamp"),
                 StringField("script"),
                 StringField("level"),
                 StringField("message")
