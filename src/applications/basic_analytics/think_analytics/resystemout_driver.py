@@ -43,9 +43,9 @@ class ThinkAnalyticsReSystemOutEventProcessor(BasicAnalyticsProcessor):
                            aggregation_name=self._component_name))
 
     def __count_by_level(self, read_stream):
-            return read_stream \
-                .aggregate(Count(group_fields=["level"],
-                                 aggregation_name=self._component_name))
+        return read_stream \
+            .aggregate(Count(group_fields=["level"],
+                             aggregation_name=self._component_name))
 
 
 def create_processor(configuration):
