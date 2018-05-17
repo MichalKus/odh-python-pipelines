@@ -9,5 +9,4 @@ class TunerPerfReportBasicAnalyticsTestCase(BaseSparkProcessorTestCase):
             processor_creator=create_processor,
             input_dir="test/it/resources/basic_analytics/eos_stb_reports/tuner_perf_report/input",
             expected_result_file="test/it/resources/basic_analytics/eos_stb_reports/tuner_perf_report/expected_result.txt",
-            timeout=70
         )
