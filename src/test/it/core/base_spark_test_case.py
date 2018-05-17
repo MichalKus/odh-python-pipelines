@@ -9,15 +9,13 @@ from util.utils import Utils
 class BaseSparkProcessorTestCase(unittest.TestCase):
     """ Class allows to proceed integration test for Spark Pipeline"""
 
-    def _test_pipeline(self, configuration_path, processor_creator, input_dir, expected_result_file,
-                       timeout=10, print_result=False):
+    def _test_pipeline(self, configuration_path, processor_creator, input_dir, expected_result_file, print_result=False):
         """
         Method for checking equals between driver result and manually generated result file
         :param configuration_path: path to config file
         :param processor_creator: processor for event_creator
         :param input_dir: path to input messages
         :param expected_result_file: path to expected result
-        :param timeout: timout for waiting driver end its work before matching result
         :param print_result: flag for only printing results to console for debugging
         :return:
         """
@@ -29,7 +27,7 @@ class BaseSparkProcessorTestCase(unittest.TestCase):
             input_dir,
             "test_result" + table_uuid_postfix
         )
-        pipeline.start(timeout)
+        pipeline.process_all_available()
         result_tables_list = [[json.loads(row.value) for row in
                                pipeline.spark.sql("select value from " + query.name).collect()]
                               for query in pipeline.spark.streams.active]

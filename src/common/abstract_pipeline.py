@@ -1,8 +1,11 @@
+"""
+Module for abstract spark pipeline
+"""
 from abc import ABCMeta, abstractmethod
 from pyspark.sql import SparkSession
 
 
-class AbstractPipeline:
+class AbstractPipeline(object):
     """
     Base class for structured streaming pipeline
     """
@@ -63,13 +66,21 @@ class AbstractPipeline:
         :return: list of stream writers
         """
 
-    def start(self, timeout=None):
+    def start(self):
         """
         Starts pipeline
         """
         for stream in self._write_streams:
             stream.start()
-        self.spark.streams.awaitAnyTermination(timeout)
+        self.spark.streams.awaitAnyTermination()
+
+    def process_all_available(self):
+        """
+        Processes all available data and exit. For tests purposes only
+        """
+        for stream in self._write_streams:
+            stream.start() \
+                .processAllAvailable()
 
     def terminate_active_streams(self):
         """
